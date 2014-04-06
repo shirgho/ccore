@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "Window.h"
 
 //Private
@@ -13,16 +11,16 @@ LRESULT CALLBACK WndProc(HWND Hw, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 //Public
 
-Window *newWindow(unsigned short width, unsigned short height)
+ccWindow *newWindow(unsigned short width, unsigned short height)
 {
-	Window *w = malloc(sizeof(Window));
+	ccWindow *w = malloc(sizeof(ccWindow));
 
 
 
 	return w;
 }
 
-void freeWindow(Window *w)
+void freeWindow(ccWindow *w)
 {
 	free(w);
 }

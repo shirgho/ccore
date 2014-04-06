@@ -6,7 +6,7 @@
 typedef struct {
 	unsigned short width;
 	unsigned short height;
-} Window;
+} ccWindow;
 
-Window *newWindow(unsigned short width, unsigned short height);
-void freeWindow(Window *w);
+ccWindow *newWindow(unsigned short width, unsigned short height);
+void freeWindow(ccWindow *w);

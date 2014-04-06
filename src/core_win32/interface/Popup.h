@@ -5,13 +5,13 @@
 typedef enum {
 	PopupError,
 	PopupNotification
-} PopupType;
+} ccPopupType;
 
 typedef enum {
 	DialogueOkCancel,
 	DialogueRetryCancel,
 	DialogueYesNo
-} DialogueType;
+} ccDialogueType;
 
-void showPopup(char* message, char* caption, PopupType type);
-bool showDialogue(char* message, char* caption, DialogueType type);
+void ccShowPopup(char* message, char* caption, ccPopupType type);
+bool ccShowDialogue(char* message, char* caption, ccDialogueType type);
