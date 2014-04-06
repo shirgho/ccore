@@ -1,7 +1,5 @@
 #include "Window.h"
 
-//Private
-
 LRESULT CALLBACK wndProc(HWND Hw, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	switch(Msg) {
@@ -23,35 +21,40 @@ void regHinstance(HINSTANCE HIn)
 	winClass.hInstance = HIn;
 	winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	winClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	winClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	winClass.lpszMenuName = NULL;
-	winClass.lpszClassName = "MainWindow";
+	winClass.lpszClassName = "CCoreWindow";
 	winClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 	RegisterClassEx(&winClass);
 }
 
-//Public
-
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title)
 {
 	ccWindow *w = malloc(sizeof(ccWindow));
 
+	//Struct initialisation
+
 	//Window creation
-	HMODULE hInstance = GetModuleHandle(NULL);
-
+	HMODULE instanceHandle = GetModuleHandle(NULL);
 	HWND winHandle;
+	HWND desktopHandle = GetDesktopWindow();
+	RECT desktopRect;
 
-	regHinstance(hInstance);
+	GetWindowRect(desktopHandle, &desktopRect);
+
+	regHinstance(instanceHandle);
 	winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
-		"MainWindow",
+		"CCoreWindow",
 		title,
 		WS_OVERLAPPEDWINDOW,
-		0, 0, width, height,
-		GetDesktopWindow(),
+		(desktopRect.right >> 1) - (width >> 1),
+		(desktopRect.bottom >> 1) - (height >> 1),
+		width, height,
+		desktopHandle,
 		NULL,
-		hInstance,
+		instanceHandle,
 		NULL);
 
 	ShowWindow(winHandle, SW_SHOW);
