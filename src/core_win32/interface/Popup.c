@@ -1,13 +1,11 @@
-#include <Windows.h>
-
 #include "Popup.h"
 
 void showPopup(char* message, char* caption, ccPopupType type)
 {
-	MessageBox(NULL, message, caption, MB_OK);
+	MessageBox(NULL, message, caption, type);
 }
 
 bool showDialogue(char* message, char* caption, ccDialogueType type)
 {
-	return MessageBox(NULL, message, caption, MB_YESNO) == 0 ? false : true;
+	return MessageBox(NULL, message, caption, type) == 0 ? false : true;
 }

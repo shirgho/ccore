@@ -1,16 +1,18 @@
 #pragma once
 
+#include <Windows.h>
+
 #include "../Types.h"
 
 typedef enum {
-	PopupError,
-	PopupNotification
+	PopupError = MB_OK,
+	PopupNotification = MB_OK
 } ccPopupType;
 
 typedef enum {
-	DialogueOkCancel,
-	DialogueRetryCancel,
-	DialogueYesNo
+	DialogueOkCancel = MB_OKCANCEL,
+	DialogueRetryCancel = MB_RETRYCANCEL,
+	DialogueYesNo = MB_YESNO
 } ccDialogueType;
 
 void ccShowPopup(char* message, char* caption, ccPopupType type);
