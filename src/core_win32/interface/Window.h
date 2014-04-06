@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include <Windows.h>
 
+#include "../Types.h"
+
 typedef struct {
 	unsigned short width;
 	unsigned short height;
 } ccWindow;
 
-ccWindow *newWindow(unsigned short width, unsigned short height);
-void freeWindow(ccWindow *w);
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
+void ccFreeWindow(ccWindow *w);
