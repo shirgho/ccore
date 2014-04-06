@@ -1,0 +1,90 @@
+\documentclass[a4paper]{article}
+
+\usepackage{a4wide,times}
+\usepackage[english]{babel}
+\usepackage{listings}
+
+\lstset{
+language=c,
+basicstyle=\ttfamily,
+numbers=left,
+numberstyle=\footnotesize,
+stepnumber=1,
+numbersep=5pt,
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+frame=single,
+tabsize=2,
+captionpos=t,
+breaklines=true,
+breakatwhitespace=false,
+}
+
+\begin{document}
+
+
+\title{Code Conventions}
+\author{Thomas Versteeg \quad Job Talle}
+
+\maketitle
+
+\section{Conventions}
+\subsection{Example Code}
+\emph{Header:}
+\begin{lstlisting}
+    #pragma once
+     
+    #include <stdlib.h>
+    #include "dingen.h"
+     
+    /* Does random shit */
+    int function(char *destination, const char *source, int value);
+\end{lstlisting}
+\emph{Body:}
+\begin{lstlisting}
+    #include "header.h"
+     
+    typedef struct{
+        int variable;
+        char *string;
+    } Struct;
+     
+    typedef struct _StructStruct{
+        struct _StructStruct *next;
+    } StructStruct;
+     
+    typedef enum{
+        A = 1,
+        BETA = 2
+    } Enum;
+     
+    int function(char *destination, const char *source, int value)
+    {
+        int i, j, output;
+        /* Random loop */
+        for(i = 0; i < strlen(source); i++){
+            for(j = 0; j < value; j++){
+                destination[i] += j;
+            }
+        }  
+        return output;
+    }
+
+
+\end{lstlisting}
+
+\subsection{Naming}
+CamelCase is applied for naming all variables and structures. All variables and functions should start with a lowercase letter. Some exceptions exist.
+
+\emph{Structures} and \emph{enumerations} are the only entities starting with an uppercase letter.
+
+Locally used structures and variables can start with an underscore to avoid naming conflicts, or to clarify their local nature.
+
+\subsection{spaces}
+Spaces are used around operators, as seen in the example code. They are not used before the \emph{\{}.
+
+\subsection{OOP}
+Structs are initialized with a function named newStruct (where Struct is the structure name), and freed using freeStruct. Function pointers are assigned in the newStruct function.
+
+\end{document}
