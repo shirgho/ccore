@@ -1,12 +1,52 @@
 #include "Window.h"
 
-LRESULT CALLBACK wndProc(HWND Hw, UINT Msg, WPARAM wParam, LPARAM lParam)
+static ccWindow *_activeWindow = NULL;
+
+LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch(Msg) {
+	switch(message) {
+	case WM_CLOSE:
+		_activeWindow->event.type = ccEventWindowQuit;
+		break;
+	case WM_SIZE:
+	case WM_EXITSIZEMOVE:
+		//TODO: save new size
+		_activeWindow->event.type = ccEventWindowResize;
+		break;
+	case WM_KEYDOWN:
+		//TODO: save keycode
+		_activeWindow->event.type = ccEventKeyDown;
+		break;
+	case WM_KEYUP:
+		//TODO: save keycode
+		_activeWindow->event.type = ccEventKeyUp;
+		break;
+	case WM_MOUSEMOVE:
+		//TODO: save coordinates
+		_activeWindow->event.type = ccEventMouseMove;
+		break;
+	case WM_LBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+		//TODO: save button index
+		_activeWindow->event.type = ccEventMouseDown;
+		break;
+	case WM_LBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_RBUTTONUP:
+		//TODO: save button index
+		_activeWindow->event.type = ccEventMouseUp;
+		break;
+	case WM_MOUSEWHEEL:
+		//TODO: save direction
+		_activeWindow->event.type = ccEventMouseScrollUp;
+		break;
 	default:
-		return DefWindowProc(Hw, Msg, wParam, lParam);
+		_activeWindow->event.type = ccEventSkip;
+		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
 	}
+	return 0;
 }
 
 void regHinstance(HINSTANCE instanceHandle)
@@ -23,30 +63,49 @@ void regHinstance(HINSTANCE instanceHandle)
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	winClass.lpszMenuName = NULL;
-	winClass.lpszClassName = "CCoreWindow";
+	winClass.lpszClassName = "ccWindow";
 	winClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 	RegisterClassEx(&winClass);
 }
 
+bool pollEvent()
+{
+	if(PeekMessage(&_activeWindow->msg, _activeWindow->winHandle, 0, 0, PM_REMOVE))
+	{
+		DispatchMessage(&_activeWindow->msg);
+		return ccEventSkip?false:true;
+	}
+	else{
+		return false;
+	}
+}
+
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title)
 {
-	ccWindow *w = malloc(sizeof(ccWindow));
+	if(_activeWindow!=NULL) {
+		ccAbort("Only one window can be created!");
+		exit(0);
+	}
+
+	_activeWindow = malloc(sizeof(ccWindow));
 
 	//Struct initialisation
+	_activeWindow->width = width;
+	_activeWindow->height = height;
+	_activeWindow->pollEvent = pollEvent;
 
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
-	HWND winHandle;
 	HWND desktopHandle = GetDesktopWindow();
 	RECT desktopRect;
 
 	GetWindowRect(desktopHandle, &desktopRect);
-
+	
 	regHinstance(moduleHandle);
-	winHandle = CreateWindowEx(
+	_activeWindow->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
-		"CCoreWindow",
+		"ccWindow",
 		title,
 		WS_OVERLAPPEDWINDOW,
 		(desktopRect.right >> 1) - (width >> 1),
@@ -57,14 +116,15 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		moduleHandle,
 		NULL);
 
-	ShowWindow(winHandle, SW_SHOW);
-	UpdateWindow(winHandle);
-	SetFocus(winHandle);
+	ShowWindow(_activeWindow->winHandle, SW_SHOW);
+	UpdateWindow(_activeWindow->winHandle);
+	SetFocus(_activeWindow->winHandle);
 
-	return w;
+	return _activeWindow;
 }
 
 void ccFreeWindow(ccWindow *w)
 {
-	free(w);
+	free(_activeWindow);
+	_activeWindow = NULL;
 }

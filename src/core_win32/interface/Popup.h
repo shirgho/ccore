@@ -5,14 +5,12 @@
 #include "../Types.h"
 
 typedef enum {
-	PopupError = MB_ICONERROR,
-	PopupNotification = MB_ICONINFORMATION
+	ccPopupError = MB_ICONERROR,
+	ccPopupNotification = MB_ICONINFORMATION
 } ccPopupType;
 
 typedef enum {
-	DialogueOkCancel = MB_OKCANCEL,
-	DialogueRetryCancel = MB_RETRYCANCEL,
-	DialogueYesNo = MB_YESNO
+	ccDialogueYesNo = MB_YESNO
 } ccDialogueType;
 
 void ccShowPopup(char* message, char* caption, ccPopupType type);
