@@ -4,9 +4,9 @@
 #include <Windows.h>
 #include <stdio.h>
 
-#include "../Types.h"
-#include "Event.h"
-#include "../utils/Error.h"
+#include "../types.h"
+#include "event.h"
+#include "../utils/error.h"
 
 typedef struct _ccWindow ccWindow;
 

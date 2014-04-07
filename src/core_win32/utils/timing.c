@@ -1,4 +1,4 @@
-#include "Timing.h"
+#include "timing.h"
 
 void ccDelay(int ms)
 {

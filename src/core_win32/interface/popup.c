@@ -1,4 +1,4 @@
-#include "Popup.h"
+#include "popup.h"
 
 void ccShowPopup(char* message, char* caption, ccPopupType type)
 {

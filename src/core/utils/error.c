@@ -1,4 +1,4 @@
-#include "Error.h"
+#include "error.h"
 
 void ccAbort(const char* message)
 {

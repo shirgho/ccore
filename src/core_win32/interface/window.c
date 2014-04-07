@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "window.h"
 
 static ccWindow *_activeWindow = NULL;
 
