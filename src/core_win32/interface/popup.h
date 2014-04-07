@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include "../types.h"
+#include "../../core/types.h"
 
 typedef enum {
 	ccPopupError = MB_ICONERROR,

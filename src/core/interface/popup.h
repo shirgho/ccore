@@ -1,17 +1,9 @@
 #pragma once
 
-#include <Windows.h>
+#include "../core.h"
 
-#include "../types.h"
-
-typedef enum {
-	ccPopupError = MB_ICONERROR,
-	ccPopupNotification = MB_ICONINFORMATION
-} ccPopupType;
-
-typedef enum {
-	ccDialogueYesNo = MB_YESNO
-} ccDialogueType;
-
-void ccShowPopup(char* message, char* caption, ccPopupType type);
-bool ccShowDialogue(char* message, char* caption, ccDialogueType type);
+#ifdef LINUX
+#include "../../core_x11/interface/popup.h"
+#elif defined WIN32
+#include "../../core_win32/interface/popup.h"
+#endif
