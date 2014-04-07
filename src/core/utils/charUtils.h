@@ -17,6 +17,6 @@ inline void ccStrCopy(char* source, char* destination)
 inline void ccStrTrimToSlash(char* str)
 {
 	int i;
-	for(i=strLength(str); str[i]!='\\'; i--);
+	for(i=ccStrLength(str); str[i]!='\\'; i--);
 	str[i+1]=0;
 }
