@@ -10,5 +10,5 @@ typedef struct {
 	Window window;
 } ccWindow;
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height);
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char *title);
 void ccFreeWindow(ccWindow *window);

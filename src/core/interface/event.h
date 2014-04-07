@@ -1,19 +1,5 @@
 #pragma once
 
-typedef enum {
-	ccEventSkip,
-	ccEventKeyDown,
-	ccEventKeyUp,
-	ccEventMouseMove,
-	ccEventMouseDown,
-	ccEventMouseUp,
-	ccEventMouseScrollDown,
-	ccEventMouseScrollUp,
-	ccEventWindowQuit,
-	ccEventWindowResize,
-} ccEventType;
+#include "../core.h"
 
-typedef struct {
-	ccEventType type;
-	unsigned int data;
-} ccEvent;
+#include LOCATION(interface/event)
