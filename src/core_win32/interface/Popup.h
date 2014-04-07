@@ -5,8 +5,8 @@
 #include "../Types.h"
 
 typedef enum {
-	PopupError = MB_OK,
-	PopupNotification = MB_OK
+	PopupError = MB_ICONERROR,
+	PopupNotification = MB_ICONINFORMATION
 } ccPopupType;
 
 typedef enum {

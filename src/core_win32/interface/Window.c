@@ -9,7 +9,7 @@ LRESULT CALLBACK wndProc(HWND Hw, UINT Msg, WPARAM wParam, LPARAM lParam)
 	}
 }
 
-void regHinstance(HINSTANCE HIn)
+void regHinstance(HINSTANCE instanceHandle)
 {
 	WNDCLASSEX winClass;
 
@@ -18,7 +18,7 @@ void regHinstance(HINSTANCE HIn)
 	winClass.lpfnWndProc = wndProc;
 	winClass.cbClsExtra = 0;
 	winClass.cbWndExtra = 0;
-	winClass.hInstance = HIn;
+	winClass.hInstance = instanceHandle;
 	winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -36,14 +36,14 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	//Struct initialisation
 
 	//Window creation
-	HMODULE instanceHandle = GetModuleHandle(NULL);
+	HMODULE moduleHandle = GetModuleHandle(NULL);
 	HWND winHandle;
 	HWND desktopHandle = GetDesktopWindow();
 	RECT desktopRect;
 
 	GetWindowRect(desktopHandle, &desktopRect);
 
-	regHinstance(instanceHandle);
+	regHinstance(moduleHandle);
 	winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		"CCoreWindow",
@@ -54,7 +54,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		width, height,
 		desktopHandle,
 		NULL,
-		instanceHandle,
+		moduleHandle,
 		NULL);
 
 	ShowWindow(winHandle, SW_SHOW);
