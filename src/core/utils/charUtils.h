@@ -1,21 +1,20 @@
 #pragma once
 
-inline int strLength(char* str)
+inline int ccStrLength(char* str)
 {
 	int i;
 	for(i=0; str[i]!=0; i++);
 	return i;
 }
 
-inline void strCopy(char* source, char* destination)
+inline void ccStrCopy(char* source, char* destination)
 {
-	for(int i=0; source[i]!=0; i++)
-	{
+	for(int i=0; source[i]!=0; i++) {
 		destination[i]=source[i];
 	}
 }
 
-inline void strTrimToSlash(char* str)
+inline void ccStrTrimToSlash(char* str)
 {
 	int i;
 	for(i=strLength(str); str[i]!='\\'; i--);
