@@ -1,14 +1,19 @@
 #pragma once
 
 #include <stdlib.h>
-#include <X11/Xlib.h>
+#include <stdio.h>
+
+#include "../../core/types.h"
+#include "../../core/interface/event.h"
+#include "../../core/utils/error.h"
 
 typedef struct {
 	unsigned short width;
 	unsigned short height;
-	Display *display;
-	Window window;
+	ccEvent event;
+
+	bool(*pollEvent)();
 } ccWindow;
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char *title);
-void ccFreeWindow(ccWindow *window);
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
+void ccFreeWindow(ccWindow *w);
