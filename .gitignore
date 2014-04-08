@@ -24,6 +24,3 @@
 
 # Vim files
 *.swp
-
-# SConstruct files
-*.dblite

@@ -1,16 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/core/interface/window.h"
-#include "../src/core/interface/popup.h"
-#include "../src/core/utils/timing.h"
+#include "core/interface/window.h"
+#include "core/interface/popup.h"
+#include "core/utils/timing.h"
 
 int main(int argc, char** argv)
 {
-	ccWindow *window;
 	printf("entry point\n");
 
-	window = ccNewWindow(1024, 768, "CCore application");
+	ccWindow *window = ccNewWindow(1024, 768, "CCore application");
 
 	while(true) {
 		ccDelay(10);
