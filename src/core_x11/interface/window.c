@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "window.h"
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char *title)
 {
