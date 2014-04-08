@@ -14,6 +14,3 @@ typedef struct {
 
 	bool(*pollEvent)();
 } ccWindow;
-
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
-void ccFreeWindow(ccWindow *w);

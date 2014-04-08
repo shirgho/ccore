@@ -9,3 +9,6 @@
 #elif defined WIN32
 #include "../../core_win32/interface/window.h"
 #endif
+
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
+void ccFreeWindow(ccWindow *w);
