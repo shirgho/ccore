@@ -9,9 +9,23 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		_activeWindow->event.type = ccEventWindowQuit;
 		break;
 	case WM_SIZE:
+	case WM_SIZING:
 	case WM_EXITSIZEMOVE:
-		//TODO: save new size
-		_activeWindow->event.type = ccEventWindowResize;
+		printf(".");
+		_activeWindow->event.type = ccEventSkip;
+		if(message != WM_EXITSIZEMOVE) {
+			unsigned short newWidth = lParam & 0x0000FFFF;
+			unsigned short newHeight = (lParam & 0xFFFF0000) >> 16;
+			if(_activeWindow->width == newWidth && _activeWindow->height == newHeight) {
+				_activeWindow->event.type = ccEventSkip;
+			}
+			else{
+				_activeWindow->width = newWidth;
+				_activeWindow->height = newHeight;
+				_activeWindow->event.type = ccEventWindowResize;
+			}
+		}
+
 		break;
 	case WM_KEYDOWN:
 		//TODO: save keycode
