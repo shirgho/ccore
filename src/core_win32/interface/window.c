@@ -1,4 +1,4 @@
-#include "window.h"
+#include "../../core/interface/window.h"
 
 static ccWindow *_activeWindow = NULL;
 
@@ -10,7 +10,6 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 	case WM_SIZE:
 	case WM_SIZING:
-	case WM_EXITSIZEMOVE:
 		printf(".");
 		_activeWindow->event.type = ccEventSkip;
 		if(message != WM_EXITSIZEMOVE) {
@@ -25,6 +24,9 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 				_activeWindow->event.type = ccEventWindowResize;
 			}
 		}
+
+		break;
+	case WM_EXITSIZEMOVE:
 
 		break;
 	case WM_KEYDOWN:

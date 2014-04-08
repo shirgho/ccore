@@ -2,6 +2,6 @@
 
 void ccAbort(const char* message)
 {
-	ccShowPopup("Only one window can be created!", "fatal error", ccPopupError);
+	ccShowPopup(message, "fatal error", ccPopupError);
 	exit(0);
 }

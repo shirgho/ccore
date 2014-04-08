@@ -10,5 +10,14 @@
 #include "../../core_win32/interface/popup.h"
 #endif
 
-void ccShowPopup(char* message, char* caption, ccPopupType type);
-bool ccShowDialogue(char* message, char* caption, ccDialogueType type);
+typedef enum {
+	ccPopupError,
+	ccPopupNotification
+} ccPopupType;
+
+typedef enum {
+	ccDialogueYesNo
+} ccDialogueType;
+
+void ccShowPopup(const char* message, const char* caption, ccPopupType type);
+bool ccShowDialogue(const char* message, const char* caption, ccDialogueType type);
