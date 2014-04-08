@@ -22,6 +22,3 @@ typedef struct _ccWindow{
 	MSG msg;
 	HWND winHandle;
 } ccWindow;
-
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
-void ccFreeWindow(ccWindow *w);
