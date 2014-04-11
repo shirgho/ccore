@@ -8,20 +8,23 @@
 int main(int argc, char** argv)
 {
 	ccWindow *window;
-	printf("entry point\n");
+	bool quit;
 
 	window = ccNewWindow(1024, 768, "CCore application");
+	quit = false;
 
-	while(true) {
-		ccDelay(10);
-		while(ccPollEventWindow(window)) {
-			switch(window->event.type) {
-			case ccEventWindowQuit:
-				if(ccShowDialogue("Really quit?", "quit", ccDialogueYesNo)) return 0;
-				break;
-			default:
-				break;
+	while(!quit) {
+		ccPollEventWindow(window);
+		switch(window->event.type){
+		case ccEventWindowQuit:
+			if(ccShowDialogue("Really quit?", "quit", ccDialogueYesNo) == true){
+				quit = true;
 			}
+			break;
+		case ccEventMouseDown:
+			quit = true;
+		default:
+			break;
 		}
 	}
 

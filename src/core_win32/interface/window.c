@@ -87,8 +87,7 @@ void regHinstance(HINSTANCE instanceHandle)
 
 bool ccPollEventWindow(ccWindow *window)
 {
-	if(PeekMessage(&_activeWindow->msg, _activeWindow->winHandle, 0, 0, PM_REMOVE))
-	{
+	if(PeekMessage(&_activeWindow->msg, _activeWindow->winHandle, 0, 0, PM_REMOVE)){
 		DispatchMessage(&_activeWindow->msg);
 		return ccEventSkip?false:true;
 	}
