@@ -30,3 +30,9 @@ void ccFreeWindow(ccWindow *window)
 	XCloseDisplay(window->display);
 	free(window);
 }
+
+bool ccPollEventWindow(ccWindow *window)
+{
+	
+	return false;
+}

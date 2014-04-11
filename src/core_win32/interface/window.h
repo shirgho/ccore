@@ -16,8 +16,6 @@ typedef struct _ccWindow{
 	unsigned short height;
 	ccEvent event;
 
-	bool(*pollEvent)();
-
 	//OS specific values
 	MSG msg;
 	HWND winHandle;

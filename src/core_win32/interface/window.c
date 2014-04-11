@@ -85,7 +85,7 @@ void regHinstance(HINSTANCE instanceHandle)
 	RegisterClassEx(&winClass);
 }
 
-bool pollEvent()
+bool ccPollEventWindow(ccWindow *window)
 {
 	if(PeekMessage(&_activeWindow->msg, _activeWindow->winHandle, 0, 0, PM_REMOVE))
 	{
@@ -109,8 +109,6 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	//Struct initialisation
 	_activeWindow->width = width;
 	_activeWindow->height = height;
-	_activeWindow->pollEvent = pollEvent;
-
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
 	HWND desktopHandle = GetDesktopWindow();
@@ -139,7 +137,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	return _activeWindow;
 }
 
-void ccFreeWindow(ccWindow *w)
+void ccFreeWindow(ccWindow *window)
 {
 	free(_activeWindow);
 	_activeWindow = NULL;

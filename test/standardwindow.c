@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 
 	while(true) {
 		ccDelay(10);
-		while(window->pollEvent()) {
+		while(ccPollEventWindow(window)) {
 			switch(window->event.type) {
 			case ccEventWindowQuit:
 				if(ccShowDialogue("Really quit?", "quit", ccDialogueYesNo)) return 0;

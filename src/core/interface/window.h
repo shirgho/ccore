@@ -11,4 +11,5 @@
 #endif
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
-void ccFreeWindow(ccWindow *w);
+void ccFreeWindow(ccWindow *window);
+bool ccPollEventWindow(ccWindow *window);

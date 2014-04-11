@@ -14,8 +14,6 @@ typedef struct {
 	unsigned short height;
 	ccEvent event;
 
-	bool(*pollEvent)();
-
 	Display *display;
 	Window window;
 } ccWindow;

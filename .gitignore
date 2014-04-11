@@ -27,3 +27,6 @@
 
 # SConstruct files
 *.dblite
+
+# Build files
+test-*
