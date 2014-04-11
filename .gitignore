@@ -26,7 +26,10 @@
 *.swp
 
 # SConstruct files
-*.dblite
+.sconsign.dblite
 
 # Build files
 test-*
+
+# Log files
+*.log
