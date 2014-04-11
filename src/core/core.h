@@ -4,6 +4,7 @@
 #ifdef GTK
 #include "../core_gtk/core.h"
 #else
+#define X11
 #include "../core_x11/core.h"
 #endif
 

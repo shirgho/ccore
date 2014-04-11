@@ -19,6 +19,8 @@ int main(int argc, char** argv)
 			case ccEventWindowQuit:
 				if(ccShowDialogue("Really quit?", "quit", ccDialogueYesNo)) return 0;
 				break;
+			default:
+				break;
 			}
 		}
 	}
