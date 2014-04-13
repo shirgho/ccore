@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 	bool quit;
 
 	window = ccNewWindow(1024, 768, "CCore application");
-	ccBindGLContextWindow(window);
+	ccGLBindContextWindow(window);
 	quit = false;
 
 	while(!quit) {
