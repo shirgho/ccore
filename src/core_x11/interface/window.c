@@ -71,10 +71,10 @@ bool ccGLBindContextWindow(ccWindow *window)
 
 	visual = glXChooseVisual(window->display, window->screen, attrListDoubleBuffered);
 	if(visual == NULL){
-		output->isDoubleBuffered = false;
+		window->isDoubleBuffered = false;
 		visual = glXChooseVisual(window->display, window->screen, attrListSingleBuffered);
 	}else{
-		output->isDoubleBuffered = true;
+		window->isDoubleBuffered = true;
 	}
 
 	window->context = glXCreateContext(window->display, visual, NULL, GL_TRUE);
