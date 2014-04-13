@@ -29,18 +29,20 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char *t
 	if(output->display == NULL){
 		return NULL;
 	}
-	/* TODO handle NULL */
 	root = DefaultRootWindow(output->display);
 	output->screen = DefaultScreen(output->display);
 	output->window = XCreateSimpleWindow(output->display, root, 10, 10, width, height, 1, BlackPixel(output->display, output->screen), WhitePixel(output->display, output->screen));
+	/* Choose types of events */
 	XSelectInput(output->display, output->window, ExposureMask | ButtonPressMask | StructureNotifyMask);
 	XMapWindow(output->display, output->window);
+	XStoreName(output->display, output->window, title);
 	
 	return output;
 }
 
 void ccFreeWindow(ccWindow *window)
 {
+	glXMakeCurrent(window->display, None, NULL);
 	glXDestroyContext(window->display, window->context);
 	XCloseDisplay(window->display);
 	free(window);

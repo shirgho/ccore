@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 	ccWindow *window;
 	bool quit;
 
-	window = ccNewWindow(1024, 768, "CCore application");
+	window = ccNewWindow(1024, 768, "CCore test application");
 	ccGLBindContextWindow(window);
 	quit = false;
 
