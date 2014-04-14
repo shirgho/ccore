@@ -67,7 +67,7 @@ bool ccPollEventWindow(ccWindow *window)
 	return false;
 }
 
-bool ccGLBindContextWindow(ccWindow *window)
+bool ccGLBindContextWindow(ccWindow *window, int glVersionMayor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 

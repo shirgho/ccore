@@ -14,5 +14,5 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 void ccFreeWindow(ccWindow *window);
 bool ccPollEventWindow(ccWindow *window);
 
-bool ccGLBindContextWindow(ccWindow *window);
+bool ccGLBindContextWindow(ccWindow *window, int glVersionMayor, int glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);
