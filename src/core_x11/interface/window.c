@@ -52,6 +52,7 @@ bool ccPollEventWindow(ccWindow *window)
 {
 	XEvent event;
 
+	/* Remove this statemnt if you want to block until an event happens */
 	if(XPending(window->display) == 0){
 		return false;
 	}
@@ -71,9 +72,18 @@ bool ccPollEventWindow(ccWindow *window)
 	return true;
 }
 
-bool ccGLBindContextWindow(ccWindow *window, int glVersionMayor, int glVersionMinor)
+bool ccGLBindContextWindow(ccWindow *window, int *glVersionMayor, int *glVersionMinor)
 {
 	XVisualInfo *visual;
+	int mayor, minor;
+
+	mayor = minor = 0;
+	glXQueryVersion(window->display, &mayor, &minor);
+	if(*glVersionMayor < mayor || (*glVersionMayor == mayor && *glVersionMinor < minor)){
+		*glVersionMayor = mayor;
+		*glVersionMinor = minor;
+		return false;
+	}
 
 	visual = glXChooseVisual(window->display, window->screen, attrListDoubleBuffered);
 	if(visual == NULL){

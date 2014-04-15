@@ -17,9 +17,12 @@ int main(int argc, char** argv)
 {
 	ccWindow *window;
 	bool quit;
+	int minor, mayor;
 
 	window = ccNewWindow(1024, 768, "CCore test application");
-	ccGLBindContextWindow(window, 3, 2);
+	mayor = 4;
+	minor = 4;
+	ccGLBindContextWindow(window, &mayor, &minor);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
