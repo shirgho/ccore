@@ -60,15 +60,15 @@ bool ccPollEventWindow(ccWindow *window)
 	switch(event.type){
 		case ButtonPress:
 			window->event.type = ccEventMouseDown;
-			return true;
+			break;
 		case ConfigureNotify:
 			window->width = event.xconfigure.width;
 			window->height = event.xconfigure.height;
 			window->event.type = ccEventWindowResize;
-			return true;
+			break;
 	}
 
-	return false;
+	return true;
 }
 
 bool ccGLBindContextWindow(ccWindow *window, int glVersionMayor, int glVersionMinor)
