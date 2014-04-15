@@ -52,6 +52,10 @@ bool ccPollEventWindow(ccWindow *window)
 {
 	XEvent event;
 
+	if(XPending(window->display) == 0){
+		return false;
+	}
+
 	XNextEvent(window->display, &event);
 	switch(event.type){
 		case ButtonPress:
