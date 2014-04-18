@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 	bool quit;
 	int minor, mayor;
 
-	window = ccNewWindow(1024, 768, "CCore test application");
+	window = ccNewWindow(1024, 768, "CCore test application"); 
 	mayor = 4;
 	minor = 4;
 	ccGLBindContextWindow(window, &mayor, &minor);

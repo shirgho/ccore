@@ -70,7 +70,7 @@ void regHinstance(HINSTANCE instanceHandle)
 	WNDCLASSEX winClass;
 
 	winClass.cbSize = sizeof(WNDCLASSEX);
-	winClass.style = 0;
+	winClass.style = CS_OWNDC;
 	winClass.lpfnWndProc = wndProc;
 	winClass.cbClsExtra = 0;
 	winClass.cbWndExtra = 0;
@@ -87,9 +87,9 @@ void regHinstance(HINSTANCE instanceHandle)
 
 bool ccPollEvent(ccWindow *window)
 {
-	if(PeekMessage(&_activeWindow->msg, _activeWindow->winHandle, 0, 0, PM_REMOVE)){
-		DispatchMessage(&_activeWindow->msg);
-		return ccEventSkip?false:true;
+	if(PeekMessage(&window->msg, window->winHandle, 0, 0, PM_REMOVE)){
+		DispatchMessage(&window->msg);
+		return window->event.type==ccEventSkip?false:true;
 	}
 	else{
 		return false;
@@ -108,6 +108,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	//Struct initialisation
 	_activeWindow->width = width;
 	_activeWindow->height = height;
+
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
 	HWND desktopHandle = GetDesktopWindow();
@@ -130,7 +131,6 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		NULL);
 
 	ShowWindow(_activeWindow->winHandle, SW_SHOW);
-	UpdateWindow(_activeWindow->winHandle);
 	SetFocus(_activeWindow->winHandle);
 
 	return _activeWindow;
@@ -138,6 +138,39 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 
 void ccFreeWindow(ccWindow *window)
 {
-	free(_activeWindow);
+	wglDeleteContext(window->renderContext);
+	ReleaseDC(window->winHandle, window->hdc);
+
+	DestroyWindow(window->winHandle);
+	free(window);
 	_activeWindow = NULL;
+}
+
+void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
+{
+	int pixelFormatIndex;
+	window->hdc = GetDC(window->winHandle);
+
+	PIXELFORMATDESCRIPTOR pfd = {
+		sizeof(PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+		PFD_TYPE_RGBA,
+		32,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		16,
+		0, 0, 0, 0, 0, 0, 0
+	};
+
+	pixelFormatIndex = ChoosePixelFormat(window->hdc, &pfd);
+	SetPixelFormat(window->hdc, pixelFormatIndex, &pfd);
+
+	window->renderContext = wglCreateContext(window->hdc);
+	if(window->renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
+	wglMakeCurrent(window->hdc, window->renderContext);
+}
+
+void ccGLSwapBuffers(ccWindow *window)
+{
+	SwapBuffers(window->hdc);
 }

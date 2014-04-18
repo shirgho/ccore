@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <Windows.h>
+#include <gl/GL.h>
 #include <stdio.h>
 
 #include "../../core/types.h"
@@ -17,6 +18,8 @@ typedef struct _ccWindow{
 	ccEvent event;
 
 	//OS specific values
+	HDC hdc;
 	MSG msg;
 	HWND winHandle;
+	HGLRC renderContext;
 } ccWindow;

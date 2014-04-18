@@ -42,6 +42,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char *t
 
 void ccFreeWindow(ccWindow *window)
 {
+	//TODO: don't delete a context before checking whether it exists!
 	glXMakeCurrent(window->display, None, NULL);
 	glXDestroyContext(window->display, window->context);
 	XCloseDisplay(window->display);
@@ -72,18 +73,20 @@ bool ccPollEvent(ccWindow *window)
 	return true;
 }
 
-bool ccGLBindContextWindow(ccWindow *window, int *glVersionMayor, int *glVersionMinor)
+void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
-	int mayor, minor;
+	/*
+	int major, minor;
 
-	mayor = minor = 0;
-	glXQueryVersion(window->display, &mayor, &minor);
-	if(*glVersionMayor < mayor || (*glVersionMayor == mayor && *glVersionMinor < minor)){
-		*glVersionMayor = mayor;
+	major = minor = 0;
+	glXQueryVersion(window->display, &major, &minor);
+	if(*glVersionMajor < major || (*glVersionMajor == major && *glVersionMinor < minor)){
+		*glVersionMajor = major;
 		*glVersionMinor = minor;
 		return false;
 	}
+	*/
 
 	visual = glXChooseVisual(window->display, window->screen, attrListDoubleBuffered);
 	if(visual == NULL){
@@ -96,7 +99,7 @@ bool ccGLBindContextWindow(ccWindow *window, int *glVersionMayor, int *glVersion
 	window->context = glXCreateContext(window->display, visual, NULL, GL_TRUE);
 	glXMakeCurrent(window->display, window->window, window->context);
 	
-	return true;
+	/*return true;*/
 }
 
 void ccGLSwapBuffers(ccWindow *window)
