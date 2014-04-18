@@ -85,7 +85,7 @@ void regHinstance(HINSTANCE instanceHandle)
 	RegisterClassEx(&winClass);
 }
 
-bool ccPollEventWindow(ccWindow *window)
+bool ccPollEvent(ccWindow *window)
 {
 	if(PeekMessage(&_activeWindow->msg, _activeWindow->winHandle, 0, 0, PM_REMOVE)){
 		DispatchMessage(&_activeWindow->msg);

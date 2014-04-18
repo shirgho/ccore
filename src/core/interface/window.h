@@ -12,7 +12,7 @@
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
 void ccFreeWindow(ccWindow *window);
-bool ccPollEventWindow(ccWindow *window);
+bool ccPollEvent(ccWindow *window);
 
 bool ccGLBindContextWindow(ccWindow *window, int *glVersionMayor, int *glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);

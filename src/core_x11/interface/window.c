@@ -48,7 +48,7 @@ void ccFreeWindow(ccWindow *window)
 	free(window);
 }
 
-bool ccPollEventWindow(ccWindow *window)
+bool ccPollEvent(ccWindow *window)
 {
 	XEvent event;
 
