@@ -96,7 +96,7 @@ bool ccPollEvent(ccWindow *window)
 	}
 }
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title)
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode)
 {
 	if(_activeWindow!=NULL) {
 		ccAbort("Only one window can be created!");
@@ -129,8 +129,28 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		NULL,
 		moduleHandle,
 		NULL);
+	
+	int sw;
+	LONG lStyle;
 
-	ShowWindow(_activeWindow->winHandle, SW_SHOW);
+	switch(mode)
+	{
+	case ccWMMinimized:
+		sw = SW_SHOWMINIMIZED;
+		break;
+	case ccWMWindow:
+		sw = SW_SHOW;
+		break;
+	case ccWMFullScreen:
+		lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
+		lStyle &= ~WS_CAPTION;
+		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
+	default:
+		sw = SW_SHOWMAXIMIZED;
+		break;
+	}
+
+	ShowWindow(_activeWindow->winHandle, sw);
 	SetFocus(_activeWindow->winHandle);
 
 	return _activeWindow;
