@@ -10,9 +10,17 @@
 #include "../../core_win32/interface/window.h"
 #endif
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title);
+typedef enum {
+	ccWMFullScreen,
+	ccWMMaximized,
+	ccWMWindow,
+	ccWMMinimized //why would one want this?
+} ccWindowMode;
+
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
+void ccChangeWM(ccWindow *window);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);
