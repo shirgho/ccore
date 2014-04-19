@@ -18,8 +18,9 @@ typedef enum {
 } ccWindowMode;
 
 typedef enum {
-	ccWFNoResize,
-	ccWFAlwaysOnTop
+	ccWFNoResize = 1,
+	ccWFAlwaysOnTop = 2,
+	ccWFNoButtons = 4
 } ccWindowFlag;
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags);
