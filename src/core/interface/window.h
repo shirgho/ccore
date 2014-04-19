@@ -22,7 +22,7 @@ typedef enum {
 	ccWFAlwaysOnTop
 } ccWindowFlag;
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode);
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
 void ccChangeWM(ccWindow *window);
