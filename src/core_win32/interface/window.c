@@ -96,8 +96,11 @@ bool ccPollEvent(ccWindow *window)
 	}
 }
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode)
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags)
 {
+	int sw;
+	LONG lStyle;
+
 	if(_activeWindow!=NULL) {
 		ccAbort("Only one window can be created!");
 		exit(0);
@@ -130,9 +133,24 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		moduleHandle,
 		NULL);
 	
-	int sw;
-	LONG lStyle;
+	//apply flags
+	if((flags & ccWFNoResize) == ccWFNoResize) {
+		lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
+		lStyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
+	}
+	if((flags & ccWFNoButtons) == ccWFNoButtons) {
+		lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
+		lStyle &= ~WS_SYSMENU;
+		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
+	}
+	if((flags & ccWFAlwaysOnTop) == ccWFAlwaysOnTop) {
+		RECT rect;
+		GetWindowRect(_activeWindow->winHandle, &rect);
+		SetWindowPos(_activeWindow->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
+	}
 
+	//apply mode
 	switch(mode)
 	{
 	case ccWMMinimized:
