@@ -26,7 +26,7 @@ typedef enum {
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
-void ccChangeWM(ccWindow *window);
+void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);

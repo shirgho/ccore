@@ -98,9 +98,6 @@ bool ccPollEvent(ccWindow *window)
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags)
 {
-	int sw;
-	LONG lStyle;
-
 	if(_activeWindow!=NULL) {
 		ccAbort("Only one window can be created!");
 		exit(0);
@@ -135,12 +132,12 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	
 	//apply flags
 	if((flags & ccWFNoResize) == ccWFNoResize) {
-		lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
 		lStyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
 		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
 	}
 	if((flags & ccWFNoButtons) == ccWFNoButtons) {
-		lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
 		lStyle &= ~WS_SYSMENU;
 		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
 	}
@@ -150,27 +147,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		SetWindowPos(_activeWindow->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
 	}
 
-	//apply mode
-	switch(mode)
-	{
-	case ccWMMinimized:
-		sw = SW_SHOWMINIMIZED;
-		break;
-	case ccWMWindow:
-		sw = SW_SHOW;
-		break;
-	case ccWMFullScreen:
-		lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
-		lStyle &= ~WS_CAPTION;
-		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
-	default:
-		sw = SW_SHOWMAXIMIZED;
-		break;
-	}
-
-	ShowWindow(_activeWindow->winHandle, sw);
-	SetFocus(_activeWindow->winHandle);
-
+	ccChangeWM(_activeWindow, mode);
 	return _activeWindow;
 }
 
@@ -211,4 +188,28 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 void ccGLSwapBuffers(ccWindow *window)
 {
 	SwapBuffers(window->hdc);
+}
+
+void ccChangeWM(ccWindow *window, ccWindowMode mode)
+{
+	int sw;
+	LONG lStyle = GetWindowLong(window->winHandle, GWL_STYLE);
+
+	switch(mode)
+	{
+	case ccWMMinimized:
+		sw = SW_SHOWMINIMIZED;
+		break;
+	case ccWMWindow:
+		sw = SW_SHOW;
+		break;
+	case ccWMFullScreen:
+		lStyle &= ~WS_CAPTION;
+	default:
+		sw = SW_SHOWMAXIMIZED;
+		break;
+	}
+
+	SetWindowLong(window->winHandle, GWL_STYLE, lStyle);
+	ShowWindow(window->winHandle, sw);
 }
