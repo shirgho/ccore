@@ -17,6 +17,11 @@ typedef enum {
 	ccWMMinimized //why would one want this?
 } ccWindowMode;
 
+typedef enum {
+	ccWFNoResize,
+	ccWFAlwaysOnTop
+} ccWindowFlag;
+
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
