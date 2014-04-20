@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 #include <Windows.h>
-#include <gl/GL.h>
 #include <stdio.h>
 
 #include "../../core/types.h"
