@@ -1,6 +1,10 @@
 #include "../../core/interface/window.h"
 
 static ccWindow *_activeWindow = NULL;
+static HDC _hdc;
+static MSG _msg;
+static HWND _winHandle;
+static HGLRC _renderContext;
 
 LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -87,8 +91,8 @@ void regHinstance(HINSTANCE instanceHandle)
 
 bool ccPollEvent(ccWindow *window)
 {
-	if(PeekMessage(&window->msg, window->winHandle, 0, 0, PM_REMOVE)){
-		DispatchMessage(&window->msg);
+	if(PeekMessage(&_msg, _winHandle, 0, 0, PM_REMOVE)){
+		DispatchMessage(&_msg);
 		return window->event.type==ccEventSkip?false:true;
 	}
 	else{
@@ -117,7 +121,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	GetWindowRect(desktopHandle, &desktopRect);
 	
 	regHinstance(moduleHandle);
-	_activeWindow->winHandle = CreateWindowEx(
+	_winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		"ccWindow",
 		title,
@@ -132,19 +136,19 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	
 	//apply flags
 	if((flags & ccWFNoResize) == ccWFNoResize) {
-		LONG lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
 		lStyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
+		SetWindowLong(_winHandle, GWL_STYLE, lStyle);
 	}
 	if((flags & ccWFNoButtons) == ccWFNoButtons) {
-		LONG lStyle = GetWindowLong(_activeWindow->winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
 		lStyle &= ~WS_SYSMENU;
-		SetWindowLong(_activeWindow->winHandle, GWL_STYLE, lStyle);
+		SetWindowLong(_winHandle, GWL_STYLE, lStyle);
 	}
 	if((flags & ccWFAlwaysOnTop) == ccWFAlwaysOnTop) {
 		RECT rect;
-		GetWindowRect(_activeWindow->winHandle, &rect);
-		SetWindowPos(_activeWindow->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
+		GetWindowRect(_winHandle, &rect);
+		SetWindowPos(_winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
 	}
 
 	ccChangeWM(_activeWindow, mode);
@@ -153,10 +157,10 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 
 void ccFreeWindow(ccWindow *window)
 {
-	wglDeleteContext(window->renderContext);
-	ReleaseDC(window->winHandle, window->hdc);
+	wglDeleteContext(_renderContext);
+	ReleaseDC(_winHandle, _hdc);
 
-	DestroyWindow(window->winHandle);
+	DestroyWindow(_winHandle);
 	free(window);
 	_activeWindow = NULL;
 }
@@ -164,7 +168,7 @@ void ccFreeWindow(ccWindow *window)
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
-	window->hdc = GetDC(window->winHandle);
+	_hdc = GetDC(_winHandle);
 
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
@@ -177,26 +181,26 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 		0, 0, 0, 0, 0, 0, 0
 	};
 
-	pixelFormatIndex = ChoosePixelFormat(window->hdc, &pfd);
-	SetPixelFormat(window->hdc, pixelFormatIndex, &pfd);
+	pixelFormatIndex = ChoosePixelFormat(_hdc, &pfd);
+	SetPixelFormat(_hdc, pixelFormatIndex, &pfd);
 
-	window->renderContext = wglCreateContext(window->hdc);
-	if(window->renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
-	wglMakeCurrent(window->hdc, window->renderContext);
+	_renderContext = wglCreateContext(_hdc);
+	if(_renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
+	wglMakeCurrent(_hdc, _renderContext);
 
 	//Fetch extentions after context creation
-	glewInit();
+	if(glewInit() != GLEW_OK) ccAbort("GLEW could not be initialized.");
 }
 
 void ccGLSwapBuffers(ccWindow *window)
 {
-	SwapBuffers(window->hdc);
+	SwapBuffers(_hdc);
 }
 
 void ccChangeWM(ccWindow *window, ccWindowMode mode)
 {
 	int sw;
-	LONG lStyle = GetWindowLong(window->winHandle, GWL_STYLE);
+	LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
 
 	switch(mode)
 	{
@@ -213,6 +217,6 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		break;
 	}
 
-	SetWindowLong(window->winHandle, GWL_STYLE, lStyle);
-	ShowWindow(window->winHandle, sw);
+	SetWindowLong(_winHandle, GWL_STYLE, lStyle);
+	ShowWindow(_winHandle, sw);
 }

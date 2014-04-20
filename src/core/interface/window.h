@@ -23,6 +23,14 @@ typedef enum {
 	ccWFNoButtons = 4
 } ccWindowFlag;
 
+typedef struct {
+	//Note: dimensions subtract border size
+	unsigned short width;
+	unsigned short height;
+	float aspect;
+	ccEvent event;
+} ccWindow;
+
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
