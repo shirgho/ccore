@@ -17,12 +17,9 @@ int main(int argc, char** argv)
 {
 	ccWindow *window;
 	bool quit;
-	int minor, mayor;
 
-	window = ccNewWindow(1024, 768, "CCore test application"); 
-	mayor = 4;
-	minor = 4;
-	ccGLBindContextWindow(window, &mayor, &minor);
+	window = ccNewWindow(1024, 768, "CCore test application", ccWMWindow, 0); 
+	ccGLBindContext(window, 3, 2);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -35,7 +32,7 @@ int main(int argc, char** argv)
 
 	quit = false;
 	while(!quit){
-		ccPollEventWindow(window);
+		ccPollEvent(window);
 		switch(window->event.type){
 			case ccEventWindowQuit:
 				if(ccShowDialogue("Really quit?", "quit", ccDialogueYesNo) == true){

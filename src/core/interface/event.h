@@ -25,5 +25,8 @@ typedef enum {
 
 typedef struct {
 	ccEventType type;
-	unsigned int data;
+	union {
+		ccPoint mouseLocation;
+		
+	};
 } ccEvent;

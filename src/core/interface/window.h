@@ -14,7 +14,7 @@ typedef enum {
 	ccWMFullScreen,
 	ccWMMaximized,
 	ccWMWindow,
-	ccWMMinimized //why would one want this?
+	ccWMMinimized
 } ccWindowMode;
 
 typedef enum {

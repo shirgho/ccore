@@ -19,7 +19,7 @@ static int attrListDoubleBuffered[] =
     GLX_DEPTH_SIZE, 16,                                                
 };
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char *title)
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags)
 {
 	ccWindow *output;
 	Window root;
@@ -33,7 +33,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char *t
 	output->screen = DefaultScreen(output->display);
 	output->window = XCreateSimpleWindow(output->display, root, 10, 10, width, height, 1, BlackPixel(output->display, output->screen), WhitePixel(output->display, output->screen));
 	/* Choose types of events */
-	XSelectInput(output->display, output->window, ExposureMask | ButtonPressMask | StructureNotifyMask);
+	XSelectInput(output->display, output->window, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask);
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 	
@@ -55,6 +55,7 @@ bool ccPollEvent(ccWindow *window)
 
 	/* Remove this statemnt if you want to block until an event happens */
 	if(XPending(window->display) == 0){
+		window->event.type = ccEventSkip;
 		return false;
 	}
 
@@ -62,6 +63,14 @@ bool ccPollEvent(ccWindow *window)
 	switch(event.type){
 		case ButtonPress:
 			window->event.type = ccEventMouseDown;
+			window->event.mouseLocation = (ccPoint){event.xmotion.x, event.xmotion.y};
+			break;
+		case MotionNotify:
+			window->event.type = ccEventMouseMove;
+			window->event.mouseLocation = (ccPoint){event.xmotion.x, event.xmotion.y};
+			break;
+		case KeyPress:
+			window->event.type = ccEventKeyDown;
 			break;
 		case ConfigureNotify:
 			window->width = event.xconfigure.width;
