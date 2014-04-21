@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	ccWindow *window;
 	bool quit;
 
-	window = ccNewWindow(1024, 768, "CCore test application", ccWMWindow, 0); 
+	window = ccNewWindow(1024, 768, "CCore test application", ccWMFullScreen, 0); 
 	ccGLBindContext(window, 3, 2);
 
 	glShadeModel(GL_SMOOTH);

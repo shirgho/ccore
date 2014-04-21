@@ -36,6 +36,8 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XSelectInput(output->display, output->window, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask);
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
+
+	ccChangeWM(output, mode);
 	
 	return output;
 }
@@ -96,6 +98,29 @@ bool ccPollEvent(ccWindow *window)
 	}
 
 	return true;
+}
+
+void ccChangeWM(ccWindow *window, ccWindowMode mode)
+{
+	XEvent event;
+	Atom wmState, fullscreen;
+
+	if(mode == ccWMFullScreen){
+		wmState = XInternAtom(window->display, "_NET_WM_STATE", false);
+		fullscreen = XInternAtom(window->display, "_NET_WM_STATE_FULLSCREEN", false);
+
+		memset(&event, 0, sizeof(event));
+		event.type = ClientMessage;
+		event.xclient.window = window->window;
+		event.xclient.message_type = wmState;
+		event.xclient.format = 32;
+		event.xclient.data.l[0] = 1;
+		event.xclient.data.l[1] = fullscreen;
+		event.xclient.data.l[2] = 0;
+
+		XSendEvent(window->display, DefaultRootWindow(window->display), false, SubstructureNotifyMask, &event);
+	}
+
 }
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
