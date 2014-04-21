@@ -37,7 +37,9 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 
-	ccChangeWM(output, mode);
+	if(mode != ccWMWindow){
+		ccChangeWM(output, mode);
+	}
 	
 	return output;
 }
@@ -105,7 +107,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	XEvent event;
 	Atom wmState, fullscreen;
 
-	if(mode == ccWMFullScreen){
+	if(mode == ccWMFullScreen || mode == ccWMWindow){
 		wmState = XInternAtom(window->display, "_NET_WM_STATE", false);
 		fullscreen = XInternAtom(window->display, "_NET_WM_STATE_FULLSCREEN", false);
 
@@ -114,9 +116,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		event.xclient.window = window->window;
 		event.xclient.message_type = wmState;
 		event.xclient.format = 32;
-		event.xclient.data.l[0] = 1;
+		event.xclient.data.l[0] = mode == ccWMFullScreen;
 		event.xclient.data.l[1] = fullscreen;
-		event.xclient.data.l[2] = 0;
 
 		XSendEvent(window->display, DefaultRootWindow(window->display), false, SubstructureNotifyMask, &event);
 	}
