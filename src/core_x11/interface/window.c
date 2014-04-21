@@ -77,9 +77,21 @@ bool ccPollEvent(ccWindow *window)
 			window->event.type = ccEventKeyDown;
 			break;
 		case ConfigureNotify:
+			window->event.type = ccEventWindowResize;
 			window->width = event.xconfigure.width;
 			window->height = event.xconfigure.height;
-			window->event.type = ccEventWindowResize;
+			break;
+		case EnterNotify:
+			window->event.type = ccEventMouseFocusGained;
+			break;
+		case LeaveNotify:
+			window->event.type = ccEventMouseFocusLost;
+			break;
+		case FocusIn:
+			window->event.type = ccEventKeyboardFocusGained;
+			break;
+		case FocusOut:
+			window->event.type = ccEventKeyboardFocusLost;
 			break;
 	}
 

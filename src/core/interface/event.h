@@ -1,25 +1,33 @@
 #pragma once
 
 typedef enum {
-	//event not handled in ccore, return false on pollEvent
+	//Event not handled in ccore, return false on pollEvent
 	ccEventSkip,
-	//a key is pressed, store keycode
+	//A key is pressed, store keycode
 	ccEventKeyDown,
-	//a key is released, store keycode
+	//A key is released, store keycode
 	ccEventKeyUp,
-	//mouse has moved, store coordinates
+	//Mouse has moved, store coordinates
 	ccEventMouseMove,
-	//mouse button down, store buttoncode
+	//Mouse button down, store buttoncode
 	ccEventMouseDown,
-	//mouse button up, store buttoncode
+	//Mouse button up, store buttoncode
 	ccEventMouseUp,
-	//mouse wheel moved down
+	//Mouse wheel moved down
 	ccEventMouseScrollDown,
-	//mouse wheel moved up
+	//Mouse wheel moved up
 	ccEventMouseScrollUp,
-	//window close button was pressed
+	//Mouse scrolled over the windows bounds
+	ccEventMouseFocusGained,
+	//Mouse outside the windows bounds
+	ccEventMouseFocusLost,
+	//The keyboard is focussed on the window
+	ccEventKeyboardFocusGained,
+	//The keyboard lost focus on the window
+	ccEventKeyboardFocusLost,
+	//Window close button was pressed
 	ccEventWindowQuit,
-	//window has resized, new dimensions are stored in the window struct before the event fires
+	//Window has resized, new dimensions are stored in the window struct before the event fires
 	ccEventWindowResize,
 } ccEventType;
 
@@ -27,6 +35,5 @@ typedef struct {
 	ccEventType type;
 	union {
 		ccPoint mouseLocation;
-		
 	};
 } ccEvent;
