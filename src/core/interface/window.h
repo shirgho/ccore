@@ -29,6 +29,13 @@ typedef struct {
 	unsigned short height;
 	float aspect;
 	ccEvent event;
+
+#ifdef LINUX
+	Display *display;
+	Window window;
+	int screen;
+	GLXContext context;
+#endif
 } ccWindow;
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags);

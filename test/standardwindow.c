@@ -50,10 +50,7 @@ int main(int argc, char** argv)
 		}
 
 		renderGL();
-
-		if(window->isDoubleBuffered){
-			ccGLSwapBuffers(window);
-		}
+		ccGLSwapBuffers(window);
 	}
 
 	ccFreeWindow(window);
