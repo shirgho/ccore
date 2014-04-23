@@ -8,7 +8,7 @@ void ccErrorString(char *dest, ccError error)
 		case CC_ERROR_NO:
 			str = "No errors";
 			break;
-		case CC_ERROR_NODisplay:
+		case CC_ERROR_NODISPLAY:
 			str = "Could not open display";
 			break;
 		case CC_ERROR_GL_UNSUPPORTED:
