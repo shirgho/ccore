@@ -32,12 +32,12 @@ typedef enum {
 } ccEventType;
 
 typedef enum {
-	ccMouseButtonNone,
-	ccMouseButtonLeft,
-	ccMouseButtonRight,
-	ccMouseButtonMiddle,
-	ccMouseButtonSpecial1,
-	ccMouseButtonSpecial2
+	ccMouseButtonNone = 0,
+	ccMouseButtonLeft = 1,
+	ccMouseButtonMiddle = 2,
+	ccMouseButtonRight = 3,
+	ccMouseButtonSpecial1 = 4,
+	ccMouseButtonSpecial2 = 5
 } ccMouseButtonType;
 
 typedef struct {

@@ -40,7 +40,9 @@ int main(int argc, char** argv)
 				}
 				break;
 			case ccEventMouseDown:
-				quit = true;
+				if(window->event.mouseState.button == ccMouseButtonLeft){
+					quit = true;
+				}
 				break;
 			case ccEventWindowResize:
 				resizeGL(window->width, window->height);
