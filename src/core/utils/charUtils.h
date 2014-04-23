@@ -1,5 +1,5 @@
 #pragma once
 
-int ccStrLength(char* str);
-void ccStrCopy(char* source, char* destination);
+int ccStrLength(const char* str);
+void ccStrCopy(const char* source, char* destination);
 void ccStrTrimToSlash(char* str);

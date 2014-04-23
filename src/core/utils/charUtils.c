@@ -1,13 +1,13 @@
 #include "charUtils.h"
 
-int ccStrLength(char* str)
+int ccStrLength(const char* str)
 {
 	int i;
 	for(i = 0; str[i] != 0; i++);
 	return i;
 }
 
-void ccStrCopy(char* source, char* destination)
+void ccStrCopy(const char* source, char* destination)
 {
 	for(int i = 0; source[i] != 0; i++) {
 		destination[i] = source[i];
