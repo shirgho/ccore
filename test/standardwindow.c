@@ -40,9 +40,12 @@ int main(int argc, char** argv)
 				}
 				break;
 			case ccEventMouseDown:
-				if(window->event.mouseState.button == ccMouseButtonLeft){
+				if(window->event.mouseState.button == ccMouseButtonLeft || window->event.mouseState.button == ccMouseButtonSpecial1){
 					quit = true;
 				}
+				break;
+			case ccEventMouseScrollUp:
+				rotQuad += 5;
 				break;
 			case ccEventWindowResize:
 				resizeGL(window->width, window->height);

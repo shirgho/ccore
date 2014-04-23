@@ -59,9 +59,18 @@ bool ccPollEvent(ccWindow *window)
 	XNextEvent(window->display, &event);
 	switch(event.type){
 		case ButtonPress:
-			window->event.type = ccEventMouseDown;
-			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
-			window->event.mouseState.button = event.xbutton.button;
+			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
+			if(event.xbutton.button <= 3){
+				window->event.type = ccEventMouseDown;
+				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
+				window->event.mouseState.button = event.xbutton.button;
+			}else if(event.xbutton.button == 4){
+				window->event.type = ccEventMouseScrollUp;
+				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
+			}else if(event.xbutton.button == 5){
+				window->event.type = ccEventMouseScrollDown;
+				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
+			}
 			break;
 		case ButtonRelease:
 			window->event.type = ccEventMouseUp;
