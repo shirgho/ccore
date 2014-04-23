@@ -1,68 +1,63 @@
 #include "../../core/interface/window.h"
 
-static ccWindow *_activeWindow = NULL;
-static HDC _hdc;
-static MSG _msg;
-static HWND _winHandle;
-static HGLRC _renderContext;
-
 LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	ccWindow *activeWindow = (ccWindow*)GetWindowLong(winHandle, GWL_USERDATA);
+	if(activeWindow == NULL) goto skipevent;
+
 	switch(message) {
 	case WM_CLOSE:
-		_activeWindow->event.type = CC_EVENT_WINDOW_QUIT;
+		activeWindow->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
 	case WM_SIZING:
 		printf(".");
-		_activeWindow->event.type = CC_EVENT_SKIP;
+		activeWindow->event.type = CC_EVENT_SKIP;
 		if(message != WM_EXITSIZEMOVE) {
 			unsigned short newWidth = lParam & 0x0000FFFF;
 			unsigned short newHeight = (lParam & 0xFFFF0000) >> 16;
-			if(_activeWindow->width == newWidth && _activeWindow->height == newHeight) {
-				_activeWindow->event.type = CC_EVENT_SKIP;
+			if(activeWindow->width == newWidth && activeWindow->height == newHeight) {
+				activeWindow->event.type = CC_EVENT_SKIP;
 			}
 			else{
-				_activeWindow->width = newWidth;
-				_activeWindow->height = newHeight;
-				_activeWindow->event.type = CC_EVENT_WINDOW_RESIZE;
+				activeWindow->width = newWidth;
+				activeWindow->height = newHeight;
+				activeWindow->aspect = (float) newWidth / newHeight;
+				activeWindow->event.type = CC_EVENT_WINDOW_RESIZE;
 			}
 		}
-
-		break;
-	case WM_EXITSIZEMOVE:
-
 		break;
 	case WM_KEYDOWN:
 		//TODO: save keycode
-		_activeWindow->event.type = CC_EVENT_KEY_DOWN;
+		activeWindow->event.type = CC_EVENT_KEY_DOWN;
 		break;
 	case WM_KEYUP:
 		//TODO: save keycode
-		_activeWindow->event.type = CC_EVENT_KEY_UP;
+		activeWindow->event.type = CC_EVENT_KEY_UP;
 		break;
 	case WM_MOUSEMOVE:
 		//TODO: save coordinates
-		_activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
+		activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
 		break;
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		//TODO: save button index
-		_activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
+		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
 		break;
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
 		//TODO: save button index
-		_activeWindow->event.type = CC_EVENT_MOUSE_UP;
+		activeWindow->event.type = CC_EVENT_MOUSE_UP;
 		break;
 	case WM_MOUSEWHEEL:
 		//TODO: save direction
-		_activeWindow->event.type = CC_EVENT_MOUSE_SCROLL_UP;
+		activeWindow->event.type = CC_EVENT_MOUSE_SCROLL_UP;
 		break;
 	default:
-		_activeWindow->event.type = CC_EVENT_SKIP;
+		activeWindow->event.type = CC_EVENT_SKIP;
+	skipevent:
 		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
 	}
@@ -91,8 +86,8 @@ void regHinstance(HINSTANCE instanceHandle)
 
 bool ccPollEvent(ccWindow *window)
 {
-	if(PeekMessage(&_msg, _winHandle, 0, 0, PM_REMOVE)){
-		DispatchMessage(&_msg);
+	if(PeekMessage(&window->msg, window->winHandle, 0, 0, PM_REMOVE)){
+		DispatchMessage(&window->msg);
 		return window->event.type==CC_EVENT_SKIP?false:true;
 	}
 	else{
@@ -102,16 +97,11 @@ bool ccPollEvent(ccWindow *window)
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags)
 {
-	if(_activeWindow!=NULL) {
-		ccAbort("Only one window can be created!");
-		exit(0);
-	}
-
-	_activeWindow = malloc(sizeof(ccWindow));
+	ccWindow *newWindow = malloc(sizeof(ccWindow));
 
 	//Struct initialisation
-	_activeWindow->width = width;
-	_activeWindow->height = height;
+	newWindow->width = width;
+	newWindow->height = height;
 
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
@@ -121,7 +111,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	GetWindowRect(desktopHandle, &desktopRect);
 	
 	regHinstance(moduleHandle);
-	_winHandle = CreateWindowEx(
+	newWindow->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		"ccWindow",
 		title,
@@ -133,42 +123,44 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		NULL,
 		moduleHandle,
 		NULL);
+
+	SetWindowLong(newWindow->winHandle, GWL_USERDATA, (LONG)newWindow);
 	
 	//apply flags
 	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) {
-		LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(newWindow->winHandle, GWL_STYLE);
 		lStyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-		SetWindowLong(_winHandle, GWL_STYLE, lStyle);
+		SetWindowLong(newWindow->winHandle, GWL_STYLE, lStyle);
 	}
 	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS) {
-		LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(newWindow->winHandle, GWL_STYLE);
 		lStyle &= ~WS_SYSMENU;
-		SetWindowLong(_winHandle, GWL_STYLE, lStyle);
+		SetWindowLong(newWindow->winHandle, GWL_STYLE, lStyle);
 	}
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
-		GetWindowRect(_winHandle, &rect);
-		SetWindowPos(_winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
+		GetWindowRect(newWindow->winHandle, &rect);
+		SetWindowPos(newWindow->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
 	}
 
-	ccChangeWM(_activeWindow, mode);
-	return _activeWindow;
+	ccChangeWM(newWindow, mode);
+
+	return newWindow;
 }
 
 void ccFreeWindow(ccWindow *window)
 {
-	wglDeleteContext(_renderContext);
-	ReleaseDC(_winHandle, _hdc);
+	wglDeleteContext(window->renderContext);
+	ReleaseDC(window->winHandle, window->hdc);
 
-	DestroyWindow(_winHandle);
+	DestroyWindow(window->winHandle);
 	free(window);
-	_activeWindow = NULL;
 }
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
-	_hdc = GetDC(_winHandle);
+	window->hdc = GetDC(window->winHandle);
 
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
@@ -181,12 +173,12 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 		0, 0, 0, 0, 0, 0, 0
 	};
 
-	pixelFormatIndex = ChoosePixelFormat(_hdc, &pfd);
-	SetPixelFormat(_hdc, pixelFormatIndex, &pfd);
+	pixelFormatIndex = ChoosePixelFormat(window->hdc, &pfd);
+	SetPixelFormat(window->hdc, pixelFormatIndex, &pfd);
 
-	_renderContext = wglCreateContext(_hdc);
-	if(_renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
-	wglMakeCurrent(_hdc, _renderContext);
+	window->renderContext = wglCreateContext(window->hdc);
+	if(window->renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
+	wglMakeCurrent(window->hdc, window->renderContext);
 
 	//Fetch extentions after context creation
 	if(glewInit() != GLEW_OK) ccAbort("GLEW could not be initialized.");
@@ -194,13 +186,13 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 
 void ccGLSwapBuffers(ccWindow *window)
 {
-	SwapBuffers(_hdc);
+	SwapBuffers(window->hdc);
 }
 
 void ccChangeWM(ccWindow *window, ccWindowMode mode)
 {
 	int sw;
-	LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
+	LONG lStyle = GetWindowLong(window->winHandle, GWL_STYLE);
 
 	switch(mode)
 	{
@@ -217,6 +209,6 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		break;
 	}
 
-	SetWindowLong(_winHandle, GWL_STYLE, lStyle);
-	ShowWindow(_winHandle, sw);
+	SetWindowLong(window->winHandle, GWL_STYLE, lStyle);
+	ShowWindow(window->winHandle, sw);
 }

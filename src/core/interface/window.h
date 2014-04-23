@@ -31,10 +31,17 @@ typedef struct {
 	ccEvent event;
 
 #ifdef LINUX
-	Display *display;
+	Display *display; 
 	Window window;
 	int screen;
 	GLXContext context;
+#endif
+
+#ifdef WIN32
+	HDC hdc;
+	MSG msg;
+	HWND winHandle;
+	HGLRC renderContext;
 #endif
 } ccWindow;
 
