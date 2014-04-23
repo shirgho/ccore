@@ -11,7 +11,7 @@ void ccErrorString(char *dest, ccError error)
 		case CC_ERROR_NODISPLAY:
 			str = "Could not open display";
 			break;
-		case CC_ERROR_GL_UNSUPPORTED:
+		case CC_ERROR_GLUNSUPPORTED:
 			str = "The current OpenGL version is not supported";
 			break;
 		default:
