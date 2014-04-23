@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string.h>
 #include "../interface/popup.h"
 
 typedef enum {
