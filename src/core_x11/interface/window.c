@@ -60,15 +60,15 @@ bool ccPollEvent(ccWindow *window)
 	switch(event.type){
 		case ButtonPress:
 			window->event.type = ccEventMouseDown;
-			window->event.mouseLocation = (ccPoint){event.xmotion.x, event.xmotion.y};
+			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			break;
 		case ButtonRelease:
 			window->event.type = ccEventMouseUp;
-			window->event.mouseLocation = (ccPoint){event.xmotion.x, event.xmotion.y};
+			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			break;
 		case MotionNotify:
 			window->event.type = ccEventMouseMove;
-			window->event.mouseLocation = (ccPoint){event.xmotion.x, event.xmotion.y};
+			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			break;
 		case KeyPress:
 			window->event.type = ccEventKeyDown;

@@ -31,9 +31,23 @@ typedef enum {
 	ccEventWindowResize,
 } ccEventType;
 
+typedef enum {
+	ccMouseButtonNone,
+	ccMouseButtonLeft,
+	ccMouseButtonRight,
+	ccMouseButtonMiddle,
+	ccMouseButtonSpecial1,
+	ccMouseButtonSpecial2
+} ccMouseButtonType;
+
+typedef struct {
+	ccPoint location;
+	ccMouseButtonType button;
+} ccMouseState;
+
 typedef struct {
 	ccEventType type;
 	union {
-		ccPoint mouseLocation;
+		ccMouseState mouseState;
 	};
 } ccEvent;
