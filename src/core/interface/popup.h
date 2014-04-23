@@ -11,12 +11,12 @@
 #endif
 
 typedef enum {
-	ccPopupError,
-	ccPopupNotification
+	CC_POPUP_ERROR,
+	CC_POPUP_NOTIFY
 } ccPopupType;
 
 typedef enum {
-	ccDialogueYesNo
+	CC_DIALOGUE_YESNO
 } ccDialogueType;
 
 void ccShowPopup(const char* message, const char* caption, ccPopupType type);

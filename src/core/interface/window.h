@@ -11,16 +11,16 @@
 #endif
 
 typedef enum {
-	ccWMFullScreen,
-	ccWMMaximized,
-	ccWMWindow,
-	ccWMMinimized
+	CC_WINDOW_MODE_FULLSCREEN,
+	CC_WINDOW_MODE_MAXIMIZED,
+	CC_WINDOW_MODE_WINDOW,
+	CC_WINDOW_MODE_MINIMIZED
 } ccWindowMode;
 
 typedef enum {
-	ccWFNoResize = 1,
-	ccWFAlwaysOnTop = 2,
-	ccWFNoButtons = 4
+	CC_WINDOW_FLAG_NORESIZE = 1,
+	CC_WINDOW_FLAG_ALWAYSONTOP = 2,
+	CC_WINDOW_FLAG_NOBUTTONS = 4
 } ccWindowFlag;
 
 typedef struct {

@@ -27,7 +27,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 
-	if(mode != ccWMWindow){
+	if(mode != CC_WINDOW_MODE_WINDOW){
 		ccChangeWM(output, mode);
 	}
 	
@@ -52,7 +52,7 @@ bool ccPollEvent(ccWindow *window)
 
 	// Remove this statemnt if you want to block until an event happens
 	if(XPending(window->display) == 0){
-		window->event.type = ccEventSkip;
+		window->event.type = CC_EVENT_SKIP;
 		return false;
 	}
 
@@ -61,45 +61,45 @@ bool ccPollEvent(ccWindow *window)
 		case ButtonPress:
 			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
 			if(event.xbutton.button <= 3){
-				window->event.type = ccEventMouseDown;
+				window->event.type = CC_EVENT_MOUSE_DOWN;
 				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 				window->event.mouseState.button = event.xbutton.button;
 			}else if(event.xbutton.button == 4){
-				window->event.type = ccEventMouseScrollUp;
+				window->event.type = CC_EVENT_MOUSE_SCROLL_UP;
 				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			}else if(event.xbutton.button == 5){
-				window->event.type = ccEventMouseScrollDown;
+				window->event.type = CC_EVENT_MOUSE_SCROLL_DOWN;
 				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			}
 			break;
 		case ButtonRelease:
-			window->event.type = ccEventMouseUp;
+			window->event.type = CC_EVENT_MOUSE_UP;
 			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			window->event.mouseState.button = event.xbutton.button;
 			break;
 		case MotionNotify:
-			window->event.type = ccEventMouseMove;
+			window->event.type = CC_EVENT_MOUSE_MOVE;
 			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			break;
 		case KeyPress:
-			window->event.type = ccEventKeyDown;
+			window->event.type = CC_EVENT_KEY_DOWN;
 			break;
 		case ConfigureNotify:
-			window->event.type = ccEventWindowResize;
+			window->event.type = CC_EVENT_WINDOW_RESIZE;
 			window->width = event.xconfigure.width;
 			window->height = event.xconfigure.height;
 			break;
 		case EnterNotify:
-			window->event.type = ccEventMouseFocusGained;
+			window->event.type = CC_EVENT_MOUSE_FOCUS_GAINED;
 			break;
 		case LeaveNotify:
-			window->event.type = ccEventMouseFocusLost;
+			window->event.type = CC_EVENT_MOUSE_FOCUS_LOST;
 			break;
 		case FocusIn:
-			window->event.type = ccEventKeyboardFocusGained;
+			window->event.type = CC_EVENT_KEYBOARD_FOCUS_GAINED;
 			break;
 		case FocusOut:
-			window->event.type = ccEventKeyboardFocusLost;
+			window->event.type = CC_EVENT_KEYBOARD_FOCUS_LOST;
 			break;
 	}
 
@@ -111,7 +111,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	XEvent event;
 	Atom wmState, fullscreen;
 
-	if(mode == ccWMFullScreen || mode == ccWMWindow){
+	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
 		wmState = XInternAtom(window->display, "_NET_WM_STATE", false);
 		fullscreen = XInternAtom(window->display, "_NET_WM_STATE_FULLSCREEN", false);
 
@@ -120,7 +120,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		event.xclient.window = window->window;
 		event.xclient.message_type = wmState;
 		event.xclient.format = 32;
-		event.xclient.data.l[0] = mode == ccWMFullScreen;
+		event.xclient.data.l[0] = mode == CC_WINDOW_MODE_FULLSCREEN;
 		event.xclient.data.l[1] = fullscreen;
 
 		XSendEvent(window->display, DefaultRootWindow(window->display), false, SubstructureNotifyMask, &event);

@@ -5,13 +5,13 @@ void ccErrorString(char *dest, ccError error)
 	const char *str;
 
 	switch(error){
-		case ccErrorNo:
+		case CC_ERROR_NO:
 			str = "No errors";
 			break;
-		case ccErrorNoDisplay:
+		case CC_ERROR_NODisplay:
 			str = "Could not open display";
 			break;
-		case ccErrorGLVersionUnsupported:
+		case CC_ERROR_GL_UNSUPPORTED:
 			str = "The current OpenGL version is not supported";
 			break;
 		default:
@@ -24,6 +24,6 @@ void ccErrorString(char *dest, ccError error)
 
 void ccAbort(const char* message)
 {
-	ccShowPopup(message, "fatal error", ccPopupError);
+	ccShowPopup(message, "fatal error", CC_POPUP_ERROR);
 	exit(0);
 }

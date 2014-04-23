@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	ccWindow *window;
 	bool quit;
 
-	window = ccNewWindow(1024, 768, "CCore test application", ccWMFullScreen, 0); 
+	window = ccNewWindow(1024, 768, "CCore test application", CC_WINDOW_MODE_FULLSCREEN, 0); 
 	ccGLBindContext(window, 3, 2);
 
 	glShadeModel(GL_SMOOTH);
@@ -34,20 +34,20 @@ int main(int argc, char** argv)
 	while(!quit){
 		ccPollEvent(window);
 		switch(window->event.type){
-			case ccEventWindowQuit:
-				if(ccShowDialogue("Really quit?", "quit", ccDialogueYesNo) == true){
+			case CC_EVENT_WINDOW_QUIT:
+				if(ccShowDialogue("Really quit?", "quit", CC_DIALOGUE_YESNO) == true){
 					quit = true;
 				}
 				break;
-			case ccEventMouseDown:
-				if(window->event.mouseState.button == ccMouseButtonLeft || window->event.mouseState.button == ccMouseButtonSpecial1){
+			case CC_EVENT_MOUSE_DOWN:
+				if(window->event.mouseState.button == CC_MOUSE_BUTTON_LEFT || window->event.mouseState.button == CC_MOUSE_BUTTON_SPECIAL_1){
 					quit = true;
 				}
 				break;
-			case ccEventMouseScrollUp:
+			case CC_EVENT_MOUSE_SCROLL_UP:
 				rotQuad += 5;
 				break;
-			case ccEventWindowResize:
+			case CC_EVENT_WINDOW_RESIZE:
 				resizeGL(window->width, window->height);
 				break;
 			default:

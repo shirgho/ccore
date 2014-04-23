@@ -10,22 +10,22 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 {
 	switch(message) {
 	case WM_CLOSE:
-		_activeWindow->event.type = ccEventWindowQuit;
+		_activeWindow->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
 	case WM_SIZING:
 		printf(".");
-		_activeWindow->event.type = ccEventSkip;
+		_activeWindow->event.type = CC_EVENT_SKIP;
 		if(message != WM_EXITSIZEMOVE) {
 			unsigned short newWidth = lParam & 0x0000FFFF;
 			unsigned short newHeight = (lParam & 0xFFFF0000) >> 16;
 			if(_activeWindow->width == newWidth && _activeWindow->height == newHeight) {
-				_activeWindow->event.type = ccEventSkip;
+				_activeWindow->event.type = CC_EVENT_SKIP;
 			}
 			else{
 				_activeWindow->width = newWidth;
 				_activeWindow->height = newHeight;
-				_activeWindow->event.type = ccEventWindowResize;
+				_activeWindow->event.type = CC_EVENT_WINDOW_RESIZE;
 			}
 		}
 
@@ -35,34 +35,34 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 	case WM_KEYDOWN:
 		//TODO: save keycode
-		_activeWindow->event.type = ccEventKeyDown;
+		_activeWindow->event.type = CC_EVENT_KEY_DOWN;
 		break;
 	case WM_KEYUP:
 		//TODO: save keycode
-		_activeWindow->event.type = ccEventKeyUp;
+		_activeWindow->event.type = CC_EVENT_KEY_UP;
 		break;
 	case WM_MOUSEMOVE:
 		//TODO: save coordinates
-		_activeWindow->event.type = ccEventMouseMove;
+		_activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
 		break;
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		//TODO: save button index
-		_activeWindow->event.type = ccEventMouseDown;
+		_activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
 		break;
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
 		//TODO: save button index
-		_activeWindow->event.type = ccEventMouseUp;
+		_activeWindow->event.type = CC_EVENT_MOUSE_UP;
 		break;
 	case WM_MOUSEWHEEL:
 		//TODO: save direction
-		_activeWindow->event.type = ccEventMouseScrollUp;
+		_activeWindow->event.type = CC_EVENT_MOUSE_SCROLL_UP;
 		break;
 	default:
-		_activeWindow->event.type = ccEventSkip;
+		_activeWindow->event.type = CC_EVENT_SKIP;
 		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
 	}
@@ -93,7 +93,7 @@ bool ccPollEvent(ccWindow *window)
 {
 	if(PeekMessage(&_msg, _winHandle, 0, 0, PM_REMOVE)){
 		DispatchMessage(&_msg);
-		return window->event.type==ccEventSkip?false:true;
+		return window->event.type==CC_EVENT_SKIP?false:true;
 	}
 	else{
 		return false;
@@ -135,17 +135,17 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		NULL);
 	
 	//apply flags
-	if((flags & ccWFNoResize) == ccWFNoResize) {
+	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) {
 		LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
 		lStyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
 		SetWindowLong(_winHandle, GWL_STYLE, lStyle);
 	}
-	if((flags & ccWFNoButtons) == ccWFNoButtons) {
+	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS) {
 		LONG lStyle = GetWindowLong(_winHandle, GWL_STYLE);
 		lStyle &= ~WS_SYSMENU;
 		SetWindowLong(_winHandle, GWL_STYLE, lStyle);
 	}
-	if((flags & ccWFAlwaysOnTop) == ccWFAlwaysOnTop) {
+	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
 		GetWindowRect(_winHandle, &rect);
 		SetWindowPos(_winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
@@ -204,13 +204,13 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 
 	switch(mode)
 	{
-	case ccWMMinimized:
+	case CC_WINDOW_MODE_MINIMIZED:
 		sw = SW_SHOWMINIMIZED;
 		break;
-	case ccWMWindow:
+	case CC_WINDOW_MODE_WINDOW:
 		sw = SW_SHOW;
 		break;
-	case ccWMFullScreen:
+	case CC_WINDOW_MODE_FULLSCREEN:
 		lStyle &= ~WS_CAPTION;
 	default:
 		sw = SW_SHOWMAXIMIZED;

@@ -4,7 +4,7 @@ void ccShowPopup(const char* message, const char* caption, ccPopupType type)
 {
 	UINT mbType;
 	switch(type) {
-	case ccPopupError:
+	case CC_POPUP_ERROR:
 		mbType = MB_ICONERROR;
 		break;
 	default:

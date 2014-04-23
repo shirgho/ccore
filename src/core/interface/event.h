@@ -2,42 +2,42 @@
 
 typedef enum {
 	//Event not handled in ccore, return false on pollEvent
-	ccEventSkip,
+	CC_EVENT_SKIP,
 	//A key is pressed, store keycode
-	ccEventKeyDown,
+	CC_EVENT_KEY_DOWN,
 	//A key is released, store keycode
-	ccEventKeyUp,
+	CC_EVENT_KEY_UP,
 	//Mouse has moved, store coordinates
-	ccEventMouseMove,
+	CC_EVENT_MOUSE_MOVE,
 	//Mouse button down, store buttoncode
-	ccEventMouseDown,
+	CC_EVENT_MOUSE_DOWN,
 	//Mouse button up, store buttoncode
-	ccEventMouseUp,
+	CC_EVENT_MOUSE_UP,
 	//Mouse wheel moved down
-	ccEventMouseScrollDown,
+	CC_EVENT_MOUSE_SCROLL_DOWN,
 	//Mouse wheel moved up
-	ccEventMouseScrollUp,
+	CC_EVENT_MOUSE_SCROLL_UP,
 	//Mouse scrolled over the windows bounds
-	ccEventMouseFocusGained,
+	CC_EVENT_MOUSE_FOCUS_GAINED,
 	//Mouse outside the windows bounds
-	ccEventMouseFocusLost,
+	CC_EVENT_MOUSE_FOCUS_LOST,
 	//The keyboard is focussed on the window
-	ccEventKeyboardFocusGained,
+	CC_EVENT_KEYBOARD_FOCUS_GAINED,
 	//The keyboard lost focus on the window
-	ccEventKeyboardFocusLost,
+	CC_EVENT_KEYBOARD_FOCUS_LOST,
 	//Window close button was pressed
-	ccEventWindowQuit,
+	CC_EVENT_WINDOW_QUIT,
 	//Window has resized, new dimensions are stored in the window struct before the event fires
-	ccEventWindowResize,
+	CC_EVENT_WINDOW_RESIZE,
 } ccEventType;
 
 typedef enum {
-	ccMouseButtonNone = 0,
-	ccMouseButtonLeft = 1,
-	ccMouseButtonMiddle = 2,
-	ccMouseButtonRight = 3,
-	ccMouseButtonSpecial1 = 4,
-	ccMouseButtonSpecial2 = 5
+	CC_MOUSE_BUTTON_NONE = 0,
+	CC_MOUSE_BUTTON_LEFT = 1,
+	CC_MOUSE_BUTTON_MIDDLE = 2,
+	CC_MOUSE_BUTTON_RIGHT = 3,
+	CC_MOUSE_BUTTON_SPECIAL_1 = 4,
+	CC_MOUSE_BUTTON_SPECIAL_2 = 5
 } ccMouseButtonType;
 
 typedef struct {
