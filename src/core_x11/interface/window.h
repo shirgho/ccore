@@ -11,3 +11,4 @@
 #include "../../core/types.h"
 #include "../../core/interface/event.h"
 #include "../../core/utils/error.h"
+#include "../../core/debug/assert.h"
