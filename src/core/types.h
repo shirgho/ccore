@@ -4,7 +4,3 @@
 #define false 0
 
 typedef char bool;
-
-typedef struct {
-	int x, y;
-} ccPoint;

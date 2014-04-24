@@ -25,8 +25,8 @@ typedef enum {
 
 typedef struct {
 	//Note: dimensions subtract border size
-	unsigned short width;
-	unsigned short height;
+	unsigned short width, height;
+	unsigned short mouseX, mouseY;
 	float aspect;
 	ccEvent event;
 

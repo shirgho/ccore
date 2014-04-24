@@ -40,8 +40,8 @@ typedef enum {
 	CC_MOUSE_BUTTON_SPECIAL_2 = 5
 } ccMouseButtonType;
 
+//TODO: is a struct necessary since coordinates are now included in the window?
 typedef struct {
-	ccPoint location;
 	ccMouseButtonType button;
 } ccMouseState;
 
