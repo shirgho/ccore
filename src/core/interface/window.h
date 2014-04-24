@@ -42,7 +42,9 @@ typedef struct {
 	MSG msg;
 	HWND winHandle;
 	HGLRC renderContext;
+	bool sizeChanged;
 #endif
+
 } ccWindow;
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags);

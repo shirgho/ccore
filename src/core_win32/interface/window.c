@@ -10,22 +10,10 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
-	case WM_SIZING:
-		printf(".");
-		activeWindow->event.type = CC_EVENT_SKIP;
-		if(message != WM_EXITSIZEMOVE) {
-			unsigned short newWidth = lParam & 0x0000FFFF;
-			unsigned short newHeight = (lParam & 0xFFFF0000) >> 16;
-			if(activeWindow->width == newWidth && activeWindow->height == newHeight) {
-				activeWindow->event.type = CC_EVENT_SKIP;
-			}
-			else{
-				activeWindow->width = newWidth;
-				activeWindow->height = newHeight;
-				activeWindow->aspect = (float) newWidth / newHeight;
-				activeWindow->event.type = CC_EVENT_WINDOW_RESIZE;
-			}
-		}
+		activeWindow->width = lParam & 0x0000FFFF;
+		activeWindow->height = (lParam & 0xFFFF0000) >> 16;
+		activeWindow->aspect = (float) activeWindow->width / activeWindow->height;
+		activeWindow->sizeChanged = true;
 		break;
 	case WM_KEYDOWN:
 		//TODO: save keycode
@@ -86,6 +74,12 @@ void regHinstance(HINSTANCE instanceHandle)
 
 bool ccPollEvent(ccWindow *window)
 {
+	if(window->sizeChanged) {
+		window->sizeChanged = false;
+		window->event.type = CC_EVENT_WINDOW_RESIZE;
+		return true;
+	}
+
 	if(PeekMessage(&window->msg, window->winHandle, 0, 0, PM_REMOVE)){
 		DispatchMessage(&window->msg);
 		return window->event.type==CC_EVENT_SKIP?false:true;
@@ -102,6 +96,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	//Struct initialisation
 	newWindow->width = width;
 	newWindow->height = height;
+	newWindow->sizeChanged = true;
 
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
