@@ -23,7 +23,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	output->screen = DefaultScreen(output->display);
 	output->window = XCreateSimpleWindow(output->display, root, 10, 10, width, height, 1, BlackPixel(output->display, output->screen), WhitePixel(output->display, output->screen));
 	// Choose types of events
-	XSelectInput(output->display, output->window, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask);
+	XSelectInput(output->display, output->window, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 
@@ -81,13 +81,18 @@ bool ccPollEvent(ccWindow *window)
 			window->event.type = CC_EVENT_MOUSE_MOVE;
 			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			break;
+		case KeymapNotify:
+			XRefreshKeyboardMapping(&event.xmapping);
+			break;
 		case KeyPress:
 			window->event.type = CC_EVENT_KEY_DOWN;
+			
 			break;
 		case ConfigureNotify:
 			window->event.type = CC_EVENT_WINDOW_RESIZE;
 			window->width = event.xconfigure.width;
 			window->height = event.xconfigure.height;
+			window->aspect = window->height / window->width;
 			break;
 		case EnterNotify:
 			window->event.type = CC_EVENT_MOUSE_FOCUS_GAINED;

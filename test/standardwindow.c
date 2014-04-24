@@ -13,7 +13,7 @@ float rotQuad = 0.0f;
 void resizeGL(unsigned int width, unsigned int height);
 void renderGL();
 
-int main(int argc, char** argv)
+int main2(int argc, char** argv)
 {
 	ccWindow *window;
 	bool quit;
