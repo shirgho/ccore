@@ -157,6 +157,11 @@ void ccFreeWindow(ccWindow *window)
 	free(window);
 }
 
+void ccGLMakeCurrent(ccWindow *window)
+{
+	wglMakeCurrent(window->hdc, window->renderContext);
+}
+
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
@@ -178,7 +183,8 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 
 	window->renderContext = wglCreateContext(window->hdc);
 	if(window->renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
-	wglMakeCurrent(window->hdc, window->renderContext);
+	
+	ccGLMakeCurrent(window);
 
 	//Fetch extentions after context creation
 	if(glewInit() != GLEW_OK) ccAbort("GLEW could not be initialized.");

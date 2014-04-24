@@ -52,3 +52,4 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);
+void ccGLMakeCurrent(ccWindow *window);
