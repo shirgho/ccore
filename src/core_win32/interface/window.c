@@ -5,6 +5,8 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 	ccWindow *activeWindow = (ccWindow*)GetWindowLong(winHandle, GWL_USERDATA);
 	if(activeWindow == NULL) goto skipevent;
 
+	activeWindow->event.type = CC_EVENT_SKIP;
+
 	switch(message) {
 	case WM_CLOSE:
 		activeWindow->event.type = CC_EVENT_WINDOW_QUIT;
@@ -45,7 +47,6 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.type = CC_EVENT_MOUSE_SCROLL_UP;
 		break;
 	default:
-		activeWindow->event.type = CC_EVENT_SKIP;
 	skipevent:
 		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
@@ -63,12 +64,12 @@ void regHinstance(HINSTANCE instanceHandle)
 	winClass.cbClsExtra = 0;
 	winClass.cbWndExtra = 0;
 	winClass.hInstance = instanceHandle;
-	winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	winClass.hIcon = NULL;
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winClass.hbrBackground = NULL;
 	winClass.lpszMenuName = NULL;
 	winClass.lpszClassName = "ccWindow";
-	winClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	winClass.hIconSm = NULL;
 
 	RegisterClassEx(&winClass);
 }
