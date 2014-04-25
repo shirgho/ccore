@@ -27,8 +27,11 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 	case WM_MOUSEMOVE:
 		activeWindow->mouseX = (unsigned short)lParam & 0x0000FFFF;
-		activeWindow->mouseY = (unsigned short)lParam & 0xFFFF0000;
+		activeWindow->mouseY = (unsigned short)((lParam & 0xFFFF0000) >> 16);
 		activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
+		break;
+	case WM_MOUSELEAVE:
+		printf("leave");
 		break;
 	case WM_LBUTTONDOWN:
 		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
@@ -59,10 +62,10 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
 		break;
 	case WM_SETFOCUS:
-		activeWindow->event.type = CC_EVENT_KEYBOARD_FOCUS_GAINED;
+		activeWindow->event.type = CC_EVENT_FOCUS_GAINED;
 		break;
 	case WM_KILLFOCUS:
-		activeWindow->event.type = CC_EVENT_KEYBOARD_FOCUS_LOST;
+		activeWindow->event.type = CC_EVENT_FOCUS_LOST;
 		break;
 	default:
 	skipevent:

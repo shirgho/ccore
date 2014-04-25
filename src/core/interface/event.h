@@ -17,14 +17,10 @@ typedef enum {
 	CC_EVENT_MOUSE_SCROLL_DOWN,
 	//Mouse wheel moved up
 	CC_EVENT_MOUSE_SCROLL_UP,
-	//Mouse scrolled over the windows bounds
-	CC_EVENT_MOUSE_FOCUS_GAINED,
-	//Mouse outside the windows bounds
-	CC_EVENT_MOUSE_FOCUS_LOST,
 	//The keyboard is focussed on the window
-	CC_EVENT_KEYBOARD_FOCUS_GAINED,
+	CC_EVENT_FOCUS_GAINED,
 	//The keyboard lost focus on the window
-	CC_EVENT_KEYBOARD_FOCUS_LOST,
+	CC_EVENT_FOCUS_LOST,
 	//Window close button was pressed
 	CC_EVENT_WINDOW_QUIT,
 	//Window has resized, new dimensions are stored in the window struct before the event fires
