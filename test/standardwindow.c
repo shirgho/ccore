@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../src/core/core.h"
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -41,7 +43,7 @@ int main(int argc, char** argv)
 		while(ccPollEvent(window)){
 			switch(window->event.type){
 				case CC_EVENT_WINDOW_QUIT:
-					if(ccShowDialogue("Really quit?", "quit", CC_DIALOGUE_YESNO) == true){
+					if(ccShowDialogue(NULL, "Really quit?", "quit", CC_DIALOGUE_YESNO) == true){
 						quit = true;
 					}
 					break;
