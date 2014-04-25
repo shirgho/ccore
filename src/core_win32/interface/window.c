@@ -31,10 +31,16 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
 		break;
 	case WM_LBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-		//TODO: save button index
 		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
+		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+		break;
+	case WM_MBUTTONDOWN:
+		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
+		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
+		break;
+	case WM_RBUTTONDOWN:
+		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
+		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 		break;
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:

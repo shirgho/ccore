@@ -32,23 +32,17 @@ typedef enum {
 } ccEventType;
 
 typedef enum {
-	CC_MOUSE_BUTTON_NONE = 0,
-	CC_MOUSE_BUTTON_LEFT = 1,
-	CC_MOUSE_BUTTON_MIDDLE = 2,
-	CC_MOUSE_BUTTON_RIGHT = 3,
-	CC_MOUSE_BUTTON_SPECIAL_1 = 4,
-	CC_MOUSE_BUTTON_SPECIAL_2 = 5
+	CC_MOUSE_BUTTON_LEFT,
+	CC_MOUSE_BUTTON_MIDDLE,
+	CC_MOUSE_BUTTON_RIGHT,
+	CC_MOUSE_BUTTON_SPECIAL_1,
+	CC_MOUSE_BUTTON_SPECIAL_2
 } ccMouseButtonType;
-
-//TODO: is a struct necessary since coordinates are now included in the window?
-typedef struct {
-	ccMouseButtonType button;
-} ccMouseState;
 
 typedef struct {
 	ccEventType type;
 	union {
-		ccMouseState mouseState;
+		ccMouseButtonType mouseButton;
 		char key;
 	};
 } ccEvent;

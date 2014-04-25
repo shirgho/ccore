@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 					resizeGL(window->width, window->height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
-					if(window->event.mouseState.button == CC_MOUSE_BUTTON_LEFT || window->event.mouseState.button == CC_MOUSE_BUTTON_SPECIAL_1){
+					if(window->event.mouseButton == CC_MOUSE_BUTTON_LEFT || window->event.mouseButton == CC_MOUSE_BUTTON_SPECIAL_1){
 						quit = true;
 					}
 					break;
