@@ -65,7 +65,7 @@ void regHinstance(HINSTANCE instanceHandle)
 	winClass.hInstance = instanceHandle;
 	winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	winClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	winClass.hbrBackground = NULL;
 	winClass.lpszMenuName = NULL;
 	winClass.lpszClassName = "ccWindow";
 	winClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
