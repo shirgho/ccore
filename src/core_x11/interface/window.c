@@ -75,7 +75,8 @@ bool ccPollEvent(ccWindow *window)
 			break;
 		case MotionNotify:
 			window->event.type = CC_EVENT_MOUSE_MOVE;
-			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
+			window->mouseX = event.xmotion.x;
+			window->mouseY = event.xmotion.y;
 			break;
 		case KeymapNotify:
 			XRefreshKeyboardMapping(&event.xmapping);
