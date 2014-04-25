@@ -126,5 +126,5 @@ void renderGL()
 	glVertex3f(-1.0f, -1.0f, -1.0f);               
 	glVertex3f(-1.0f, -1.0f, 1.0f);                
 	glEnd();                                           
-	rotQuad += 0.1f;                                   
+	rotQuad += 0.5f;                                   
 }
