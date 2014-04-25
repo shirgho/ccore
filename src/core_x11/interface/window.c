@@ -3,11 +3,11 @@
 /* Attribute list for a double buffered OpenGL context, with at least 4 bits per color and a 16 bit depth buffer */
 static int attrList[] =                                             
 {                                                                      
-    GLX_RGBA, GLX_DOUBLEBUFFER,                                        
-    GLX_RED_SIZE, 4,                                                   
-    GLX_GREEN_SIZE, 4,                                                 
-    GLX_BLUE_SIZE, 4,                                                  
-    GLX_DEPTH_SIZE, 16,                                                
+	GLX_RGBA, GLX_DOUBLEBUFFER,                                        
+	GLX_RED_SIZE, 4,                                                   
+	GLX_GREEN_SIZE, 4,                                                 
+	GLX_BLUE_SIZE, 4,                                                  
+	GLX_DEPTH_SIZE, 16,                                                
 };
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags)
@@ -27,10 +27,12 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 
+	output->mouseX = output->mouseY = output->width = output->height = -1;
+
 	if(mode != CC_WINDOW_MODE_WINDOW){
 		ccChangeWM(output, mode);
 	}
-	
+
 	return output;
 }
 
@@ -74,6 +76,9 @@ bool ccPollEvent(ccWindow *window)
 			window->event.mouseState.button = event.xbutton.button;
 			break;
 		case MotionNotify:
+			if(window->mouseX == event.xmotion.x && window->mouseY == event.xmotion.y){
+				return false;
+			}
 			window->event.type = CC_EVENT_MOUSE_MOVE;
 			window->mouseX = event.xmotion.x;
 			window->mouseY = event.xmotion.y;
@@ -85,6 +90,9 @@ bool ccPollEvent(ccWindow *window)
 			window->event.type = CC_EVENT_KEY_DOWN;
 			break;
 		case ConfigureNotify:
+			if(window->width == event.xconfigure.width && window->height == event.xconfigure.height){
+				return false;
+			}
 			window->event.type = CC_EVENT_WINDOW_RESIZE;
 			window->width = event.xconfigure.width;
 			window->height = event.xconfigure.height;
