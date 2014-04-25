@@ -25,8 +25,9 @@ int main(int argc, char** argv)
 	ccWindow *window;
 	bool quit;
 
-	window = ccNewWindow(1024, 768, "CCore test application", CC_WINDOW_MODE_WINDOW, 0); 
+	window = ccNewWindow(1024, 768, "CCore test application", 0); 
 	ccGLBindContext(window, 3, 2);
+	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

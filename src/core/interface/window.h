@@ -47,7 +47,7 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags);
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
 void ccChangeWM(ccWindow *window, ccWindowMode mode);

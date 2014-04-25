@@ -91,7 +91,7 @@ bool ccPollEvent(ccWindow *window)
 	}
 }
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags)
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags)
 {
 	ccWindow *newWindow = malloc(sizeof(ccWindow));
 
@@ -139,8 +139,6 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 		GetWindowRect(newWindow->winHandle, &rect);
 		SetWindowPos(newWindow->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
 	}
-
-	ccChangeWM(newWindow, mode);
 
 	return newWindow;
 }
