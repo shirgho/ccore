@@ -23,7 +23,7 @@ typedef enum {
 	CC_WINDOW_FLAG_NOBUTTONS = 4
 } ccWindowFlag;
 
-typedef struct {
+typedef struct _ccWindow {
 	//Note: dimensions subtract border size
 	unsigned short width, height;
 	unsigned short mouseX, mouseY;

@@ -24,6 +24,6 @@ void ccErrorString(char *dest, ccError error)
 
 void ccAbort(const char* message)
 {
-	ccShowPopup(message, "fatal error", CC_POPUP_ERROR);
+	ccShowPopup(NULL, message, "fatal error", CC_POPUP_ERROR);
 	exit(0);
 }
