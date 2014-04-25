@@ -14,6 +14,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 {
 	ccWindow *output;
 	Window root;
+	Atom delete;
 
 	output = malloc(sizeof(ccWindow));
 	output->display = XOpenDisplay(NULL);
@@ -32,6 +33,9 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	if(mode != CC_WINDOW_MODE_WINDOW){
 		ccChangeWM(output, mode);
 	}
+
+	delete = XInternAtom(output->display, "WM_DELETE_WINDOW", True);
+	XSetWMProtocols(output->display, output->window, &delete, 1);
 
 	return output;
 }
@@ -100,6 +104,9 @@ bool ccPollEvent(ccWindow *window)
 			break;
 		case EnterNotify:
 			window->event.type = CC_EVENT_MOUSE_FOCUS_GAINED;
+			break;
+		case ClientMessage:
+			window->event.type = CC_EVENT_WINDOW_QUIT;
 			break;
 		case LeaveNotify:
 			window->event.type = CC_EVENT_MOUSE_FOCUS_LOST;
