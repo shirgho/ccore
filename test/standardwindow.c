@@ -59,6 +59,7 @@ int main(int argc, char** argv)
 					break;
 				case CC_EVENT_KEY_DOWN:
 					ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
+					break;
 				default:
 					break;
 			}

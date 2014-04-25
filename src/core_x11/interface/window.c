@@ -57,8 +57,8 @@ bool ccPollEvent(ccWindow *window)
 	ccAssert(window != NULL);
 
 	// Remove this statemnt if you want to block until an event happens
+	window->event.type = CC_EVENT_SKIP;
 	if(XPending(window->display) == 0){
-		window->event.type = CC_EVENT_SKIP;
 		return false;
 	}
 
@@ -80,12 +80,11 @@ bool ccPollEvent(ccWindow *window)
 			window->event.mouseState.button = event.xbutton.button;
 			break;
 		case MotionNotify:
-			if(window->mouseX == event.xmotion.x && window->mouseY == event.xmotion.y){
-				return false;
+			if(window->mouseX != event.xmotion.x || window->mouseY != event.xmotion.y){
+				window->event.type = CC_EVENT_MOUSE_MOVE;
+				window->mouseX = event.xmotion.x;
+				window->mouseY = event.xmotion.y;
 			}
-			window->event.type = CC_EVENT_MOUSE_MOVE;
-			window->mouseX = event.xmotion.x;
-			window->mouseY = event.xmotion.y;
 			break;
 		case KeymapNotify:
 			XRefreshKeyboardMapping(&event.xmapping);
@@ -94,13 +93,12 @@ bool ccPollEvent(ccWindow *window)
 			window->event.type = CC_EVENT_KEY_DOWN;
 			break;
 		case ConfigureNotify:
-			if(window->width == event.xconfigure.width && window->height == event.xconfigure.height){
-				return false;
+			if(window->width != event.xconfigure.width || window->height != event.xconfigure.height){
+				window->event.type = CC_EVENT_WINDOW_RESIZE;
+				window->width = event.xconfigure.width;
+				window->height = event.xconfigure.height;
+				window->aspect = window->height / window->width;
 			}
-			window->event.type = CC_EVENT_WINDOW_RESIZE;
-			window->width = event.xconfigure.width;
-			window->height = event.xconfigure.height;
-			window->aspect = window->height / window->width;
 			break;
 		case EnterNotify:
 			window->event.type = CC_EVENT_MOUSE_FOCUS_GAINED;
