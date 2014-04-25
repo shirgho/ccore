@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 
 	quit = false;
 	while(!quit){
+		ccDelay(15);
 		while(ccPollEvent(window)){
 			switch(window->event.type){
 				case CC_EVENT_WINDOW_QUIT:
