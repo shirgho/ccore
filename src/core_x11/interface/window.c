@@ -62,19 +62,15 @@ bool ccPollEvent(ccWindow *window)
 			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
 			if(event.xbutton.button <= 3){
 				window->event.type = CC_EVENT_MOUSE_DOWN;
-				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 				window->event.mouseState.button = event.xbutton.button;
 			}else if(event.xbutton.button == 4){
 				window->event.type = CC_EVENT_MOUSE_SCROLL_UP;
-				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			}else if(event.xbutton.button == 5){
 				window->event.type = CC_EVENT_MOUSE_SCROLL_DOWN;
-				window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			}
 			break;
 		case ButtonRelease:
 			window->event.type = CC_EVENT_MOUSE_UP;
-			window->event.mouseState.location = (ccPoint){event.xmotion.x, event.xmotion.y};
 			window->event.mouseState.button = event.xbutton.button;
 			break;
 		case MotionNotify:
@@ -86,7 +82,6 @@ bool ccPollEvent(ccWindow *window)
 			break;
 		case KeyPress:
 			window->event.type = CC_EVENT_KEY_DOWN;
-			
 			break;
 		case ConfigureNotify:
 			window->event.type = CC_EVENT_WINDOW_RESIZE;
