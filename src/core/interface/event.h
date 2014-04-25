@@ -43,6 +43,7 @@ typedef struct {
 	ccEventType type;
 	union {
 		ccMouseButtonType mouseButton;
+		short scrollDelta;
 		char key;
 	};
 } ccEvent;

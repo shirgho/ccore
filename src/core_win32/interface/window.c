@@ -55,8 +55,8 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 		break;
 	case WM_MOUSEWHEEL:
-		//TODO: save direction
 		activeWindow->event.type = CC_EVENT_MOUSE_SCROLL_UP;
+		activeWindow->event.scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
 		break;
 	default:
 	skipevent:

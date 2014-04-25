@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_MOUSE_SCROLL_UP:
-					rotQuad += 5;
+					rotQuad += window->event.scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
 					ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
@@ -126,6 +126,5 @@ void renderGL()
 	glVertex3f(-1.0f, 1.0f, -1.0f);                
 	glVertex3f(-1.0f, -1.0f, -1.0f);               
 	glVertex3f(-1.0f, -1.0f, 1.0f);                
-	glEnd();                                           
-	rotQuad += 0.5f;                                   
+	glEnd();
 }
