@@ -1,3 +1,7 @@
+#ifndef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif 
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,18 +11,19 @@
 #include "../src/core/interface/window.h"
 #include "../src/core/interface/popup.h"
 #include "../src/core/utils/timing.h"
+#include "../src/core/interface/event.h"
 
 float rotQuad = 0.0f;
 
 void resizeGL(unsigned int width, unsigned int height);
 void renderGL();
 
-int main2(int argc, char** argv)
+int main(int argc, char** argv)
 {
 	ccWindow *window;
 	bool quit;
 
-	window = ccNewWindow(1024, 768, "CCore test application", CC_WINDOW_MODE_FULLSCREEN, 0); 
+	window = ccNewWindow(1024, 768, "CCore test application", CC_WINDOW_MODE_WINDOW, 0); 
 	ccGLBindContext(window, 3, 2);
 
 	glShadeModel(GL_SMOOTH);
@@ -32,26 +37,30 @@ int main2(int argc, char** argv)
 
 	quit = false;
 	while(!quit){
-		ccPollEvent(window);
-		switch(window->event.type){
-			case CC_EVENT_WINDOW_QUIT:
-				if(ccShowDialogue("Really quit?", "quit", CC_DIALOGUE_YESNO) == true){
-					quit = true;
-				}
-				break;
-			case CC_EVENT_MOUSE_DOWN:
-				if(window->event.mouseState.button == CC_MOUSE_BUTTON_LEFT || window->event.mouseState.button == CC_MOUSE_BUTTON_SPECIAL_1){
-					quit = true;
-				}
-				break;
-			case CC_EVENT_MOUSE_SCROLL_UP:
-				rotQuad += 5;
-				break;
-			case CC_EVENT_WINDOW_RESIZE:
-				resizeGL(window->width, window->height);
-				break;
-			default:
-				break;
+		while(ccPollEvent(window)){
+			switch(window->event.type){
+				case CC_EVENT_WINDOW_QUIT:
+					if(ccShowDialogue("Really quit?", "quit", CC_DIALOGUE_YESNO) == true){
+						quit = true;
+					}
+					break;
+				case CC_EVENT_WINDOW_RESIZE:
+					printf("%d %d\n", window->width, window->height);
+					resizeGL(window->width, window->height);
+					break;
+				case CC_EVENT_MOUSE_DOWN:
+					if(window->event.mouseState.button == CC_MOUSE_BUTTON_LEFT || window->event.mouseState.button == CC_MOUSE_BUTTON_SPECIAL_1){
+						quit = true;
+					}
+					break;
+				case CC_EVENT_MOUSE_SCROLL_UP:
+					rotQuad += 5;
+					break;
+				case CC_EVENT_KEY_DOWN:
+					ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
+				default:
+					break;
+			}
 		}
 
 		renderGL();
@@ -73,7 +82,7 @@ void resizeGL(unsigned int width, unsigned int height)
 	glLoadIdentity();                                 
 	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
 	glMatrixMode(GL_MODELVIEW);                                           
-}                                                                         
+}
 
 void renderGL()
 {              
