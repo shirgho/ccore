@@ -58,6 +58,12 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.type = CC_EVENT_MOUSE_SCROLL_UP;
 		activeWindow->event.scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
 		break;
+	case WM_SETFOCUS:
+		activeWindow->event.type = CC_EVENT_KEYBOARD_FOCUS_GAINED;
+		break;
+	case WM_KILLFOCUS:
+		activeWindow->event.type = CC_EVENT_KEYBOARD_FOCUS_LOST;
+		break;
 	default:
 	skipevent:
 		return DefWindowProc(winHandle, message, wParam, lParam);
