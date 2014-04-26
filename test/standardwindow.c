@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 						quit = true;
 					}
 					break;
-				case CC_EVENT_MOUSE_SCROLL_UP:
+				case CC_EVENT_MOUSE_SCROLL:
 					rotQuad += window->event.scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:

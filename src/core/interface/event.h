@@ -13,10 +13,8 @@ typedef enum {
 	CC_EVENT_MOUSE_DOWN,
 	//Mouse button up, store buttoncode
 	CC_EVENT_MOUSE_UP,
-	//Mouse wheel moved down
-	CC_EVENT_MOUSE_SCROLL_DOWN,
 	//Mouse wheel moved up
-	CC_EVENT_MOUSE_SCROLL_UP,
+	CC_EVENT_MOUSE_SCROLL,
 	//The keyboard is focussed on the window
 	CC_EVENT_FOCUS_GAINED,
 	//The keyboard lost focus on the window
