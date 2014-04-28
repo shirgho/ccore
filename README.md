@@ -7,3 +7,6 @@ A development library for games which makes it easier to use low level system fu
 - Scons (http://scons.org)
 - GCC (MinGW on Win32)
 - X11 on Linux
+
+### TODO ###
+- Add direct acces to scancodes for the keyboard
