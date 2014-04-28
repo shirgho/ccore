@@ -1,5 +1,52 @@
 #include "../../core/interface/window.h"
 
+#define VK_0 0x30
+#define VK_9 0x39
+#define VK_A 0x41
+#define VK_Z 0x5A
+
+ccKeyCode translateKey(WPARAM wParam)
+{
+	if(wParam >= VK_A && wParam <= VK_Z) {
+		return CC_KEY_A + wParam - VK_A;
+	}
+
+	if(wParam >= VK_0 && wParam <= VK_9) {
+		return CC_KEY_0 + wParam - VK_0;
+	}
+
+	switch(wParam)
+	{
+	case VK_BACK:
+		return CC_KEY_BACKSPACE;
+		break;
+	case VK_TAB:
+		return CC_KEY_TAB;
+		break;
+	case VK_RETURN:
+		return CC_KEY_RETURN;
+		break;
+	case VK_ESCAPE:
+		return CC_KEY_ESCAPE;
+		break;
+	case VK_SPACE:
+		return CC_KEY_SPACE;
+		break;
+	case VK_LEFT:
+		return CC_KEY_LEFT;
+		break;
+	case VK_RIGHT:
+		return CC_KEY_RIGHT;
+		break;
+	case VK_UP:
+		return CC_KEY_UP;
+		break;
+	case VK_DOWN:
+		return CC_KEY_DOWN;
+		break;
+	}
+}
+
 LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	ccWindow *activeWindow = (ccWindow*)GetWindowLong(winHandle, GWL_USERDATA);
@@ -18,20 +65,17 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->sizeChanged = true;
 		break;
 	case WM_KEYDOWN:
-		//TODO: save keycode
 		activeWindow->event.type = CC_EVENT_KEY_DOWN;
+		activeWindow->event.key = translateKey(wParam);
 		break;
 	case WM_KEYUP:
-		//TODO: save keycode
 		activeWindow->event.type = CC_EVENT_KEY_UP;
+		activeWindow->event.key = translateKey(wParam);
 		break;
 	case WM_MOUSEMOVE:
 		activeWindow->mouseX = (unsigned short)lParam & 0x0000FFFF;
 		activeWindow->mouseY = (unsigned short)((lParam & 0xFFFF0000) >> 16);
 		activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
-		break;
-	case WM_MOUSELEAVE:
-		printf("leave");
 		break;
 	case WM_LBUTTONDOWN:
 		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
@@ -104,6 +148,7 @@ bool ccPollEvent(ccWindow *window)
 	}
 
 	if(PeekMessage(&window->msg, window->winHandle, 0, 0, PM_REMOVE)){
+		TranslateMessage(&window->msg);
 		DispatchMessage(&window->msg);
 		return window->event.type==CC_EVENT_SKIP?false:true;
 	}
