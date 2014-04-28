@@ -60,6 +60,7 @@
       <DebugInformationFormat>None</DebugInformationFormat>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
