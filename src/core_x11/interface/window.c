@@ -28,7 +28,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 
-	output->mouse.x = output->mouse.y = output->size.width = output->size.height = -1;
+	output->mouse.x = output->mouse.y = output->width = output->height = -1;
 
 	delete = XInternAtom(output->display, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(output->display, output->window, &delete, 1);
@@ -67,8 +67,10 @@ bool ccPollEvent(ccWindow *window)
 				window->event.mouseButton = event.xbutton.button;
 			}else if(event.xbutton.button == 4){
 				window->event.type = CC_EVENT_MOUSE_SCROLL;
+				window->event.scrollDelta = 1;
 			}else if(event.xbutton.button == 5){
 				window->event.type = CC_EVENT_MOUSE_SCROLL;
+				window->event.scrollDelta = -1;
 			}
 			break;
 		case ButtonRelease:
@@ -89,11 +91,11 @@ bool ccPollEvent(ccWindow *window)
 			window->event.type = CC_EVENT_KEY_DOWN;
 			break;
 		case ConfigureNotify:
-			if(window->size.width != event.xconfigure.width || window->size.height != event.xconfigure.height){
+			if(window->width != event.xconfigure.width || window->height != event.xconfigure.height){
 				window->event.type = CC_EVENT_WINDOW_RESIZE;
-				window->size.width = event.xconfigure.width;
-				window->size.height = event.xconfigure.height;
-				window->aspect = window->size.height / window->size.width;
+				window->width = event.xconfigure.width;
+				window->height = event.xconfigure.height;
+				window->aspect = window->height / window->width;
 			}
 			break;
 		case ClientMessage:
