@@ -45,6 +45,8 @@ ccKeyCode translateKey(WPARAM wParam)
 		return CC_KEY_DOWN;
 		break;
 	}
+
+	return wParam;
 }
 
 LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
