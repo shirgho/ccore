@@ -10,7 +10,7 @@ static int attrList[] =
 	GLX_DEPTH_SIZE, 16,                                                
 };
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, ccWindowMode mode, int flags)
+ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags)
 {
 	ccWindow *output;
 	Window root;
@@ -29,10 +29,6 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XStoreName(output->display, output->window, title);
 
 	output->mouseX = output->mouseY = output->width = output->height = -1;
-
-	if(mode != CC_WINDOW_MODE_WINDOW){
-		ccChangeWM(output, mode);
-	}
 
 	delete = XInternAtom(output->display, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(output->display, output->window, &delete, 1);
