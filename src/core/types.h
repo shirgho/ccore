@@ -5,6 +5,11 @@
 
 typedef char bool;
 
-tyedef struct {
-	int x, y;
+typedef struct {
+	union {
+		int x, width;
+	};
+	union {
+		int y, height;
+	}
 } ccPoint;

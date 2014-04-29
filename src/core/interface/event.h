@@ -34,7 +34,7 @@ typedef enum {
 	CC_MOUSE_BUTTON_SPECIAL_2 = 5
 } ccMouseButtonType;
 
-//partially mapped on ascii where possible
+// Partially mapped on ascii where possible
 typedef enum {
 	CC_KEY_BACKSPACE = 8,
  	CC_KEY_TAB,

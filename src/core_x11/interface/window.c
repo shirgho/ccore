@@ -28,7 +28,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 
-	output->mouseX = output->mouseY = output->width = output->height = -1;
+	output->mouse.X = output->mouse.Y = output->size.width = output->size.height = -1;
 
 	delete = XInternAtom(output->display, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(output->display, output->window, &delete, 1);
@@ -64,7 +64,7 @@ bool ccPollEvent(ccWindow *window)
 			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
 			if(event.xbutton.button <= 3){
 				window->event.type = CC_EVENT_MOUSE_DOWN;
-				window->event.mouseState.button = event.xbutton.button;
+				window->event.mouseButton = event.xbutton.button;
 			}else if(event.xbutton.button == 4){
 				window->event.type = CC_EVENT_MOUSE_SCROLL_UP;
 			}else if(event.xbutton.button == 5){
@@ -73,7 +73,7 @@ bool ccPollEvent(ccWindow *window)
 			break;
 		case ButtonRelease:
 			window->event.type = CC_EVENT_MOUSE_UP;
-			window->event.mouseState.button = event.xbutton.button;
+			window->event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
 			if(window->mouseX != event.xmotion.x || window->mouseY != event.xmotion.y){
@@ -91,8 +91,8 @@ bool ccPollEvent(ccWindow *window)
 		case ConfigureNotify:
 			if(window->width != event.xconfigure.width || window->height != event.xconfigure.height){
 				window->event.type = CC_EVENT_WINDOW_RESIZE;
-				window->width = event.xconfigure.width;
-				window->height = event.xconfigure.height;
+				window->size.width = event.xconfigure.width;
+				window->size.height = event.xconfigure.height;
 				window->aspect = window->height / window->width;
 			}
 			break;

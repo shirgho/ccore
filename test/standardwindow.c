@@ -49,8 +49,8 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
-					printf("%d %d\n", window->width, window->height);
-					resizeGL(window->width, window->height);
+					printf("%d %d\n", window->size.width, window->size.height);
+					resizeGL(window->size.width, window->size.height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
 					if(window->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE){
@@ -61,9 +61,21 @@ int main(int argc, char** argv)
 					rotQuad += window->event.scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
-					if(window->event.key == CC_KEY_UP) printf("UP!\n");
-					if(window->event.key == CC_KEY_W) ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
-					if(window->event.key == CC_KEY_Q) ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
+					if(window->event.key == CC_KEY_UP){ printf("UP!\n");
+					}
+					switch(window->event.key){
+						case CC_KEY_UP:
+							printf("UP!\n");
+							break;
+						case CC_KEY_W:
+							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
+							break;
+						case CC_KEY_Q:
+							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
+							break;
+						default:
+							break;
+					}
 					break;
 				default:
 					break;

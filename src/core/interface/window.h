@@ -25,9 +25,8 @@ typedef enum {
 
 typedef struct _ccWindow {
 	//Note: dimensions subtract border size
-	unsigned short width, height;
-	unsigned short mouseX, mouseY;
 	float aspect;
+	ccPoint mouse, size;
 	ccEvent event;
 
 #ifdef LINUX
