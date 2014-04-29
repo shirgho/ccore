@@ -73,8 +73,8 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.key = translateKey(wParam);
 		break;
 	case WM_MOUSEMOVE:
-		activeWindow->mouseX = (unsigned short)lParam & 0x0000FFFF;
-		activeWindow->mouseY = (unsigned short)((lParam & 0xFFFF0000) >> 16);
+		activeWindow->mouse.x = (unsigned short)lParam & 0x0000FFFF;
+		activeWindow->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
 		activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
 		break;
 	case WM_LBUTTONDOWN:

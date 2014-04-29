@@ -49,8 +49,8 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
-					printf("%d %d\n", window->size.width, window->size.height);
-					resizeGL(window->size.width, window->size.height);
+					printf("%d %d\n", window->width, window->height);
+					resizeGL(window->width, window->height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
 					if(window->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE){
