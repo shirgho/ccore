@@ -90,6 +90,9 @@ bool ccPollEvent(ccWindow *window)
 		case KeyPress:
 			window->event.type = CC_EVENT_KEY_DOWN;
 			break;
+		case KeyRelease:
+			window->event.type = CC_EVENT_KEY_UP;
+			break;
 		case ConfigureNotify:
 			if(window->width != event.xconfigure.width || window->height != event.xconfigure.height){
 				window->event.type = CC_EVENT_WINDOW_RESIZE;

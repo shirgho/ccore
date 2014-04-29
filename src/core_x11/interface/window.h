@@ -12,3 +12,4 @@
 #include "../../core/interface/event.h"
 #include "../../core/utils/error.h"
 #include "../../core/debug/assert.h"
+#include "../../core_linux/input.h"
