@@ -61,8 +61,6 @@ int main(int argc, char** argv)
 					rotQuad += window->event.scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
-					if(window->event.key == CC_KEY_UP){ printf("UP!\n");
-					}
 					switch(window->event.key){
 						case CC_KEY_UP:
 							printf("UP!\n");
