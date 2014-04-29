@@ -26,11 +26,12 @@ typedef enum {
 } ccEventType;
 
 typedef enum {
-	CC_MOUSE_BUTTON_LEFT,
-	CC_MOUSE_BUTTON_MIDDLE,
-	CC_MOUSE_BUTTON_RIGHT,
-	CC_MOUSE_BUTTON_SPECIAL_1,
-	CC_MOUSE_BUTTON_SPECIAL_2
+	CC_MOUSE_BUTTON_NONE = 0,
+	CC_MOUSE_BUTTON_LEFT = 1,
+	CC_MOUSE_BUTTON_MIDDLE = 2,
+	CC_MOUSE_BUTTON_RIGHT = 3,
+	CC_MOUSE_BUTTON_SPECIAL_1 = 4,
+	CC_MOUSE_BUTTON_SPECIAL_2 = 5
 } ccMouseButtonType;
 
 //partially mapped on ascii where possible
@@ -86,6 +87,7 @@ typedef struct {
 	ccEventType type;
 	union {
 		ccMouseButtonType mouseButton;
+		ccPoint mousePosition;
 		ccKeyCode key;
 		short scrollDelta;
 	};
