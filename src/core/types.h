@@ -11,5 +11,5 @@ typedef struct {
 	};
 	union {
 		int y, height;
-	}
+	};
 } ccPoint;

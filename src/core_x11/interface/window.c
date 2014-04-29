@@ -28,7 +28,7 @@ ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* t
 	XMapWindow(output->display, output->window);
 	XStoreName(output->display, output->window, title);
 
-	output->mouse.X = output->mouse.Y = output->size.width = output->size.height = -1;
+	output->mouse.x = output->mouse.y = output->size.width = output->size.height = -1;
 
 	delete = XInternAtom(output->display, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(output->display, output->window, &delete, 1);
@@ -66,9 +66,9 @@ bool ccPollEvent(ccWindow *window)
 				window->event.type = CC_EVENT_MOUSE_DOWN;
 				window->event.mouseButton = event.xbutton.button;
 			}else if(event.xbutton.button == 4){
-				window->event.type = CC_EVENT_MOUSE_SCROLL_UP;
+				window->event.type = CC_EVENT_MOUSE_SCROLL;
 			}else if(event.xbutton.button == 5){
-				window->event.type = CC_EVENT_MOUSE_SCROLL_DOWN;
+				window->event.type = CC_EVENT_MOUSE_SCROLL;
 			}
 			break;
 		case ButtonRelease:
@@ -76,10 +76,10 @@ bool ccPollEvent(ccWindow *window)
 			window->event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
-			if(window->mouseX != event.xmotion.x || window->mouseY != event.xmotion.y){
+			if(window->mouse.x != event.xmotion.x || window->mouse.y != event.xmotion.y){
 				window->event.type = CC_EVENT_MOUSE_MOVE;
-				window->mouseX = event.xmotion.x;
-				window->mouseY = event.xmotion.y;
+				window->mouse.x = event.xmotion.x;
+				window->mouse.y = event.xmotion.y;
 			}
 			break;
 		case KeymapNotify:
@@ -89,27 +89,27 @@ bool ccPollEvent(ccWindow *window)
 			window->event.type = CC_EVENT_KEY_DOWN;
 			break;
 		case ConfigureNotify:
-			if(window->width != event.xconfigure.width || window->height != event.xconfigure.height){
+			if(window->size.width != event.xconfigure.width || window->size.height != event.xconfigure.height){
 				window->event.type = CC_EVENT_WINDOW_RESIZE;
 				window->size.width = event.xconfigure.width;
 				window->size.height = event.xconfigure.height;
-				window->aspect = window->height / window->width;
+				window->aspect = window->size.height / window->size.width;
 			}
-			break;
-		case EnterNotify:
-			window->event.type = CC_EVENT_MOUSE_FOCUS_GAINED;
 			break;
 		case ClientMessage:
 			window->event.type = CC_EVENT_WINDOW_QUIT;
 			break;
+		case EnterNotify:
+			window->event.type = CC_EVENT_FOCUS_GAINED;
+			break;
 		case LeaveNotify:
-			window->event.type = CC_EVENT_MOUSE_FOCUS_LOST;
+			window->event.type = CC_EVENT_FOCUS_LOST;
 			break;
 		case FocusIn:
-			window->event.type = CC_EVENT_KEYBOARD_FOCUS_GAINED;
+			window->event.type = CC_EVENT_FOCUS_GAINED;
 			break;
 		case FocusOut:
-			window->event.type = CC_EVENT_KEYBOARD_FOCUS_LOST;
+			window->event.type = CC_EVENT_FOCUS_LOST;
 			break;
 	}
 
