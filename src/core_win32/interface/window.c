@@ -278,7 +278,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		window->width = GetSystemMetrics(SM_CXSCREEN);
 		window->height = GetSystemMetrics(SM_CYSCREEN);
 
-		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
+		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
 		MoveWindow(window->winHandle, 0, 0, window->width, window->height, TRUE);
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
