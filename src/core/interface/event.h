@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../types.h"
+
 typedef enum {
 	//Event not handled in ccore, return false on pollEvent
 	CC_EVENT_SKIP,
@@ -36,6 +38,7 @@ typedef enum {
 
 // Partially mapped on ascii where possible
 typedef enum {
+	CC_KEY_UNDEFINED = 0,
 	CC_KEY_BACKSPACE = 8,
  	CC_KEY_TAB,
 	CC_KEY_RETURN = 13,

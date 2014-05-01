@@ -6,6 +6,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/extensions/Xrandr.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 
@@ -13,4 +14,4 @@
 #include "../../core/interface/event.h"
 #include "../../core/utils/error.h"
 #include "../../core/debug/assert.h"
-#include "../../core_linux/input.h"
+#include "key.h"

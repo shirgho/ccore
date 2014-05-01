@@ -23,6 +23,8 @@ void renderGL();
 int main(int argc, char** argv)
 {
 	ccWindow *window;
+	ccScreenData current;
+	ccResolutions *resolutions;
 	bool quit;
 	int i;
 
@@ -31,13 +33,12 @@ int main(int argc, char** argv)
 	ccChangeWM(window, CC_WINDOW_MODE_VISIBLE);
 	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
 
-	ccDimensions current;
 	ccGetResolution(&current);
 	printf("Active resolution: %d x %d\n", current.width, current.height);
 
-	ccResolutions* resolutions = ccGetResolutions(window);
-	for(i = 0; i < resolutions->nResolutions; i++) {
-		printf("found %d x %d\n", resolutions->resolutions[i].width, resolutions->resolutions[i].height);
+	resolutions = ccGetResolutions(window);
+	for(i = 0; i < resolutions->amount; i++) {
+		printf("found %d x %d\n", resolutions->screenData[i].width, resolutions->screenData[i].height);
 	}
 	ccFreeResolutions(resolutions);
 

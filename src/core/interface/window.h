@@ -11,12 +11,12 @@
 #endif
 
 typedef struct {
-	int width, height, framerate;
-} ccScreenDimension;
+	int width, height, refreshRate;
+} ccScreenData;
 
 typedef struct {
-	ccScreenDimension* resolutions;
-	int nResolutions;
+	ccScreenData* screenData;
+	int amount;
 } ccResolutions;
 
 typedef enum {
@@ -65,8 +65,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
 ccResolutions* ccGetResolutions(ccWindow *window);
 void ccFreeResolutions(ccResolutions *resolutions);
-void ccGetResolution(ccScreenDimension *dimensions); // Note: acts on primary display device on Win32
-void ccSetResolution(ccScreenDimension *dimensions);
+void ccGetResolution(ccScreenData *dimensions); // Note: acts on primary display device on Win32
+void ccSetResolution(ccScreenData *dimensions);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);

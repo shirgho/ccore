@@ -10,7 +10,7 @@ static int attrList[] =
 	GLX_DEPTH_SIZE, 16,                                                
 };
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags)
+ccWindow* ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags)
 {
 	ccWindow *output;
 	Window root;
@@ -89,6 +89,7 @@ bool ccPollEvent(ccWindow *window)
 			break;
 		case KeyPress:
 			window->event.type = CC_EVENT_KEY_DOWN;
+			window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
 		case KeyRelease:
 			window->event.type = CC_EVENT_KEY_UP;
@@ -142,6 +143,30 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
+ccResolutions* ccGetResolutions(ccWindow *window)
+{
+	ccResolutions *sizes;
+
+	sizes = malloc(sizeof(ccResolutions));
+
+	return sizes;
+}
+
+void ccFreeResolutions(ccResolutions *resolutions)
+{
+	free(resolutions);
+}
+
+void ccGetResolution(ccScreenData *dimension)
+{
+
+}
+
+void ccSetResolution(ccScreenData *dimension)
+{
+
+}
+
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
@@ -159,4 +184,3 @@ void ccGLSwapBuffers(ccWindow *window)
 {
 	glXSwapBuffers(window->display, window->window);
 }
-
