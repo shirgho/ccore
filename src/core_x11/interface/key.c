@@ -25,6 +25,14 @@ ccKeyCode ccXLookupKey(int key)
 			return CC_KEY_ESCAPE;
 		case XK_space:
 			return CC_KEY_SPACE;
+		case XK_Shift_L:
+			return CC_KEY_LSHIFT;
+		case XK_Shift_R:
+			return CC_KEY_RSHIFT;
+		case XK_Control_L:
+			return CC_KEY_LCONTROL;
+		case XK_Control_R:
+			return CC_KEY_RCONTROL;
 		case XK_Left:
 			return CC_KEY_LEFT;
 		case XK_Right:

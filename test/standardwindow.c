@@ -75,9 +75,6 @@ int main(int argc, char** argv)
 					break;
 				case CC_EVENT_KEY_DOWN:
 					switch(window->event.key){
-						case CC_KEY_UP:
-							printf("UP!\n");
-							break;
 						case CC_KEY_1:
 							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
 							break;
@@ -93,7 +90,11 @@ int main(int argc, char** argv)
 						case CC_KEY_5:
 							ccChangeWM(window, CC_WINDOW_MODE_INVISIBLE);
 							break;
+						case CC_KEY_UNDEFINED:
+							printf("Key is not supported!\n");
+							break;
 						default:
+							printf("Key: %c\n", (char)window->event.key);
 							break;
 					}
 					break;

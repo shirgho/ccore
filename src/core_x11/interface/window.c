@@ -93,6 +93,7 @@ bool ccPollEvent(ccWindow *window)
 			break;
 		case KeyRelease:
 			window->event.type = CC_EVENT_KEY_UP;
+			window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
 		case ConfigureNotify:
 			if(window->width != event.xconfigure.width || window->height != event.xconfigure.height){
