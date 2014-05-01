@@ -27,6 +27,18 @@ ccKeyCode translateKey(WPARAM wParam)
 	case VK_SPACE:
 		return CC_KEY_SPACE;
 		break;
+	case VK_LSHIFT:
+		return CC_KEY_LSHIFT;
+		break;
+	case VK_RSHIFT:
+		return CC_KEY_RSHIFT;
+		break;
+	case VK_LCONTROL:
+		return CC_KEY_LCONTROL;
+		break;
+	case VK_RCONTROL:
+		return CC_KEY_RCONTROL;
+		break;
 	case VK_LEFT:
 		return CC_KEY_LEFT;
 		break;
@@ -41,7 +53,7 @@ ccKeyCode translateKey(WPARAM wParam)
 		break;
 	}
 
-	return wParam;
+	return CC_KEY_UNDEFINED;
 }
 
 LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
