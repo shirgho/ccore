@@ -10,6 +10,15 @@
 #include "../../core_win32/interface/window.h"
 #endif
 
+typedef struct {
+	int width, height, framerate;
+} ccScreenDimension;
+
+typedef struct {
+	ccScreenDimension* resolutions;
+	int nResolutions;
+} ccResolutions;
+
 typedef enum {
 	CC_WINDOW_MODE_VISIBLE,
 	CC_WINDOW_MODE_INVISIBLE,
@@ -49,20 +58,15 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
-typedef struct {
-	ccDimensions* resolutions;
-	int nResolutions;
-} ccResolutions;
-
-ccResolutions *ccGetResolutions(ccWindow *window);
-void ccFreeResolutions(ccResolutions *resolutions);
-void ccGetResolution(ccDimensions *dimensions); //Note: acts on primary display device
-void ccSetResolution(ccDimensions *dimensions);
-
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags);
+ccWindow* ccNewWindow(unsigned short width, unsigned short height, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
+
+ccResolutions* ccGetResolutions(ccWindow *window);
+void ccFreeResolutions(ccResolutions *resolutions);
+void ccGetResolution(ccScreenDimension *dimensions); // Note: acts on primary display device on Win32
+void ccSetResolution(ccScreenDimension *dimensions);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);
