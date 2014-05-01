@@ -6,8 +6,8 @@ A development library for games which makes it easier to use low level system fu
 ### Minimum requirements for compiling ###
 **Linux:**
 - scons (http://scons.org)
-- libx11-dev (for X11)
-- libxrandr (for getting screen resolution)
+- libx11-dev
+- libxrandr-dev
 
 **Windows:**
 - Visual Studio
