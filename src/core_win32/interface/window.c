@@ -1,18 +1,13 @@
 #include "../../core/interface/window.h"
 
-#define VK_0 0x30
-#define VK_9 0x39
-#define VK_A 0x41
-#define VK_Z 0x5A
-
 ccKeyCode translateKey(WPARAM wParam)
 {
-	if(wParam >= VK_A && wParam <= VK_Z) {
-		return CC_KEY_A + wParam - VK_A;
+	if(wParam >= 'A' && wParam <= 'Z') {
+		return CC_KEY_A + wParam - 'A';
 	}
 
-	if(wParam >= VK_0 && wParam <= VK_9) {
-		return CC_KEY_0 + wParam - VK_0;
+	if(wParam >= '0' && wParam <= '9') {
+		return CC_KEY_0 + wParam - '0';
 	}
 
 	switch(wParam)
