@@ -260,10 +260,14 @@ void ccGLSwapBuffers(ccWindow *window)
 
 void ccChangeWM(ccWindow *window, ccWindowMode mode)
 {
-	ShowWindow(window->winHandle, SW_SHOW);
-
 	switch(mode)
 	{
+	case CC_WINDOW_MODE_VISIBLE:
+		ShowWindow(window->winHandle, SW_SHOW);
+		break;
+	case CC_WINDOW_MODE_INVISIBLE:
+		ShowWindow(window->winHandle, SW_HIDE);
+		break;
 	case CC_WINDOW_MODE_MINIMIZED:
 		ShowWindow(window->winHandle, SW_MINIMIZE);
 		break;

@@ -27,6 +27,7 @@ int main(int argc, char** argv)
 
 	window = ccNewWindow(1024, 768, "CCore test application", 0); 
 	ccGLBindContext(window, 3, 2);
+	ccChangeWM(window, CC_WINDOW_MODE_VISIBLE);
 	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
 
 	glShadeModel(GL_SMOOTH);
@@ -76,6 +77,9 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_4:
 							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
+							break;
+						case CC_KEY_5:
+							ccChangeWM(window, CC_WINDOW_MODE_INVISIBLE);
 							break;
 					}
 					break;
