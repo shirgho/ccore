@@ -24,6 +24,7 @@ int main(int argc, char** argv)
 {
 	ccWindow *window;
 	bool quit;
+	int i;
 
 	window = ccNewWindow(1024, 768, "CCore test application", 0); 
 	ccGLBindContext(window, 3, 2);
@@ -35,7 +36,7 @@ int main(int argc, char** argv)
 	printf("Active resolution: %d x %d\n", current.width, current.height);
 
 	ccResolutions* resolutions = ccGetResolutions(window);
-	for(int i = 0; i < resolutions->nResolutions; i++) {
+	for(i = 0; i < resolutions->nResolutions; i++) {
 		printf("found %d x %d\n", resolutions->resolutions[i].width, resolutions->resolutions[i].height);
 	}
 	ccFreeResolutions(resolutions);
@@ -90,6 +91,8 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_5:
 							ccChangeWM(window, CC_WINDOW_MODE_INVISIBLE);
+							break;
+						default:
 							break;
 					}
 					break;
