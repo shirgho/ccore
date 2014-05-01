@@ -14,7 +14,7 @@ typedef enum {
 	CC_WINDOW_MODE_VISIBLE,
 	CC_WINDOW_MODE_INVISIBLE,
 	CC_WINDOW_MODE_FULLSCREEN,
-	CC_WINDOW_MODE_MAXIMIZED,
+	CC_WINDOW_MODE_MAXIMIZED, //Note: maximize from windowed mode
 	CC_WINDOW_MODE_WINDOW,
 	CC_WINDOW_MODE_MINIMIZED
 } ccWindowMode;
@@ -56,6 +56,7 @@ typedef struct {
 
 ccResolutions *ccGetResolutions(ccWindow *window);
 void ccFreeResolutions(ccResolutions *resolutions);
+//Note: acts on primary display device
 void ccGetResolution(ccDimensions *dimensions);
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags);
