@@ -2,12 +2,8 @@
 
 ccKeyCode translateKey(WPARAM wParam)
 {
-	if(wParam >= 'A' && wParam <= 'Z') {
-		return CC_KEY_A + wParam - 'A';
-	}
-
-	if(wParam >= '0' && wParam <= '9') {
-		return CC_KEY_0 + wParam - '0';
+	if((wParam >= 'A' && wParam <= 'Z') || (wParam >= '0' && wParam <= '9')) {
+		return wParam;
 	}
 
 	switch(wParam)
