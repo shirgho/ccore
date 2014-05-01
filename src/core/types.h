@@ -6,10 +6,9 @@
 typedef char bool;
 
 typedef struct {
-	union {
-		int x, width;
-	};
-	union {
-		int y, height;
-	};
+	int x, y;
 } ccPoint;
+
+typedef struct {
+	int width, height;
+} ccDimensions;
