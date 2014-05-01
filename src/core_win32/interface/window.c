@@ -290,23 +290,23 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 ccResolutions *ccGetResolutions(ccWindow *window) {
 	DEVMODE dm;
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
-	resolutions->nResolutions = 0;
-	resolutions->resolutions = NULL;
+	resolutions->amount = 0;
+	resolutions->screenData = NULL;
 
 	for(int i = 0; EnumDisplaySettings(NULL, i, &dm) != 0; i++) {
-		if(resolutions->nResolutions == 0 ||
-			(resolutions->resolutions[resolutions->nResolutions-1].width != dm.dmPelsWidth || resolutions->resolutions[resolutions->nResolutions-1].height != dm.dmPelsHeight)) {
+		if(resolutions->amount == 0 ||
+			(resolutions->screenData[resolutions->amount - 1].width != dm.dmPelsWidth || resolutions->screenData[resolutions->amount - 1].height != dm.dmPelsHeight)) {
 			
-			if(resolutions->resolutions == NULL) {
-				resolutions->resolutions = malloc(sizeof(ccDimensions));
+			if(resolutions->screenData == NULL) {
+				resolutions->screenData = malloc(sizeof(ccScreenData));
 			}
 			else{
-				resolutions->resolutions = realloc(resolutions->resolutions, (resolutions->nResolutions + 1) * sizeof(ccDimensions));
+				resolutions->screenData = realloc(resolutions->screenData, (resolutions->amount + 1) * sizeof(ccScreenData));
 			}
 
-			resolutions->resolutions[resolutions->nResolutions].width = dm.dmPelsWidth;
-			resolutions->resolutions[resolutions->nResolutions].height = dm.dmPelsHeight;
-			resolutions->nResolutions++;
+			resolutions->screenData[resolutions->amount].width = dm.dmPelsWidth;
+			resolutions->screenData[resolutions->amount].height = dm.dmPelsHeight;
+			resolutions->amount++;
 		}
 	}
 
@@ -314,15 +314,15 @@ ccResolutions *ccGetResolutions(ccWindow *window) {
 }
 
 void ccFreeResolutions(ccResolutions *resolutions) {
-	if(resolutions->nResolutions!=0) free(resolutions->resolutions);
+	if(resolutions->amount != 0) free(resolutions->screenData);
 	free(resolutions);
 }
 
-void ccGetResolution(ccDimensions *dimensions) {
-	dimensions->width = GetSystemMetrics(SM_CXSCREEN);
-	dimensions->height = GetSystemMetrics(SM_CYSCREEN);
+void ccGetResolution(ccScreenData *screenData) {
+	screenData->width = GetSystemMetrics(SM_CXSCREEN);
+	screenData->height = GetSystemMetrics(SM_CYSCREEN);
 }
 
-void ccSetResolution(ccDimensions *dimensions) {
+void ccSetResolution(ccScreenData *screenData) {
 
 }
