@@ -7,6 +7,7 @@ A development library for games which makes it easier to use low level system fu
 **Linux:**
 - scons (http://scons.org)
 - libx11-dev
+- libxrandr-dev
 
 **Windows:**
 - Visual Studio
