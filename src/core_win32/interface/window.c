@@ -286,3 +286,39 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		break;
 	}
 }
+
+ccResolutions *ccGetResolutions(ccWindow *window) {
+	DEVMODE dm;
+	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
+	resolutions->nResolutions = 0;
+	resolutions->resolutions = NULL;
+
+	for(int i = 0; EnumDisplaySettings(NULL, i, &dm) != 0; i++) {
+		if(resolutions->nResolutions == 0 ||
+			(resolutions->resolutions[resolutions->nResolutions-1].width != dm.dmPelsWidth || resolutions->resolutions[resolutions->nResolutions-1].height != dm.dmPelsHeight)) {
+			
+			if(resolutions->resolutions == NULL) {
+				resolutions->resolutions = malloc(sizeof(ccDimensions));
+			}
+			else{
+				resolutions->resolutions = realloc(resolutions->resolutions, (resolutions->nResolutions + 1) * sizeof(ccDimensions));
+			}
+
+			resolutions->resolutions[resolutions->nResolutions].width = dm.dmPelsWidth;
+			resolutions->resolutions[resolutions->nResolutions].height = dm.dmPelsHeight;
+			resolutions->nResolutions++;
+		}
+	}
+
+	return resolutions;
+}
+
+void ccFreeResolutions(ccResolutions *resolutions) {
+	if(resolutions->nResolutions!=0) free(resolutions->resolutions);
+	free(resolutions);
+}
+
+void ccGetResolution(ccDimensions *dimensions) {
+	dimensions->width = GetSystemMetrics(SM_CXSCREEN);
+	dimensions->height = GetSystemMetrics(SM_CYSCREEN);
+}

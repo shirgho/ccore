@@ -49,6 +49,15 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
+typedef struct {
+	ccDimensions* resolutions;
+	int nResolutions;
+} ccResolutions;
+
+ccResolutions *ccGetResolutions(ccWindow *window);
+void ccFreeResolutions(ccResolutions *resolutions);
+void ccGetResolution(ccDimensions *dimensions);
+
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);

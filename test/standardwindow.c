@@ -30,6 +30,16 @@ int main(int argc, char** argv)
 	ccChangeWM(window, CC_WINDOW_MODE_VISIBLE);
 	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
 
+	ccDimensions current;
+	ccGetResolution(&current);
+	printf("Active resolution: %d x %d\n", current.width, current.height);
+
+	ccResolutions* resolutions = ccGetResolutions(window);
+	for(int i = 0; i < resolutions->nResolutions; i++) {
+		printf("found %d x %d\n", resolutions->resolutions[i].width, resolutions->resolutions[i].height);
+	}
+	ccFreeResolutions(resolutions);
+
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);                  
@@ -50,7 +60,7 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
-					printf("%d %d\n", window->width, window->height);
+					printf("Updated window size: %d x %d\n", window->width, window->height);
 					resizeGL(window->width, window->height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
