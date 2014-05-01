@@ -260,24 +260,25 @@ void ccGLSwapBuffers(ccWindow *window)
 
 void ccChangeWM(ccWindow *window, ccWindowMode mode)
 {
-	int sw;
-	LONG lStyle = GetWindowLong(window->winHandle, GWL_STYLE);
+	ShowWindow(window->winHandle, SW_SHOW);
 
 	switch(mode)
 	{
 	case CC_WINDOW_MODE_MINIMIZED:
-		sw = SW_SHOWMINIMIZED;
+		ShowWindow(window->winHandle, SW_MINIMIZE);
 		break;
 	case CC_WINDOW_MODE_WINDOW:
-		sw = SW_SHOW;
+		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		lStyle &= ~WS_CAPTION;
-	default:
-		sw = SW_SHOWMAXIMIZED;
+		window->width = GetSystemMetrics(SM_CXSCREEN);
+		window->height = GetSystemMetrics(SM_CYSCREEN);
+
+		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
+		MoveWindow(window->winHandle, 0, 0, window->width, window->height, TRUE);
+		break;
+	case CC_WINDOW_MODE_MAXIMIZED:
+		ShowWindow(window->winHandle, SW_MAXIMIZE);
 		break;
 	}
-
-	SetWindowLong(window->winHandle, GWL_STYLE, lStyle);
-	ShowWindow(window->winHandle, sw);
 }

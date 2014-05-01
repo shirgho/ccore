@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 					resizeGL(window->width, window->height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
-					if(window->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE){
+					if(window->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE) {
 						quit = true;
 					}
 					break;
@@ -65,13 +65,17 @@ int main(int argc, char** argv)
 						case CC_KEY_UP:
 							printf("UP!\n");
 							break;
-						case CC_KEY_W:
+						case CC_KEY_1:
 							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
 							break;
-						case CC_KEY_Q:
-							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
+						case CC_KEY_2:
+							ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
 							break;
-						default:
+						case CC_KEY_3:
+							ccChangeWM(window, CC_WINDOW_MODE_MINIMIZED);
+							break;
+						case CC_KEY_4:
+							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
 							break;
 					}
 					break;
