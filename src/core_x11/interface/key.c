@@ -2,15 +2,15 @@
 
 ccKeyCode ccXLookupKey(int key)
 {
-	if(key <= XK_0 && key >= XK_9){
+	if(key >= XK_0 && key <= XK_9){
 		return (ccKeyCode)(key - XK_0) + CC_KEY_0;
 	}
 
-	if(key <= XK_a && key >= XK_z){
+	if(key >= XK_a && key <= XK_z){
 		return (ccKeyCode)(key - XK_a) + CC_KEY_A;
 	}
 
-	if(key <= XK_A && key >= XK_Z){
+	if(key >= XK_A && key <= XK_Z){
 		return (ccKeyCode)(key - XK_A) + CC_KEY_A;
 	}
 
