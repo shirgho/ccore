@@ -56,8 +56,8 @@ typedef struct {
 
 ccResolutions *ccGetResolutions(ccWindow *window);
 void ccFreeResolutions(ccResolutions *resolutions);
-//Note: acts on primary display device
-void ccGetResolution(ccDimensions *dimensions);
+void ccGetResolution(ccDimensions *dimensions); //Note: acts on primary display device
+void ccSetResolution(ccDimensions *dimensions);
 
 ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags);
 void ccFreeWindow(ccWindow *window);

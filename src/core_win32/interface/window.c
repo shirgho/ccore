@@ -322,3 +322,7 @@ void ccGetResolution(ccDimensions *dimensions) {
 	dimensions->width = GetSystemMetrics(SM_CXSCREEN);
 	dimensions->height = GetSystemMetrics(SM_CYSCREEN);
 }
+
+void ccSetResolution(ccDimensions *dimensions) {
+
+}
