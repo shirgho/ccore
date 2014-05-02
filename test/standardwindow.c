@@ -34,11 +34,11 @@ int main(int argc, char** argv)
 	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
 
 	ccGetResolution(&current);
-	printf("Active resolution: %d x %d @ %dHz\n", current.width, current.height, current.refreshRate);
+	printf("Active resolution: %d x %d @ %dHz, %dbpp\n", current.width, current.height, current.refreshRate, current.bitDepth);
 
 	resolutions = ccGetResolutions();
 	for(i = 0; i < resolutions->amount; i++) {
-		printf("found %d x %d @ %dHz\n", resolutions->screenData[i].width, resolutions->screenData[i].height, resolutions->screenData[i].refreshRate);
+		printf("found %d x %d @ %dHz, %dbpp\n", resolutions->screenData[i].width, resolutions->screenData[i].height, resolutions->screenData[i].refreshRate, resolutions->screenData[i].bitDepth);
 	}
 	ccFreeResolutions(resolutions);
 

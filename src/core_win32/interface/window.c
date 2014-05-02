@@ -314,6 +314,7 @@ ccResolutions *ccGetResolutions() {
 			resolutions->screenData[resolutions->amount].width = dm.dmPelsWidth;
 			resolutions->screenData[resolutions->amount].height = dm.dmPelsHeight;
 			resolutions->screenData[resolutions->amount].refreshRate = dm.dmDisplayFrequency;
+			resolutions->screenData[resolutions->amount].bitDepth = dm.dmBitsPerPel;
 			resolutions->amount++;
 		}
 	}
@@ -335,6 +336,7 @@ void ccGetResolution(ccScreenData *screenData) {
 	screenData->width = dm.dmPelsWidth;
 	screenData->height = dm.dmPelsHeight;
 	screenData->refreshRate = dm.dmDisplayFrequency;
+	screenData->bitDepth = dm.dmBitsPerPel;
 }
 
 void ccSetResolution(ccScreenData *screenData) {
