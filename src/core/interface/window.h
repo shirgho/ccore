@@ -63,7 +63,7 @@ void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
-ccResolutions* ccGetResolutions(ccWindow *window);
+ccResolutions* ccGetResolutions();
 void ccFreeResolutions(ccResolutions *resolutions);
 void ccGetResolution(ccScreenData *dimensions); // Note: acts on primary display device on Win32
 void ccSetResolution(ccScreenData *dimensions);

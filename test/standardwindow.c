@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	ccGetResolution(&current);
 	printf("Active resolution: %d x %d @ %dHz\n", current.width, current.height, current.refreshRate);
 
-	resolutions = ccGetResolutions(window);
+	resolutions = ccGetResolutions();
 	for(i = 0; i < resolutions->amount; i++) {
 		printf("found %d x %d @ %dHz\n", resolutions->screenData[i].width, resolutions->screenData[i].height, resolutions->screenData[i].refreshRate);
 	}

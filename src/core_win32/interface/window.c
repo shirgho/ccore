@@ -290,7 +290,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
-ccResolutions *ccGetResolutions(ccWindow *window) {
+ccResolutions *ccGetResolutions() {
 	DEVMODE dm;
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
 
@@ -327,8 +327,14 @@ void ccFreeResolutions(ccResolutions *resolutions) {
 }
 
 void ccGetResolution(ccScreenData *screenData) {
-	screenData->width = GetSystemMetrics(SM_CXSCREEN);
-	screenData->height = GetSystemMetrics(SM_CYSCREEN);
+	DEVMODE dm;
+	ZeroMemory(&dm, sizeof(dm));
+	dm.dmSize = sizeof(dm);
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
+
+	screenData->width = dm.dmPelsWidth;
+	screenData->height = dm.dmPelsHeight;
+	screenData->refreshRate = dm.dmDisplayFrequency;
 }
 
 void ccSetResolution(ccScreenData *screenData) {
