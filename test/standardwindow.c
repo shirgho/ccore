@@ -42,6 +42,10 @@ int main(int argc, char** argv)
 	}
 	ccFreeResolutions(resolutions);
 
+	current.width = 1600;
+	current.height = 900;
+	ccSetResolution(&current);
+
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);                  

@@ -11,7 +11,7 @@
 #endif
 
 typedef struct {
-	int width, height, refreshRate;
+	int width, height, refreshRate, bitDepth;
 } ccScreenData;
 
 typedef struct {

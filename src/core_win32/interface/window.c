@@ -338,5 +338,17 @@ void ccGetResolution(ccScreenData *screenData) {
 }
 
 void ccSetResolution(ccScreenData *screenData) {
+	DEVMODE dm;
+	ZeroMemory(&dm, sizeof(dm));
+	dm.dmSize = sizeof(dm);
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
 
+	dm.dmPelsWidth = screenData->width;
+	dm.dmPelsHeight = screenData->height;
+	dm.dmFields = (DM_PELSWIDTH | DM_PELSHEIGHT);
+
+	if(ChangeDisplaySettings(&dm, CDS_TEST) != DISP_CHANGE_SUCCESSFUL) {
+		//TODO: throw error
+		printf("Couldn't change display mode");
+	}
 }
