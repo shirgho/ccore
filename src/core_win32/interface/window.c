@@ -293,6 +293,10 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 ccResolutions *ccGetResolutions(ccWindow *window) {
 	DEVMODE dm;
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
+
+	ZeroMemory(&dm, sizeof(dm));
+	dm.dmSize = sizeof(dm);
+
 	resolutions->amount = 0;
 	resolutions->screenData = NULL;
 
@@ -309,6 +313,7 @@ ccResolutions *ccGetResolutions(ccWindow *window) {
 
 			resolutions->screenData[resolutions->amount].width = dm.dmPelsWidth;
 			resolutions->screenData[resolutions->amount].height = dm.dmPelsHeight;
+			resolutions->screenData[resolutions->amount].refreshRate = dm.dmDisplayFrequency;
 			resolutions->amount++;
 		}
 	}
