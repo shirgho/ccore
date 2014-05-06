@@ -21,7 +21,7 @@ typedef struct {
 
 typedef struct {
 	ccScreenData screenData;
-} ccMonitor;
+} ccDisplay;
 
 typedef enum {
 	CC_WINDOW_MODE_VISIBLE,
@@ -44,7 +44,6 @@ typedef struct _ccWindow {
 	unsigned short width, height;
 	ccPoint mouse;
 	ccEvent event;
-	ccMonitor monitor;
 
 #ifdef LINUX
 	Display *display; 
