@@ -2,6 +2,7 @@
 
 #include "../types.h"
 
+// A type of event returned used in ccWindow after the function ccPollEvent is called
 typedef enum {
 	//Event not handled in ccore, return false on pollEvent
 	CC_EVENT_SKIP,
@@ -27,6 +28,7 @@ typedef enum {
 	CC_EVENT_WINDOW_RESIZE,
 } ccEventType;
 
+// The type of mouse button pressed, used inside the ccEvent union
 typedef enum {
 	CC_MOUSE_BUTTON_NONE = 0,
 	CC_MOUSE_BUTTON_LEFT = 1,
@@ -36,7 +38,8 @@ typedef enum {
 	CC_MOUSE_BUTTON_SPECIAL_2 = 5
 } ccMouseButtonType;
 
-// Partially mapped on ascii where possible
+// A type of keyboard action, used inside the ccEvent union
+// Mapped on ASCII where possible
 typedef enum {
 	CC_KEY_UNDEFINED = 0,
 
@@ -94,8 +97,11 @@ typedef enum {
 	CC_KEY_Z = 'Z'
 } ccKeyCode;
 
+// The event structure used by ccWindow, set by the call ccPollEvent
 typedef struct {
+	// The type of data inside the union depends on the type of event
 	ccEventType type;
+	// The union contains different data types for different events
 	union {
 		ccMouseButtonType mouseButton;
 		ccPoint mousePosition;
