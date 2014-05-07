@@ -10,25 +10,31 @@
 #include "../../core_win32/interface/window.h"
 #endif
 
+//stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
 } ccDisplayData;
 
+//an array of all possible display properties a display can acquire
 typedef struct {
 	ccDisplayData* displayData;
 	int amount;
 } ccResolutions;
 
+//a display (often a monitor)
 typedef struct {
+	//current display configuration
 	ccDisplayData currentDisplayData;
 	int x, y;
 } ccDisplay;
 
+//list of all displays currently connected and active
 typedef struct {
 	ccDisplay* display;
 	int amount;
 } ccDisplays;
 
+//the way a window is shown. Only one window mode can be active at a time
 typedef enum {
 	CC_WINDOW_MODE_VISIBLE,
 	CC_WINDOW_MODE_INVISIBLE,
@@ -38,12 +44,14 @@ typedef enum {
 	CC_WINDOW_MODE_MINIMIZED
 } ccWindowMode;
 
+//a window can contain multiple flags to determine the layout and functionality
 typedef enum {
 	CC_WINDOW_FLAG_NORESIZE = 1,
 	CC_WINDOW_FLAG_ALWAYSONTOP = 2,
 	CC_WINDOW_FLAG_NOBUTTONS = 4
 } ccWindowFlag;
 
+//the window struct
 typedef struct _ccWindow {
 	//Note: dimensions subtract border size
 	float aspect;
@@ -68,20 +76,33 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
+//creates a new window
 ccWindow* ccNewWindow(unsigned short width, unsigned short height, const char *title, int flags);
+//frees the window
 void ccFreeWindow(ccWindow *window);
+//poll an event from the events that currently need to be processed in the window
 bool ccPollEvent(ccWindow *window);
+//change the window mode
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
+//get all display configurations a ccDisplay can acquire
 ccResolutions* ccGetResolutions(ccDisplay display);
+//free the list generated with the former function
 void ccFreeResolutions(ccResolutions *resolutions);
 
+//get all displays currently connected and active
 ccDisplays* ccGetDisplays();
+//free the list generated with the former function
 void ccFreeDisplays(ccDisplays *displays);
 
+//set the display configuration of a display. Use one of the possible configurations found with ccGetResolutions!
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
+//return the index of the display in a ccDisplays list in which window resides
 int ccDisplayIndex(ccDisplays displays, ccWindow window);
 
+//bind the openGl context to window
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
+//swap the buffers
 void ccGLSwapBuffers(ccWindow *window);
+//make window the current window
 void ccGLMakeCurrent(ccWindow *window);
