@@ -92,14 +92,20 @@ void ccFreeResolutions(ccResolutions *resolutions);
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 
 //get all displays currently connected and active
+void ccFindDisplays();
+//update the display list
+void ccUpdateDisplays();
+//get a pointer to the display list
 ccDisplays* ccGetDisplays();
-//free the list generated with the former function
+//get the default display (for single monitor applications)
+ccDisplay ccGetDefaultDisplay();
+//this needs to be called when ccFindDisplays was called
 void ccFreeDisplays(ccDisplays *displays);
 
 //set the display configuration of a display. Use one of the possible configurations found with ccGetResolutions!
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 //return the index of the display in a ccDisplays list in which window resides
-int ccDisplayIndex(ccDisplays displays, ccWindow window);
+ccDisplay ccGetWindowDisplay(ccWindow window);
 
 //bind the openGl context to window
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);

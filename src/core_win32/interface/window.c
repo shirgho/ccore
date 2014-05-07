@@ -1,5 +1,7 @@
 #include "../../core/interface/window.h"
 
+static ccDisplays displays;
+
 ccKeyCode translateKey(WPARAM wParam)
 {
 	if((wParam >= 'A' && wParam <= 'Z') || (wParam >= '0' && wParam <= '9')) {
