@@ -15,12 +15,13 @@ typedef struct {
 } ccDisplayData;
 
 typedef struct {
-	ccDisplayData* screenData;
+	ccDisplayData* displayData;
 	int amount;
 } ccResolutions;
 
 typedef struct {
-	ccDisplayData displayData;
+	ccDisplayData currentDisplayData;
+	int x, y;
 } ccDisplay;
 
 typedef struct {

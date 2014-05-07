@@ -14,9 +14,11 @@ A development library for games which makes it easier to use low level system fu
 
 ### TODO ###
 **Major:**
-- Sound
 - File IO
-- Networking
 
 **Minor:**
 - Let the user map keycodes to keys pressed
+
+**Extensions:**
+- Networking
+- Sound
