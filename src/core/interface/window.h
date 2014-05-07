@@ -58,6 +58,7 @@ typedef struct _ccWindow {
 	unsigned short width, height;
 	ccPoint mouse;
 	ccEvent event;
+	ccDisplay display;
 
 #ifdef LINUX
 	Display *display; 
@@ -77,7 +78,7 @@ typedef struct _ccWindow {
 } ccWindow;
 
 //creates a new window
-ccWindow* ccNewWindow(ccDisplay display, unsigned short width, unsigned short height, const char *title, int flags);
+ccWindow* ccNewWindow(ccDisplay *display, unsigned short width, unsigned short height, const char *title, int flags);
 //frees the window
 void ccFreeWindow(ccWindow *window);
 //poll an event from the events that currently need to be processed in the window
