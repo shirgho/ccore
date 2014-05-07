@@ -23,7 +23,6 @@ void renderGL();
 int main(int argc, char** argv)
 {
 	ccWindow *window;
-	ccScreenData current;
 	ccResolutions *resolutions;
 	bool quit;
 	int i;
@@ -32,19 +31,6 @@ int main(int argc, char** argv)
 	ccGLBindContext(window, 3, 2);
 	ccChangeWM(window, CC_WINDOW_MODE_VISIBLE);
 	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
-
-	ccGetResolution(&current);
-	printf("Active resolution: %d x %d @ %dHz, %dbpp\n", current.width, current.height, current.refreshRate, current.bitDepth);
-
-	resolutions = ccGetResolutions();
-	for(i = 0; i < resolutions->amount; i++) {
-		printf("found %d x %d @ %dHz, %dbpp\n", resolutions->screenData[i].width, resolutions->screenData[i].height, resolutions->screenData[i].refreshRate, resolutions->screenData[i].bitDepth);
-	}
-	ccFreeResolutions(resolutions);
-
-	current.width = 1600;
-	current.height = 900;
-	ccSetResolution(&current);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
