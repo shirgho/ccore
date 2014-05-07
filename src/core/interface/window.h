@@ -89,6 +89,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode);
 ccResolutions* ccGetResolutions(ccDisplay display);
 //free the list generated with the former function
 void ccFreeResolutions(ccResolutions *resolutions);
+void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 
 //get all displays currently connected and active
 ccDisplays* ccGetDisplays();
