@@ -23,9 +23,7 @@ void renderGL();
 int main(int argc, char** argv)
 {
 	ccWindow *window;
-	ccResolutions *resolutions;
 	bool quit;
-	int i;
 
 	window = ccNewWindow(1024, 768, "CCore test application", 0); 
 	ccGLBindContext(window, 3, 2);
