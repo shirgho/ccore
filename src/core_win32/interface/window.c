@@ -326,7 +326,7 @@ void ccFreeResolutions(ccResolutions *resolutions) {
 	if(resolutions->amount != 0) free(resolutions->displayData);
 	free(resolutions);
 }
-
+/*
 void ccSetResolution(ccDisplay display, ccDisplayData *screenData) {
 	DEVMODE dm;
 	ZeroMemory(&dm, sizeof(dm));
@@ -342,3 +342,4 @@ void ccSetResolution(ccDisplay display, ccDisplayData *screenData) {
 		printf("Couldn't change display mode");
 	}
 }
+*/
