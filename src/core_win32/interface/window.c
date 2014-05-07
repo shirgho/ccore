@@ -289,7 +289,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		break;
 	}
 }
-
+/*
 ccResolutions *ccGetResolutions(ccDisplay display) {
 	DEVMODE dm;
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
@@ -321,9 +321,9 @@ ccResolutions *ccGetResolutions(ccDisplay display) {
 
 	return resolutions;
 }
-
+*/
 void ccFreeResolutions(ccResolutions *resolutions) {
-	if(resolutions->amount != 0) free(resolutions->screenData);
+	if(resolutions->amount != 0) free(resolutions->displayData);
 	free(resolutions);
 }
 
