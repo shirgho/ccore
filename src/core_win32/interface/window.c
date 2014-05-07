@@ -290,7 +290,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
-ccResolutions *ccGetResolutions() {
+ccResolutions *ccGetResolutions(ccDisplay display) {
 	DEVMODE dm;
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
 
