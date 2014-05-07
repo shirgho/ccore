@@ -327,19 +327,7 @@ void ccFreeResolutions(ccResolutions *resolutions) {
 	free(resolutions);
 }
 
-void ccGetResolution(ccScreenData *screenData) {
-	DEVMODE dm;
-	ZeroMemory(&dm, sizeof(dm));
-	dm.dmSize = sizeof(dm);
-	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
-
-	screenData->width = dm.dmPelsWidth;
-	screenData->height = dm.dmPelsHeight;
-	screenData->refreshRate = dm.dmDisplayFrequency;
-	screenData->bitDepth = dm.dmBitsPerPel;
-}
-
-void ccSetResolution(ccScreenData *screenData) {
+void ccSetResolution(ccDisplay display, ccDisplayData *screenData) {
 	DEVMODE dm;
 	ZeroMemory(&dm, sizeof(dm));
 	dm.dmSize = sizeof(dm);

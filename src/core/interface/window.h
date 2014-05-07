@@ -23,6 +23,11 @@ typedef struct {
 	ccDisplayData displayData;
 } ccDisplay;
 
+typedef struct {
+	ccDisplay* display;
+	int amount;
+} ccDisplays;
+
 typedef enum {
 	CC_WINDOW_MODE_VISIBLE,
 	CC_WINDOW_MODE_INVISIBLE,
@@ -69,7 +74,12 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
 ccResolutions* ccGetResolutions(ccDisplay display);
 void ccFreeResolutions(ccResolutions *resolutions);
+
+ccDisplays* ccGetDisplays();
+void ccFreeDisplays(ccDisplays *displays);
+
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
+int ccDisplayIndex(ccDisplays displays, ccWindow window);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
 void ccGLSwapBuffers(ccWindow *window);
