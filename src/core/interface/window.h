@@ -15,7 +15,7 @@ typedef struct {
 } ccDisplayData;
 
 typedef struct {
-	ccDisplayData* screenData;
+	ccDisplayData* displayData;
 	int amount;
 } ccResolutions;
 
