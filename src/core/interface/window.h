@@ -20,7 +20,8 @@ typedef struct {
 } ccResolutions;
 
 typedef struct {
-	ccDisplayData displayData;
+	ccDisplayData currentDisplayData;
+	int x, y;
 } ccDisplay;
 
 typedef struct {
