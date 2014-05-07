@@ -52,7 +52,6 @@ bool ccPollEvent(ccWindow *window)
 
 	ccAssert(window != NULL);
 
-	// Remove this statemnt if you want to block until an event happens
 	window->event.type = CC_EVENT_SKIP;
 	if(XPending(window->display) == 0){
 		return false;
@@ -142,30 +141,6 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 
 		XSendEvent(window->display, DefaultRootWindow(window->display), false, SubstructureNotifyMask, &event);
 	}
-}
-
-ccResolutions* ccGetResolutions(ccWindow *window)
-{
-	ccResolutions *sizes;
-
-	sizes = malloc(sizeof(ccResolutions));
-
-	return sizes;
-}
-
-void ccFreeResolutions(ccResolutions *resolutions)
-{
-	free(resolutions);
-}
-
-void ccGetResolution(ccScreenData *dimension)
-{
-
-}
-
-void ccSetResolution(ccScreenData *dimension)
-{
-
 }
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)

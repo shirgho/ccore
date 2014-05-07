@@ -75,11 +75,10 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
 ccResolutions* ccGetResolutions(ccDisplay display);
 void ccFreeResolutions(ccResolutions *resolutions);
+void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 
 ccDisplays* ccGetDisplays();
 void ccFreeDisplays(ccDisplays *displays);
-
-void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 int ccDisplayIndex(ccDisplays displays, ccWindow window);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
