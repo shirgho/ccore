@@ -330,6 +330,8 @@ void ccFindDisplays()
 			currentDisplay->currentDisplayData.height = dm.dmPelsHeight;
 			currentDisplay->currentDisplayData.bitDepth = dm.dmBitsPerPel;
 			currentDisplay->currentDisplayData.refreshRate = dm.dmDisplayFrequency;
+
+			if(currentDisplay->x == 0 && currentDisplay->y == 0) displays.primary = displays.amount-1;
 			
 			displayCount++;
 		}
@@ -348,7 +350,7 @@ ccDisplays *ccGetDisplays()
 
 ccDisplay *ccGetDefaultDisplay()
 {
-	return NULL;
+	return &displays.display[displays.primary];
 }
 /*
 ccResolutions *ccGetResolutions(ccDisplay display) {
