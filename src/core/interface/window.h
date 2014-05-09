@@ -34,6 +34,7 @@ typedef struct {
 typedef struct {
 	ccDisplay* display;
 	int amount;
+	int defaultIndex;
 } ccDisplays;
 
 //the way a window is shown. Only one window mode can be active at a time
