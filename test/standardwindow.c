@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 										 ccGetDisplays()->display[i].currentDisplayData.bitDepth,
 										 ccGetDisplays()->display[i].currentDisplayData.refreshRate);
 	}
+	ccUpdateDisplays();
 
 	window = ccNewWindow(&ccGetDisplays()->display[2], 1024, 768, "CCore test application", 0); 
 	ccGLBindContext(window, 3, 2);

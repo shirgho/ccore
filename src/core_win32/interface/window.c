@@ -348,6 +348,12 @@ ccDisplay *ccGetDefaultDisplay()
 {
 	return &displays.display[displays.primary];
 }
+
+void ccUpdateDisplays()
+{
+	ccFreeDisplays();
+	ccFindDisplays();
+}
 /*
 ccResolutions *ccGetResolutions(ccDisplay display) {
 	DEVMODE dm;
