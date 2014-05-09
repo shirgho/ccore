@@ -28,11 +28,10 @@ int main(int argc, char** argv)
 
 	ccFindDisplays();
 	for(i = 0; i < ccGetDisplays()->amount; i++) {
-		printf("%d\t%d\t%dx%d\t%dbpp\t%s\n", ccGetDisplays()->display[i].x,
+		printf("%d\t%d\t%dx%d\n", ccGetDisplays()->display[i].x,
 								  ccGetDisplays()->display[i].y,
 								  ccGetDisplays()->display[i].currentDisplayData.width,
-								  ccGetDisplays()->display[i].currentDisplayData.height,
-								  ccGetDisplays()->display[i].currentDisplayData.bitDepth);
+								  ccGetDisplays()->display[i].currentDisplayData.height);
 	}
 
 	window = ccNewWindow(ccGetDefaultDisplay(), 1024, 768, "CCore test application", 0); 
