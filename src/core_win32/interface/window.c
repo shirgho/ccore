@@ -172,6 +172,7 @@ ccWindow *ccNewWindow(ccDisplay *display, unsigned short width, unsigned short h
 	newWindow->width = width;
 	newWindow->height = height;
 	newWindow->sizeChanged = true;
+	newWindow->display = display;
 
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
@@ -292,36 +293,35 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
+BOOL CALLBACK addMonitor(__in HMONITOR hMonitor, __in HDC hdcMonitor, __in LPRECT lprcMonitor, __in LPARAM dwData)
+{
+	ccDisplay *currentDisplay;
+	displays.amount++;
+	if(displays.amount == 1) {
+		displays.display = malloc(sizeof(ccDisplay));
+	}
+	else {
+		displays.display = realloc(displays.display, sizeof(ccDisplay)*displays.amount);
+	}
+
+	currentDisplay = &displays.display[displays.amount - 1];
+	currentDisplay->x = lprcMonitor->left;
+	currentDisplay->y = lprcMonitor->top;
+	currentDisplay->currentDisplayData.width = lprcMonitor->right - lprcMonitor->left;
+	currentDisplay->currentDisplayData.height = lprcMonitor->bottom - lprcMonitor->top;
+
+	return TRUE;
+}
+
 void ccFindDisplays()
 {
-	DISPLAY_DEVICE device;
-	DISPLAY_DEVICE display;
-	int deviceCount = 0;
-	int displayCount;
-
-	device.cb = sizeof(DISPLAY_DEVICE);
-	display.cb = sizeof(DISPLAY_DEVICE);
 	displays.amount = 0;
+	EnumDisplayMonitors(NULL, NULL, addMonitor, 0);
+}
 
-	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
-		displayCount = 0;
-
-		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
-			printf("%s\n", device.DeviceString);
-			printf("%s\n", display.DeviceString);
-
-			displays.amount++;
-			if(displays.amount == 1) {
-				displays.display = malloc(sizeof(ccDisplay));
-			}
-			else{
-				displays.display = realloc(displays.display, sizeof(ccDisplay)*displays.amount);
-			}
-
-			displayCount++;
-		}
-		deviceCount++;
-	}
+ccDisplays *ccGetDisplays()
+{
+	return &displays;
 }
 
 ccDisplay *ccGetDefaultDisplay()

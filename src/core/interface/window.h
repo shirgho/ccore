@@ -60,7 +60,7 @@ typedef struct _ccWindow {
 	unsigned short width, height;
 	ccPoint mouse;
 	ccEvent event;
-	ccDisplay display;
+	ccDisplay *display;
 
 #ifdef LINUX
 	Display *display; 
