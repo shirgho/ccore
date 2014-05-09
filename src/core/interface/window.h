@@ -89,9 +89,7 @@ bool ccPollEvent(ccWindow *window);
 //change the window mode
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
-//get all display configurations a ccDisplay can acquire
 ccResolutions *ccGetResolutions(ccDisplay display);
-//free the list generated with the former function
 void ccFreeResolutions(ccResolutions *resolutions);
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 
@@ -105,11 +103,6 @@ ccDisplays *ccGetDisplays();
 ccDisplay *ccGetDefaultDisplay();
 //this needs to be called when ccFindDisplays was called
 void ccFreeDisplays();
-
-//set the display configuration of a display. Use one of the possible configurations found with ccGetResolutions!
-void ccSetResolution(ccDisplay display, ccDisplayData resolution);
-//return the index of the display in a ccDisplays list in which window resides
-ccDisplay ccGetWindowDisplay(ccWindow window);
 
 //bind the openGl context to window
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
