@@ -292,42 +292,17 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		break;
 	}
 }
-/*
-BOOL CALLBACK addMonitor(__in HMONITOR hMonitor, __in HDC hdcMonitor, __in LPRECT lprcMonitor, __in LPARAM dwData)
-{
-	ccDisplay *currentDisplay;
-	displays.amount++;
-	if(displays.amount == 1) {
-		displays.display = malloc(sizeof(ccDisplay));
-	}
-	else {
-		displays.display = realloc(displays.display, sizeof(ccDisplay)*displays.amount);
-	}
-
-	currentDisplay = &displays.display[displays.amount - 1];
-	currentDisplay->x = lprcMonitor->left;
-	currentDisplay->y = lprcMonitor->top;
-	currentDisplay->currentDisplayData.width = lprcMonitor->right - lprcMonitor->left;
-	currentDisplay->currentDisplayData.height = lprcMonitor->bottom - lprcMonitor->top;
-
-	return TRUE;
-}
-
-void ccFindDisplays()
-{
-	displays.amount = 0;
-	EnumDisplayMonitors(NULL, NULL, addMonitor, 0);
-}
-*/
 
 void ccFindDisplays()
 {
 	DISPLAY_DEVICE device;
 	DISPLAY_DEVICE display;
+	DEVMODE dm;
 	ccDisplay *currentDisplay;
 	int deviceCount = 0;
 	int displayCount;
 
+	dm.dmSize = sizeof(dm);
 	device.cb = sizeof(DISPLAY_DEVICE);
 	display.cb = sizeof(DISPLAY_DEVICE);
 	displays.amount = 0;
@@ -336,9 +311,6 @@ void ccFindDisplays()
 		displayCount = 0;
 
 		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
-			printf("%s\n", device.DeviceString);
-			printf("%s\n", display.DeviceString);
-
 			displays.amount++;
 			if(displays.amount == 1) {
 				displays.display = malloc(sizeof(ccDisplay));
@@ -347,7 +319,17 @@ void ccFindDisplays()
 				displays.display = realloc(displays.display, sizeof(ccDisplay)*displays.amount);
 			}
 
+			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
+
 			currentDisplay = &displays.display[displays.amount - 1];
+			memcpy(currentDisplay->gpuName, device.DeviceString, 128);
+			memcpy(currentDisplay->monitorName, display.DeviceString, 128);
+			currentDisplay->x = dm.dmPosition.x;
+			currentDisplay->y = dm.dmPosition.y;
+			currentDisplay->currentDisplayData.width = dm.dmPelsWidth;
+			currentDisplay->currentDisplayData.height = dm.dmPelsHeight;
+			currentDisplay->currentDisplayData.bitDepth = dm.dmBitsPerPel;
+			currentDisplay->currentDisplayData.refreshRate = dm.dmDisplayFrequency;
 
 			displayCount++;
 		}

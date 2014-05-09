@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../core.h"
+#include "../utils/charUtils.h"
 
 #ifdef X11
 #include "../../core_x11/interface/window.h"
@@ -13,8 +14,6 @@
 //stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
-	const char *gpuName;
-	const char *monitorName;
 } ccDisplayData;
 
 //an array of all possible display properties a display can acquire
@@ -28,6 +27,8 @@ typedef struct {
 	//current display configuration
 	ccDisplayData currentDisplayData;
 	int x, y;
+	char gpuName[128];
+	char monitorName[128];
 } ccDisplay;
 
 //list of all displays currently connected and active
