@@ -296,7 +296,6 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 BOOL CALLBACK addMonitor(__in HMONITOR hMonitor, __in HDC hdcMonitor, __in LPRECT lprcMonitor, __in LPARAM dwData)
 {
 	ccDisplay *currentDisplay;
-
 	displays.amount++;
 	if(displays.amount == 1) {
 		displays.display = malloc(sizeof(ccDisplay));
@@ -327,7 +326,7 @@ ccDisplays *ccGetDisplays()
 
 ccDisplay *ccGetDefaultDisplay()
 {
-	return &displays.display[displays.defaultIndex];
+	return NULL;
 }
 /*
 ccResolutions *ccGetResolutions(ccDisplay display) {
