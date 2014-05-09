@@ -176,10 +176,6 @@ ccWindow *ccNewWindow(ccDisplay *display, unsigned short width, unsigned short h
 
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
-	HWND desktopHandle = GetDesktopWindow();
-	RECT desktopRect;
-
-	GetWindowRect(desktopHandle, &desktopRect);
 	
 	regHinstance(moduleHandle);
 	newWindow->winHandle = CreateWindowEx(
@@ -187,10 +183,10 @@ ccWindow *ccNewWindow(ccDisplay *display, unsigned short width, unsigned short h
 		"ccWindow",
 		title,
 		WS_OVERLAPPEDWINDOW,
-		(desktopRect.right >> 1) - (width >> 1),
-		(desktopRect.bottom >> 1) - (height >> 1),
+		(newWindow->display->x + (newWindow->display->currentDisplayData.width >> 1)) - (width >> 1),
+		(newWindow->display->y + (newWindow->display->currentDisplayData.height >> 1)) - (height >> 1),
 		width, height,
-		desktopHandle,
+		NULL,
 		NULL,
 		moduleHandle,
 		NULL);
@@ -281,8 +277,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		window->width = GetSystemMetrics(SM_CXSCREEN);
-		window->height = GetSystemMetrics(SM_CYSCREEN);
+		window->width = window->display->currentDisplayData.width;
+		window->height = window->display->currentDisplayData.height;
 
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
 		MoveWindow(window->winHandle, window->display->x, window->display->y, window->width, window->height, TRUE);
