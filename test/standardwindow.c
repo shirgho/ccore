@@ -88,9 +88,6 @@ int main(int argc, char** argv)
 						case CC_KEY_4:
 							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
 							break;
-						case CC_KEY_5:
-							ccChangeWM(window, CC_WINDOW_MODE_INVISIBLE);
-							break;
 						case CC_KEY_UNDEFINED:
 							printf("Key is not supported!\n");
 							break;
