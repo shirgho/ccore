@@ -330,11 +330,15 @@ void ccFindDisplays()
 			currentDisplay->currentDisplayData.height = dm.dmPelsHeight;
 			currentDisplay->currentDisplayData.bitDepth = dm.dmBitsPerPel;
 			currentDisplay->currentDisplayData.refreshRate = dm.dmDisplayFrequency;
-
+			
 			displayCount++;
 		}
 		deviceCount++;
 	}
+}
+
+void ccFreeDisplays() {
+	free(displays.display);
 }
 
 ccDisplays *ccGetDisplays()

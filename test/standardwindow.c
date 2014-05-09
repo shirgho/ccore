@@ -109,6 +109,7 @@ int main(int argc, char** argv)
 	}
 
 	ccFreeWindow(window);
+	ccFreeDisplays();
 
 	return 0;
 }

@@ -103,7 +103,7 @@ ccDisplays *ccGetDisplays();
 //get the default display (for single monitor applications)
 ccDisplay *ccGetDefaultDisplay();
 //this needs to be called when ccFindDisplays was called
-void ccFreeDisplays(ccDisplays *displays);
+void ccFreeDisplays();
 
 //set the display configuration of a display. Use one of the possible configurations found with ccGetResolutions!
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
