@@ -13,6 +13,8 @@
 //stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
+	const char *gpuName;
+	const char *monitorName;
 } ccDisplayData;
 
 //an array of all possible display properties a display can acquire
@@ -87,7 +89,7 @@ bool ccPollEvent(ccWindow *window);
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
 
 //get all display configurations a ccDisplay can acquire
-ccResolutions* ccGetResolutions(ccDisplay display);
+ccResolutions *ccGetResolutions(ccDisplay display);
 //free the list generated with the former function
 void ccFreeResolutions(ccResolutions *resolutions);
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
@@ -97,9 +99,9 @@ void ccFindDisplays();
 //update the display list
 void ccUpdateDisplays();
 //get a pointer to the display list
-ccDisplays* ccGetDisplays();
+ccDisplays *ccGetDisplays();
 //get the default display (for single monitor applications)
-ccDisplay ccGetDefaultDisplay();
+ccDisplay *ccGetDefaultDisplay();
 //this needs to be called when ccFindDisplays was called
 void ccFreeDisplays(ccDisplays *displays);
 

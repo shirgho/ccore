@@ -164,7 +164,7 @@ bool ccPollEvent(ccWindow *window)
 	}
 }
 
-ccWindow *ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags)
+ccWindow *ccNewWindow(ccDisplay *display, unsigned short width, unsigned short height, const char* title, int flags)
 {
 	ccWindow *newWindow = malloc(sizeof(ccWindow));
 
@@ -290,6 +290,43 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		ShowWindow(window->winHandle, SW_MAXIMIZE);
 		break;
 	}
+}
+
+void ccFindDisplays()
+{
+	DISPLAY_DEVICE device;
+	DISPLAY_DEVICE display;
+	int deviceCount = 0;
+	int displayCount;
+
+	device.cb = sizeof(DISPLAY_DEVICE);
+	display.cb = sizeof(DISPLAY_DEVICE);
+	displays.amount = 0;
+
+	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
+		displayCount = 0;
+
+		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
+			printf("%s\n", device.DeviceString);
+			printf("%s\n", display.DeviceString);
+
+			displays.amount++;
+			if(displays.amount == 1) {
+				displays.display = malloc(sizeof(ccDisplay));
+			}
+			else{
+				displays.display = realloc(displays.display, sizeof(ccDisplay)*displays.amount);
+			}
+
+			displayCount++;
+		}
+		deviceCount++;
+	}
+}
+
+ccDisplay *ccGetDefaultDisplay()
+{
+	return NULL;
 }
 /*
 ccResolutions *ccGetResolutions(ccDisplay display) {
