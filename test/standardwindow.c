@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 	}
 	printf("Main display index: %d\n", ccGetDisplays()->primary);
 
-	window = ccNewWindow(ccGetDefaultDisplay(), 1024, 768, "CCore test application", 0); 
+	window = ccNewWindow(&ccGetDisplays()->display[1], 1024, 768, "CCore test application", 0); 
 	ccGLBindContext(window, 3, 2);
 	ccChangeWM(window, CC_WINDOW_MODE_VISIBLE);
 	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
