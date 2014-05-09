@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../core.h"
-#include "../utils/charUtils.h"
 
 #ifdef X11
 #include "../../core_x11/interface/window.h"
