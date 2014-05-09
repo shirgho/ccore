@@ -292,7 +292,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		break;
 	}
 }
-
+/*
 BOOL CALLBACK addMonitor(__in HMONITOR hMonitor, __in HDC hdcMonitor, __in LPRECT lprcMonitor, __in LPARAM dwData)
 {
 	ccDisplay *currentDisplay;
@@ -317,6 +317,42 @@ void ccFindDisplays()
 {
 	displays.amount = 0;
 	EnumDisplayMonitors(NULL, NULL, addMonitor, 0);
+}
+*/
+
+void ccFindDisplays()
+{
+	DISPLAY_DEVICE device;
+	DISPLAY_DEVICE display;
+	ccDisplay *currentDisplay;
+	int deviceCount = 0;
+	int displayCount;
+
+	device.cb = sizeof(DISPLAY_DEVICE);
+	display.cb = sizeof(DISPLAY_DEVICE);
+	displays.amount = 0;
+
+	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
+		displayCount = 0;
+
+		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
+			printf("%s\n", device.DeviceString);
+			printf("%s\n", display.DeviceString);
+
+			displays.amount++;
+			if(displays.amount == 1) {
+				displays.display = malloc(sizeof(ccDisplay));
+			}
+			else{
+				displays.display = realloc(displays.display, sizeof(ccDisplay)*displays.amount);
+			}
+
+			currentDisplay = &displays.display[displays.amount - 1];
+
+			displayCount++;
+		}
+		deviceCount++;
+	}
 }
 
 ccDisplays *ccGetDisplays()
