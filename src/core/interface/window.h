@@ -86,7 +86,7 @@ void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window);
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
 void ccResizeWindow(ccWindow *window, ccRect rect);
-void ccCenterWindow(ccWindow *window);
+void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
 
 ccResolutions *ccGetResolutions(ccDisplay display);
 void ccFreeResolutions(ccResolutions *resolutions);
