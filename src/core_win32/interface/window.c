@@ -433,7 +433,7 @@ ccResolutions *ccGetResolutions(ccDisplay *display)
 	while(EnumDisplaySettings(display->deviceName, i, &devMode)) {
 		i++;
 
-		buffer.bitDepth = devMode.dmPelsWidth;
+		buffer.bitDepth = devMode.dmBitsPerPel;
 		buffer.refreshRate = devMode.dmDisplayFrequency;
 		buffer.width = devMode.dmPelsWidth;
 		buffer.height = devMode.dmPelsHeight;
