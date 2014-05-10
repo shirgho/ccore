@@ -54,6 +54,38 @@ ccKeyCode translateKey(WPARAM wParam)
 	return CC_KEY_UNDEFINED;
 }
 
+void updateWindowDisplay(ccWindow *window)
+{
+	int i;
+	int xOverlap, yOverlap;
+	int area, largestArea;
+	ccRect displayRect;
+	RECT winRect;
+	
+	GetWindowRect(window->winHandle, &winRect);
+
+	window->rect.x = winRect.left;
+	window->rect.y = winRect.top;
+
+	largestArea = 0;
+
+	for(i = 0; i < displays.amount; i++)
+	{
+		ccGetDisplayRect(&displays.display[i], &displayRect);
+		xOverlap = max(0,
+			min(window->rect.x + window->rect.width, displayRect.x + displayRect.width) -
+			max(window->rect.x, displayRect.x));
+		yOverlap = max(0,
+			min(window->rect.y + window->rect.height, displayRect.y + displayRect.height) -
+			max(window->rect.y, displayRect.y));
+		area = xOverlap * yOverlap;
+		if(area > largestArea) {
+			largestArea = area;
+			window->display = &displays.display[i];
+		}
+	}
+}
+
 LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	ccWindow *activeWindow = (ccWindow*)GetWindowLong(winHandle, GWL_USERDATA);
@@ -70,9 +102,8 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->rect.height = (lParam & 0xFFFF0000) >> 16;
 		activeWindow->aspect = (float) activeWindow->rect.width / activeWindow->rect.height;
 		activeWindow->sizeChanged = true;
-		break;
-	case WM_EXITSIZEMOVE:
-		
+	case WM_MOVE:
+		updateWindowDisplay(activeWindow);
 		break;
 	case WM_KEYDOWN:
 		activeWindow->event.type = CC_EVENT_KEY_DOWN;
