@@ -295,6 +295,12 @@ void ccResizeWindow(ccWindow *window, ccRect rect)
 	MoveWindow(window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);
 }
 
+void ccCenterWindow(ccWindow *window)
+{
+	window->rect.x = window->display->x + ((window->display->currentDisplayData.width - window->rect.width) >> 1);
+	window->rect.x = window->display->y + ((window->display->currentDisplayData.height - window->rect.height) >> 1);
+}
+
 void ccFindDisplays()
 {
 	DISPLAY_DEVICE device;
