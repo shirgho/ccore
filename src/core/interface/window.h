@@ -80,7 +80,7 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
-ccWindow* ccNewWindow(ccDisplay *display, unsigned short width, unsigned short height, const char *title, int flags);
+ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
 //poll an event from the events that currently need to be processed in the window
 bool ccPollEvent(ccWindow *window);

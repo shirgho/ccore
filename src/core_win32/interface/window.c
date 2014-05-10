@@ -66,9 +66,9 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
-		activeWindow->width = lParam & 0x0000FFFF;
-		activeWindow->height = (lParam & 0xFFFF0000) >> 16;
-		activeWindow->aspect = (float) activeWindow->width / activeWindow->height;
+		activeWindow->rect.width = lParam & 0x0000FFFF;
+		activeWindow->rect.height = (lParam & 0xFFFF0000) >> 16;
+		activeWindow->aspect = (float) activeWindow->rect.width / activeWindow->rect.height;
 		activeWindow->sizeChanged = true;
 		break;
 	case WM_EXITSIZEMOVE:
@@ -167,13 +167,12 @@ bool ccPollEvent(ccWindow *window)
 	}
 }
 
-ccWindow *ccNewWindow(ccDisplay *display, unsigned short width, unsigned short height, const char* title, int flags)
+ccWindow *ccNewWindow(ccRect rect, const char* title, int flags)
 {
 	ccWindow *newWindow = malloc(sizeof(ccWindow));
 
 	//Struct initialisation
-	newWindow->width = width;
-	newWindow->height = height;
+	memcpy(&newWindow->rect, &rect, sizeof(ccRect));
 	newWindow->sizeChanged = true;
 	newWindow->display = display;
 
@@ -186,9 +185,8 @@ ccWindow *ccNewWindow(ccDisplay *display, unsigned short width, unsigned short h
 		"ccWindow",
 		title,
 		WS_OVERLAPPEDWINDOW,
-		(newWindow->display->x + (newWindow->display->currentDisplayData.width >> 1)) - (width >> 1),
-		(newWindow->display->y + (newWindow->display->currentDisplayData.height >> 1)) - (height >> 1),
-		width, height,
+		rect.x, rect.y,
+		rect.width, rect.height,
 		NULL,
 		NULL,
 		moduleHandle,
@@ -280,11 +278,11 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		window->width = window->display->currentDisplayData.width;
-		window->height = window->display->currentDisplayData.height;
+		window->rect.width = window->display->currentDisplayData.width;
+		window->rect.height = window->display->currentDisplayData.height;
 
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
-		ccResizeWindow(window, (ccRect){ window->display->x, window->display->y, window->width, window->height });
+		ccResizeWindow(window, (ccRect){ window->display->x, window->display->y, window->rect.width, window->rect.height });
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
 		ShowWindow(window->winHandle, SW_MAXIMIZE);
@@ -294,6 +292,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 
 void ccResizeWindow(ccWindow *window, ccRect rect)
 {
+	memcpy(&window->rect, &rect, sizeof(ccRect));
 	MoveWindow(window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);
 }
 

@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 	}
 	ccUpdateDisplays();
 
-	window = ccNewWindow(&ccGetDisplays()->display[2], 1024, 768, "CCore test application", 0); 
+	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 	ccGLBindContext(window, 3, 2);
 	ccChangeWM(window, CC_WINDOW_MODE_VISIBLE);
 	ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
@@ -64,8 +64,8 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
-					printf("Updated window size: %d x %d\n", window->width, window->height);
-					resizeGL(window->width, window->height);
+					printf("Updated window size: x:%d y:%d %d x %d\n", window->rect.x, window->rect.y, window->rect.width, window->rect.height);
+					resizeGL(window->rect.width, window->rect.height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
 					if(window->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE) {
