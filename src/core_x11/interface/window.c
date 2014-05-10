@@ -143,20 +143,77 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
-void ccResizeWindow(ccWindow *window, ccRect rect);
-void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
+void ccResizeWindow(ccWindow *window, ccRect rect)
+{
 
-ccResolutions *ccGetResolutions(ccDisplay *display);
-void ccFreeResolutions(ccResolutions *resolutions);
-void ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
-bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution);
+}
 
-void ccFindDisplays(); //get all displays currently connected and active
-void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
-ccDisplays *ccGetDisplays(); //get a pointer to the global display list
-ccDisplay *ccGetDefaultDisplay(); //get the default display (E.G.for single monitor applications)
-void ccFreeDisplays();
-void ccGetDisplayRect(ccDisplay *display, ccRect *rect);
+void ccCenterWindow(ccWindow *window)
+{
+
+}
+
+ccResolutions *ccGetResolutions(ccDisplay *display)
+{
+	ccResolutions *output;
+
+	output = malloc(sizeof(ccResolutions));
+
+	return output;
+}
+
+void ccFreeResolutions(ccResolutions *resolutions)
+{
+
+}
+
+void ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
+{
+
+}
+
+bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution)
+{
+
+	return false;
+}
+
+void ccFindDisplays()
+{
+
+}
+void ccUpdateDisplays()
+{
+
+}
+
+ccDisplays *ccGetDisplays()
+{
+	ccDisplays *output;
+
+	output = malloc(sizeof(ccDisplays));
+
+	return output;
+}
+
+ccDisplay *ccGetDefaultDisplay()
+{
+	ccDisplay *output;
+
+	output = malloc(sizeof(ccDisplay));
+
+	return output;
+}
+
+void ccFreeDisplays()
+{
+
+}
+
+void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
+{
+
+}
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
