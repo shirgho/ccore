@@ -58,7 +58,7 @@ typedef enum {
 typedef struct _ccWindow {
 	//Note: dimensions subtract border size
 	float aspect;
-	unsigned short width, height;
+	ccRect rect;
 	ccPoint mouse;
 	ccEvent event;
 	ccDisplay *display;
