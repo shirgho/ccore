@@ -33,6 +33,11 @@ typedef struct {
 	char deviceName[128];
 #endif
 
+#ifdef LINUX
+	bool XDisplayOpened;
+	Display *XDisplay;
+#endif
+
 } ccDisplay;
 
 //list of all displays currently connected and active

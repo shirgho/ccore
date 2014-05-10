@@ -182,8 +182,36 @@ bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution)
 
 void ccFindDisplays()
 {
+	DIR *dir;
+	struct dirent *direntry;
+	Display *disp;
+	char displayName[64];
 
+	displays.amount = 0;
+
+	dir = opendir("/tmp/.X11-unix");
+	ccAssert(dir != NULL);
+
+	while((direntry = readdir(dir)) != NULL){
+		if(direntry->d_name[0] != 'X'){
+			continue;
+		}
+		strcat(displayName, direntry->d_name + 1);
+		disp = XOpenDisplay(displayName);
+		if(disp != NULL){
+			XCloseDisplay(disp);
+			displays.amount++;
+			if(displays.amount == 1){
+				displays.display = malloc(sizeof(ccDisplay));
+			}else{
+				displays.display = realloc(displays.display, sizeof(ccDisplay) * displays.amount);
+			}
+			strcat(displays.display[displays.amount].monitorName, displayName);
+			displays.display[displays.amount].XDisplayOpened = false;
+		}
+	}
 }
+
 void ccUpdateDisplays()
 {
 
@@ -191,11 +219,7 @@ void ccUpdateDisplays()
 
 ccDisplays *ccGetDisplays()
 {
-	ccDisplays *output;
-
-	output = malloc(sizeof(ccDisplays));
-
-	return output;
+	return &displays;
 }
 
 ccDisplay *ccGetDefaultDisplay()
@@ -209,7 +233,7 @@ ccDisplay *ccGetDefaultDisplay()
 
 void ccFreeDisplays()
 {
-
+	free(displays.display);
 }
 
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
