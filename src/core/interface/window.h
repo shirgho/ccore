@@ -32,7 +32,7 @@ typedef struct {
 
 //list of all displays currently connected and active
 typedef struct {
-	ccDisplay* display;
+	ccDisplay* display; //READ ONLY!!
 	int amount;
 	int primary;
 } ccDisplays;
@@ -96,7 +96,7 @@ void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 //get all displays currently connected and active
 void ccFindDisplays();
 //update the display list
-void ccUpdateDisplays();
+void ccUpdateDisplays(); //TODO: update window display pointers
 //get a pointer to the display list
 ccDisplays *ccGetDisplays();
 //get the default display (for single monitor applications)
