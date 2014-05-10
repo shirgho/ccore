@@ -418,10 +418,7 @@ bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution)
 	int i;
 
 	for(i = 0; i < resolutions->amount; i++) {
-		if(resolutions->displayData[i].bitDepth == resolution->bitDepth &&
-		   resolutions->displayData[i].refreshRate == resolution->refreshRate &&
-		   resolutions->displayData[i].width == resolution->width &&
-		   resolutions->displayData[i].height == resolution->height) {
+		if(memcmp(&resolutions->displayData[i], resolution, sizeof(ccDisplayData)) == 0) {
 			return true;
 		}
 	}
