@@ -71,8 +71,8 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->aspect = (float) activeWindow->width / activeWindow->height;
 		activeWindow->sizeChanged = true;
 		break;
-	case WM_MOVE:
-		printf("moved");
+	case WM_EXITSIZEMOVE:
+		
 		break;
 	case WM_KEYDOWN:
 		activeWindow->event.type = CC_EVENT_KEY_DOWN;
@@ -290,6 +290,11 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		ShowWindow(window->winHandle, SW_MAXIMIZE);
 		break;
 	}
+}
+
+void ccResizeWindow(ccWindow *window, int x, int y, int width, int height)
+{
+
 }
 
 void ccFindDisplays()
