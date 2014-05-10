@@ -24,7 +24,7 @@ typedef struct {
 //a display (often a monitor)
 typedef struct {
 	//current display configuration
-	ccDisplayData currentDisplayData;
+	ccDisplayData displayData;
 	int x, y;
 	char gpuName[128];
 	char monitorName[128];
