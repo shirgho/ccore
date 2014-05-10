@@ -34,10 +34,10 @@ int main(int argc, char** argv)
 										 ccGetDisplays()->display[i].gpuName,
 										 ccGetDisplays()->display[i].x,
 									     ccGetDisplays()->display[i].y,
-										 ccGetDisplays()->display[i].currentDisplayData.width,
-										 ccGetDisplays()->display[i].currentDisplayData.height,
-										 ccGetDisplays()->display[i].currentDisplayData.bitDepth,
-										 ccGetDisplays()->display[i].currentDisplayData.refreshRate);
+										 ccGetDisplays()->display[i].displayData.width,
+										 ccGetDisplays()->display[i].displayData.height,
+										 ccGetDisplays()->display[i].displayData.bitDepth,
+										 ccGetDisplays()->display[i].displayData.refreshRate);
 	}
 
 	//Find all resolutions of one display and print them

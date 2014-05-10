@@ -301,8 +301,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		window->rect.width = window->display->currentDisplayData.width;
-		window->rect.height = window->display->currentDisplayData.height;
+		window->rect.width = window->display->displayData.width;
+		window->rect.height = window->display->displayData.height;
 
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
 		ccResizeWindow(window, (ccRect){ window->display->x, window->display->y, window->rect.width, window->rect.height });
@@ -322,8 +322,8 @@ void ccResizeWindow(ccWindow *window, ccRect rect)
 void ccCenterWindow(ccWindow *window)
 {
 	ccResizeWindow(window,
-		(ccRect){window->display->x + ((window->display->currentDisplayData.width - window->rect.width) >> 1),
-				 window->display->y + ((window->display->currentDisplayData.height - window->rect.height) >> 1),
+		(ccRect){window->display->x + ((window->display->displayData.width - window->rect.width) >> 1),
+				 window->display->y + ((window->display->displayData.height - window->rect.height) >> 1),
 				 window->rect.width,
 				 window->rect.height
 	});
@@ -365,10 +365,10 @@ void ccFindDisplays()
 			
 			currentDisplay->x = dm.dmPosition.x;
 			currentDisplay->y = dm.dmPosition.y;
-			currentDisplay->currentDisplayData.width = dm.dmPelsWidth;
-			currentDisplay->currentDisplayData.height = dm.dmPelsHeight;
-			currentDisplay->currentDisplayData.bitDepth = dm.dmBitsPerPel;
-			currentDisplay->currentDisplayData.refreshRate = dm.dmDisplayFrequency;
+			currentDisplay->displayData.width = dm.dmPelsWidth;
+			currentDisplay->displayData.height = dm.dmPelsHeight;
+			currentDisplay->displayData.bitDepth = dm.dmBitsPerPel;
+			currentDisplay->displayData.refreshRate = dm.dmDisplayFrequency;
 
 			if(currentDisplay->x == 0 && currentDisplay->y == 0) displays.primary = displays.amount-1;
 			
@@ -396,8 +396,8 @@ void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
 {
 	rect->x = display->x;
 	rect->y = display->y;
-	rect->width = display->currentDisplayData.width;
-	rect->height = display->currentDisplayData.height;
+	rect->width = display->displayData.width;
+	rect->height = display->displayData.height;
 }
 
 void ccUpdateDisplays()
