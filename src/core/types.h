@@ -9,3 +9,7 @@ typedef struct {
 	int x, y;
 } ccPoint;
 
+typedef struct {
+	int x, y;
+	int width, height;
+} ccRect;

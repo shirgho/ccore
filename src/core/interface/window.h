@@ -80,14 +80,12 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
-//creates a new window
 ccWindow* ccNewWindow(ccDisplay *display, unsigned short width, unsigned short height, const char *title, int flags);
-//frees the window
 void ccFreeWindow(ccWindow *window);
 //poll an event from the events that currently need to be processed in the window
 bool ccPollEvent(ccWindow *window);
-//change the window mode
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
+void ccResizeWindow(ccWindow *window, ccRect rect);
 
 ccResolutions *ccGetResolutions(ccDisplay display);
 void ccFreeResolutions(ccResolutions *resolutions);
@@ -99,7 +97,7 @@ void ccFindDisplays();
 void ccUpdateDisplays(); //TODO: update window display pointers
 //get a pointer to the display list
 ccDisplays *ccGetDisplays();
-//get the default display (for single monitor applications)
+//get the default display (E.G.for single monitor applications)
 ccDisplay *ccGetDefaultDisplay();
 //this needs to be called when ccFindDisplays was called
 void ccFreeDisplays();

@@ -284,7 +284,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		window->height = window->display->currentDisplayData.height;
 
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
-		MoveWindow(window->winHandle, window->display->x, window->display->y, window->width, window->height, TRUE);
+		ccResizeWindow(window, (ccRect){ window->display->x, window->display->y, window->width, window->height });
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
 		ShowWindow(window->winHandle, SW_MAXIMIZE);
@@ -292,9 +292,9 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
-void ccResizeWindow(ccWindow *window, int x, int y, int width, int height)
+void ccResizeWindow(ccWindow *window, ccRect rect)
 {
-
+	MoveWindow(window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);
 }
 
 void ccFindDisplays()
