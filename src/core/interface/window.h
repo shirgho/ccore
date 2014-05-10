@@ -87,8 +87,7 @@ typedef struct _ccWindow {
 
 ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
-//poll an event from the events that currently need to be processed in the window
-bool ccPollEvent(ccWindow *window);
+bool ccPollEvent(ccWindow *window); //poll an event from the events that currently need to be processed in the window
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
 void ccResizeWindow(ccWindow *window, ccRect rect);
 void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
@@ -97,20 +96,13 @@ ccResolutions *ccGetResolutions(ccDisplay *display);
 void ccFreeResolutions(ccResolutions *resolutions);
 void ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
 
-//get all displays currently connected and active
-void ccFindDisplays();
-//update the display list
-void ccUpdateDisplays(); //TODO: update window display pointers
-//get a pointer to the display list
-ccDisplays *ccGetDisplays();
-//get the default display (E.G.for single monitor applications)
-ccDisplay *ccGetDefaultDisplay();
+void ccFindDisplays(); //get all displays currently connected and active
+void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
+ccDisplays *ccGetDisplays(); //get a pointer to the global display list
+ccDisplay *ccGetDefaultDisplay(); //get the default display (E.G.for single monitor applications)
 void ccFreeDisplays();
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect);
 
-//bind the openGl context to window
-void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
-//swap the buffers
-void ccGLSwapBuffers(ccWindow *window);
-//make window the current window
-void ccGLMakeCurrent(ccWindow *window);
+void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
+void ccGLSwapBuffers(ccWindow *window); //swap the buffers
+void ccGLMakeCurrent(ccWindow *window); //make window the current window
