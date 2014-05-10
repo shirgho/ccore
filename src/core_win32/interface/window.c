@@ -71,6 +71,9 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 		activeWindow->aspect = (float) activeWindow->width / activeWindow->height;
 		activeWindow->sizeChanged = true;
 		break;
+	case WM_MOVE:
+		printf("moved");
+		break;
 	case WM_KEYDOWN:
 		activeWindow->event.type = CC_EVENT_KEY_DOWN;
 		activeWindow->event.key = translateKey(wParam);
