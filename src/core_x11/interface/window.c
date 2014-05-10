@@ -10,7 +10,7 @@ static int attrList[] =
 	GLX_DEPTH_SIZE, 16,                                                
 };
 
-ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
+ccWindow* ccNewWindow(ccRect rect, const char *title, int flags)
 {
 	ccWindow *output;
 	Window root;
@@ -21,8 +21,8 @@ ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 	//TODO: change assert to error
 	ccAssert(output->XDisplay != NULL);
 	root = DefaultRootWindow(output->XDisplay);
-	output->screen = DefaultScreen(output->XDisplay);
-	output->window = XCreateSimpleWindow(output->XDisplay, root, 10, 10, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
+	output->XScreen = DefaultScreen(output->XDisplay);
+	output->XWindow = XCreateSimpleWindow(output->XDisplay, root, 10, 10, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
 	// Choose types of events
 	XSelectInput(output->XDisplay, output->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 	XMapWindow(output->XDisplay, output->XWindow);
@@ -95,11 +95,11 @@ bool ccPollEvent(ccWindow *window)
 			window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
 		case ConfigureNotify:
-			if(window->width != event.xconfigure.width || window->height != event.xconfigure.height){
+			if(window->rect.width != event.xconfigure.width || window->rect.height != event.xconfigure.height){
 				window->event.type = CC_EVENT_WINDOW_RESIZE;
-				window->width = event.xconfigure.width;
-				window->height = event.xconfigure.height;
-				window->aspect = window->height / window->width;
+				window->rect.width = event.xconfigure.width;
+				window->rect.height = event.xconfigure.height;
+				window->aspect = window->rect.height / window->rect.width;
 			}
 			break;
 		case ClientMessage:
@@ -133,7 +133,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 
 		memset(&event, 0, sizeof(event));
 		event.type = ClientMessage;
-		event.xclient.window = window->window;
+		event.xclient.window = window->XWindow;
 		event.xclient.message_type = wmState;
 		event.xclient.format = 32;
 		event.xclient.data.l[0] = mode == CC_WINDOW_MODE_FULLSCREEN;
@@ -143,17 +143,20 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
-ccResolutions* ccGetResolutions(ccDisplay display)
-{
-	
-}
+void ccResizeWindow(ccWindow *window, ccRect rect);
+void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
 
+ccResolutions *ccGetResolutions(ccDisplay *display);
 void ccFreeResolutions(ccResolutions *resolutions);
-void ccSetResolution(ccDisplay display, ccDisplayData resolution);
+void ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
+bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution);
 
-ccDisplays* ccGetDisplays();
-void ccFreeDisplays(ccDisplays *displays);
-int ccDisplayIndex(ccDisplays displays, ccWindow window);
+void ccFindDisplays(); //get all displays currently connected and active
+void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
+ccDisplays *ccGetDisplays(); //get a pointer to the global display list
+ccDisplay *ccGetDefaultDisplay(); //get the default display (E.G.for single monitor applications)
+void ccFreeDisplays();
+void ccGetDisplayRect(ccDisplay *display, ccRect *rect);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
@@ -164,11 +167,11 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 	visual = glXChooseVisual(window->XDisplay, window->XScreen, attrList);
 	ccAssert(visual != NULL);
 
-	window->context = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
-	glXMakeCurrent(window->XDisplay, window->window, window->context);
+	window->XContext = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
+	glXMakeCurrent(window->XDisplay, window->XWindow, window->XContext);
 }
 
 void ccGLSwapBuffers(ccWindow *window)
 {
-	glXSwapBuffers(window->XDisplay, window->window);
+	glXSwapBuffers(window->XDisplay, window->XWindow);
 }
