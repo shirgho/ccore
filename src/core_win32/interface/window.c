@@ -367,6 +367,9 @@ void ccFindDisplays()
 			currentDisplay = &displays.display[displays.amount - 1];
 			memcpy(currentDisplay->gpuName, device.DeviceString, 128);
 			memcpy(currentDisplay->monitorName, display.DeviceString, 128);
+			memcpy(currentDisplay->deviceName, display.DeviceName, 128);
+			ccStrTrimToSlash(currentDisplay->deviceName, false);
+			
 			currentDisplay->x = dm.dmPosition.x;
 			currentDisplay->y = dm.dmPosition.y;
 			currentDisplay->currentDisplayData.width = dm.dmPelsWidth;
@@ -408,6 +411,35 @@ void ccUpdateDisplays()
 {
 	ccFreeDisplays();
 	ccFindDisplays();
+}
+
+ccResolutions *ccGetResolutions(ccDisplay *display)
+{
+	DEVMODE devMode;
+	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
+
+	ZeroMemory(&devMode, sizeof(DEVMODE));
+
+	resolutions->amount = 0;
+
+	while(EnumDisplaySettings(display->deviceName, resolutions->amount, &devMode)) {
+		
+		if(resolutions->amount == 0) {
+			resolutions->displayData = malloc(sizeof(ccDisplayData));
+		}
+		else{
+			resolutions->displayData = realloc(resolutions->displayData, sizeof(ccDisplayData)*(resolutions->amount + 1));
+		}
+
+		resolutions->displayData[resolutions->amount].width = devMode.dmPelsWidth;
+		resolutions->displayData[resolutions->amount].height = devMode.dmPelsHeight;
+		resolutions->displayData[resolutions->amount].refreshRate = devMode.dmDisplayFrequency;
+		resolutions->displayData[resolutions->amount].bitDepth = devMode.dmBitsPerPel;
+
+		resolutions->amount++;
+	}
+
+	return resolutions;
 }
 /*
 ccResolutions *ccGetResolutions(ccDisplay display) {

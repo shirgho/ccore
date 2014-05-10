@@ -24,8 +24,10 @@ int main(int argc, char** argv)
 {
 	ccWindow *window;
 	bool quit;
+	ccResolutions *resolutions;
 	int i;
 
+	//Find displays and print their stats
 	ccFindDisplays();
 	for(i = 0; i < ccGetDisplays()->amount; i++) {
 		printf("\n%s\n%s\n%d\t%d\t%dx%d\t%dbpp\t%dHz\n", ccGetDisplays()->display[i].monitorName,
@@ -37,7 +39,12 @@ int main(int argc, char** argv)
 										 ccGetDisplays()->display[i].currentDisplayData.bitDepth,
 										 ccGetDisplays()->display[i].currentDisplayData.refreshRate);
 	}
-	ccUpdateDisplays();
+
+	//Find all resolutions of one display and print them
+	resolutions = ccGetResolutions(&ccGetDisplays()->display[2]);
+	for(i = 0; i < resolutions->amount; i++) {
+		printf("%dx%d\t%dbpp\t%dHz\n", resolutions->displayData[i].width, resolutions->displayData[i].height, resolutions->displayData[i].bitDepth, resolutions->displayData[i].refreshRate);
+	}
 
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 

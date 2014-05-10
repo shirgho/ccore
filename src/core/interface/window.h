@@ -28,6 +28,11 @@ typedef struct {
 	int x, y;
 	char gpuName[128];
 	char monitorName[128];
+	
+#ifdef WIN32
+	char deviceName[128];
+#endif
+
 } ccDisplay;
 
 //list of all displays currently connected and active
@@ -88,7 +93,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode);
 void ccResizeWindow(ccWindow *window, ccRect rect);
 void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
 
-ccResolutions *ccGetResolutions(ccDisplay display);
+ccResolutions *ccGetResolutions(ccDisplay *display);
 void ccFreeResolutions(ccResolutions *resolutions);
 void ccSetResolution(ccDisplay display, ccDisplayData resolution);
 
