@@ -413,39 +413,54 @@ void ccUpdateDisplays()
 	ccFindDisplays();
 }
 
+bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution)
+{
+	int i;
+
+	for(i = 0; i < resolutions->amount; i++) {
+		if(resolutions->displayData[i].bitDepth == resolution->bitDepth &&
+		   resolutions->displayData[i].refreshRate == resolution->refreshRate &&
+		   resolutions->displayData[i].width == resolution->width &&
+		   resolutions->displayData[i].height == resolution->height) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 ccResolutions *ccGetResolutions(ccDisplay *display)
 {
 	DEVMODE devMode;
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
+	ccDisplayData buffer;
 	int i = 0;
+	int j;
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 
 	resolutions->amount = 0;
 
 	while(EnumDisplaySettings(display->deviceName, i, &devMode)) {
-		
-		if(resolutions->amount == 0 ||
-			!(resolutions->displayData[resolutions->amount - 1].width == devMode.dmPelsWidth &&
-			resolutions->displayData[resolutions->amount - 1].height == devMode.dmPelsHeight &&
-			resolutions->displayData[resolutions->amount - 1].refreshRate == devMode.dmDisplayFrequency &&
-			resolutions->displayData[resolutions->amount - 1].bitDepth == devMode.dmBitsPerPel)) {
-
-			if(resolutions->amount == 0) {
-				resolutions->displayData = malloc(sizeof(ccDisplayData));
-			}
-			else{
-				resolutions->displayData = realloc(resolutions->displayData, sizeof(ccDisplayData)*(resolutions->amount + 1));
-			}
-
-			resolutions->displayData[resolutions->amount].width = devMode.dmPelsWidth;
-			resolutions->displayData[resolutions->amount].height = devMode.dmPelsHeight;
-			resolutions->displayData[resolutions->amount].refreshRate = devMode.dmDisplayFrequency;
-			resolutions->displayData[resolutions->amount].bitDepth = devMode.dmBitsPerPel;
-
-			resolutions->amount++;
-		}
 		i++;
+
+		buffer.bitDepth = devMode.dmPelsWidth;
+		buffer.refreshRate = devMode.dmDisplayFrequency;
+		buffer.width = devMode.dmPelsWidth;
+		buffer.height = devMode.dmPelsHeight;
+
+		if(ccResolutionExists(resolutions, &buffer)) continue;
+
+		if(resolutions->amount == 0) {
+			resolutions->displayData = malloc(sizeof(ccDisplayData));
+		}
+		else{
+			resolutions->displayData = realloc(resolutions->displayData, sizeof(ccDisplayData)*(resolutions->amount + 1));
+		}
+
+		memcpy(&resolutions->displayData[resolutions->amount], &buffer, sizeof(ccDisplayData));
+
+		resolutions->amount++;
 	}
 
 	return resolutions;
