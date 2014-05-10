@@ -57,7 +57,6 @@ ccKeyCode translateKey(WPARAM wParam)
 void updateWindowDisplay(ccWindow *window)
 {
 	int i;
-	int xOverlap, yOverlap;
 	int area, largestArea;
 	ccRect displayRect;
 	RECT winRect;
@@ -72,13 +71,7 @@ void updateWindowDisplay(ccWindow *window)
 	for(i = 0; i < displays.amount; i++)
 	{
 		ccGetDisplayRect(&displays.display[i], &displayRect);
-		xOverlap = max(0,
-			min(window->rect.x + window->rect.width, displayRect.x + displayRect.width) -
-			max(window->rect.x, displayRect.x));
-		yOverlap = max(0,
-			min(window->rect.y + window->rect.height, displayRect.y + displayRect.height) -
-			max(window->rect.y, displayRect.y));
-		area = xOverlap * yOverlap;
+		area = ccRectIntersectionArea(&displayRect, &window->rect);
 		if(area > largestArea) {
 			largestArea = area;
 			window->display = &displays.display[i];
@@ -432,7 +425,6 @@ ccResolutions *ccGetResolutions(ccDisplay *display)
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
 	ccDisplayData buffer;
 	int i = 0;
-	int j;
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 

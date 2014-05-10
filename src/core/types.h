@@ -13,3 +13,5 @@ typedef struct {
 	int x, y;
 	int width, height;
 } ccRect;
+
+int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);

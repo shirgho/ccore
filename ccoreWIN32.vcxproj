@@ -71,6 +71,7 @@
   <ItemGroup>
     <ClCompile Include="src\core\utils\charUtils.c" />
     <ClCompile Include="src\core\utils\error.c" />
+    <ClCompile Include="src\core\utils\rect.c" />
     <ClCompile Include="src\core_win32\glew\glew.c" />
     <ClCompile Include="src\core_win32\interface\popup.c" />
     <ClCompile Include="src\core_win32\interface\window.c" />
