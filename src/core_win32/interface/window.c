@@ -450,57 +450,26 @@ ccResolutions *ccGetResolutions(ccDisplay *display)
 
 	return resolutions;
 }
-/*
-ccResolutions *ccGetResolutions(ccDisplay display) {
-	DEVMODE dm;
-	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
 
-	ZeroMemory(&dm, sizeof(dm));
-	dm.dmSize = sizeof(dm);
-
-	resolutions->amount = 0;
-	resolutions->screenData = NULL;
-
-	for(int i = 0; EnumDisplaySettings(NULL, i, &dm) != 0; i++) {
-		if(resolutions->amount == 0 ||
-			(resolutions->screenData[resolutions->amount - 1].width != dm.dmPelsWidth || resolutions->screenData[resolutions->amount - 1].height != dm.dmPelsHeight)) {
-			
-			if(resolutions->screenData == NULL) {
-				resolutions->screenData = malloc(sizeof(ccScreenData));
-			}
-			else{
-				resolutions->screenData = realloc(resolutions->screenData, (resolutions->amount + 1) * sizeof(ccScreenData));
-			}
-
-			resolutions->screenData[resolutions->amount].width = dm.dmPelsWidth;
-			resolutions->screenData[resolutions->amount].height = dm.dmPelsHeight;
-			resolutions->screenData[resolutions->amount].refreshRate = dm.dmDisplayFrequency;
-			resolutions->screenData[resolutions->amount].bitDepth = dm.dmBitsPerPel;
-			resolutions->amount++;
-		}
-	}
-
-	return resolutions;
-}
-*/
 void ccFreeResolutions(ccResolutions *resolutions) {
 	if(resolutions->amount != 0) free(resolutions->displayData);
 	free(resolutions);
 }
-/*
-void ccSetResolution(ccDisplay display, ccDisplayData *screenData) {
-	DEVMODE dm;
-	ZeroMemory(&dm, sizeof(dm));
-	dm.dmSize = sizeof(dm);
-	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
 
-	dm.dmPelsWidth = screenData->width;
-	dm.dmPelsHeight = screenData->height;
-	dm.dmFields = (DM_PELSWIDTH | DM_PELSHEIGHT);
+void ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
+{
+	DEVMODE devMode;
+	ZeroMemory(&devMode, sizeof(DEVMODE));
+	devMode.dmSize = sizeof(DEVMODE);
+	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
 
-	if(ChangeDisplaySettings(&dm, CDS_TEST) != DISP_CHANGE_SUCCESSFUL) {
-		//TODO: throw error
-		printf("Couldn't change display mode");
+	devMode.dmPelsWidth = displayData->width;
+	devMode.dmPelsHeight = displayData->height;
+	devMode.dmBitsPerPel = displayData->bitDepth;
+	devMode.dmDisplayFrequency = displayData->refreshRate;
+	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
+
+	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
+		ccAbort("Error changing resolution!");
 	}
 }
-*/

@@ -45,6 +45,8 @@ int main(int argc, char** argv)
 	for(i = 0; i < resolutions->amount; i++) {
 		printf("%dx%d\t%dbpp\t%dHz\n", resolutions->displayData[i].width, resolutions->displayData[i].height, resolutions->displayData[i].bitDepth, resolutions->displayData[i].refreshRate);
 	}
+	ccSetResolution(&ccGetDisplays()->display[2], &resolutions->displayData[0]);
+	ccFreeResolutions(resolutions);
 
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 

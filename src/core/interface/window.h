@@ -95,7 +95,7 @@ void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
 
 ccResolutions *ccGetResolutions(ccDisplay *display);
 void ccFreeResolutions(ccResolutions *resolutions);
-void ccSetResolution(ccDisplay display, ccDisplayData resolution);
+void ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
 
 //get all displays currently connected and active
 void ccFindDisplays();
