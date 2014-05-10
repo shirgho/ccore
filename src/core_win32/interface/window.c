@@ -355,6 +355,14 @@ ccDisplay *ccGetDefaultDisplay()
 	return &displays.display[displays.primary];
 }
 
+void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
+{
+	rect->x = display->x;
+	rect->y = display->y;
+	rect->width = display->currentDisplayData.width;
+	rect->height = display->currentDisplayData.height;
+}
+
 void ccUpdateDisplays()
 {
 	ccFreeDisplays();

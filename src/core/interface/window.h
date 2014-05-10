@@ -100,7 +100,7 @@ ccDisplays *ccGetDisplays();
 //get the default display (E.G.for single monitor applications)
 ccDisplay *ccGetDefaultDisplay();
 void ccFreeDisplays();
-void ccGetDisplayRect(ccDisplay display, ccRect *rect);
+void ccGetDisplayRect(ccDisplay *display, ccRect *rect);
 
 //bind the openGl context to window
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
