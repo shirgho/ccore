@@ -10,28 +10,28 @@ static int attrList[] =
 	GLX_DEPTH_SIZE, 16,                                                
 };
 
-ccWindow* ccNewWindow(unsigned short width, unsigned short height, const char* title, int flags)
+ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 {
 	ccWindow *output;
 	Window root;
 	Atom delete;
 
 	output = malloc(sizeof(ccWindow));
-	output->display = XOpenDisplay(NULL);
+	output->XDisplay = XOpenDisplay(NULL);
 	//TODO: change assert to error
-	ccAssert(output->display != NULL);
-	root = DefaultRootWindow(output->display);
-	output->screen = DefaultScreen(output->display);
-	output->window = XCreateSimpleWindow(output->display, root, 10, 10, width, height, 1, BlackPixel(output->display, output->screen), WhitePixel(output->display, output->screen));
+	ccAssert(output->XDisplay != NULL);
+	root = DefaultRootWindow(output->XDisplay);
+	output->screen = DefaultScreen(output->XDisplay);
+	output->window = XCreateSimpleWindow(output->XDisplay, root, 10, 10, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
 	// Choose types of events
-	XSelectInput(output->display, output->window, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
-	XMapWindow(output->display, output->window);
-	XStoreName(output->display, output->window, title);
+	XSelectInput(output->XDisplay, output->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
+	XMapWindow(output->XDisplay, output->XWindow);
+	XStoreName(output->XDisplay, output->XWindow, title);
 
-	output->mouse.x = output->mouse.y = output->width = output->height = -1;
+	output->mouse.x = output->mouse.y = output->rect.width = output->rect.height = -1;
 
-	delete = XInternAtom(output->display, "WM_DELETE_WINDOW", True);
-	XSetWMProtocols(output->display, output->window, &delete, 1);
+	delete = XInternAtom(output->XDisplay, "WM_DELETE_WINDOW", True);
+	XSetWMProtocols(output->XDisplay, output->XWindow, &delete, 1);
 
 	return output;
 }
@@ -40,9 +40,9 @@ void ccFreeWindow(ccWindow *window)
 {
 	ccAssert(window != NULL);
 	//TODO: don't delete a context before checking whether it exists!
-	glXMakeCurrent(window->display, None, NULL);
-	glXDestroyContext(window->display, window->context);
-	XCloseDisplay(window->display);
+	glXMakeCurrent(window->XDisplay, None, NULL);
+	glXDestroyContext(window->XDisplay, window->XContext);
+	XCloseDisplay(window->XDisplay);
 	free(window);
 }
 
@@ -53,11 +53,11 @@ bool ccPollEvent(ccWindow *window)
 	ccAssert(window != NULL);
 
 	window->event.type = CC_EVENT_SKIP;
-	if(XPending(window->display) == 0){
+	if(XPending(window->XDisplay) == 0){
 		return false;
 	}
 
-	XNextEvent(window->display, &event);
+	XNextEvent(window->XDisplay, &event);
 	switch(event.type){
 		case ButtonPress:
 			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
@@ -128,8 +128,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	Atom wmState, fullscreen;
 
 	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
-		wmState = XInternAtom(window->display, "_NET_WM_STATE", false);
-		fullscreen = XInternAtom(window->display, "_NET_WM_STATE_FULLSCREEN", false);
+		wmState = XInternAtom(window->XDisplay, "_NET_WM_STATE", false);
+		fullscreen = XInternAtom(window->XDisplay, "_NET_WM_STATE_FULLSCREEN", false);
 
 		memset(&event, 0, sizeof(event));
 		event.type = ClientMessage;
@@ -139,9 +139,21 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		event.xclient.data.l[0] = mode == CC_WINDOW_MODE_FULLSCREEN;
 		event.xclient.data.l[1] = fullscreen;
 
-		XSendEvent(window->display, DefaultRootWindow(window->display), false, SubstructureNotifyMask, &event);
+		XSendEvent(window->XDisplay, DefaultRootWindow(window->XDisplay), false, SubstructureNotifyMask, &event);
 	}
 }
+
+ccResolutions* ccGetResolutions(ccDisplay display)
+{
+	
+}
+
+void ccFreeResolutions(ccResolutions *resolutions);
+void ccSetResolution(ccDisplay display, ccDisplayData resolution);
+
+ccDisplays* ccGetDisplays();
+void ccFreeDisplays(ccDisplays *displays);
+int ccDisplayIndex(ccDisplays displays, ccWindow window);
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
@@ -149,14 +161,14 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 
 	ccAssert(window != NULL);
 
-	visual = glXChooseVisual(window->display, window->screen, attrList);
+	visual = glXChooseVisual(window->XDisplay, window->XScreen, attrList);
 	ccAssert(visual != NULL);
 
-	window->context = glXCreateContext(window->display, visual, NULL, GL_TRUE);
-	glXMakeCurrent(window->display, window->window, window->context);
+	window->context = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
+	glXMakeCurrent(window->XDisplay, window->window, window->context);
 }
 
 void ccGLSwapBuffers(ccWindow *window)
 {
-	glXSwapBuffers(window->display, window->window);
+	glXSwapBuffers(window->XDisplay, window->window);
 }

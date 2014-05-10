@@ -69,10 +69,10 @@ typedef struct _ccWindow {
 	ccDisplay *display;
 
 #ifdef LINUX
-	Display *display; 
-	Window window;
-	int screen;
-	GLXContext context;
+	Display *XDisplay; 
+	Window XWindow;
+	int XScreen;
+	GLXContext XContext;
 #endif
 
 #ifdef WIN32
