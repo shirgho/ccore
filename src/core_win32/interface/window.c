@@ -417,26 +417,35 @@ ccResolutions *ccGetResolutions(ccDisplay *display)
 {
 	DEVMODE devMode;
 	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
+	int i = 0;
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 
 	resolutions->amount = 0;
 
-	while(EnumDisplaySettings(display->deviceName, resolutions->amount, &devMode)) {
+	while(EnumDisplaySettings(display->deviceName, i, &devMode)) {
 		
-		if(resolutions->amount == 0) {
-			resolutions->displayData = malloc(sizeof(ccDisplayData));
-		}
-		else{
-			resolutions->displayData = realloc(resolutions->displayData, sizeof(ccDisplayData)*(resolutions->amount + 1));
-		}
+		if(resolutions->amount == 0 ||
+			!(resolutions->displayData[resolutions->amount - 1].width == devMode.dmPelsWidth &&
+			resolutions->displayData[resolutions->amount - 1].height == devMode.dmPelsHeight &&
+			resolutions->displayData[resolutions->amount - 1].refreshRate == devMode.dmDisplayFrequency &&
+			resolutions->displayData[resolutions->amount - 1].bitDepth == devMode.dmBitsPerPel)) {
 
-		resolutions->displayData[resolutions->amount].width = devMode.dmPelsWidth;
-		resolutions->displayData[resolutions->amount].height = devMode.dmPelsHeight;
-		resolutions->displayData[resolutions->amount].refreshRate = devMode.dmDisplayFrequency;
-		resolutions->displayData[resolutions->amount].bitDepth = devMode.dmBitsPerPel;
+			if(resolutions->amount == 0) {
+				resolutions->displayData = malloc(sizeof(ccDisplayData));
+			}
+			else{
+				resolutions->displayData = realloc(resolutions->displayData, sizeof(ccDisplayData)*(resolutions->amount + 1));
+			}
 
-		resolutions->amount++;
+			resolutions->displayData[resolutions->amount].width = devMode.dmPelsWidth;
+			resolutions->displayData[resolutions->amount].height = devMode.dmPelsHeight;
+			resolutions->displayData[resolutions->amount].refreshRate = devMode.dmDisplayFrequency;
+			resolutions->displayData[resolutions->amount].bitDepth = devMode.dmBitsPerPel;
+
+			resolutions->amount++;
+		}
+		i++;
 	}
 
 	return resolutions;
