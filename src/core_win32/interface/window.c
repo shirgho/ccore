@@ -174,7 +174,6 @@ ccWindow *ccNewWindow(ccRect rect, const char* title, int flags)
 	//Struct initialisation
 	memcpy(&newWindow->rect, &rect, sizeof(ccRect));
 	newWindow->sizeChanged = true;
-	newWindow->display = display;
 
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);

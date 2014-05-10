@@ -99,8 +99,8 @@ void ccUpdateDisplays(); //TODO: update window display pointers
 ccDisplays *ccGetDisplays();
 //get the default display (E.G.for single monitor applications)
 ccDisplay *ccGetDefaultDisplay();
-//this needs to be called when ccFindDisplays was called
 void ccFreeDisplays();
+void ccGetDisplayRect(ccDisplay display, ccRect *rect);
 
 //bind the openGl context to window
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor);
