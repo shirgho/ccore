@@ -92,7 +92,9 @@ static ccDisplays _displays;
 #define ccGetDisplay(x) _displays.display[x]
 
 #define ccGetResolutionAmount(x) _displays.display[x].amount
+#define ccGetResolutionAmountPrimary() _displays.display[_displays.primary].amount
 #define ccGetResolution(x, y) _displays.display[x].resolutions[y]
+#define ccGetResolutionPrimary(x) _displays.display[_displays.primary].resolutions[x]
 
 ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
