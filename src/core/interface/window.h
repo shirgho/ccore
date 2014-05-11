@@ -34,7 +34,7 @@ typedef struct {
 #endif
 
 #ifdef LINUX
-	bool XDisplayOpened;
+	int XScreen;
 	Display *XDisplay;
 #endif
 

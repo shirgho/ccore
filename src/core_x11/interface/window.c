@@ -185,7 +185,9 @@ void ccFindDisplays()
 	DIR *dir;
 	struct dirent *direntry;
 	Display *disp;
+	ccDisplay current;
 	char displayName[64];
+	int i, screenCount;
 
 	displays.amount = 0;
 
@@ -196,18 +198,28 @@ void ccFindDisplays()
 		if(direntry->d_name[0] != 'X'){
 			continue;
 		}
-		strcat(displayName, direntry->d_name + 1);
+		memset(displayName, '\0', 64);
+		strcat(displayName, direntry->d_name);
+		displayName[0] = ':';
 		disp = XOpenDisplay(displayName);
 		if(disp != NULL){
-			XCloseDisplay(disp);
-			displays.amount++;
-			if(displays.amount == 1){
-				displays.display = malloc(sizeof(ccDisplay));
-			}else{
-				displays.display = realloc(displays.display, sizeof(ccDisplay) * displays.amount);
+			screenCount = XScreenCount(disp);
+			for(i = 0; i < screenCount; i++){
+				memcpy(current.monitorName, displayName, 64);
+				current.XScreen = i;
+				current.displayData.width = XDisplayWidth(disp, i);
+				current.displayData.height = XDisplayHeight(disp, i);
+
+				displays.amount++;
+				if(displays.amount == 1){
+					displays.display = malloc(sizeof(ccDisplay));
+				}else{
+					displays.display = realloc(displays.display, sizeof(ccDisplay) * displays.amount);
+				}
+				memcpy(displays.display + (displays.amount - 1), &current, sizeof(ccDisplay));
 			}
-			strcat(displays.display[displays.amount].monitorName, displayName);
-			displays.display[displays.amount].XDisplayOpened = false;
+
+			XCloseDisplay(disp);
 		}
 	}
 }

@@ -2,6 +2,8 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif 
 
+#define DEBUG
+
 #include <stdio.h>
 #include <stdlib.h>
 
