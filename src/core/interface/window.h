@@ -88,8 +88,8 @@ typedef struct _ccWindow {
 static ccDisplays _displays;
 
 #define ccGetDisplayAmount() _displays.amount
-#define ccGetDisplayPrimary() _displays.display[_displays.primary]
 #define ccGetDisplay(x) _displays.display[x]
+#define ccGetDisplayPrimary() _displays.display[_displays.primary]
 
 #define ccGetResolutionAmount(x) _displays.display[x].amount
 #define ccGetResolutionAmountPrimary() _displays.display[_displays.primary].amount
@@ -108,7 +108,6 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
 void ccFindDisplays(); //get all displays currently connected and active
 void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
-ccDisplay *ccGetDefaultDisplay(); //get the default display (E.G.for single monitor applications)
 void ccFreeDisplays();
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect);
 
