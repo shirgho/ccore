@@ -361,7 +361,7 @@ void ccFindDisplays()
 			memcpy(currentDisplay->gpuName, device.DeviceString, 128);
 			memcpy(currentDisplay->monitorName, display.DeviceString, 128);
 			memcpy(currentDisplay->deviceName, display.DeviceName, 128);
-			ccStrTrimToSlash(currentDisplay->deviceName, false);
+			ccStrTrimToChar(currentDisplay->deviceName, '\\', false);
 			
 			currentDisplay->x = dm.dmPosition.x;
 			currentDisplay->y = dm.dmPosition.y;

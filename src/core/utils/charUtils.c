@@ -14,9 +14,9 @@ void ccStrCopy(const char* source, char* destination)
 	}
 }
 
-void ccStrTrimToSlash(char* str, bool includeSlash)
+void ccStrTrimToChar(char* str, char ch, bool includeChar)
 {
 	int i;
-	for(i = ccStrLength(str); str[i] != '\\'; i--);
-	str[i + includeSlash] = 0;
+	for(i = ccStrLength(str); str[i] != ch; i--);
+	str[i + includeChar] = 0;
 }
