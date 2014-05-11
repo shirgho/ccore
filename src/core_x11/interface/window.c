@@ -153,15 +153,6 @@ void ccCenterWindow(ccWindow *window)
 
 }
 
-ccResolutions *ccGetResolutions(ccDisplay *display)
-{
-	ccResolutions *output;
-
-	output = malloc(sizeof(ccResolutions));
-
-	return output;
-}
-
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 {
 
@@ -170,15 +161,18 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 
 void ccFindDisplays()
 {
+	int i, j, screenCount, sizeCount, rateCount;
+	short *refreshRates;
+	char displayName[64];
 	DIR *dir;
 	struct dirent *direntry;
+	XRRScreenSize *sizes;
+	XWindowAttributes attrList;
 	Display *disp;
 	ccDisplay current;
-	XWindowAttributes attrList;
-	char displayName[64];
-	int i, screenCount;
+	ccDisplayData currentResolution;
 
-	displays.amount = 0;
+	_displays.amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
 	ccAssert(dir != NULL);
@@ -194,24 +188,41 @@ void ccFindDisplays()
 		if(disp != NULL){
 			screenCount = XScreenCount(disp);
 			for(i = 0; i < screenCount; i++){
-				XGetWindowAttributes(disp, RootWindow(disp, i), &attrList);
-
 				memcpy(current.monitorName, displayName, 64);
 				current.gpuName[0] = '\0';
 				current.XScreen = i;
+
+				XGetWindowAttributes(disp, RootWindow(disp, i), &attrList);
 				current.x = attrList.x;
 				current.y = attrList.y;
-				current.displayData.width = attrList.width;
-				current.displayData.height = attrList.height;
-				current.displayData.bitDepth = attrList.depth;
 
-				displays.amount++;
-				if(displays.amount == 1){
-					displays.display = malloc(sizeof(ccDisplay));
-				}else{
-					displays.display = realloc(displays.display, sizeof(ccDisplay) * displays.amount);
+				sizes = XRRSizes(disp, i, &sizeCount);
+				for(j = 0; j < sizeCount; j++){
+					currentResolution.width = sizes[i].width;
+					currentResolution.height = sizes[i].height;
+
+					//TODO add multiple refresh rates
+					refreshRates = XRRRates(disp, i, j, &rateCount);
+					currentResolution.refreshRate = refreshRates[0];
+
+					currentResolution.bitDepth = attrList.depth;
+
+					current.amount++;
+					if(current.amount == 1){
+						current.resolutions = malloc(sizeof(ccDisplayData));
+					}else{
+						current.resolutions = realloc(current.resolutions, sizeof(ccDisplayData) * current.amount);
+					}
+					memcpy(current.resolutions + (current.amount - 1), &currentResolution, sizeof(ccDisplayData));
 				}
-				memcpy(displays.display + (displays.amount - 1), &current, sizeof(ccDisplay));
+
+				_displays.amount++;
+				if(_displays.amount == 1){
+					_displays.display = malloc(sizeof(ccDisplay));
+				}else{
+					_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
+				}
+				memcpy(_displays.display + (_displays.amount - 1), &current, sizeof(ccDisplay));
 			}
 
 			XCloseDisplay(disp);
@@ -224,23 +235,9 @@ void ccUpdateDisplays()
 
 }
 
-ccDisplays *ccGetDisplays()
-{
-	return &displays;
-}
-
-ccDisplay *ccGetDefaultDisplay()
-{
-	ccDisplay *output;
-
-	output = malloc(sizeof(ccDisplay));
-
-	return output;
-}
-
 void ccFreeDisplays()
 {
-	free(displays.display);
+	free(_displays.display);
 }
 
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
