@@ -35,8 +35,8 @@ int main(int argc, char** argv)
 	}
 
 	//Find all resolutions of one display and print them
-	for(i = 0; i < ; i++) {
-		printf("%dx%d\t%dbpp\t%dHz\n", resolutions->displayData[i].width, resolutions->displayData[i].height, resolutions->displayData[i].bitDepth, resolutions->displayData[i].refreshRate);
+	for(i = 0; i < ccGetResolutionAmount(0); i++) {
+		printf("%dx%d\t%dbpp\t%dHz\n", ccGetResolution(0, i).width, ccGetResolution(0, i).height, ccGetResolution(0, i).bitDepth, ccGetResolution(0, i).refreshRate);
 	}
 	//ccSetResolution(&ccGetDisplays()->display[1], &resolutions->displayData[8]);
 
