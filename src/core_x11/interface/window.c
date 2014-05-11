@@ -162,17 +162,7 @@ ccResolutions *ccGetResolutions(ccDisplay *display)
 	return output;
 }
 
-void ccFreeResolutions(ccResolutions *resolutions)
-{
-
-}
-
-void ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
-{
-
-}
-
-bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution)
+bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 {
 
 	return false;

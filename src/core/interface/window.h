@@ -88,7 +88,7 @@ typedef struct _ccWindow {
 static ccDisplays _displays;
 
 #define ccGetDisplayAmount() _displays.amount
-#define ccGetDisplayPrimary() _displays.primary
+#define ccGetDisplayPrimary() _displays.display[_displays.primary]
 #define ccGetDisplay(x) _displays.display[x]
 
 #define ccGetResolutionAmount(x) _displays.display[x].amount
