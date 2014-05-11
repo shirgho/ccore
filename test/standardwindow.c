@@ -26,29 +26,19 @@ int main(int argc, char** argv)
 {
 	ccWindow *window;
 	bool quit;
-	ccResolutions *resolutions;
 	int i;
 
 	//Find displays and print their stats
 	ccFindDisplays();
-	for(i = 0; i < ccGetDisplays()->amount; i++) {
-		printf("\n%s\n%s\n%d\t%d\t%dx%d\t%dbpp\t%dHz\n", ccGetDisplays()->display[i].monitorName,
-										 ccGetDisplays()->display[i].gpuName,
-										 ccGetDisplays()->display[i].x,
-									     ccGetDisplays()->display[i].y,
-										 ccGetDisplays()->display[i].displayData.width,
-										 ccGetDisplays()->display[i].displayData.height,
-										 ccGetDisplays()->display[i].displayData.bitDepth,
-										 ccGetDisplays()->display[i].displayData.refreshRate);
+	for(i = 0; i < ccGetDisplayAmount(); i++) {
+		printf("Monitor: %s, Display: %s, X: %d, Y: %d\n", ccGetDisplay(i).monitorName, ccGetDisplay(i).gpuName, ccGetDisplay(i).x, ccGetDisplay(i).y);
 	}
 
 	//Find all resolutions of one display and print them
-	resolutions = ccGetResolutions(&ccGetDisplays()->display[1]);
-	for(i = 0; i < resolutions->amount; i++) {
+	for(i = 0; i < ; i++) {
 		printf("%dx%d\t%dbpp\t%dHz\n", resolutions->displayData[i].width, resolutions->displayData[i].height, resolutions->displayData[i].bitDepth, resolutions->displayData[i].refreshRate);
 	}
 	//ccSetResolution(&ccGetDisplays()->display[1], &resolutions->displayData[8]);
-	ccFreeResolutions(resolutions);
 
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 
