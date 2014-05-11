@@ -186,6 +186,7 @@ void ccFindDisplays()
 	struct dirent *direntry;
 	Display *disp;
 	ccDisplay current;
+	XWindowAttributes attrList;
 	char displayName[64];
 	int i, screenCount;
 
@@ -205,10 +206,16 @@ void ccFindDisplays()
 		if(disp != NULL){
 			screenCount = XScreenCount(disp);
 			for(i = 0; i < screenCount; i++){
+				XGetWindowAttributes(disp, RootWindow(disp, i), &attrList);
+
 				memcpy(current.monitorName, displayName, 64);
+				current.gpuName[0] = '\0';
 				current.XScreen = i;
-				current.displayData.width = XDisplayWidth(disp, i);
-				current.displayData.height = XDisplayHeight(disp, i);
+				current.x = attrList.x;
+				current.y = attrList.y;
+				current.displayData.width = attrList.width;
+				current.displayData.height = attrList.height;
+				current.displayData.bitDepth = attrList.depth;
 
 				displays.amount++;
 				if(displays.amount == 1){

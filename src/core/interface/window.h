@@ -15,17 +15,11 @@ typedef struct {
 	int width, height, refreshRate, bitDepth;
 } ccDisplayData;
 
-//an array of all possible display properties a display can acquire
-typedef struct {
-	ccDisplayData* displayData;
-	int amount;
-} ccResolutions;
-
 //a display (often a monitor)
 typedef struct {
 	//current display configuration
-	ccDisplayData displayData;
-	int x, y;
+	ccDisplayData *resolutions;
+	int x, y, amount, current;
 	char gpuName[128];
 	char monitorName[128];
 	
@@ -35,6 +29,7 @@ typedef struct {
 
 #ifdef LINUX
 	int XScreen;
+	bool XDefaultScreen;
 	Display *XDisplay;
 #endif
 
