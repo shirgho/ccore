@@ -301,8 +301,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		window->rect.width = ccGetResolution(window->display).width;
-		window->rect.height = ccGetResolution(window->display).height;
+		window->rect.width = ccGetResolutionCurrent(window->display)->width;
+		window->rect.height = ccGetResolutionCurrent(window->display)->height;
 
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
 		ccResizeWindow(window, (ccRect){ window->display->x, window->display->y, window->rect.width, window->rect.height });
@@ -322,8 +322,8 @@ void ccResizeWindow(ccWindow *window, ccRect rect)
 void ccCenterWindow(ccWindow *window)
 {
 	ccResizeWindow(window,
-		(ccRect){window->display->x + ((ccGetResolution(window->display).width - window->rect.width) >> 1),
-			     window->display->y + ((ccGetResolution(window->display).height - window->rect.height) >> 1),
+		(ccRect){window->display->x + ((ccGetResolutionCurrent(window->display)->width - window->rect.width) >> 1),
+		window->display->y + ((ccGetResolutionCurrent(window->display)->height - window->rect.height) >> 1),
 				 window->rect.width,
 				 window->rect.height
 	});

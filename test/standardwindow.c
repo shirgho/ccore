@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 	for(i = 0; i < ccGetPrimaryDisplay()->amount; i++) {
 		printf("%dx%d\t%dbpp\t%dHz\n", ccGetPrimaryDisplay()->resolution[i].width, ccGetPrimaryDisplay()->resolution[i].height, ccGetPrimaryDisplay()->resolution[i].bitDepth, ccGetPrimaryDisplay()->resolution[i].refreshRate);
 	}
-	//ccSetResolution(&ccGetDisplays()->display[1], &resolutions->displayData[8]);
+	//ccSetResolution(ccGetDisplay(1), ccGetResolution(ccGetDisplay(1), 4));
 
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 

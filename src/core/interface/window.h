@@ -86,7 +86,9 @@ typedef struct _ccWindow {
 } ccWindow;
 
 //German defines only please
-#define ccGetResolution(display) display->resolution[display->current]
+#define ccGetResolutionCurrent(display) (&display->resolution[display->current])
+#define ccGetResolution(display, index) (&display->resolution[index])
+#define ccGetResolutionAmount(display) display->amount
 
 ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
