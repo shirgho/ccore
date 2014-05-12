@@ -1,6 +1,6 @@
 #include "../../core/interface/window.h"
 
-static ccDisplays displays;
+static ccDisplays _displays;
 
 ccKeyCode translateKey(WPARAM wParam)
 {
@@ -68,13 +68,13 @@ void updateWindowDisplay(ccWindow *window)
 
 	largestArea = 0;
 
-	for(i = 0; i < displays.amount; i++)
+	for(i = 0; i < _displays.amount; i++)
 	{
-		ccGetDisplayRect(&displays.display[i], &displayRect);
+		ccGetDisplayRect(&_displays.display[i], &displayRect);
 		area = ccRectIntersectionArea(&displayRect, &window->rect);
 		if(area > largestArea) {
 			largestArea = area;
-			window->display = &displays.display[i];
+			window->display = &_displays.display[i];
 		}
 	}
 }
@@ -301,8 +301,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		window->rect.width = window->display->displayData.width;
-		window->rect.height = window->display->displayData.height;
+		window->rect.width = ccGetResolution(window->display).width;
+		window->rect.height = ccGetResolution(window->display).height;
 
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
 		ccResizeWindow(window, (ccRect){ window->display->x, window->display->y, window->rect.width, window->rect.height });
@@ -322,8 +322,8 @@ void ccResizeWindow(ccWindow *window, ccRect rect)
 void ccCenterWindow(ccWindow *window)
 {
 	ccResizeWindow(window,
-		(ccRect){window->display->x + ((window->display->displayData.width - window->rect.width) >> 1),
-				 window->display->y + ((window->display->displayData.height - window->rect.height) >> 1),
+		(ccRect){window->display->x + ((ccGetResolution(window->display).width - window->rect.width) >> 1),
+			     window->display->y + ((ccGetResolution(window->display).height - window->rect.height) >> 1),
 				 window->rect.width,
 				 window->rect.height
 	});
@@ -335,29 +335,33 @@ void ccFindDisplays()
 	DISPLAY_DEVICE display;
 	DEVMODE dm;
 	ccDisplay *currentDisplay;
+	ccDisplayData buffer;
+	ccDisplayData current;
 	int deviceCount = 0;
 	int displayCount;
+	int i;
 
 	dm.dmSize = sizeof(dm);
 	device.cb = sizeof(DISPLAY_DEVICE);
 	display.cb = sizeof(DISPLAY_DEVICE);
-	displays.amount = 0;
+	_displays.amount = 0;
 
 	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
 		displayCount = 0;
 
 		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
-			displays.amount++;
-			if(displays.amount == 1) {
-				displays.display = malloc(sizeof(ccDisplay));
+			_displays.amount++;
+			
+			if(_displays.amount == 1) {
+				_displays.display = malloc(sizeof(ccDisplay));
 			}
 			else{
-				displays.display = realloc(displays.display, sizeof(ccDisplay)*displays.amount);
+				_displays.display = realloc(_displays.display, sizeof(ccDisplay)*_displays.amount);
 			}
 
 			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
 
-			currentDisplay = &displays.display[displays.amount - 1];
+			currentDisplay = &_displays.display[_displays.amount - 1];
 			memcpy(currentDisplay->gpuName, device.DeviceString, 128);
 			memcpy(currentDisplay->monitorName, display.DeviceString, 128);
 			memcpy(currentDisplay->deviceName, display.DeviceName, 128);
@@ -365,39 +369,90 @@ void ccFindDisplays()
 			
 			currentDisplay->x = dm.dmPosition.x;
 			currentDisplay->y = dm.dmPosition.y;
-			currentDisplay->displayData.width = dm.dmPelsWidth;
-			currentDisplay->displayData.height = dm.dmPelsHeight;
-			currentDisplay->displayData.bitDepth = dm.dmBitsPerPel;
-			currentDisplay->displayData.refreshRate = dm.dmDisplayFrequency;
 
-			if(currentDisplay->x == 0 && currentDisplay->y == 0) displays.primary = displays.amount-1;
+			currentDisplay->amount = 0;
+
+			current.bitDepth = dm.dmBitsPerPel;
+			current.refreshRate = dm.dmDisplayFrequency;
+			current.width = dm.dmPelsWidth;
+			current.height = dm.dmPelsHeight;
+
+			printf("%dx%d\n", current.width, current.height);
+
+			i = 0;
+			while(EnumDisplaySettings(device.DeviceName, i, &dm)) {
+				i++;
+
+				buffer.bitDepth = dm.dmBitsPerPel;
+				buffer.refreshRate = dm.dmDisplayFrequency;
+				buffer.width = dm.dmPelsWidth;
+				buffer.height = dm.dmPelsHeight;
+
+				if(ccResolutionExists(currentDisplay, &buffer)) continue;
+
+				if(currentDisplay->amount == 0) {
+					currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+				}
+				else{
+					currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
+				}
+
+				if(memcmp(&current, &buffer, sizeof(ccDisplayData)) == 0) currentDisplay->current = currentDisplay->amount;
+
+				memcpy(&currentDisplay->resolution[currentDisplay->amount], &buffer, sizeof(ccDisplayData));
+
+				currentDisplay->amount++;
+			}
+
+			if(currentDisplay->x == 0 && currentDisplay->y == 0) _displays.primary = _displays.amount - 1;
 			
 			displayCount++;
+
 		}
 		deviceCount++;
+
 	}
 }
 
 void ccFreeDisplays() {
-	free(displays.display);
+	int i;
+	for(i = 0; i < _displays.amount; i++) {
+		free(_displays.display[i].resolution);
+	}
+	free(_displays.display);
 }
 
 ccDisplays *ccGetDisplays()
 {
-	return &displays;
+	return &_displays;
 }
 
 ccDisplay *ccGetDefaultDisplay()
 {
-	return &displays.display[displays.primary];
+	return &_displays.display[_displays.primary];
+}
+
+ccDisplay *ccGetDisplay(int index)
+{
+	return &_displays.display[index];
 }
 
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
 {
 	rect->x = display->x;
 	rect->y = display->y;
-	rect->width = display->displayData.width;
-	rect->height = display->displayData.height;
+	rect->width = display->resolution[display->current].width;
+	rect->height = display->resolution[display->current].height;
+}
+
+int ccGetDisplayAmount()
+{
+	return _displays.amount;
+}
+
+ccDisplay *ccGetPrimaryDisplay()
+{
+	return &_displays.display[_displays.primary];
 }
 
 void ccUpdateDisplays()
@@ -406,58 +461,17 @@ void ccUpdateDisplays()
 	ccFindDisplays();
 }
 
-bool ccResolutionExists(ccResolutions *resolutions, ccDisplayData *resolution)
+bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 {
 	int i;
 
-	for(i = 0; i < resolutions->amount; i++) {
-		if(memcmp(&resolutions->displayData[i], resolution, sizeof(ccDisplayData)) == 0) {
+	for(i = 0; i < display->amount; i++) {
+		if(memcmp(&display->resolution[i], resolution, sizeof(ccDisplayData)) == 0) {
 			return true;
 		}
 	}
 
 	return false;
-}
-
-ccResolutions *ccGetResolutions(ccDisplay *display)
-{
-	DEVMODE devMode;
-	ccResolutions *resolutions = malloc(sizeof(ccResolutions));
-	ccDisplayData buffer;
-	int i = 0;
-
-	ZeroMemory(&devMode, sizeof(DEVMODE));
-
-	resolutions->amount = 0;
-
-	while(EnumDisplaySettings(display->deviceName, i, &devMode)) {
-		i++;
-
-		buffer.bitDepth = devMode.dmBitsPerPel;
-		buffer.refreshRate = devMode.dmDisplayFrequency;
-		buffer.width = devMode.dmPelsWidth;
-		buffer.height = devMode.dmPelsHeight;
-
-		if(ccResolutionExists(resolutions, &buffer)) continue;
-
-		if(resolutions->amount == 0) {
-			resolutions->displayData = malloc(sizeof(ccDisplayData));
-		}
-		else{
-			resolutions->displayData = realloc(resolutions->displayData, sizeof(ccDisplayData)*(resolutions->amount + 1));
-		}
-
-		memcpy(&resolutions->displayData[resolutions->amount], &buffer, sizeof(ccDisplayData));
-
-		resolutions->amount++;
-	}
-
-	return resolutions;
-}
-
-void ccFreeResolutions(ccResolutions *resolutions) {
-	if(resolutions->amount != 0) free(resolutions->displayData);
-	free(resolutions);
 }
 
 void ccSetResolution(ccDisplay *display, ccDisplayData *displayData)

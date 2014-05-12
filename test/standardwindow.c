@@ -31,12 +31,12 @@ int main(int argc, char** argv)
 	//Find displays and print their stats
 	ccFindDisplays();
 	for(i = 0; i < ccGetDisplayAmount(); i++) {
-		printf("Monitor: %s, Display: %s, X: %d, Y: %d\n", ccGetDisplay(i).monitorName, ccGetDisplay(i).gpuName, ccGetDisplay(i).x, ccGetDisplay(i).y);
+		printf("Display: %s, Device: %s\nX: %d, Y: %d\n", ccGetDisplay(i)->monitorName, ccGetDisplay(i)->gpuName, ccGetDisplay(i)->x, ccGetDisplay(i)->y);
 	}
-
+	
 	//Find all resolutions of one display and print them
-	for(i = 0; i < ccGetResolutionAmountPrimary(); i++) {
-		printf("%dx%d\t%dbpp\t%dHz\n", ccGetResolutionPrimary(i).width, ccGetResolutionPrimary(i).height, ccGetResolutionPrimary(i).bitDepth, ccGetResolutionPrimary(i).refreshRate);
+	for(i = 0; i < ccGetPrimaryDisplay()->amount; i++) {
+		printf("%dx%d\t%dbpp\t%dHz\n", ccGetPrimaryDisplay()->resolution[i].width, ccGetPrimaryDisplay()->resolution[i].height, ccGetPrimaryDisplay()->resolution[i].bitDepth, ccGetPrimaryDisplay()->resolution[i].refreshRate);
 	}
 	//ccSetResolution(&ccGetDisplays()->display[1], &resolutions->displayData[8]);
 

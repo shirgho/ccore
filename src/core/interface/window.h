@@ -18,7 +18,7 @@ typedef struct {
 //a display (often a monitor)
 typedef struct {
 	//current display configuration
-	ccDisplayData *resolutions;
+	ccDisplayData *resolution;
 	int x, y, amount, current;
 	char gpuName[128];
 	char monitorName[128];
@@ -85,16 +85,8 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
-static ccDisplays _displays;
-
-#define ccGetDisplayAmount() _displays.amount
-#define ccGetDisplay(x) _displays.display[x]
-#define ccGetDisplayPrimary() _displays.display[_displays.primary]
-
-#define ccGetResolutionAmount(x) _displays.display[x].amount
-#define ccGetResolutionAmountPrimary() _displays.display[_displays.primary].amount
-#define ccGetResolution(x, y) _displays.display[x].resolutions[y]
-#define ccGetResolutionPrimary(x) _displays.display[_displays.primary].resolutions[x]
+//German defines only please
+#define ccGetResolution(display) display->resolution[display->current]
 
 ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
@@ -110,6 +102,9 @@ void ccFindDisplays(); //get all displays currently connected and active
 void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
 void ccFreeDisplays();
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect);
+int ccGetDisplayAmount();
+ccDisplay *ccGetDisplay(int index);
+ccDisplay *ccGetPrimaryDisplay();
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
 void ccGLSwapBuffers(ccWindow *window); //swap the buffers
