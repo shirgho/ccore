@@ -37,7 +37,7 @@ typedef struct {
 
 //list of all displays currently connected and active
 typedef struct {
-	ccDisplay* display; //READ ONLY!!
+	ccDisplay* display;
 	int amount;
 	int primary;
 } ccDisplays;
@@ -85,7 +85,6 @@ typedef struct _ccWindow {
 
 } ccWindow;
 
-//German defines only please
 #define ccGetResolutionCurrent(display) (&display->resolution[display->current])
 #define ccGetResolution(display, index) (&display->resolution[index])
 #define ccGetResolutionAmount(display) display->amount
@@ -107,9 +106,10 @@ void ccFindDisplays(); //get all displays currently connected and active
 void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
 void ccFreeDisplays();
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect);
+
 int ccGetDisplayAmount();
 ccDisplay *ccGetDisplay(int index);
-ccDisplay *ccGetPrimaryDisplay();
+ccDisplay *ccGetDefaultDisplay();
 
 //opengl
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
