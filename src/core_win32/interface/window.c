@@ -377,8 +377,6 @@ void ccFindDisplays()
 			current.width = dm.dmPelsWidth;
 			current.height = dm.dmPelsHeight;
 
-			printf("%dx%d\n", current.width, current.height);
-
 			i = 0;
 			while(EnumDisplaySettings(device.DeviceName, i, &dm)) {
 				i++;
