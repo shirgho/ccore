@@ -90,6 +90,7 @@ typedef struct _ccWindow {
 #define ccGetResolution(display, index) (&display->resolution[index])
 #define ccGetResolutionAmount(display) display->amount
 
+//ccWindow related
 ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window); //poll an event from the events that currently need to be processed in the window
@@ -97,9 +98,11 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode);
 void ccResizeWindow(ccWindow *window, ccRect rect);
 void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
 
+//resolution
 void ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
+//display
 void ccFindDisplays(); //get all displays currently connected and active
 void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
 void ccFreeDisplays();
@@ -108,6 +111,7 @@ int ccGetDisplayAmount();
 ccDisplay *ccGetDisplay(int index);
 ccDisplay *ccGetPrimaryDisplay();
 
+//opengl
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
 void ccGLSwapBuffers(ccWindow *window); //swap the buffers
 void ccGLMakeCurrent(ccWindow *window); //make window the current window
