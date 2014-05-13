@@ -169,6 +169,7 @@ void ccFindDisplays()
 	DIR *dir;
 	struct dirent *direntry;
 	XRRScreenSize *sizes;
+	SizeID currentSize;
 	XWindowAttributes attrList;
 	Display *disp;
 	ccDisplay *currentDisplay;
@@ -206,6 +207,7 @@ void ccFindDisplays()
 				currentDisplay->x = attrList.x;
 				currentDisplay->y = attrList.y;
 
+				currentSize = XRRConfigCurrentConfiguration();
 				sizes = XRRSizes(disp, i, &sizeCount);
 				for(j = 0; j < sizeCount; j++){
 					currentResolution.width = sizes[j].width;
