@@ -448,11 +448,6 @@ int ccGetDisplayAmount()
 	return _displays.amount;
 }
 
-ccDisplay *ccGetPrimaryDisplay()
-{
-	return &_displays.display[_displays.primary];
-}
-
 void ccUpdateDisplays()
 {
 	ccFreeDisplays();
