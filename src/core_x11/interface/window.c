@@ -171,8 +171,8 @@ void ccFindDisplays()
 	XRRScreenSize *sizes;
 	XWindowAttributes attrList;
 	Display *disp;
-	ccDisplay current;
-	ccDisplayData currentResolution;
+	ccDisplay *currentDisplay->isplay;
+	ccDisplayData currentDisplay->esolution;
 
 	_displays.amount = 0;
 
@@ -190,32 +190,32 @@ void ccFindDisplays()
 		if(disp != NULL){
 			screenCount = XScreenCount(disp);
 			for(i = 0; i < screenCount; i++){
-				memcpy(current.monitorName, displayName, 64);
-				current.gpuName[0] = '\0';
-				current.XScreen = i;
+				memcpy(currentDisplay->monitorName, displayName, 64);
+				currentDisplay->gpuName[0] = '\0';
+				currentDisplay->XScreen = i;
 
 				XGetWindowAttributes(disp, RootWindow(disp, i), &attrList);
-				current.x = attrList.x;
-				current.y = attrList.y;
+				currentDisplay->x = attrList.x;
+				currentDisplay->y = attrList.y;
 
 				sizes = XRRSizes(disp, i, &sizeCount);
 				for(j = 0; j < sizeCount; j++){
-					currentResolution.width = sizes[i].width;
-					currentResolution.height = sizes[i].height;
+					currentDisplay->esolution.width = sizes[i].width;
+					currentDisplay->esolution.height = sizes[i].height;
 
 					//TODO add multiple refresh rates
 					refreshRates = XRRRates(disp, i, j, &rateCount);
-					currentResolution.refreshRate = refreshRates[0];
+					currentDisplay->esolution.refreshRate = refreshRates[0];
 
-					currentResolution.bitDepth = attrList.depth;
+					currentDisplay->esolution.bitDepth = attrList.depth;
 
-					current.amount++;
-					if(current.amount == 1){
-						current.resolution = malloc(sizeof(ccDisplayData));
+					currentDisplay->amount++;
+					if(currentDisplay->amount == 1){
+						currentDisplay->resolution = malloc(sizeof(ccDisplayData));
 					}else{
-						current.resolution = realloc(current.resolution, sizeof(ccDisplayData) * current.amount);
+						currentDisplay->resolution = realloc(current.resolution, sizeof(ccDisplayData) * current.amount);
 					}
-					memcpy(current.resolution + (current.amount - 1), &currentResolution, sizeof(ccDisplayData));
+					memcpy(currentDisplay->resolution + (current.amount - 1), &currentResolution, sizeof(ccDisplayData));
 				}
 
 				_displays.amount++;
@@ -224,7 +224,7 @@ void ccFindDisplays()
 				}else{
 					_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
 				}
-				memcpy(_displays.display + (_displays.amount - 1), &current, sizeof(ccDisplay));
+				memcpy(_displays.display + (_displays.amount - 1), &currentDisplay-> sizeof(ccDisplay));
 			}
 
 			XCloseDisplay(disp);
