@@ -2,6 +2,7 @@ ccore
 =====
 
 A development library for games which makes it easier to use low level system functionality while maintaining cross-platform useabillity.
+It is currently developed for Win32 (Windows XP and higher) and Linux with X11. We are planning on adding a Mac version later.
 
 ### Minimum requirements for compiling ###
 **Linux:**
@@ -22,3 +23,6 @@ A development library for games which makes it easier to use low level system fu
 **Extensions:**
 - Networking
 - Sound
+- Game Icon
+- Joystick
+- Screenshot/recording

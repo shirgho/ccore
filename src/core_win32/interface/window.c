@@ -2,7 +2,7 @@
 
 static ccDisplays _displays;
 
-ccKeyCode translateKey(WPARAM wParam)
+static ccKeyCode translateKey(WPARAM wParam)
 {
 	if((wParam >= 'A' && wParam <= 'Z') || (wParam >= '0' && wParam <= '9')) {
 		return wParam;
@@ -54,7 +54,7 @@ ccKeyCode translateKey(WPARAM wParam)
 	return CC_KEY_UNDEFINED;
 }
 
-void updateWindowDisplay(ccWindow *window)
+static void updateWindowDisplay(ccWindow *window)
 {
 	int i;
 	int area, largestArea;
@@ -79,7 +79,7 @@ void updateWindowDisplay(ccWindow *window)
 	}
 }
 
-LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	ccWindow *activeWindow = (ccWindow*)GetWindowLong(winHandle, GWL_USERDATA);
 	if(activeWindow == NULL) goto skipevent;
@@ -153,7 +153,7 @@ LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lPa
 	return 0;
 }
 
-void regHinstance(HINSTANCE instanceHandle)
+static void regHinstance(HINSTANCE instanceHandle)
 {
 	WNDCLASSEX winClass;
 
