@@ -1,5 +1,7 @@
 #include "../../core/interface/window.h"
 
+static ccDisplays _displays;
+
 /* Attribute list for a double buffered OpenGL context, with at least 4 bits per color and a 16 bit depth buffer */
 static int attrList[] =                                             
 {                                                                      
@@ -209,11 +211,11 @@ void ccFindDisplays()
 
 					current.amount++;
 					if(current.amount == 1){
-						current.resolutions = malloc(sizeof(ccDisplayData));
+						current.resolution = malloc(sizeof(ccDisplayData));
 					}else{
-						current.resolutions = realloc(current.resolutions, sizeof(ccDisplayData) * current.amount);
+						current.resolution = realloc(current.resolution, sizeof(ccDisplayData) * current.amount);
 					}
-					memcpy(current.resolutions + (current.amount - 1), &currentResolution, sizeof(ccDisplayData));
+					memcpy(current.resolution + (current.amount - 1), &currentResolution, sizeof(ccDisplayData));
 				}
 
 				_displays.amount++;
@@ -243,6 +245,21 @@ void ccFreeDisplays()
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
 {
 
+}
+
+int ccGetDisplayAmount()
+{
+	return _displays.amount;
+}
+
+ccDisplay *ccGetDisplay(int index)
+{
+	return _displays.display + index;
+}
+
+ccDisplay *ccGetDefaultDisplay()
+{
+	return _displays.display + _displays.primary;
 }
 
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
