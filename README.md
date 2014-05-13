@@ -25,3 +25,4 @@ It is currently developed for Win32 (Windows XP and higher) and Linux with X11. 
 - Sound
 - Game Icon
 - Joystick
+- Screenshot/recording
