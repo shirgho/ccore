@@ -163,7 +163,7 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 
 void ccFindDisplays()
 {
-	int i, j, screenCount, sizeCount, rateCount;
+	int i, j, k, screenCount, sizeCount, rateCount;
 	short *refreshRates;
 	char displayName[64];
 	DIR *dir;
@@ -171,8 +171,8 @@ void ccFindDisplays()
 	XRRScreenSize *sizes;
 	XWindowAttributes attrList;
 	Display *disp;
-	ccDisplay *currentDisplay->isplay;
-	ccDisplayData currentDisplay->esolution;
+	ccDisplay *currentDisplay;
+	ccDisplayData currentResolution;
 
 	_displays.amount = 0;
 
@@ -190,6 +190,14 @@ void ccFindDisplays()
 		if(disp != NULL){
 			screenCount = XScreenCount(disp);
 			for(i = 0; i < screenCount; i++){
+				_displays.amount++;
+				if(_displays.amount == 1){
+					_displays.display = malloc(sizeof(ccDisplay));
+				}else{
+					_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
+				}
+				currentDisplay = _displays.display + _displays.amount - 1;
+
 				memcpy(currentDisplay->monitorName, displayName, 64);
 				currentDisplay->gpuName[0] = '\0';
 				currentDisplay->XScreen = i;
@@ -200,31 +208,25 @@ void ccFindDisplays()
 
 				sizes = XRRSizes(disp, i, &sizeCount);
 				for(j = 0; j < sizeCount; j++){
-					currentDisplay->esolution.width = sizes[i].width;
-					currentDisplay->esolution.height = sizes[i].height;
+					currentResolution.width = sizes[j].width;
+					currentResolution.height = sizes[j].height;
 
 					//TODO add multiple refresh rates
 					refreshRates = XRRRates(disp, i, j, &rateCount);
-					currentDisplay->esolution.refreshRate = refreshRates[0];
+					for(k = 0; k < rateCount; k++){
+						currentResolution.refreshRate = refreshRates[k];
 
-					currentDisplay->esolution.bitDepth = attrList.depth;
+						currentResolution.bitDepth = attrList.depth;
 
-					currentDisplay->amount++;
-					if(currentDisplay->amount == 1){
-						currentDisplay->resolution = malloc(sizeof(ccDisplayData));
-					}else{
-						currentDisplay->resolution = realloc(current.resolution, sizeof(ccDisplayData) * current.amount);
+						currentDisplay->amount++;
+						if(currentDisplay->amount == 1){
+							currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+						}else{
+							currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+						}
+						memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
 					}
-					memcpy(currentDisplay->resolution + (current.amount - 1), &currentResolution, sizeof(ccDisplayData));
 				}
-
-				_displays.amount++;
-				if(_displays.amount == 1){
-					_displays.display = malloc(sizeof(ccDisplay));
-				}else{
-					_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
-				}
-				memcpy(_displays.display + (_displays.amount - 1), &currentDisplay-> sizeof(ccDisplay));
 			}
 
 			XCloseDisplay(disp);
