@@ -16,6 +16,7 @@ It is currently developed for Win32 (Windows 2000 and higher) and Linux with X11
 ### TODO ###
 **Major:**
 - File IO
+- Mac & BSD support
 
 **Minor:**
 - Let the user map keycodes to keys pressed
