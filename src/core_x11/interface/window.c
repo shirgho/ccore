@@ -169,9 +169,12 @@ void ccFindDisplays()
 	DIR *dir;
 	struct dirent *direntry;
 	XRRScreenSize *sizes;
-	SizeID currentSize;
+	XRRScreenConfiguration *screenConfig;
 	XWindowAttributes attrList;
+	SizeID currentSize;
 	Display *disp;
+	Rotation rotation;
+	Window root;
 	ccDisplay *currentDisplay;
 	ccDisplayData currentResolution;
 
@@ -203,17 +206,22 @@ void ccFindDisplays()
 				currentDisplay->gpuName[0] = '\0';
 				currentDisplay->XScreen = i;
 
-				XGetWindowAttributes(disp, RootWindow(disp, i), &attrList);
+				root = RootWindow(disp, i);
+				XGetWindowAttributes(disp, root, &attrList);
 				currentDisplay->x = attrList.x;
 				currentDisplay->y = attrList.y;
 
-				currentSize = XRRConfigCurrentConfiguration();
-				sizes = XRRSizes(disp, i, &sizeCount);
+				screenConfig = XRRGetScreenInfo(disp, root);
+				currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
+				sizes = XRRConfigSizes(screenConfig, &sizeCount);
 				for(j = 0; j < sizeCount; j++){
 					currentResolution.width = sizes[j].width;
 					currentResolution.height = sizes[j].height;
 
-					//TODO add multiple refresh rates
+					if(j == currentSize){
+						currentDisplay->current = j;
+					}
+
 					refreshRates = XRRRates(disp, i, j, &rateCount);
 					for(k = 0; k < rateCount; k++){
 						currentResolution.refreshRate = refreshRates[k];
