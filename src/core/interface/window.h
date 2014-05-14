@@ -29,7 +29,6 @@ typedef struct {
 
 #ifdef LINUX
 	int XScreen;
-	bool XDefaultScreen;
 	Display *XDisplay;
 #endif
 
