@@ -17,6 +17,9 @@
 #include "../src/core/utils/timing.h"
 #include "../src/core/interface/event.h"
 
+#include "../src/core/utils/math/matrix.h"
+#include "../src/core/utils/math/vector.h"
+
 float rotQuad = 0.0f;
 
 void resizeGL(unsigned int width, unsigned int height);

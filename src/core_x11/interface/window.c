@@ -193,6 +193,7 @@ void ccFindDisplays()
 		disp = XOpenDisplay(displayName);
 		if(disp != NULL){
 			screenCount = XScreenCount(disp);
+			printf("Display %s has %d screens\n", displayName, screenCount);
 			for(i = 0; i < screenCount; i++){
 				_displays.amount++;
 				if(_displays.amount == 1){
@@ -202,8 +203,8 @@ void ccFindDisplays()
 				}
 				currentDisplay = _displays.display + _displays.amount - 1;
 
-				memcpy(currentDisplay->monitorName, displayName, 64);
-				currentDisplay->gpuName[0] = '\0';
+				memcpy(currentDisplay->monitorName, displayName, strlen(displayName));
+				memcpy(currentDisplay->gpuName, XServerVendor(disp), 64);
 				currentDisplay->XScreen = i;
 
 				root = RootWindow(disp, i);
