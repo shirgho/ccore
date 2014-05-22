@@ -163,7 +163,8 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 
 void ccFindDisplays()
 {
-	int i, j, k, screenCount, sizeCount, rateCount;
+	int i, j, k, screenCount, sizeCount, rateCount, eventBase, errorBase;
+	bool usesXinerama;
 	short *refreshRates;
 	char displayName[64];
 	DIR *dir;
@@ -192,7 +193,13 @@ void ccFindDisplays()
 		displayName[0] = ':';
 		disp = XOpenDisplay(displayName);
 		if(disp != NULL){
-			screenCount = XScreenCount(disp);
+			if(XineramaQueryExtension(disp, &eventBase, &errorBase) && XineramaIsActive(disp)){
+				XineramaQueryScreens(disp, &screenCount);
+				usesXinerama = true;
+			}else{
+				screenCount = XScreenCount(disp);
+				usesXinerama = false;
+			}
 			printf("Display %s has %d screens\n", displayName, screenCount);
 			for(i = 0; i < screenCount; i++){
 				_displays.amount++;
