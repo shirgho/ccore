@@ -14,7 +14,7 @@ typedef struct {
 	int width, height;
 } ccRect;
 
-#ifdef LINUX
+#ifdef __GNUC__
  #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
