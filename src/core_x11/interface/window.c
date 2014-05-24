@@ -172,6 +172,7 @@ void ccFindDisplays()
 	XRRScreenSize *sizes;
 	XRRScreenConfiguration *screenConfig;
 	XWindowAttributes attrList;
+	XineramaScreenInfo *xineramaInfo;
 	SizeID currentSize;
 	Display *disp;
 	Rotation rotation;
@@ -194,13 +195,12 @@ void ccFindDisplays()
 		disp = XOpenDisplay(displayName);
 		if(disp != NULL){
 			if(XineramaQueryExtension(disp, &eventBase, &errorBase) && XineramaIsActive(disp)){
-				XineramaQueryScreens(disp, &screenCount);
+				xineramaInfo = XineramaQueryScreens(disp, &screenCount);
 				usesXinerama = true;
 			}else{
 				screenCount = XScreenCount(disp);
 				usesXinerama = false;
 			}
-			printf("Display %s has %d screens\n", displayName, screenCount);
 			for(i = 0; i < screenCount; i++){
 				_displays.amount++;
 				if(_displays.amount == 1){
@@ -212,16 +212,27 @@ void ccFindDisplays()
 
 				memcpy(currentDisplay->monitorName, displayName, strlen(displayName));
 				memcpy(currentDisplay->gpuName, XServerVendor(disp), 64);
-				currentDisplay->XScreen = i;
 
-				root = RootWindow(disp, i);
-				XGetWindowAttributes(disp, root, &attrList);
-				currentDisplay->x = attrList.x;
-				currentDisplay->y = attrList.y;
+				if(usesXinerama){
+					currentDisplay->XScreen = xineramaInfo[i].screen_number;
+				}else{
+					currentDisplay->XScreen = i;
+				}
+
+				root = RootWindow(disp, currentDisplay->XScreen);
+				if(usesXinerama){
+					currentDisplay->x = xineramaInfo[i].x_org;
+					currentDisplay->y = xineramaInfo[i].y_org;
+				}else{
+					XGetWindowAttributes(disp, root, &attrList);
+					currentDisplay->x = attrList.x;
+					currentDisplay->y = attrList.y;
+				}
 
 				screenConfig = XRRGetScreenInfo(disp, root);
 				currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
 				sizes = XRRConfigSizes(screenConfig, &sizeCount);
+
 				for(j = 0; j < sizeCount; j++){
 					currentResolution.width = sizes[j].width;
 					currentResolution.height = sizes[j].height;
@@ -230,7 +241,7 @@ void ccFindDisplays()
 						currentDisplay->current = j;
 					}
 
-					refreshRates = XRRRates(disp, i, j, &rateCount);
+					refreshRates = XRRRates(disp, currentDisplay->XScreen, j, &rateCount);
 					for(k = 0; k < rateCount; k++){
 						currentResolution.refreshRate = refreshRates[k];
 
@@ -248,6 +259,9 @@ void ccFindDisplays()
 			}
 
 			XCloseDisplay(disp);
+			if(usesXinerama){
+				XFree(xineramaInfo);
+			}
 		}
 	}
 }
