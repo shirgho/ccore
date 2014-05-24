@@ -39,6 +39,7 @@ int main(int argc, char** argv)
 		fprintf(newFile, "%d\n", i);
 	}
 	fclose(newFile);
+	free(dir);
 
 	//Find displays and print their stats
 	ccFindDisplays();
