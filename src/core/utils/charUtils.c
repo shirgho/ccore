@@ -31,3 +31,37 @@ void ccStrReplaceChar(char *str, char ch, char newCh)
 		if(str[i] == ch) str[i] = newCh;
 	}
 }
+
+char *ccStrCombine(int amount, ...)
+{
+	va_list strings;
+	int i;
+	int l = 0;
+	int *lengths;
+	char **elements;
+	char *newStr;
+
+	lengths = malloc(amount*sizeof(int));
+	elements = malloc(amount*sizeof(char*));
+	
+	va_start(strings, amount);
+	for(i = 0; i < amount; i++) {
+		elements[i] = va_arg(strings, char*);
+		lengths[i] = ccStrLength(elements[i]);
+		l += lengths[i];
+	}
+
+	newStr = malloc(l);
+	l = 0;
+
+	for(i = 0; i < amount; i++) {
+		ccStrCopy(elements[i], newStr + l);
+		l += lengths[i];
+	}
+
+	va_end(strings);
+
+	free(lengths);
+	free(elements);
+	return newStr;
+}

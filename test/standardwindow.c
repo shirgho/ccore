@@ -2,7 +2,7 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif 
 
-#define DEBUG
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +28,18 @@ int main(int argc, char** argv)
 	ccWindow *window;
 	bool quit;
 	int i;
+
+	//Create a .txt
+	char *dir = ccStrCombine(2, ccGetDataDir(), "txtfile.txt");
+	FILE *newFile = fopen(dir, "w");
+	if(!newFile) ccAbort("Can't create file!");
+
+	for(i = 0; i < 100; i++) {
+		fprintf(newFile, "%d\n", i);
+	}
+	fclose(newFile);
+
+	printf("%s\n", ccStrCombine(2, "one ", "two!"));
 
 	//Find displays and print their stats
 	ccFindDisplays();
