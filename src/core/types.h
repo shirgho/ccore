@@ -20,12 +20,6 @@ typedef struct {
    ({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
      _a > _b ? _a : _b; })
-=======
-#define max(a,b) \
-({ __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a > _b ? _a : _b; })
->>>>>>> a484898bf5c8e849eff34adaef764f6bfc52fce5
 
 #define min(a,b) \
 ({ __typeof__ (a) _a = (a); \
