@@ -70,6 +70,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\utils\charUtils.c" />
+    <ClCompile Include="src\core_win32\utils\dirUtils.c" />
     <ClCompile Include="src\core\utils\error.c" />
     <ClCompile Include="src\core\utils\rect.c" />
     <ClCompile Include="src\core_win32\glew\glew.c" />
@@ -87,6 +88,7 @@
     <ClInclude Include="src\core\interface\window.h" />
     <ClInclude Include="src\core\types.h" />
     <ClInclude Include="src\core\utils\charUtils.h" />
+    <ClInclude Include="src\core\utils\dirUtils.h" />
     <ClInclude Include="src\core\utils\error.h" />
     <ClInclude Include="src\core\utils\timing.h" />
     <ClInclude Include="src\core_win32\core.h" />
@@ -94,6 +96,7 @@
     <ClInclude Include="src\core_win32\glew\wglew.h" />
     <ClInclude Include="src\core_win32\interface\popup.h" />
     <ClInclude Include="src\core_win32\interface\window.h" />
+    <ClInclude Include="src\core_win32\utils\dirUtils.h" />
     <ClInclude Include="src\core_win32\utils\timing.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
