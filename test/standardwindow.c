@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 	}
 	//ccSetResolution(ccGetDisplay(1), ccGetResolution(ccGetDisplay(1), 4));
 
-	printf("%s\n", ccGetDataDir());
+	printf("%s\n%s\n%s\n", ccGetDataDir(), ccGetUserDir(), ccGetTempDir());
 
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 

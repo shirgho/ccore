@@ -10,7 +10,7 @@ int ccStrLength(const char* str)
 void ccStrCopy(const char* source, char* destination)
 {
 	int i;
-	for(i = 0; source[i] != 0; i++) {
+	for(i = 0; source[i] != '\0'; i++) {
 		destination[i] = source[i];
 	}
 	destination[i] = 0;
