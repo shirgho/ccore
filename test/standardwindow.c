@@ -40,8 +40,6 @@ int main(int argc, char** argv)
 	}
 	fclose(newFile);
 
-	printf("%s\n", ccStrCombine(2, "one ", "two!"));
-
 	//Find displays and print their stats
 	ccFindDisplays();
 	for(i = 0; i < ccGetDisplayAmount(); i++) {
