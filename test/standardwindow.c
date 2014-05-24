@@ -17,6 +17,7 @@
 #include "../src/core/utils/timing.h"
 #include "../src/core/interface/event.h"
 #include "../src/core/utils/dirUtils.h"
+#include "../src/core/utils/charUtils.h"
 
 float rotQuad = 0.0f;
 
