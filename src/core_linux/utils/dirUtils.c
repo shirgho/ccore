@@ -7,7 +7,19 @@ char *ccGetUserDir()
 
 char *ccGetDataDir()
 {
+#ifndef CC_DATA_LOCATION
+	char *buf;
+
+	buf = malloc(4096);
+	readlink("/proc/self/exe", buf, 4096);
+
+	buf = dirname(buf);
+	strcat(buf, "/");
+
+	return buf;
+#else
 	return CC_DATA_LOCATION;
+#endif
 }
 
 char *ccGetTempDir()

@@ -2,12 +2,13 @@
 
 #include "../../core/utils/dirUtils.h"
 
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <libgen.h>
+
 #ifndef CC_USER_LOCATION
 #define CC_USER_LOCATION "~/.config/"
-#endif
-
-#ifndef CC_DATA_LOCATION
-#define CC_DATA_LOCATION ""
 #endif
 
 #ifndef CC_TEMP_LOCATION

@@ -32,6 +32,7 @@ int main(int argc, char** argv)
 
 	//Create a .txt
 	char *dir = ccStrCombine(2, ccGetDataDir(), "txtfile.txt");
+	printf("Creating file %s\n", dir);
 	FILE *newFile = fopen(dir, "w");
 	if(!newFile) ccAbort("Can't create file!");
 
