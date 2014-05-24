@@ -25,4 +25,6 @@ typedef struct {
     __typeof__ (b) _b = (b); \
     _a < _b ? _a : _b; })
 
+#endif
+
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);
