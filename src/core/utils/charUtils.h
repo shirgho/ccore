@@ -3,6 +3,7 @@
 #include "../types.h"
 
 #include <stdarg.h>
+#include <stdlib.h>
 
 int ccStrLength(const char *str);
 void ccStrCopy(const char *source, char *destination);
