@@ -3,7 +3,7 @@
 #include "../core.h"
 
 #ifdef LINUX
-#include "../../core_x11/utils/dirUtils.h"
+#include "../../core_linux/utils/dirUtils.h"
 #elif defined WIN32
 #include "../../core_win32/utils/dirUtils.h"
 #endif

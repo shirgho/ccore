@@ -1,3 +1,3 @@
 #pragma once
 
-#define X11
+#define LINUX

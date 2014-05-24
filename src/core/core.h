@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef __linux__
+#include "../core_linux/core.h"
 #ifdef GTK
 #include "../core_gtk/core.h"
 #else
