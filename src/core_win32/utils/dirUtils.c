@@ -9,10 +9,10 @@ static char *tempDir;
 static void scanDirs()
 {
 	HMODULE hModule = GetModuleHandleW(NULL);
-	WCHAR path[MAX_PATH];
+	char path[MAX_PATH];
 
 	//Fetch absolue .exe path
-	GetModuleFileName(hModule, (LPSTR) path, MAX_PATH);
+	GetModuleFileName(hModule, path, MAX_PATH);
 	
 	dataDir = malloc(ccStrLength(path));
 	ccStrCopy(path, dataDir);
