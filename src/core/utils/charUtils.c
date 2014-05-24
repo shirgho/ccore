@@ -51,7 +51,8 @@ char *ccStrCombine(int amount, ...)
 		l += lengths[i];
 	}
 
-	newStr = malloc(l);
+	newStr = malloc(l+1);
+	newStr[l] = '\0';
 	l = 0;
 
 	for(i = 0; i < amount; i++) {
