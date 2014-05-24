@@ -14,16 +14,14 @@ typedef struct {
 	int width, height;
 } ccRect;
 
-#ifdef LINUX
- #define max(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-     _a > _b ? _a : _b; })
+#define max(a,b) \
+({ __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b; })
 
- #define min(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-     _a < _b ? _a : _b; })
-#endif
+#define min(a,b) \
+({ __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a < _b ? _a : _b; })
 
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);
