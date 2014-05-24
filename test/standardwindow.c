@@ -16,9 +16,7 @@
 #include "../src/core/interface/popup.h"
 #include "../src/core/utils/timing.h"
 #include "../src/core/interface/event.h"
-
-#include "../src/core/utils/math/matrix.h"
-#include "../src/core/utils/math/vector.h"
+#include "../src/core/utils/dirUtils.h"
 
 float rotQuad = 0.0f;
 
@@ -42,6 +40,8 @@ int main(int argc, char** argv)
 		printf("%dx%d\t%dbpp\t%dHz\n", ccGetDefaultDisplay()->resolution[i].width, ccGetDefaultDisplay()->resolution[i].height, ccGetDefaultDisplay()->resolution[i].bitDepth, ccGetDefaultDisplay()->resolution[i].refreshRate);
 	}
 	//ccSetResolution(ccGetDisplay(1), ccGetResolution(ccGetDisplay(1), 4));
+
+	printf("%s\n", ccGetDataDir());
 
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 

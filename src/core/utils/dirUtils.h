@@ -9,4 +9,5 @@
 #endif
 
 char *ccGetUserDir();
-char *ccGetAppDir();
+char *ccGetDataDir();
+char *ccGetTempDir();
