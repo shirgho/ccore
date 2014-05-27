@@ -1,14 +1,5 @@
 #include "charUtils.h"
 
-void ccStrCopy(const char* source, char* destination)
-{
-	int i;
-	for(i = 0; source[i] != '\0'; i++) {
-		destination[i] = source[i];
-	}
-	destination[i] = 0;
-}
-
 void ccStrTrimToChar(char* str, char ch, bool includeChar)
 {
 	int i;
@@ -49,7 +40,7 @@ char *ccStrCombine(int amount, ...)
 	l = 0;
 
 	for(i = 0; i < amount; i++) {
-		ccStrCopy(elements[i], newStr + l);
+		strcpy(newStr + l, elements[i]);
 		l += lengths[i];
 	}
 

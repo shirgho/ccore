@@ -15,7 +15,7 @@ static void scanDirs()
 	GetModuleFileName(hModule, path, MAX_PATH);
 	
 	dataDir = malloc(strlen(path));
-	ccStrCopy(path, dataDir);
+	strcpy(dataDir, path);
 	ccStrTrimToChar(dataDir, '\\', true);
 	ccStrReplaceChar(dataDir, '\\', '/');
 
@@ -26,7 +26,7 @@ static void scanDirs()
 	GetTempPath(MAX_PATH, path);
 
 	tempDir = malloc(strlen(path));
-	ccStrCopy(path, tempDir);
+	strcpy(tempDir, path);
 	ccStrReplaceChar(tempDir, '\\', '/');
 }
 

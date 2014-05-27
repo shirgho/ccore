@@ -19,7 +19,7 @@ void ccErrorString(char *dest, ccError error)
 			break;
 	}
 
-	ccStrCopy(str, dest);
+	strcpy(dest, str);
 }
 
 void ccAbort(const char* message)
