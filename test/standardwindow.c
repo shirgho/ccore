@@ -17,6 +17,8 @@
 #include "../src/core/utils/dirUtils.h"
 #include "../src/core/utils/charUtils.h"
 
+#include "../src/modules/clipboard/clipboard.h"
+
 float rotQuad = 0.0f;
 
 void resizeGL(unsigned int width, unsigned int height);
