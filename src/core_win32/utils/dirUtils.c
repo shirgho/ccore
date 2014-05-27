@@ -14,7 +14,7 @@ static void scanDirs()
 	//Fetch absolue .exe path
 	GetModuleFileName(hModule, path, MAX_PATH);
 	
-	dataDir = malloc(ccStrLength(path));
+	dataDir = malloc(strlen(path));
 	ccStrCopy(path, dataDir);
 	ccStrTrimToChar(dataDir, '\\', true);
 	ccStrReplaceChar(dataDir, '\\', '/');
@@ -25,7 +25,7 @@ static void scanDirs()
 	//Temp directory
 	GetTempPath(MAX_PATH, path);
 
-	tempDir = malloc(ccStrLength(path));
+	tempDir = malloc(strlen(path));
 	ccStrCopy(path, tempDir);
 	ccStrReplaceChar(tempDir, '\\', '/');
 }
