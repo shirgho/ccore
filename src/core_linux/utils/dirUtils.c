@@ -15,6 +15,7 @@ char *ccGetDataDir()
 
 	buf = dirname(buf);
 	strcat(buf, "/");
+	ccStrTrim(buf);
 
 	return buf;
 #else
