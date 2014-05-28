@@ -189,17 +189,20 @@ void ccFindDisplays()
 		if(direntry->d_name[0] != 'X'){
 			continue;
 		}
-		memset(displayName, '\0', 64);
-		strcat(displayName, direntry->d_name);
-		displayName[0] = ':';
+		usesXinerama = false;
+		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
 		disp = XOpenDisplay(displayName);
 		if(disp != NULL){
 			if(XineramaQueryExtension(disp, &eventBase, &errorBase) && XineramaIsActive(disp)){
 				xineramaInfo = XineramaQueryScreens(disp, &screenCount);
-				usesXinerama = true;
+				if(!xineramaInfo){
+					screenCount = XScreenCount(disp);	
+				}else{
+					usesXinerama = true;
+					printf("Display %s has %d screens\n", displayName, screenCount);
+				}
 			}else{
 				screenCount = XScreenCount(disp);
-				usesXinerama = false;
 			}
 			for(i = 0; i < screenCount; i++){
 				_displays.amount++;
@@ -236,6 +239,8 @@ void ccFindDisplays()
 				for(j = 0; j < sizeCount; j++){
 					currentResolution.width = sizes[j].width;
 					currentResolution.height = sizes[j].height;
+
+					printf("%d x %d\n", sizes[j].width, sizes[j].height);
 
 					if(j == currentSize){
 						currentDisplay->current = j;

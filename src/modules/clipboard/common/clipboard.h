@@ -2,8 +2,8 @@
 
 #include "../../../core/core.h"
 
-#ifdef LINUX
-#include "../linux/clipboard.h"
+#ifdef X11
+#include "../x11/clipboard.h"
 #elif defined WIN32
 #include "../win32/clipboard.h"
 #endif
