@@ -16,6 +16,11 @@ void ccStrReplaceChar(char *str, char ch, char newCh)
 	}
 }
 
+void ccStrTrim(char *str)
+{
+	str = realloc(str, strlen(str) + 1);
+}
+
 char *ccStrCombine(int amount, ...)
 {
 	va_list strings;
