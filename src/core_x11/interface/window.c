@@ -181,6 +181,7 @@ void ccFindDisplays()
 	ccDisplayData currentResolution;
 
 	_displays.amount = 0;
+	usesXinerama = false;
 
 	dir = opendir("/tmp/.X11-unix");
 	ccAssert(dir != NULL);
@@ -189,17 +190,16 @@ void ccFindDisplays()
 		if(direntry->d_name[0] != 'X'){
 			continue;
 		}
-		usesXinerama = false;
 		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
 		disp = XOpenDisplay(displayName);
 		if(disp != NULL){
 			if(XineramaQueryExtension(disp, &eventBase, &errorBase) && XineramaIsActive(disp)){
 				xineramaInfo = XineramaQueryScreens(disp, &screenCount);
-				if(!xineramaInfo){
-					screenCount = XScreenCount(disp);	
-				}else{
+				if(xineramaInfo){
 					usesXinerama = true;
 					printf("Display %s has %d screens\n", displayName, screenCount);
+				}else{
+					screenCount = XScreenCount(disp);
 				}
 			}else{
 				screenCount = XScreenCount(disp);
@@ -226,15 +226,16 @@ void ccFindDisplays()
 				if(usesXinerama){
 					currentDisplay->x = xineramaInfo[i].x_org;
 					currentDisplay->y = xineramaInfo[i].y_org;
+					sizeCount = 0;
 				}else{
 					XGetWindowAttributes(disp, root, &attrList);
 					currentDisplay->x = attrList.x;
 					currentDisplay->y = attrList.y;
-				}
 
-				screenConfig = XRRGetScreenInfo(disp, root);
-				currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
-				sizes = XRRConfigSizes(screenConfig, &sizeCount);
+					screenConfig = XRRGetScreenInfo(disp, root);
+					currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
+					sizes = XRRConfigSizes(screenConfig, &sizeCount);
+				}
 
 				for(j = 0; j < sizeCount; j++){
 					currentResolution.width = sizes[j].width;
