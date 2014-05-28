@@ -20,11 +20,11 @@ typedef struct {
 	//current display configuration
 	ccDisplayData *resolution;
 	int x, y, amount, current;
-	char gpuName[128];
-	char monitorName[128];
+	char *gpuName;
+	char *monitorName;
 	
 #ifdef WIN32
-	char deviceName[128];
+	char* deviceName;
 #endif
 
 #ifdef LINUX

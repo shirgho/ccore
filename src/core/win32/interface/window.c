@@ -1,4 +1,4 @@
-#include "../../core/interface/window.h"
+#include "../../common/interface/window.h"
 
 static ccDisplays _displays;
 
@@ -362,10 +362,19 @@ void ccFindDisplays()
 			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
 
 			currentDisplay = &_displays.display[_displays.amount - 1];
+
+			currentDisplay->gpuName = malloc(CC_MAXDEVICENAMESIZE);
+			currentDisplay->monitorName = malloc(CC_MAXDEVICENAMESIZE);
+			currentDisplay->deviceName = malloc(CC_MAXDEVICENAMESIZE);
+
 			memcpy(currentDisplay->gpuName, device.DeviceString, 128);
 			memcpy(currentDisplay->monitorName, display.DeviceString, 128);
 			memcpy(currentDisplay->deviceName, display.DeviceName, 128);
 			ccStrTrimToChar(currentDisplay->deviceName, '\\', false);
+
+			ccStrTrim(currentDisplay->gpuName);
+			ccStrTrim(currentDisplay->monitorName);
+			ccStrTrim(currentDisplay->deviceName);
 			
 			currentDisplay->x = dm.dmPosition.x;
 			currentDisplay->y = dm.dmPosition.y;
@@ -415,6 +424,9 @@ void ccFindDisplays()
 void ccFreeDisplays() {
 	int i;
 	for(i = 0; i < _displays.amount; i++) {
+		free(_displays.display[i].gpuName);
+		free(_displays.display[i].monitorName);
+		free(_displays.display[i].deviceName);
 		free(_displays.display[i].resolution);
 	}
 	free(_displays.display);
