@@ -1,3 +1,3 @@
 #pragma once
 
-#include "../../../modules/clipboard/clipboard.h"
+#include "../common/clipboard.h"

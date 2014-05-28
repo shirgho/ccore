@@ -17,7 +17,7 @@
 #include "../src/core/utils/dirUtils.h"
 #include "../src/core/utils/charUtils.h"
 
-#include "../src/modules/clipboard/clipboard.h"
+#include "../src/modules/clipboard/common/clipboard.h"
 
 float rotQuad = 0.0f;
 

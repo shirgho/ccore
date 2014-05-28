@@ -78,7 +78,7 @@
     <ClCompile Include="src\core_win32\interface\popup.c" />
     <ClCompile Include="src\core_win32\interface\window.c" />
     <ClCompile Include="src\core_win32\utils\timing.c" />
-    <ClCompile Include="src\modules_\modules_win32\clipboard\clipboard.c" />
+    <ClCompile Include="src\modules\clipboard\win32\clipboard.c" />
     <ClCompile Include="test\standardwindow.c" />
   </ItemGroup>
   <ItemGroup>
@@ -100,8 +100,8 @@
     <ClInclude Include="src\core_win32\interface\window.h" />
     <ClInclude Include="src\core_win32\utils\dirUtils.h" />
     <ClInclude Include="src\core_win32\utils\timing.h" />
-    <ClInclude Include="src\modules\clipboard\clipboard.h" />
-    <ClInclude Include="src\modules_\modules_win32\clipboard\clipboard.h" />
+    <ClInclude Include="src\modules\clipboard\common\clipboard.h" />
+    <ClInclude Include="src\modules\clipboard\win32\clipboard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

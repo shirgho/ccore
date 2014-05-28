@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../core/core.h"
+#include "../../../core/core.h"
 
 #ifdef LINUX
-#include "../../modules_/modules_linux/clipboard/clipboard.h"
+#include "../linux/clipboard.h"
 #elif defined WIN32
-#include "../../modules_/modules_win32/clipboard/clipboard.h"
+#include "../win32/clipboard.h"
 #endif
 
 typedef enum {
