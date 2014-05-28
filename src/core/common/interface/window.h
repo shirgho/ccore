@@ -3,11 +3,11 @@
 #include "../core.h"
 
 #ifdef X11
-#include "../../core_x11/interface/window.h"
+#include "../../x11/interface/window.h"
 #elif defined GTK
-#include "../../core_gtk/interface/window.h"
+#include "../../gtk/interface/window.h"
 #elif defined WIN32
-#include "../../core_win32/interface/window.h"
+#include "../../win32/interface/window.h"
 #endif
 
 //stores display properties

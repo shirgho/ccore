@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../core/core.h"
+#include "../../../core/common/core.h"
 
 #ifdef X11
 #include "../x11/clipboard.h"

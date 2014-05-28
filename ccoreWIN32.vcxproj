@@ -70,36 +70,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\utils\charUtils.c" />
-    <ClCompile Include="src\core_win32\utils\dirUtils.c" />
-    <ClCompile Include="src\core\utils\error.c" />
-    <ClCompile Include="src\core\utils\rect.c" />
-    <ClCompile Include="src\core_win32\glew\glew.c" />
-    <ClCompile Include="src\core_win32\interface\popup.c" />
-    <ClCompile Include="src\core_win32\interface\window.c" />
-    <ClCompile Include="src\core_win32\utils\timing.c" />
+    <ClCompile Include="src\core\common\utils\charUtils.c" />
+    <ClCompile Include="src\core\common\utils\error.c" />
+    <ClCompile Include="src\core\common\utils\rect.c" />
+    <ClCompile Include="src\core\win32\glew\glew.c" />
+    <ClCompile Include="src\core\win32\interface\popup.c" />
+    <ClCompile Include="src\core\win32\interface\window.c" />
+    <ClCompile Include="src\core\win32\utils\dirUtils.c" />
+    <ClCompile Include="src\core\win32\utils\timing.c" />
     <ClCompile Include="src\modules\clipboard\win32\clipboard.c" />
     <ClCompile Include="test\standardwindow.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\core.h" />
-    <ClInclude Include="src\core\debug\assert.h" />
-    <ClInclude Include="src\core\debug\print.h" />
-    <ClInclude Include="src\core\interface\event.h" />
-    <ClInclude Include="src\core\interface\popup.h" />
-    <ClInclude Include="src\core\interface\window.h" />
-    <ClInclude Include="src\core\types.h" />
-    <ClInclude Include="src\core\utils\charUtils.h" />
-    <ClInclude Include="src\core\utils\dirUtils.h" />
-    <ClInclude Include="src\core\utils\error.h" />
-    <ClInclude Include="src\core\utils\timing.h" />
-    <ClInclude Include="src\core_win32\core.h" />
-    <ClInclude Include="src\core_win32\glew\glew.h" />
-    <ClInclude Include="src\core_win32\glew\wglew.h" />
-    <ClInclude Include="src\core_win32\interface\popup.h" />
-    <ClInclude Include="src\core_win32\interface\window.h" />
-    <ClInclude Include="src\core_win32\utils\dirUtils.h" />
-    <ClInclude Include="src\core_win32\utils\timing.h" />
+    <ClInclude Include="src\core\common\core.h" />
+    <ClInclude Include="src\core\common\debug\assert.h" />
+    <ClInclude Include="src\core\common\debug\print.h" />
+    <ClInclude Include="src\core\common\interface\event.h" />
+    <ClInclude Include="src\core\common\interface\popup.h" />
+    <ClInclude Include="src\core\common\interface\window.h" />
+    <ClInclude Include="src\core\common\types.h" />
+    <ClInclude Include="src\core\common\utils\charUtils.h" />
+    <ClInclude Include="src\core\common\utils\dirUtils.h" />
+    <ClInclude Include="src\core\common\utils\error.h" />
+    <ClInclude Include="src\core\common\utils\timing.h" />
+    <ClInclude Include="src\core\win32\core.h" />
+    <ClInclude Include="src\core\win32\glew\glew.h" />
+    <ClInclude Include="src\core\win32\glew\wglew.h" />
+    <ClInclude Include="src\core\win32\interface\popup.h" />
+    <ClInclude Include="src\core\win32\interface\window.h" />
+    <ClInclude Include="src\core\win32\utils\dirUtils.h" />
+    <ClInclude Include="src\core\win32\utils\timing.h" />
     <ClInclude Include="src\modules\clipboard\common\clipboard.h" />
     <ClInclude Include="src\modules\clipboard\win32\clipboard.h" />
   </ItemGroup>

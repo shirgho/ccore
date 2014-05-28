@@ -6,9 +6,9 @@ typedef struct _ccWindow ccWindow;
 #include "window.h"
 
 #ifdef LINUX
-#include "../../core_x11/interface/popup.h"
+#include "../../x11/interface/popup.h"
 #elif defined WIN32
-#include "../../core_win32/interface/popup.h"
+#include "../../win32/interface/popup.h"
 #endif
 
 typedef enum {

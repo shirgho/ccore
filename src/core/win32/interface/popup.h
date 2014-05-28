@@ -2,4 +2,4 @@
 
 #include <Windows.h>
 
-#include "../../core/types.h"
+#include "../../common/types.h"

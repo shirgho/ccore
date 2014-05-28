@@ -3,9 +3,9 @@
 #include "../core.h"
 
 #ifdef LINUX
-#include "../../core_linux/utils/timing.h"
+#include "../../linux/utils/timing.h"
 #elif defined WIN32
-#include "../../core_win32/utils/timing.h"
+#include "../../win32/utils/timing.h"
 #endif
 
 void ccDelay(int ms);

@@ -5,17 +5,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/core/core.h"
+#include "../src/core/common/core.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "../src/core/interface/window.h"
-#include "../src/core/interface/popup.h"
-#include "../src/core/utils/timing.h"
-#include "../src/core/interface/event.h"
-#include "../src/core/utils/dirUtils.h"
-#include "../src/core/utils/charUtils.h"
+#include "../src/core/common/interface/window.h"
+#include "../src/core/common/interface/popup.h"
+#include "../src/core/common/utils/timing.h"
+#include "../src/core/common/interface/event.h"
+#include "../src/core/common/utils/dirUtils.h"
+#include "../src/core/common/utils/charUtils.h"
 
 #include "../src/modules/clipboard/common/clipboard.h"
 

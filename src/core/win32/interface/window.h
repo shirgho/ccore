@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <stdio.h>
 
-#include "../../core/types.h"
-#include "../../core/interface/event.h"
-#include "../../core/utils/error.h"
-#include "../../core/utils/charUtils.h"
+#include "../../common/types.h"
+#include "../../common/interface/event.h"
+#include "../../common/utils/error.h"
+#include "../../common/utils/charUtils.h"
