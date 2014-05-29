@@ -1,4 +1,4 @@
-#include "../../core/utils/timing.h"
+#include "../../common/utils/timing.h"
 
 void ccDelay(int ms)
 {

@@ -1,4 +1,4 @@
-#include "../../core/interface/window.h"
+#include "../../common/interface/window.h"
 
 static ccDisplays _displays;
 
@@ -21,7 +21,7 @@ ccWindow* ccNewWindow(ccRect rect, const char *title, int flags)
 	output = malloc(sizeof(ccWindow));
 	output->XDisplay = XOpenDisplay(NULL);
 	//TODO: change assert to error
-	ccAssert(output->XDisplay != NULL);
+	assert(output->XDisplay != NULL);
 	root = DefaultRootWindow(output->XDisplay);
 	output->XScreen = DefaultScreen(output->XDisplay);
 	output->XWindow = XCreateSimpleWindow(output->XDisplay, root, 10, 10, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
@@ -40,7 +40,7 @@ ccWindow* ccNewWindow(ccRect rect, const char *title, int flags)
 
 void ccFreeWindow(ccWindow *window)
 {
-	ccAssert(window != NULL);
+	assert(window != NULL);
 	//TODO: don't delete a context before checking whether it exists!
 	glXMakeCurrent(window->XDisplay, None, NULL);
 	glXDestroyContext(window->XDisplay, window->XContext);
@@ -52,7 +52,7 @@ bool ccPollEvent(ccWindow *window)
 {
 	XEvent event;
 
-	ccAssert(window != NULL);
+	assert(window != NULL);
 
 	window->event.type = CC_EVENT_SKIP;
 	if(XPending(window->XDisplay) == 0){
@@ -163,7 +163,7 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 
 void ccFindDisplays()
 {
-	int i, j, k, screenCount, sizeCount, rateCount, eventBase, errorBase;
+	int i, j, k, screenCount, sizeCount, rateCount, eventBase, errorBase, displayNameLength;
 	bool usesXinerama;
 	short *refreshRates;
 	char displayName[64];
@@ -184,7 +184,7 @@ void ccFindDisplays()
 	usesXinerama = false;
 
 	dir = opendir("/tmp/.X11-unix");
-	ccAssert(dir != NULL);
+	assert(dir != NULL);
 
 	while((direntry = readdir(dir)) != NULL){
 		if(direntry->d_name[0] != 'X'){
@@ -213,8 +213,12 @@ void ccFindDisplays()
 				}
 				currentDisplay = _displays.display + _displays.amount - 1;
 
-				memcpy(currentDisplay->monitorName, displayName, strlen(displayName));
-				memcpy(currentDisplay->gpuName, XServerVendor(disp), 64);
+				displayNameLength = strlen(displayName);
+
+				currentDisplay->monitorName = malloc(displayNameLength + 1);
+
+				memcpy(currentDisplay->monitorName, displayName, displayNameLength);
+				currentDisplay->monitorName[displayNameLength] = '\0';
 
 				if(usesXinerama){
 					currentDisplay->XScreen = xineramaInfo[i].screen_number;
@@ -306,10 +310,10 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 
-	ccAssert(window != NULL);
+	assert(window != NULL);
 
 	visual = glXChooseVisual(window->XDisplay, window->XScreen, attrList);
-	ccAssert(visual != NULL);
+	assert(visual != NULL);
 
 	window->XContext = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(window->XDisplay, window->XWindow, window->XContext);
