@@ -161,27 +161,120 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
+bool ccFindDisplaysXinerama(Display *display)
+{
+	int i, screenCount, modesCount, eventBase, errorBase;
+	ccDisplay *currentDisplay;
+	XineramaScreenInfo *xineramaInfo;
+	XF86VidModeModeInfo **modes;
+
+	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || XineramaIsActive(display)){
+		return false;
+	}
+
+	xineramaInfo = XineramaQueryScreens(display, &screenCount);
+	if(!xineramaInfo){
+		return false;
+	}
+
+	for(i = 0; i < screenCount; i++){
+		_displays.amount++;
+		if(_displays.amount == 1){
+			_displays.display = malloc(sizeof(ccDisplay));
+		}else{
+			_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
+		}
+		currentDisplay = _displays.display + _displays.amount - 1;
+
+		currentDisplay->XineramaScreen = xineramaInfo[i].screen_number;
+		currentDisplay->XScreen = 0;
+		currentDisplay->x = xineramaInfo[i].x_org;
+		currentDisplay->y = xineramaInfo[i].y_org;
+	}
+
+	if(!XF86VidModeGetAllModeLines(display, 0, &modesCount, &modes)){
+		return false;
+	}
+
+	return true;
+}
+
+void ccFindDisplaysXrandr(Display *display, char *displayName)
+{
+	int i, j, k, screenCount, sizeCount, rateCount, displayNameLength;
+	short *refreshRates;
+	ccDisplay *currentDisplay;
+	ccDisplayData currentResolution;
+	Window root;
+	Rotation rotation;
+	SizeID currentSize;
+	XWindowAttributes attrList;
+	XRRScreenConfiguration *screenConfig;
+	XRRScreenSize *sizes;
+
+	screenCount = XScreenCount(display);
+
+	for(i = 0; i < screenCount; i++){
+		_displays.amount++;
+		if(_displays.amount == 1){
+			_displays.display = malloc(sizeof(ccDisplay));
+		}else{
+			_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
+		}
+		currentDisplay = _displays.display + _displays.amount - 1;
+
+		displayNameLength = strlen(displayName);
+		currentDisplay->monitorName = malloc(displayNameLength + 1);
+		memcpy(currentDisplay->monitorName, displayName, displayNameLength);
+		currentDisplay->monitorName[displayNameLength] = '\0';
+
+		root = RootWindow(display, i);
+		XGetWindowAttributes(display, root, &attrList);
+
+		currentDisplay->XineramaScreen = -1;
+		currentDisplay->XScreen = i;
+		currentDisplay->x = attrList.x;
+		currentDisplay->y = attrList.y;
+
+		screenConfig = XRRGetScreenInfo(display, root);
+		currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
+		sizes = XRRConfigSizes(screenConfig, &sizeCount);
+
+		for(j = 0; j < sizeCount; j++){
+			currentResolution.width = sizes[j].width;
+			currentResolution.height = sizes[j].height;
+
+			if(j == currentSize){
+				currentDisplay->current = j;
+			}
+
+			refreshRates = XRRRates(display, currentDisplay->XScreen, j, &rateCount);
+			rateCount = 0;
+			for(k = 0; k < rateCount; k++){
+				currentResolution.refreshRate = refreshRates[k];
+
+				currentResolution.bitDepth = attrList.depth;
+
+				currentDisplay->amount++;
+				if(currentDisplay->amount == 1){
+					currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+				}else{
+					currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+				}
+				memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
+			}
+		}
+	}
+}
+
 void ccFindDisplays()
 {
-	int i, j, k, screenCount, sizeCount, rateCount, eventBase, errorBase, displayNameLength;
-	bool usesXinerama;
-	short *refreshRates;
 	char displayName[64];
 	DIR *dir;
 	struct dirent *direntry;
-	XRRScreenSize *sizes;
-	XRRScreenConfiguration *screenConfig;
-	XWindowAttributes attrList;
-	XineramaScreenInfo *xineramaInfo;
-	SizeID currentSize;
-	Display *disp;
-	Rotation rotation;
-	Window root;
-	ccDisplay *currentDisplay;
-	ccDisplayData currentResolution;
+	Display *display;
 
 	_displays.amount = 0;
-	usesXinerama = false;
 
 	dir = opendir("/tmp/.X11-unix");
 	assert(dir != NULL);
@@ -191,87 +284,12 @@ void ccFindDisplays()
 			continue;
 		}
 		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
-		disp = XOpenDisplay(displayName);
-		if(disp != NULL){
-			if(XineramaQueryExtension(disp, &eventBase, &errorBase) && XineramaIsActive(disp)){
-				xineramaInfo = XineramaQueryScreens(disp, &screenCount);
-				if(xineramaInfo){
-					usesXinerama = true;
-					printf("Display %s has %d screens\n", displayName, screenCount);
-				}else{
-					screenCount = XScreenCount(disp);
-				}
-			}else{
-				screenCount = XScreenCount(disp);
-			}
-			for(i = 0; i < screenCount; i++){
-				_displays.amount++;
-				if(_displays.amount == 1){
-					_displays.display = malloc(sizeof(ccDisplay));
-				}else{
-					_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
-				}
-				currentDisplay = _displays.display + _displays.amount - 1;
-
-				displayNameLength = strlen(displayName);
-
-				currentDisplay->monitorName = malloc(displayNameLength + 1);
-
-				memcpy(currentDisplay->monitorName, displayName, displayNameLength);
-				currentDisplay->monitorName[displayNameLength] = '\0';
-
-				if(usesXinerama){
-					currentDisplay->XScreen = xineramaInfo[i].screen_number;
-				}else{
-					currentDisplay->XScreen = i;
-				}
-
-				root = RootWindow(disp, currentDisplay->XScreen);
-				if(usesXinerama){
-					currentDisplay->x = xineramaInfo[i].x_org;
-					currentDisplay->y = xineramaInfo[i].y_org;
-					sizeCount = 0;
-				}else{
-					XGetWindowAttributes(disp, root, &attrList);
-					currentDisplay->x = attrList.x;
-					currentDisplay->y = attrList.y;
-
-					screenConfig = XRRGetScreenInfo(disp, root);
-					currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
-					sizes = XRRConfigSizes(screenConfig, &sizeCount);
-				}
-
-				for(j = 0; j < sizeCount; j++){
-					currentResolution.width = sizes[j].width;
-					currentResolution.height = sizes[j].height;
-
-					printf("%d x %d\n", sizes[j].width, sizes[j].height);
-
-					if(j == currentSize){
-						currentDisplay->current = j;
-					}
-
-					refreshRates = XRRRates(disp, currentDisplay->XScreen, j, &rateCount);
-					for(k = 0; k < rateCount; k++){
-						currentResolution.refreshRate = refreshRates[k];
-
-						currentResolution.bitDepth = attrList.depth;
-
-						currentDisplay->amount++;
-						if(currentDisplay->amount == 1){
-							currentDisplay->resolution = malloc(sizeof(ccDisplayData));
-						}else{
-							currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
-						}
-						memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
-					}
-				}
-			}
-
-			XCloseDisplay(disp);
-			if(usesXinerama){
-				XFree(xineramaInfo);
-			}
+		display = XOpenDisplay(displayName);
+		if(display != NULL){
+			if(!ccFindDisplaysXinerama(display)){
+				ccFindDisplaysXrandr(display, displayName);
+			}		
+			XCloseDisplay(display);
 		}
 	}
 }

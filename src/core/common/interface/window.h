@@ -28,8 +28,7 @@ typedef struct {
 #endif
 
 #ifdef LINUX
-	int XScreen;
-	Display *XDisplay;
+	int XScreen, XineramaScreen;
 #endif
 
 } ccDisplay;
