@@ -161,19 +161,26 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-bool ccFindDisplaysXinerama(Display *display)
+bool ccFindDisplaysXinerama(Display *display, char *displayName)
 {
-	int i, screenCount, modesCount, eventBase, errorBase;
+	int i, screenCount, modesCount, eventBase, errorBase, displayNameLength;
 	ccDisplay *currentDisplay;
+	ccDisplayData currentResolution;
 	XineramaScreenInfo *xineramaInfo;
 	XF86VidModeModeInfo **modes;
 
-	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || XineramaIsActive(display)){
+	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
+#ifdef DEBUG
+		printf("Xinerama not supported or active\n");
+#endif
 		return false;
 	}
 
 	xineramaInfo = XineramaQueryScreens(display, &screenCount);
 	if(!xineramaInfo){
+#ifdef DEBUG
+		printf("Xinerama: Couldn't query screens\n");
+#endif
 		return false;
 	}
 
@@ -186,15 +193,57 @@ bool ccFindDisplaysXinerama(Display *display)
 		}
 		currentDisplay = _displays.display + _displays.amount - 1;
 
+		displayNameLength = strlen(displayName);
+		currentDisplay->monitorName = malloc(displayNameLength + 1);
+		memcpy(currentDisplay->monitorName, displayName, displayNameLength);
+		currentDisplay->monitorName[displayNameLength] = '\0';
+
 		currentDisplay->XineramaScreen = xineramaInfo[i].screen_number;
 		currentDisplay->XScreen = 0;
 		currentDisplay->x = xineramaInfo[i].x_org;
 		currentDisplay->y = xineramaInfo[i].y_org;
+		currentDisplay->current = 0;
+		currentDisplay->amount = 1;
+
+		currentResolution.width = xineramaInfo[i].width;
+		currentResolution.height = xineramaInfo[i].height;
+
+#ifdef DEBUG
+		printf("%s,%d %dx%d\n", displayName, i, currentResolution.width, currentResolution.height);
+#endif
+
+		if(currentDisplay->amount == 1){
+			currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+		}else{
+			currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+		}
+		memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
 	}
 
+	XFree(xineramaInfo);
+
 	if(!XF86VidModeGetAllModeLines(display, 0, &modesCount, &modes)){
+#ifdef DEBUG
+		printf("XVid: Couldn't get modes\n");
+#endif
 		return false;
 	}
+
+	currentDisplay = _displays.display;
+	for(i = 0; i < modesCount; i++){
+		currentResolution.width = modes[i]->hdisplay;
+		currentResolution.height = modes[i]->vdisplay;
+
+		currentDisplay->amount++;
+		if(currentDisplay->amount == 1){
+			currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+		}else{
+			currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+		}
+		memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
+	}
+
+	XFree(modes);
 
 	return true;
 }
@@ -213,6 +262,10 @@ void ccFindDisplaysXrandr(Display *display, char *displayName)
 	XRRScreenSize *sizes;
 
 	screenCount = XScreenCount(display);
+
+#ifdef DEBUG
+	printf("XRandr: Found %d displays\n", screenCount);
+#endif
 
 	for(i = 0; i < screenCount; i++){
 		_displays.amount++;
@@ -274,6 +327,13 @@ void ccFindDisplays()
 	struct dirent *direntry;
 	Display *display;
 
+	if(_displays.amount != 0){
+#ifdef DEBUG
+		printf("Displays already found, no need to call ccFindDisplays anymore\n");
+#endif
+		return;
+	}
+
 	_displays.amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
@@ -284,14 +344,18 @@ void ccFindDisplays()
 			continue;
 		}
 		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
+#ifdef DEBUG
+		printf("X: Found display %s\n", displayName);
+#endif	
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
-			if(!ccFindDisplaysXinerama(display)){
+			if(!ccFindDisplaysXinerama(display, displayName)){
 				ccFindDisplaysXrandr(display, displayName);
 			}		
 			XCloseDisplay(display);
 		}
 	}
+
 }
 
 void ccUpdateDisplays()

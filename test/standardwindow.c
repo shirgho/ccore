@@ -5,11 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/core/common/core.h"
-
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include "../src/core/common/core.h"
 #include "../src/core/common/interface/window.h"
 #include "../src/core/common/interface/popup.h"
 #include "../src/core/common/utils/timing.h"
@@ -18,6 +17,7 @@
 #include "../src/core/common/utils/charUtils.h"
 
 #include "../src/modules/clipboard/common/clipboard.h"
+
 
 float rotQuad = 0.0f;
 

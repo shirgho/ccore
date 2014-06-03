@@ -1,5 +1,5 @@
 import os
 
-env = Environment(CC='gcc', CCFLAGS = '-g -Wall -O2')
+env = Environment(CC='gcc', CCFLAGS = '-g -Wall -DDEBUG -O2')
 
 env.Program(target = 'test-x11', source = [Glob('*.c'), Glob('../src/core/linux/*/*.c'), Glob('../src/core/common/*/*.c'), Glob('../src/core/x11/*/*.c')], LIBS=['Xxf86vm', 'X11', 'Xrandr', 'Xinerama', 'GL', 'GLU'], LIBPATH=['/usr/lib', '/usr/local/lib', '.'])
