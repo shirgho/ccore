@@ -163,11 +163,14 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 
 bool ccFindDisplaysXinerama(Display *display, char *displayName)
 {
-	int i, screenCount, modesCount, eventBase, errorBase, displayNameLength;
+	int i, j, k, displayNameLength, eventBase, errorBase;
+	unsigned int vTotal;
 	ccDisplay *currentDisplay;
 	ccDisplayData currentResolution;
-	XineramaScreenInfo *xineramaInfo;
-	XF86VidModeModeInfo **modes;
+	Window root;
+	XRRScreenResources *resources;
+	XRROutputInfo *outputInfo;
+	XRRCrtcInfo *crtcInfo;
 
 	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
 #ifdef DEBUG
@@ -176,15 +179,10 @@ bool ccFindDisplaysXinerama(Display *display, char *displayName)
 		return false;
 	}
 
-	xineramaInfo = XineramaQueryScreens(display, &screenCount);
-	if(!xineramaInfo){
-#ifdef DEBUG
-		printf("Xinerama: Couldn't query screens\n");
-#endif
-		return false;
-	}
+	root = RootWindow(display, 0);
+	resources = XRRGetScreenResources(display, root);
 
-	for(i = 0; i < screenCount; i++){
+	for(i = 0; i < resources->noutput; i++){
 		_displays.amount++;
 		if(_displays.amount == 1){
 			_displays.display = malloc(sizeof(ccDisplay));
@@ -197,53 +195,51 @@ bool ccFindDisplaysXinerama(Display *display, char *displayName)
 		currentDisplay->monitorName = malloc(displayNameLength + 1);
 		memcpy(currentDisplay->monitorName, displayName, displayNameLength);
 		currentDisplay->monitorName[displayNameLength] = '\0';
+		currentDisplay->gpuName = "";
 
-		currentDisplay->XineramaScreen = xineramaInfo[i].screen_number;
+		// Dangerous operation
+		crtcInfo = XRRGetCrtcInfo(display, resources, resources->crtcs[i]);
+
+		currentDisplay->x = crtcInfo->x;
+		currentDisplay->y = crtcInfo->y;
+		currentDisplay->XineramaScreen = i;
 		currentDisplay->XScreen = 0;
-		currentDisplay->x = xineramaInfo[i].x_org;
-		currentDisplay->y = xineramaInfo[i].y_org;
 		currentDisplay->current = 0;
-		currentDisplay->amount = 1;
+		currentDisplay->amount = 0;
 
-		currentResolution.width = xineramaInfo[i].width;
-		currentResolution.height = xineramaInfo[i].height;
+		outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
+		for(j = 0; j < outputInfo->nmode; j++){
+			for(k = 0; k < resources->nmode; k++){
+				if(outputInfo->modes[j] == resources->modes[k].id){
+					vTotal = resources->modes[k].vTotal;
+					if(resources->modes[k].modeFlags & RR_DoubleScan){
+						vTotal <<= 1;
+					}
+					if(resources->modes[k].modeFlags & RR_Interlace){
+						vTotal >>= 1;
+					}
 
-#ifdef DEBUG
-		printf("%s,%d %dx%d\n", displayName, i, currentResolution.width, currentResolution.height);
-#endif
+					currentResolution.refreshRate = resources->modes[k].dotClock / (resources->modes[k].hTotal * vTotal);
+					currentResolution.width = resources->modes[k].width;
+					currentResolution.height = resources->modes[k].height;
 
-		if(currentDisplay->amount == 1){
-			currentDisplay->resolution = malloc(sizeof(ccDisplayData));
-		}else{
-			currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+					currentDisplay->amount++;
+					if(currentDisplay->amount == 1){
+						currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+					}else{
+						currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+					}
+					memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
+					break;
+				}
+			}
 		}
-		memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
+
+		XRRFreeCrtcInfo(crtcInfo);
+		XRRFreeOutputInfo(outputInfo);
 	}
 
-	XFree(xineramaInfo);
-
-	if(!XF86VidModeGetAllModeLines(display, 0, &modesCount, &modes)){
-#ifdef DEBUG
-		printf("XVid: Couldn't get modes\n");
-#endif
-		return false;
-	}
-
-	currentDisplay = _displays.display;
-	for(i = 0; i < modesCount; i++){
-		currentResolution.width = modes[i]->hdisplay;
-		currentResolution.height = modes[i]->vdisplay;
-
-		currentDisplay->amount++;
-		if(currentDisplay->amount == 1){
-			currentDisplay->resolution = malloc(sizeof(ccDisplayData));
-		}else{
-			currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
-		}
-		memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
-	}
-
-	XFree(modes);
+	XRRFreeScreenResources(resources);
 
 	return true;
 }
@@ -280,6 +276,7 @@ void ccFindDisplaysXrandr(Display *display, char *displayName)
 		currentDisplay->monitorName = malloc(displayNameLength + 1);
 		memcpy(currentDisplay->monitorName, displayName, displayNameLength);
 		currentDisplay->monitorName[displayNameLength] = '\0';
+		currentDisplay->gpuName = "";
 
 		root = RootWindow(display, i);
 		XGetWindowAttributes(display, root, &attrList);

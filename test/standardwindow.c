@@ -30,6 +30,7 @@ int main(int argc, char** argv)
 	bool quit;
 	int i;
 
+	/*
 	//Create a .txt
 	char *dir = ccStrCombine(2, ccGetDataDir(), "txtfile.txt");
 	printf("Creating file %s\n", dir);
@@ -41,6 +42,7 @@ int main(int argc, char** argv)
 	}
 	fclose(newFile);
 	free(dir);
+	*/
 
 	//Find displays and print their stats
 	ccFindDisplays();
