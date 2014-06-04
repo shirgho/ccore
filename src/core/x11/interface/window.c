@@ -385,12 +385,24 @@ void ccUpdateDisplays()
 
 void ccFreeDisplays()
 {
+/*	int i;
+
+	for(i = 0; i < _displays.amount; i++){
+		if(_displays.display + i != NULL){
+			free(_displays.display[i].gpuName);
+			free(_displays.display[i].monitorName);
+			free(_displays.display[i].resolution);
+		}
+	} */
 	free(_displays.display);
 }
 
 void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
 {
-
+	rect->x = display->x;
+	rect->y = display->y;
+	rect->width = display->resolution[display->current].width;
+	rect->height = display->resolution[display->current].height;
 }
 
 int ccGetDisplayAmount()
