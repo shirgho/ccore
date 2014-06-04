@@ -51,6 +51,7 @@ void ccFreeWindow(ccWindow *window)
 bool ccPollEvent(ccWindow *window)
 {
 	XEvent event;
+	XWindowAttributes windowAttributes;
 
 	assert(window != NULL);
 
@@ -102,6 +103,9 @@ bool ccPollEvent(ccWindow *window)
 				window->rect.width = event.xconfigure.width;
 				window->rect.height = event.xconfigure.height;
 				window->aspect = window->rect.height / window->rect.width;
+				XGetWindowAttributes(window->XDisplay, window->XWindow, &windowAttributes);
+				window->rect.x = windowAttributes.x;
+				window->rect.y = windowAttributes.y;
 			}
 			break;
 		case ClientMessage:
@@ -179,6 +183,8 @@ bool ccFindDisplaysXinerama(Display *display, char *displayName)
 		return false;
 	}
 
+	currentResolution.bitDepth = -1;
+
 	root = RootWindow(display, 0);
 	resources = XRRGetScreenResources(display, root);
 
@@ -194,6 +200,7 @@ bool ccFindDisplaysXinerama(Display *display, char *displayName)
 		displayNameLength = strlen(displayName);
 		currentDisplay->monitorName = malloc(displayNameLength + 1);
 		memcpy(currentDisplay->monitorName, displayName, displayNameLength);
+
 		currentDisplay->monitorName[displayNameLength] = '\0';
 		currentDisplay->gpuName = "";
 
