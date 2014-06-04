@@ -24,7 +24,7 @@ ccWindow* ccNewWindow(ccRect rect, const char *title, int flags)
 	assert(output->XDisplay != NULL);
 	root = DefaultRootWindow(output->XDisplay);
 	output->XScreen = DefaultScreen(output->XDisplay);
-	output->XWindow = XCreateSimpleWindow(output->XDisplay, root, 10, 10, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
+	output->XWindow = XCreateSimpleWindow(output->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
 	// Choose types of events
 	XSelectInput(output->XDisplay, output->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 	XMapWindow(output->XDisplay, output->XWindow);
@@ -131,6 +131,7 @@ bool ccPollEvent(ccWindow *window)
 void ccChangeWM(ccWindow *window, ccWindowMode mode)
 {
 	XEvent event;
+	XWindowAttributes windowAttributes;
 	Atom wmState, fullscreen;
 
 	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
@@ -146,6 +147,11 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		event.xclient.data.l[1] = fullscreen;
 
 		XSendEvent(window->XDisplay, DefaultRootWindow(window->XDisplay), false, SubstructureNotifyMask, &event);
+	}else if(mode == CC_WINDOW_MODE_MINIMIZED){
+		XUnmapWindow(window->XDisplay, window->XWindow);
+	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
+		XGetWindowAttributes(window->XDisplay, DefaultRootWindow(window->XDisplay), &windowAttributes);
+		XMoveResizeWindow(window->XDisplay, window->XWindow, 0, 0, windowAttributes.width - windowAttributes.x, windowAttributes.height - windowAttributes.y);
 	}
 }
 
