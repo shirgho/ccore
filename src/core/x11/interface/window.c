@@ -170,13 +170,6 @@ void ccCenterWindow(ccWindow *window)
 
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 {
-	int i;
-
-	for(i = 0; i < display->amount; i++){
-		if(resolution->width == display->resolution[i].width && resolution->height == display->resolution[i].height){
-			return true;
-		}
-	}
 
 	return false;
 }
