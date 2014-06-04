@@ -313,7 +313,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	}
 }
 
-void ccResizeWindow(ccWindow *window, ccRect rect)
+void ccResizeMoveWindow(ccWindow *window, ccRect rect)
 {
 	memcpy(&window->rect, &rect, sizeof(ccRect));
 	MoveWindow(window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);

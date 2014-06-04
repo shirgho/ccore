@@ -133,6 +133,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	XEvent event;
 	XWindowAttributes windowAttributes;
 	Atom wmState, fullscreen;
+	int windowWidth, windowHeight;
 
 	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
 		wmState = XInternAtom(window->XDisplay, "_NET_WM_STATE", false);
@@ -151,13 +152,15 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		XUnmapWindow(window->XDisplay, window->XWindow);
 	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
 		XGetWindowAttributes(window->XDisplay, DefaultRootWindow(window->XDisplay), &windowAttributes);
-		XMoveResizeWindow(window->XDisplay, window->XWindow, 0, 0, windowAttributes.width - windowAttributes.x, windowAttributes.height - windowAttributes.y);
+		windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
+		windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
+		XMoveResizeWindow(window->XDisplay, window->XWindow, 0, 0, windowWidth, windowHeight);
 	}
 }
 
-void ccResizeWindow(ccWindow *window, ccRect rect)
+void ccResizeMoveWindow(ccWindow *window, ccRect rect)
 {
-
+	XMoveResizeWindow(window->XDisplay, window->XWindow, rect.x, rect.y, rect.width, rect.height);
 }
 
 void ccCenterWindow(ccWindow *window)

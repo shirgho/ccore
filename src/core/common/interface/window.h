@@ -92,7 +92,7 @@ ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow(ccWindow *window);
 bool ccPollEvent(ccWindow *window); //poll an event from the events that currently need to be processed in the window
 void ccChangeWM(ccWindow *window, ccWindowMode mode);
-void ccResizeWindow(ccWindow *window, ccRect rect);
+void ccResizeMoveWindow(ccWindow *window, ccRect rect);
 void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
 
 //resolution
