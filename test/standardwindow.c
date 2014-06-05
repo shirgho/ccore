@@ -94,7 +94,8 @@ int main(int argc, char** argv)
 					switch(window->event.key){
 						case CC_KEY_1:
 							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
-							
+							//Use 2 windows full screen
+							ccResizeMoveWindow(window, ccRectConcatenate(2, ccGetDisplayRect(ccGetDisplay(1)), ccGetDisplayRect(ccGetDisplay(0))));
 							break;
 						case CC_KEY_2:
 							ccChangeWM(window, CC_WINDOW_MODE_WINDOW);

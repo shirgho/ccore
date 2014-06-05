@@ -39,6 +39,7 @@ char *ccStrConcatenate(int amount, ...)
 		lengths[i] = strlen(elements[i]);
 		l += lengths[i];
 	}
+	va_end(strings);
 
 	newStr = malloc(l+1);
 	newStr[l] = '\0';
@@ -48,8 +49,6 @@ char *ccStrConcatenate(int amount, ...)
 		strcpy(newStr + l, elements[i]);
 		l += lengths[i];
 	}
-
-	va_end(strings);
 
 	free(lengths);
 	free(elements);

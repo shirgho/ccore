@@ -70,7 +70,7 @@ static void updateWindowDisplay(ccWindow *window)
 
 	for(i = 0; i < _displays.amount; i++)
 	{
-		ccGetDisplayRect(&_displays.display[i], &displayRect);
+		displayRect = ccGetDisplayRect(&_displays.display[i]);
 		area = ccRectIntersectionArea(&displayRect, &window->rect);
 		if(area > largestArea) {
 			largestArea = area;
@@ -444,12 +444,14 @@ ccDisplay *ccGetDisplay(int index)
 	return &_displays.display[index];
 }
 
-void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
+ccRect ccGetDisplayRect(ccDisplay *display)
 {
-	rect->x = display->x;
-	rect->y = display->y;
-	rect->width = display->resolution[display->current].width;
-	rect->height = display->resolution[display->current].height;
+	ccRect rect;
+	rect.x = display->x;
+	rect.y = display->y;
+	rect.width = display->resolution[display->current].width;
+	rect.height = display->resolution[display->current].height;
+	return rect;
 }
 
 int ccGetDisplayAmount()

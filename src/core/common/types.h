@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdlib.h>
+#include <stdarg.h>
+
 #define true 1
 #define false 0
 
@@ -27,3 +30,4 @@ typedef struct {
 #endif
 
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);
+ccRect ccRectConcatenate(int amount, ...);
