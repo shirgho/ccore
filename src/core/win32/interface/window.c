@@ -234,6 +234,9 @@ ccWindow *ccNewWindow(ccRect rect, const char* title, int flags)
 		SetWindowPos(newWindow->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
 	}
 
+	ShowWindow(newWindow->winHandle, SW_SHOW);
+	ccChangeWM(newWindow, CC_WINDOW_MODE_WINDOW);
+
 	return newWindow;
 }
 
@@ -288,12 +291,6 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 {
 	switch(mode)
 	{
-	case CC_WINDOW_MODE_VISIBLE:
-		ShowWindow(window->winHandle, SW_SHOW);
-		break;
-	case CC_WINDOW_MODE_INVISIBLE:
-		ShowWindow(window->winHandle, SW_HIDE);
-		break;
 	case CC_WINDOW_MODE_MINIMIZED:
 		ShowWindow(window->winHandle, SW_MINIMIZE);
 		break;
@@ -305,7 +302,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		window->rect.height = ccGetResolutionCurrent(window->display)->height;
 
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
-		ccResizeWindow(window, (ccRect){ window->display->x, window->display->y, window->rect.width, window->rect.height });
+		ccResizeMoveWindow(window, (ccRect){ window->display->x, window->display->y, window->rect.width, window->rect.height });
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
 		ShowWindow(window->winHandle, SW_MAXIMIZE);
@@ -321,7 +318,7 @@ void ccResizeMoveWindow(ccWindow *window, ccRect rect)
 
 void ccCenterWindow(ccWindow *window)
 {
-	ccResizeWindow(window,
+	ccResizeMoveWindow(window,
 		(ccRect){window->display->x + ((ccGetResolutionCurrent(window->display)->width - window->rect.width) >> 1),
 		window->display->y + ((ccGetResolutionCurrent(window->display)->height - window->rect.height) >> 1),
 				 window->rect.width,
