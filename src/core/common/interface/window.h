@@ -42,9 +42,8 @@ typedef struct {
 
 //the way a window is shown. Only one window mode can be active at a time
 typedef enum {
-	CC_WINDOW_MODE_VISIBLE,
-	CC_WINDOW_MODE_INVISIBLE,
 	CC_WINDOW_MODE_FULLSCREEN,
+	CC_WINDOW_MODE_FULLSCREEN_EXCLUSIVE,
 	CC_WINDOW_MODE_MAXIMIZED, //Note: maximize from windowed mode
 	CC_WINDOW_MODE_WINDOW,
 	CC_WINDOW_MODE_MINIMIZED
