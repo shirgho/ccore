@@ -5,9 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-
 #include "../src/core/common/core.h"
 #include "../src/core/common/interface/window.h"
 #include "../src/core/common/interface/popup.h"
@@ -18,6 +15,8 @@
 
 #include "../src/modules/clipboard/common/clipboard.h"
 
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 float rotQuad = 0.0f;
 
@@ -30,7 +29,6 @@ int main(int argc, char** argv)
 	bool quit;
 	int i;
 
-	/*
 	//Create a .txt
 	char *dir = ccStrCombine(2, ccGetDataDir(), "txtfile.txt");
 	printf("Creating file %s\n", dir);
@@ -42,7 +40,6 @@ int main(int argc, char** argv)
 	}
 	fclose(newFile);
 	free(dir);
-	*/
 
 	//Find displays and print their stats
 	ccFindDisplays();
