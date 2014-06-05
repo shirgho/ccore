@@ -21,7 +21,7 @@ void ccStrTrim(char *str)
 	str = realloc(str, strlen(str) + 1);
 }
 
-char *ccStrCombine(int amount, ...)
+char *ccStrConcatenate(int amount, ...)
 {
 	va_list strings;
 	int i;

@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	int i;
 
 	//Create a .txt
-	char *dir = ccStrCombine(2, ccGetDataDir(), "txtfile.txt");
+	char *dir = ccStrConcatenate(2, ccGetDataDir(), "txtfile.txt");
 	printf("Creating file %s\n", dir);
 	FILE *newFile = fopen(dir, "w");
 	if(!newFile) ccAbort("Can't create file!");
@@ -94,6 +94,7 @@ int main(int argc, char** argv)
 					switch(window->event.key){
 						case CC_KEY_1:
 							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
+							
 							break;
 						case CC_KEY_2:
 							ccChangeWM(window, CC_WINDOW_MODE_WINDOW);

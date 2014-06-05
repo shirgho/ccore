@@ -9,4 +9,4 @@
 void ccStrTrimToChar(char *str, char ch, bool includeChar);
 void ccStrReplaceChar(char *str, char ch, char newCh);
 void ccStrTrim(char *str);
-char *ccStrCombine(int amount, ...);
+char *ccStrConcatenate(int amount, ...);
