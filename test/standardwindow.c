@@ -15,20 +15,20 @@
 
 #include "../src/modules/clipboard/common/clipboard.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-
 float rotQuad = 0.0f;
 
+GLuint loadShader(const char *location, GLenum type);
 void resizeGL(unsigned int width, unsigned int height);
 void renderGL();
 
 int main(int argc, char** argv)
 {
 	ccWindow *window;
+	char *dir;
 	bool quit;
 	int i;
 
+/*
 	//Create a .txt
 	char *dir = ccStrConcatenate(2, ccGetDataDir(), "txtfile.txt");
 	printf("Creating file %s\n", dir);
@@ -40,7 +40,15 @@ int main(int argc, char** argv)
 	}
 	fclose(newFile);
 	free(dir);
+*/
 
+	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.vert");
+	loadShader(dir, GL_VERTEX_SHADER);
+	free(dir);
+
+	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.frag");
+	loadShader(dir, GL_FRAGMENT_SHADER);
+	
 	//Find displays and print their stats
 	ccFindDisplays();
 	for(i = 0; i < ccGetDisplayAmount(); i++) {
@@ -127,6 +135,41 @@ int main(int argc, char** argv)
 	ccFreeDisplays();
 
 	return 0;
+}
+
+GLuint loadShader(const char *location, GLenum type)
+{
+	FILE *file;
+	long fileSize;
+	char *buffer;
+	GLuint handle;
+
+	file = fopen(location, "r");
+	if(!file){
+		printf("ERROR: Couldn't read file %s\n", location);
+		return 0;
+	}
+	fseek(file, 0, SEEK_END);
+	fileSize = ftell(file);
+	rewind(file);
+
+	buffer = malloc(fileSize);
+	if(!buffer){
+		printf("ERROR: Out of memory\n");
+		return 0;
+	}
+	fread(buffer, fileSize, 1, file);
+
+	handle = glCreateShader(type);
+	if(!handle){
+		printf("ERROR: Couldn't create shader handle\n");
+		return 0;
+	}
+
+	free(buffer);
+	fclose(file);
+
+	return handle;
 }
 
 void resizeGL(unsigned int width, unsigned int height)

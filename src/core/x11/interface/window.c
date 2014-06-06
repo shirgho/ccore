@@ -181,7 +181,7 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-bool ccFindDisplaysXinerama(Display *display, char *displayName)
+static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int i, j, k, displayNameLength, eventBase, errorBase;
 	unsigned int vTotal;
@@ -272,7 +272,7 @@ bool ccFindDisplaysXinerama(Display *display, char *displayName)
 	return true;
 }
 
-void ccFindDisplaysXrandr(Display *display, char *displayName)
+static void ccXFindDisplaysXrandr(Display *display, char *displayName)
 {
 	int i, j, k, screenCount, sizeCount, rateCount, displayNameLength;
 	short *refreshRates;
@@ -374,8 +374,8 @@ void ccFindDisplays()
 #endif	
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
-			if(!ccFindDisplaysXinerama(display, displayName)){
-				ccFindDisplaysXrandr(display, displayName);
+			if(!ccXFindDisplaysXinerama(display, displayName)){
+				ccXFindDisplaysXrandr(display, displayName);
 			}		
 			XCloseDisplay(display);
 		}
@@ -440,6 +440,10 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 
 	window->XContext = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(window->XDisplay, window->XWindow, window->XContext);
+
+	if(glewInit() != GLEW_OK){
+		ccAbort("GLEW could not be initialized");
+	}
 }
 
 void ccGLSwapBuffers(ccWindow *window)
