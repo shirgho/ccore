@@ -205,6 +205,12 @@ bool ccFindDisplaysXinerama(Display *display, char *displayName)
 	resources = XRRGetScreenResources(display, root);
 
 	for(i = 0; i < resources->noutput; i++){
+		outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
+		/* Ignore disconnected devices */
+		if(outputInfo->connection != 0){
+			continue;
+		}
+
 		_displays.amount++;
 		if(_displays.amount == 1){
 			_displays.display = malloc(sizeof(ccDisplay));
@@ -230,7 +236,6 @@ bool ccFindDisplaysXinerama(Display *display, char *displayName)
 		currentDisplay->current = 0;
 		currentDisplay->amount = 0;
 
-		outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
 		for(j = 0; j < outputInfo->nmode; j++){
 			for(k = 0; k < resources->nmode; k++){
 				if(outputInfo->modes[j] == resources->modes[k].id){
@@ -397,12 +402,16 @@ void ccFreeDisplays()
 	free(_displays.display);
 }
 
-void ccGetDisplayRect(ccDisplay *display, ccRect *rect)
+ccRect ccGetDisplayRect(ccDisplay *display)
 {
-	rect->x = display->x;
-	rect->y = display->y;
-	rect->width = display->resolution[display->current].width;
-	rect->height = display->resolution[display->current].height;
+	ccRect rect;
+
+	rect.x = display->x;
+	rect.y = display->y;
+	rect.width = display->resolution[display->current].width;
+	rect.height = display->resolution[display->current].height;
+
+	return rect;
 }
 
 int ccGetDisplayAmount()
