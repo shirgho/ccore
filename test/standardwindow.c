@@ -101,17 +101,25 @@ int main(int argc, char** argv)
 				case CC_EVENT_KEY_DOWN:
 					switch(window->event.key){
 						case CC_KEY_1:
+							printf("Going full screen on the first two windows\n");
 							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
 							//Use 2 windows full screen
 							ccResizeMoveWindow(window, ccRectConcatenate(2, ccGetDisplayRect(ccGetDisplay(1)), ccGetDisplayRect(ccGetDisplay(0))));
 							break;
 						case CC_KEY_2:
-							ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
+							printf("Going full screen\n");
+							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
 							break;
 						case CC_KEY_3:
-							ccChangeWM(window, CC_WINDOW_MODE_MINIMIZED);
+							printf("windowed mode\n");
+							ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
 							break;
 						case CC_KEY_4:
+							printf("minimizing\n");
+							ccChangeWM(window, CC_WINDOW_MODE_MINIMIZED);
+							break;
+						case CC_KEY_5:
+							printf("maximizing\n");
 							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
 							break;
 						case CC_KEY_UNDEFINED:

@@ -303,9 +303,11 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		ShowWindow(window->winHandle, SW_MINIMIZE);
 		break;
 	case CC_WINDOW_MODE_WINDOW:
+		ShowWindow(window->winHandle, SW_SHOWDEFAULT);
 		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
+		ShowWindow(window->winHandle, SW_SHOWDEFAULT);
 		window->rect.width = ccGetResolutionCurrent(window->display)->width;
 		window->rect.height = ccGetResolutionCurrent(window->display)->height;
 
@@ -320,7 +322,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 
 void ccResizeMoveWindow(ccWindow *window, ccRect rect)
 {
-	memcpy(&window->rect, &rect, sizeof(ccRect));
+	window->rect = rect;
 	MoveWindow(window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);
 }
 
@@ -328,7 +330,7 @@ void ccCenterWindow(ccWindow *window)
 {
 	ccResizeMoveWindow(window,
 		(ccRect){window->display->x + ((ccGetResolutionCurrent(window->display)->width - window->rect.width) >> 1),
-		window->display->y + ((ccGetResolutionCurrent(window->display)->height - window->rect.height) >> 1),
+				 window->display->y + ((ccGetResolutionCurrent(window->display)->height - window->rect.height) >> 1),
 				 window->rect.width,
 				 window->rect.height
 	});
