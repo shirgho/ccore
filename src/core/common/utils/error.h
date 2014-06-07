@@ -9,8 +9,12 @@ typedef enum {
 	// The window couldn't find a display to attach to
 	CC_ERROR_NODISPLAY,
 	// The target OpenGL version is not supported
-	CC_ERROR_GLUNSUPPORTED
+	CC_ERROR_GLVERSION,
+	// OpenGL context creation failed
+	CC_ERROR_GLCONTEXT,
+	// GLEW could not initialize
+	CC_ERROR_GLEWINIT
 } ccError;
 
 void ccErrorString(char *dest, ccError error);
-void ccAbort(const char* message);
+void ccAbort(char* message);
