@@ -64,8 +64,8 @@ int main(int argc, char** argv)
 
 	//ccSetResolution(ccGetDisplay(1), ccGetResolution(ccGetDisplay(1), 4));
 	//
-	ccGLBindContext(window, 3, 2);
 	ccCenterWindow(window);
+	ccGLBindContext(window, 5, 2);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
