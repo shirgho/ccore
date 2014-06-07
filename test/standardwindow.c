@@ -41,13 +41,6 @@ int main(int argc, char** argv)
 	fclose(newFile);
 	free(dir);
 */
-
-	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.vert");
-	loadShader(dir, GL_VERTEX_SHADER);
-	free(dir);
-
-	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.frag");
-	loadShader(dir, GL_FRAGMENT_SHADER);
 	
 	//Find displays and print their stats
 	ccFindDisplays();
@@ -66,6 +59,13 @@ int main(int argc, char** argv)
 	//
 	ccCenterWindow(window);
 	ccGLBindContext(window, 3, 2);
+
+	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.vert");
+	loadShader(dir, GL_VERTEX_SHADER);
+	free(dir);
+
+	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.frag");
+	loadShader(dir, GL_FRAGMENT_SHADER);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
