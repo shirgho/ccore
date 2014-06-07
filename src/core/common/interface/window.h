@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../core.h"
+#include "../utils/error.h"
 
 #ifdef X11
 #include "../../x11/interface/window.h"
@@ -94,7 +95,7 @@ void ccResizeMoveWindow(ccWindow *window, ccRect rect);
 void ccCenterWindow(ccWindow *window); //Call only after setting WM to visible!
 
 //resolution
-void ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
+ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
 //display
@@ -108,6 +109,6 @@ ccDisplay *ccGetDisplay(int index);
 ccDisplay *ccGetDefaultDisplay();
 
 //opengl
-void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
+ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
 void ccGLSwapBuffers(ccWindow *window); //swap the buffers
 void ccGLMakeCurrent(ccWindow *window); //make window the current window

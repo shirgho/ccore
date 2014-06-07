@@ -5,7 +5,7 @@ const char *ccErrorString(ccError error)
 	const char *str;
 
 	switch(error){
-		case CC_ERROR_NO:
+		case CC_ERROR_NONE:
 			return "No errors";
 			break;
 		case CC_ERROR_NODISPLAY:
@@ -20,14 +20,11 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_GLEWINIT:
 			return "GLEW could not be initialized";
 			break;
+		case CC_ERROR_RESOLUTION_CHANGE:
+			return "Could not change display resolution";
+			break;
 		default:
 			return "Error message not defined";
 			break;
 	}
-}
-
-void ccAbort(const char* message)
-{
-	ccShowPopup(NULL, message, "fatal error", CC_POPUP_ERROR);
-	exit(0);
 }

@@ -254,7 +254,7 @@ void ccGLMakeCurrent(ccWindow *window)
 	wglMakeCurrent(window->hdc, window->renderContext);
 }
 
-void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
+ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
 	int glVerMajor, glVerMinor;
@@ -276,18 +276,19 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 	SetPixelFormat(window->hdc, pixelFormatIndex, &pfd);
 
 	window->renderContext = wglCreateContext(window->hdc);
-	if(window->renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
+	if(window->renderContext == NULL) return CC_ERROR_GLCONTEXT;
 	
 	ccGLMakeCurrent(window);
 
 	//Version check
 	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
 	glGetIntegerv(GL_MINOR_VERSION, &glVerMinor);
-	if(glVerMajor < glVersionMajor || (glVerMajor == glVersionMajor && glVerMinor < glVersionMinor))
-		ccAbort("OpenGL version not supported.");
+	if(glVerMajor < glVersionMajor || (glVerMajor == glVersionMajor && glVerMinor < glVersionMinor)) return CC_ERROR_GLVERSION;
 
 	//Fetch extentions after context creation
-	if(glewInit() != GLEW_OK) ccAbort("GLEW could not be initialized.");
+	if(glewInit() != GLEW_OK) return CC_ERROR_GLEWINIT;
+
+	return CC_ERROR_NONE;
 }
 
 void ccGLSwapBuffers(ccWindow *window)
@@ -488,7 +489,7 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-void ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
+ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 {
 	DEVMODE devMode;
 	ZeroMemory(&devMode, sizeof(DEVMODE));
@@ -502,6 +503,8 @@ void ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
 
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
-		ccAbort("Error changing resolution!");
+		return CC_ERROR_RESOLUTION_CHANGE;
 	}
+	
+	return CC_ERROR_NONE;
 }
