@@ -257,6 +257,8 @@ void ccGLMakeCurrent(ccWindow *window)
 void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
+	int glVerMajor, glVerMinor;
+
 	window->hdc = GetDC(window->winHandle);
 
 	PIXELFORMATDESCRIPTOR pfd = {
@@ -277,6 +279,12 @@ void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 	if(window->renderContext == NULL) ccAbort("openGL could not be initialized.\nThis could happen because your openGL version is too old.");
 	
 	ccGLMakeCurrent(window);
+
+	//Version check
+	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
+	glGetIntegerv(GL_MINOR_VERSION, &glVerMinor);
+	if(glVerMajor < glVersionMajor || (glVerMajor == glVersionMajor && glVerMinor < glVersionMinor))
+		ccAbort("OpenGL version not supported.");
 
 	//Fetch extentions after context creation
 	if(glewInit() != GLEW_OK) ccAbort("GLEW could not be initialized.");
