@@ -16,4 +16,4 @@ typedef enum {
 } ccError;
 
 const char *ccErrorString(ccError error);
-void ccAbort(char* message);
+void ccAbort(const char* message);
