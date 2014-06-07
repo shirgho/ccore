@@ -66,6 +66,7 @@ int main(int argc, char** argv)
 
 	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.frag");
 	loadShader(dir, GL_FRAGMENT_SHADER);
+	free(dir);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
