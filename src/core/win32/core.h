@@ -7,7 +7,3 @@
 #pragma comment(lib, "opengl32")
 #pragma comment(lib, "glu32")
 #endif
-
-//Load all extensions using GLEW
-#define GLEW_STATIC
-#include "glew/glew.h"

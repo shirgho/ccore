@@ -70,6 +70,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="lib\glew\glew.c" />
     <ClCompile Include="src\core\common\utils\charUtils.c" />
     <ClCompile Include="src\core\common\utils\error.c" />
     <ClCompile Include="src\core\common\utils\rect.c" />
@@ -82,6 +83,9 @@
     <ClCompile Include="test\standardwindow.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\glew\GL\glew.h" />
+    <ClInclude Include="lib\glew\GL\glxew.h" />
+    <ClInclude Include="lib\glew\GL\wglew.h" />
     <ClInclude Include="src\core\common\core.h" />
     <ClInclude Include="src\core\common\debug\assert.h" />
     <ClInclude Include="src\core\common\debug\print.h" />

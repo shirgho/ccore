@@ -14,3 +14,7 @@
 #else
 #error "OS not supported!"
 #endif
+
+//Load all extensions using GLEW
+#define GLEW_STATIC
+#include "../../../lib/glew/GL/glew.h"
