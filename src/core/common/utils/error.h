@@ -1,6 +1,5 @@
 #pragma once
 
-#include "charUtils.h"
 #include "../interface/popup.h"
 
 typedef enum {
@@ -16,5 +15,5 @@ typedef enum {
 	CC_ERROR_GLEWINIT
 } ccError;
 
-void ccErrorString(char *dest, ccError error);
+const char *ccErrorString(ccError error);
 void ccAbort(char* message);
