@@ -87,8 +87,8 @@
     <ClInclude Include="lib\glew\GL\glxew.h" />
     <ClInclude Include="lib\glew\GL\wglew.h" />
     <ClInclude Include="src\core\common\core.h" />
-    <ClInclude Include="src\core\common\debug\assert.h" />
-    <ClInclude Include="src\core\common\debug\print.h" />
+    <ClInclude Include="src\core\common\debugutils\assert.h" />
+    <ClInclude Include="src\core\common\debugutils\print.h" />
     <ClInclude Include="src\core\common\interface\event.h" />
     <ClInclude Include="src\core\common\interface\popup.h" />
     <ClInclude Include="src\core\common\interface\window.h" />
