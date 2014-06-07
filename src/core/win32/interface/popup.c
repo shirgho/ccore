@@ -1,4 +1,4 @@
-#include "../../core/interface/popup.h"
+#include "../../common/interface/popup.h"
 
 void ccShowPopup(ccWindow* parent, const char* message, const char* caption, ccPopupType type)
 {
