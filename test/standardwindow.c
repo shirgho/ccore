@@ -12,6 +12,7 @@
 #include "../src/core/common/interface/event.h"
 #include "../src/core/common/utils/dirUtils.h"
 #include "../src/core/common/utils/charUtils.h"
+#include "../src/core/common/debug/print.h"
 
 #include "../src/modules/clipboard/common/clipboard.h"
 
