@@ -290,11 +290,6 @@ void ccFreeWindow(ccWindow *window)
 	free(window);
 }
 
-void ccGLMakeCurrent(ccWindow *window)
-{
-	wglMakeCurrent(window->hdc, window->renderContext);
-}
-
 ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
@@ -318,8 +313,9 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 
 	window->renderContext = wglCreateContext(window->hdc);
 	if(window->renderContext == NULL) return CC_ERROR_GLCONTEXT;
-	
-	ccGLMakeCurrent(window);
+
+	//Make window the current context
+	wglMakeCurrent(window->hdc, window->renderContext);
 
 	//Version check
 	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);

@@ -111,4 +111,3 @@ ccDisplay *ccGetDefaultDisplay();
 //opengl
 ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
 void ccGLSwapBuffers(ccWindow *window); //swap the buffers
-void ccGLMakeCurrent(ccWindow *window); //make window the current window
