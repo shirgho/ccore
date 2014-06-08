@@ -7,7 +7,6 @@
 
 #include "../src/ccore/core/common/core.h"
 #include "../src/ccore/core/common/interface/window.h"
-#include "../src/ccore/core/common/interface/popup.h"
 #include "../src/ccore/core/common/utils/timing.h"
 #include "../src/ccore/core/common/interface/event.h"
 #include "../src/ccore/core/common/utils/dirUtils.h"
@@ -84,9 +83,7 @@ int main(int argc, char** argv)
 		while(ccPollEvent(window)){
 			switch(window->event.type){
 				case CC_EVENT_WINDOW_QUIT:
-					if(ccShowDialogue(window, "Really quit?", "quit", CC_DIALOGUE_YESNO) == true){
-						quit = true;
-					}
+					quit = true;
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
 					printf("Updated window size: x:%d y:%d %d x %d\n", window->rect.x, window->rect.y, window->rect.width, window->rect.height);
