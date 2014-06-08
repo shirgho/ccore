@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 	quit = false;
 	while(!quit){
 		ccDelay(15);
-		while(ccPollEvent(window)){
+		while(window != NULL && ccPollEvent(window)){
 			switch(window->event.type){
 				case CC_EVENT_WINDOW_QUIT:
 					quit = true;
@@ -121,6 +121,11 @@ int main(int argc, char** argv)
 							printf("maximizing\n");
 							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
 							break;
+						case CC_KEY_6:
+							printf("destroying window\n");
+							ccFreeWindow(window);
+							window = NULL;
+							break;
 						case CC_KEY_UNDEFINED:
 							printf("Key is not supported!\n");
 							break;
@@ -134,11 +139,13 @@ int main(int argc, char** argv)
 			}
 		}
 
-		renderGL();
-		ccGLSwapBuffers(window);
+		if(window != NULL) {
+			renderGL();
+			ccGLSwapBuffers(window);
+		}
 	}
 
-	ccFreeWindow(window);
+	if(window != NULL) ccFreeWindow(window);
 	ccFreeDisplays();
 
 	return 0;
