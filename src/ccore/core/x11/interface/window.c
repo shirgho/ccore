@@ -429,21 +429,23 @@ ccDisplay *ccGetDefaultDisplay()
 	return _displays.display + _displays.primary;
 }
 
-void ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
+ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 
-	assert(window != NULL);
+	ccAssert(window != NULL);
 
 	visual = glXChooseVisual(window->XDisplay, window->XScreen, attrList);
-	assert(visual != NULL);
+	ccAssert(visual != NULL);
 
 	window->XContext = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(window->XDisplay, window->XWindow, window->XContext);
 
 	if(glewInit() != GLEW_OK){
-		ccAbort("GLEW could not be initialized");
+		return CC_ERROR_GLEWINIT;
 	}
+
+	return CC_ERROR_NONE;
 }
 
 void ccGLSwapBuffers(ccWindow *window)
