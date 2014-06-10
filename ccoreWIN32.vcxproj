@@ -10,6 +10,38 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\glew\glew.c" />
+    <ClCompile Include="src\ccore\core\common\utils\charUtils.c" />
+    <ClCompile Include="src\ccore\core\common\utils\error.c" />
+    <ClCompile Include="src\ccore\core\common\utils\rect.c" />
+    <ClCompile Include="src\ccore\core\win32\interface\window.c" />
+    <ClCompile Include="src\ccore\core\win32\utils\dirUtils.c" />
+    <ClCompile Include="src\ccore\core\win32\utils\timing.c" />
+    <ClCompile Include="src\ccore\modules\clipboard\win32\clipboard.c" />
+    <ClCompile Include="test\standardwindow.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\glew\GL\glew.h" />
+    <ClInclude Include="lib\glew\GL\glxew.h" />
+    <ClInclude Include="lib\glew\GL\wglew.h" />
+    <ClInclude Include="src\ccore\core\common\core.h" />
+    <ClInclude Include="src\ccore\core\common\debugutils\assert.h" />
+    <ClInclude Include="src\ccore\core\common\debugutils\print.h" />
+    <ClInclude Include="src\ccore\core\common\interface\event.h" />
+    <ClInclude Include="src\ccore\core\common\interface\window.h" />
+    <ClInclude Include="src\ccore\core\common\types.h" />
+    <ClInclude Include="src\ccore\core\common\utils\charUtils.h" />
+    <ClInclude Include="src\ccore\core\common\utils\dirUtils.h" />
+    <ClInclude Include="src\ccore\core\common\utils\error.h" />
+    <ClInclude Include="src\ccore\core\common\utils\timing.h" />
+    <ClInclude Include="src\ccore\core\win32\core.h" />
+    <ClInclude Include="src\ccore\core\win32\interface\window.h" />
+    <ClInclude Include="src\ccore\core\win32\utils\dirUtils.h" />
+    <ClInclude Include="src\ccore\core\win32\utils\timing.h" />
+    <ClInclude Include="src\ccore\modules\clipboard\common\clipboard.h" />
+    <ClInclude Include="src\ccore\modules\clipboard\win32\clipboard.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>
     <RootNamespace>ccore2</RootNamespace>
@@ -70,41 +102,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="lib\glew\glew.c" />
-    <ClCompile Include="src\core\common\utils\charUtils.c" />
-    <ClCompile Include="src\core\common\utils\error.c" />
-    <ClCompile Include="src\core\common\utils\rect.c" />
-    <ClCompile Include="src\core\win32\interface\popup.c" />
-    <ClCompile Include="src\core\win32\interface\window.c" />
-    <ClCompile Include="src\core\win32\utils\dirUtils.c" />
-    <ClCompile Include="src\core\win32\utils\timing.c" />
-    <ClCompile Include="src\modules\clipboard\win32\clipboard.c" />
-    <ClCompile Include="test\standardwindow.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="lib\glew\GL\glew.h" />
-    <ClInclude Include="lib\glew\GL\glxew.h" />
-    <ClInclude Include="lib\glew\GL\wglew.h" />
-    <ClInclude Include="src\core\common\core.h" />
-    <ClInclude Include="src\core\common\debugutils\assert.h" />
-    <ClInclude Include="src\core\common\debugutils\print.h" />
-    <ClInclude Include="src\core\common\interface\event.h" />
-    <ClInclude Include="src\core\common\interface\popup.h" />
-    <ClInclude Include="src\core\common\interface\window.h" />
-    <ClInclude Include="src\core\common\types.h" />
-    <ClInclude Include="src\core\common\utils\charUtils.h" />
-    <ClInclude Include="src\core\common\utils\dirUtils.h" />
-    <ClInclude Include="src\core\common\utils\error.h" />
-    <ClInclude Include="src\core\common\utils\timing.h" />
-    <ClInclude Include="src\core\win32\core.h" />
-    <ClInclude Include="src\core\win32\interface\popup.h" />
-    <ClInclude Include="src\core\win32\interface\window.h" />
-    <ClInclude Include="src\core\win32\utils\dirUtils.h" />
-    <ClInclude Include="src\core\win32\utils\timing.h" />
-    <ClInclude Include="src\modules\clipboard\common\clipboard.h" />
-    <ClInclude Include="src\modules\clipboard\win32\clipboard.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

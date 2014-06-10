@@ -5,8 +5,6 @@
 
 #ifdef X11
 #include "../../x11/interface/window.h"
-#elif defined GTK
-#include "../../gtk/interface/window.h"
 #elif defined WIN32
 #include "../../win32/interface/window.h"
 #endif
@@ -111,4 +109,3 @@ ccDisplay *ccGetDefaultDisplay();
 //opengl
 ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
 void ccGLSwapBuffers(ccWindow *window); //swap the buffers
-void ccGLMakeCurrent(ccWindow *window); //make window the current window

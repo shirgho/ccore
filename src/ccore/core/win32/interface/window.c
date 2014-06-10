@@ -49,6 +49,47 @@ static ccKeyCode translateKey(WPARAM wParam)
 	case VK_DOWN:
 		return CC_KEY_DOWN;
 		break;
+	case VK_CAPITAL:
+		return CC_KEY_CAPSLOCK;
+		break;
+	case VK_INSERT:
+		return CC_KEY_INSERT;
+		break;
+	case VK_DELETE:
+		return CC_KEY_DELETE;
+		break;
+	case VK_HOME:
+		return CC_KEY_HOME;
+		break;
+	case VK_END:
+		return CC_KEY_END;
+		break;
+	case VK_PRIOR:
+		return CC_KEY_PAGEUP;
+		break;
+	case VK_NEXT:
+		return CC_KEY_PAGEDOWN;
+		break;
+	case VK_SNAPSHOT:
+		return CC_KEY_PRINTSCREEN;
+		break;
+	case VK_SCROLL:
+		return CC_KEY_SCROLLLOCK;
+		break;
+	case VK_PAUSE:
+		return CC_KEY_PAUSEBREAK;
+		break;
+	case VK_NUMLOCK:
+		return CC_KEY_NUMLOCK;
+		break;
+	}
+
+	if(wParam >= VK_F1 && wParam <= VK_F12) {
+		return CC_KEY_F1 + wParam - VK_F1;
+	}
+
+	if(wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9) {
+		return CC_KEY_NUM0 + wParam - VK_NUMPAD0;
 	}
 
 	return CC_KEY_UNDEFINED;
@@ -249,11 +290,6 @@ void ccFreeWindow(ccWindow *window)
 	free(window);
 }
 
-void ccGLMakeCurrent(ccWindow *window)
-{
-	wglMakeCurrent(window->hdc, window->renderContext);
-}
-
 ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
@@ -277,8 +313,9 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 
 	window->renderContext = wglCreateContext(window->hdc);
 	if(window->renderContext == NULL) return CC_ERROR_GLCONTEXT;
-	
-	ccGLMakeCurrent(window);
+
+	//Make window the current context
+	wglMakeCurrent(window->hdc, window->renderContext);
 
 	//Version check
 	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);

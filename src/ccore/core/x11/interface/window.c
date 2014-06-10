@@ -433,10 +433,10 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 {
 	XVisualInfo *visual;
 
-	assert(window != NULL);
+	ccAssert(window != NULL);
 
 	visual = glXChooseVisual(window->XDisplay, window->XScreen, attrList);
-	assert(visual != NULL);
+	ccAssert(visual != NULL);
 
 	window->XContext = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(window->XDisplay, window->XWindow, window->XContext);
@@ -444,7 +444,11 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 	if(glewInit() != GLEW_OK){
 		return CC_ERROR_GLEWINIT;
 	}
+<<<<<<< HEAD:src/core/x11/interface/window.c
 	
+=======
+
+>>>>>>> 7b3ee0321a4f8fc7b32a3df993a1f8dfc3db025f:src/ccore/core/x11/interface/window.c
 	return CC_ERROR_NONE;
 }
 

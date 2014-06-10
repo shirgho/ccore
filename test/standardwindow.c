@@ -5,16 +5,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/core/common/core.h"
-#include "../src/core/common/interface/window.h"
-#include "../src/core/common/interface/popup.h"
-#include "../src/core/common/utils/timing.h"
-#include "../src/core/common/interface/event.h"
-#include "../src/core/common/utils/dirUtils.h"
-#include "../src/core/common/utils/charUtils.h"
-#include "../src/core/common/debugutils/print.h"
+#include "../src/ccore/core/common/core.h"
+#include "../src/ccore/core/common/interface/window.h"
+#include "../src/ccore/core/common/utils/timing.h"
+#include "../src/ccore/core/common/interface/event.h"
+#include "../src/ccore/core/common/utils/dirUtils.h"
+#include "../src/ccore/core/common/utils/charUtils.h"
+#include "../src/ccore/core/common/debugutils/print.h"
 
-#include "../src/modules/clipboard/common/clipboard.h"
+#include "../src/ccore/modules/clipboard/common/clipboard.h"
 
 float rotQuad = 0.0f;
 
@@ -81,12 +80,10 @@ int main(int argc, char** argv)
 	quit = false;
 	while(!quit){
 		ccDelay(15);
-		while(ccPollEvent(window)){
+		while(window != NULL && ccPollEvent(window)){
 			switch(window->event.type){
 				case CC_EVENT_WINDOW_QUIT:
-					if(ccShowDialogue(window, "Really quit?", "quit", CC_DIALOGUE_YESNO) == true){
-						quit = true;
-					}
+					quit = true;
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
 					printf("Updated window size: x:%d y:%d %d x %d\n", window->rect.x, window->rect.y, window->rect.width, window->rect.height);
@@ -124,6 +121,11 @@ int main(int argc, char** argv)
 							printf("maximizing\n");
 							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
 							break;
+						case CC_KEY_6:
+							printf("destroying window\n");
+							ccFreeWindow(window);
+							window = NULL;
+							break;
 						case CC_KEY_UNDEFINED:
 							printf("Key is not supported!\n");
 							break;
@@ -137,11 +139,13 @@ int main(int argc, char** argv)
 			}
 		}
 
-		renderGL();
-		ccGLSwapBuffers(window);
+		if(window != NULL) {
+			renderGL();
+			ccGLSwapBuffers(window);
+		}
 	}
 
-	ccFreeWindow(window);
+	if(window != NULL) ccFreeWindow(window);
 	ccFreeDisplays();
 
 	return 0;
