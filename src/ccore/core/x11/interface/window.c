@@ -149,7 +149,7 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 
 		XSendEvent(window->XDisplay, DefaultRootWindow(window->XDisplay), false, SubstructureNotifyMask, &event);
 	}else if(mode == CC_WINDOW_MODE_MINIMIZED){
-		XUnmapWindow(window->XDisplay, window->XWindow);
+		XIconifyWindow(window->XDisplay, window->XWindow, window->XScreen);
 	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
 		XGetWindowAttributes(window->XDisplay, DefaultRootWindow(window->XDisplay), &windowAttributes);
 		windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
@@ -166,6 +166,12 @@ void ccResizeMoveWindow(ccWindow *window, ccRect rect)
 void ccCenterWindow(ccWindow *window)
 {
 
+}
+
+ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
+{
+
+	return CC_ERROR_NONE;
 }
 
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
@@ -444,11 +450,7 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 	if(glewInit() != GLEW_OK){
 		return CC_ERROR_GLEWINIT;
 	}
-<<<<<<< HEAD:src/core/x11/interface/window.c
-	
-=======
 
->>>>>>> 7b3ee0321a4f8fc7b32a3df993a1f8dfc3db025f:src/ccore/core/x11/interface/window.c
 	return CC_ERROR_NONE;
 }
 
