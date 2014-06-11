@@ -125,6 +125,10 @@ int main(int argc, char** argv)
 							ccFreeWindow(window);
 							window = NULL;
 							break;
+						case CC_KEY_C:
+							printf("centering window\n");
+							ccCenterWindow(window);
+							break;
 						case CC_KEY_UNDEFINED:
 							printf("Key is not supported!\n");
 							break;

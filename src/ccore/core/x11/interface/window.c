@@ -165,7 +165,22 @@ void ccResizeMoveWindow(ccWindow *window, ccRect rect)
 
 void ccCenterWindow(ccWindow *window)
 {
+	//TODO send _NET_WM_WINDOW_TYPE_SPLASH event
+	XEvent event;
+	Atom wmState, splash;
 
+	wmState = XInternAtom(window->XDisplay, "_NET_WM_TYPE", false);
+	splash = XInternAtom(window->XDisplay, "_NET_WM_TYPE_SPLASH", false);
+
+	memset(&event, 0, sizeof(event));
+	event.type = ClientMessage;
+	event.xclient.window = window->XWindow;
+	event.xclient.message_type = wmState;
+	event.xclient.format = 32;
+	event.xclient.data.l[0] = 0;
+	event.xclient.data.l[1] = splash;
+
+	XSendEvent(window->XDisplay, DefaultRootWindow(window->XDisplay), false, SubstructureNotifyMask, &event);
 }
 
 ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
