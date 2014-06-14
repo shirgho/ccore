@@ -43,18 +43,22 @@ int main(int argc, char** argv)
 */
 	
 	//Find displays and print their stats
+	printf("Finding displays\n");
 	ccFindDisplays();
 	for(i = 0; i < ccGetDisplayAmount(); i++) {
 		printf("Display: %s, Device: %s\nX: %d, Y: %d\n", ccGetDisplay(i)->monitorName, ccGetDisplay(i)->gpuName, ccGetDisplay(i)->x, ccGetDisplay(i)->y);
 	}
 	
+	printf("Printing resolutions from default display\n");
 	//Find all resolutions of one display and print them
 	for(i = 0; i < ccGetDefaultDisplay()->amount; i++) {
 		printf("%dx%d\t%dbpp\t%dHz\n", ccGetDefaultDisplay()->resolution[i].width, ccGetDefaultDisplay()->resolution[i].height, ccGetDefaultDisplay()->resolution[i].bitDepth, ccGetDefaultDisplay()->resolution[i].refreshRate);
 	}
 
+	printf("Creating window\n");
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 
+	printf("Setting resolution\n");
 	ccSetResolution(ccGetDisplay(1), ccGetResolution(ccGetDisplay(1), 4));
 	ccCenterWindow(window);
 	ccGLBindContext(window, 3, 2);

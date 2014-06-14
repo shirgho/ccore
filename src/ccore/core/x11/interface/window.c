@@ -185,6 +185,78 @@ void ccCenterWindow(ccWindow *window)
 
 ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 {
+	Display *XDisplay;
+	Window root;
+	XRRScreenResources *resources;
+	XRROutputInfo *outputInfo;
+	double dpi;
+	int widthMM, heightMM, minX, minY, maxX, maxY;
+
+	/* Screen already has the good coordinates */
+	if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
+		return CC_ERROR_NONE;
+	}
+
+	if(display->resolution->width <= 0 || display->resolution->height <= 0){
+#ifdef DEBUG
+		printf("Error: Resolution supplied too small\n");
+#endif	
+		return CC_ERROR_RESOLUTION_CHANGE;
+	}
+
+	XDisplay = XOpenDisplay(display->XDisplayName);
+	root = RootWindow(XDisplay, display->XScreen);
+	XGrabServer(XDisplay);
+
+	if(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY)){
+#ifdef DEBUG
+		printf("X: Unable to get screen size range\n");
+#endif	
+		return CC_ERROR_RESOLUTION_CHANGE;
+	}
+
+	resources = XRRGetScreenResources(XDisplay, root);
+	outputInfo = XRRGetOutputInfo(XDisplay, resources, resources->outputs[display->XineramaScreen]);
+	if(!outputInfo->crtc){
+#ifdef DEBUG
+		printf("X: No valid CRTC output found\n");
+#endif
+		return CC_ERROR_RESOLUTION_CHANGE;
+	}
+	XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, 0, 0, None, RR_Rotate_0, NULL, 0);
+	XRRFreeScreenResources(resources);	
+	XRRFreeOutputInfo(outputInfo);
+
+	if(displayData->width < minX || displayData->height < minY){
+#ifdef DEBUG
+		printf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
+#endif	
+		return CC_ERROR_RESOLUTION_CHANGE;
+	} else if(displayData->width > maxX || displayData->height > maxY){
+#ifdef DEBUG
+		printf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
+#endif	
+		return CC_ERROR_RESOLUTION_CHANGE;
+	}
+
+	dpi = (25.4 * DisplayHeight(XDisplay, display->XScreen)) / DisplayHeightMM(XDisplay, display->XScreen);
+	if(dpi <= 0){
+		dpi = 96;
+	}
+	widthMM = (25.4 * displayData->width) / dpi;
+	heightMM = (25.4 * displayData->height) / dpi;
+
+#ifdef DEBUG
+	printf("X: Setting display %d to %dx%d, with %dx%d mm\n", display->XScreen, displayData->width, displayData->height, widthMM, heightMM);
+#endif	
+
+	XRRSetScreenSize(XDisplay, root, displayData->width, displayData->height, widthMM, heightMM);
+
+	display->resolution = displayData;
+
+	XSync(XDisplay, False);
+	XUngrabServer(XDisplay);
+	XCloseDisplay(XDisplay);
 
 	return CC_ERROR_NONE;
 }
@@ -229,6 +301,9 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
 		/* Ignore disconnected devices */
 		if(outputInfo->connection != 0){
+#ifdef DEBUG
+			printf("X: Ignored disconnected display %d\n", i);
+#endif
 			continue;
 		}
 
@@ -241,17 +316,25 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		currentDisplay = _displays.display + _displays.amount - 1;
 
 		displayNameLength = strlen(displayName);
-		currentDisplay->monitorName = malloc(displayNameLength + 1);
-		memcpy(currentDisplay->monitorName, displayName, displayNameLength);
+		currentDisplay->XDisplayName = malloc(displayNameLength + 1);
+		memcpy(currentDisplay->XDisplayName, displayName, displayNameLength);
 
-		currentDisplay->monitorName[displayNameLength] = '\0';
+		currentDisplay->monitorName = malloc(outputInfo->nameLen + 1);
+		memcpy(currentDisplay->monitorName, outputInfo->name, outputInfo->nameLen);
+
+		currentDisplay->XDisplayName[displayNameLength] = '\0';
 		currentDisplay->gpuName = "";
 
 		// Dangerous operation
 		crtcInfo = XRRGetCrtcInfo(display, resources, resources->crtcs[i]);
+		if(crtcInfo){
+			currentDisplay->x = crtcInfo->x;
+			currentDisplay->y = crtcInfo->y;
+		}else{
+			currentDisplay->x = -1;
+			currentDisplay->y = -1;
+		}
 
-		currentDisplay->x = crtcInfo->x;
-		currentDisplay->y = crtcInfo->y;
 		currentDisplay->XineramaScreen = i;
 		currentDisplay->XScreen = 0;
 		currentDisplay->current = 0;
@@ -391,13 +474,16 @@ void ccFindDisplays()
 		}
 		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
 #ifdef DEBUG
-		printf("X: Found display %s\n", displayName);
+		printf("X: Found root display %s\n", displayName);
 #endif	
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
 			if(!ccXFindDisplaysXinerama(display, displayName)){
 				ccXFindDisplaysXrandr(display, displayName);
 			}		
+#ifdef DEBUG
+			printf("X: %d displays found\n", _displays.amount);
+#endif	
 			XCloseDisplay(display);
 		}
 	}
