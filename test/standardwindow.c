@@ -17,14 +17,12 @@
 
 float rotQuad = 0.0f;
 
-GLuint loadShader(const char *location, GLenum type);
 void resizeGL(unsigned int width, unsigned int height);
 void renderGL();
 
 int main(int argc, char** argv)
 {
 	ccWindow *window;
-	char *dir;
 	bool quit;
 	int i;
 
@@ -62,14 +60,6 @@ int main(int argc, char** argv)
 	ccSetResolution(ccGetDisplay(0), ccGetResolution(ccGetDisplay(0), 4));
 	ccCenterWindow(window);
 	ccGLBindContext(window, 3, 2);
-
-	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.vert");
-	loadShader(dir, GL_VERTEX_SHADER);
-	free(dir);
-
-	dir = ccStrConcatenate(2, ccGetDataDir(), "shaders/raytrace.frag");
-	loadShader(dir, GL_FRAGMENT_SHADER);
-	free(dir);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -157,41 +147,6 @@ int main(int argc, char** argv)
 	ccFreeDisplays();
 
 	return 0;
-}
-
-GLuint loadShader(const char *location, GLenum type)
-{
-	FILE *file;
-	long fileSize;
-	char *buffer;
-	GLuint handle;
-
-	file = fopen(location, "r");
-	if(!file){
-		printf("ERROR: Couldn't read file %s\n", location);
-		return 0;
-	}
-	fseek(file, 0, SEEK_END);
-	fileSize = ftell(file);
-	rewind(file);
-
-	buffer = malloc(fileSize);
-	if(!buffer){
-		printf("ERROR: Out of memory\n");
-		return 0;
-	}
-	fread(buffer, fileSize, 1, file);
-
-	handle = glCreateShader(type);
-	if(!handle){
-		printf("ERROR: Couldn't create shader handle\n");
-		return 0;
-	}
-
-	free(buffer);
-	fclose(file);
-
-	return handle;
 }
 
 void resizeGL(unsigned int width, unsigned int height)
