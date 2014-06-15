@@ -20,8 +20,8 @@ ccWindow* ccNewWindow(ccRect rect, const char *title, int flags)
 
 	output = malloc(sizeof(ccWindow));
 	output->XDisplay = XOpenDisplay(NULL);
-	//TODO: change assert to error
-	assert(output->XDisplay != NULL);
+	//TODO: change ccAssert to error
+	ccAssert(output->XDisplay != NULL);
 	root = DefaultRootWindow(output->XDisplay);
 	output->XScreen = DefaultScreen(output->XDisplay);
 	output->XWindow = XCreateSimpleWindow(output->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
@@ -40,7 +40,7 @@ ccWindow* ccNewWindow(ccRect rect, const char *title, int flags)
 
 void ccFreeWindow(ccWindow *window)
 {
-	assert(window != NULL);
+	ccAssert(window != NULL);
 	//TODO: don't delete a context before checking whether it exists!
 	glXMakeCurrent(window->XDisplay, None, NULL);
 	glXDestroyContext(window->XDisplay, window->XContext);
@@ -53,7 +53,7 @@ bool ccPollEvent(ccWindow *window)
 	XEvent event;
 	XWindowAttributes windowAttributes;
 
-	assert(window != NULL);
+	ccAssert(window != NULL);
 
 	window->event.type = CC_EVENT_SKIP;
 	if(XPending(window->XDisplay) == 0){
@@ -135,6 +135,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 	Atom wmState, fullscreen;
 	int windowWidth, windowHeight;
 
+	ccAssert(window);
+
 	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
 		wmState = XInternAtom(window->XDisplay, "_NET_WM_STATE", false);
 		fullscreen = XInternAtom(window->XDisplay, "_NET_WM_STATE_FULLSCREEN", false);
@@ -170,6 +172,8 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 
 void ccResizeMoveWindow(ccWindow *window, ccRect rect)
 {
+	ccAssert(window);
+
 	XMoveResizeWindow(window->XDisplay, window->XWindow, rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -178,6 +182,8 @@ void ccCenterWindow(ccWindow *window)
 	//TODO send _NET_WM_WINDOW_TYPE_SPLASH event
 	XEvent event;
 	Atom wmState, splash;
+
+	ccAssert(window);
 
 	wmState = XInternAtom(window->XDisplay, "_NET_WM_TYPE", false);
 	splash = XInternAtom(window->XDisplay, "_NET_WM_TYPE_SPLASH", false);
@@ -209,9 +215,7 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 		}
 
 		if(display->resolution->width <= 0 || display->resolution->height <= 0){
-#ifdef DEBUG
-			printf("Error: Resolution supplied not valid\n");
-#endif	
+			ccPrintString("Error: Resolution supplied not valid\n");
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
 	}
@@ -221,50 +225,36 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 	XGrabServer(XDisplay);
 
 	if(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY)){
-#ifdef DEBUG
-		printf("X: Unable to get screen size range\n");
-#endif	
+		ccPrintString("X: Unable to get screen size range\n");
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
 	if(displayData){
 		if(displayData->width < minX || displayData->height < minY){
-#ifdef DEBUG
-			printf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
-#endif	
+			ccPrintString("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
 			return CC_ERROR_RESOLUTION_CHANGE;
 		} else if(displayData->width > maxX || displayData->height > maxY){
-#ifdef DEBUG
-			printf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
-#endif	
+			ccPrintString("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
 
-#ifdef DEBUG
-		printf("X: Setting display %d to %dx%d\n", display->XScreen, displayData->width, displayData->height);
-#endif	
+		ccPrintString("X: Setting display %d to %dx%d\n", display->XScreen, displayData->width, displayData->height);
 	}
 
 	resources = XRRGetScreenResources(XDisplay, root);
 	if(!resources){
-#ifdef DEBUG
-		printf("X: Couldn't get screen resources");
-#endif
+		ccPrintString("X: Couldn't get screen resources");
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 	outputInfo = XRRGetOutputInfo(XDisplay, resources, display->XOutput);
 	if(!outputInfo || outputInfo->connection == RR_Disconnected){
-#ifdef DEBUG
-		printf("X: Couldn't get output info");
-#endif
+		ccPrintString("X: Couldn't get output info");
 		XRRFreeScreenResources(resources);
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 	crtcInfo = XRRGetCrtcInfo(XDisplay, resources, outputInfo->crtc);
 	if(!crtcInfo){
-#ifdef DEBUG
-		printf("X: Couldn't get crtc info");
-#endif
+		ccPrintString("X: Couldn't get crtc info");
 		XRRFreeScreenResources(resources);
 		XRRFreeOutputInfo(outputInfo);
 		return CC_ERROR_RESOLUTION_CHANGE;
@@ -316,9 +306,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 	XRRCrtcInfo *crtcInfo;
 
 	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
-#ifdef DEBUG
-		printf("Xinerama not supported or active\n");
-#endif
+		ccPrintString("Xinerama not supported or active\n");
 		return false;
 	}
 
@@ -332,7 +320,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		/* Ignore disconnected devices */
 		if(outputInfo->connection != 0){
 #ifdef DEBUG
-			printf("X: Ignored disconnected display %d\n", i);
+			ccPrintString("X: Ignored disconnected display %d\n", i);
 #endif
 			continue;
 		}
@@ -355,7 +343,6 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		currentDisplay->XDisplayName[displayNameLength] = '\0';
 		currentDisplay->gpuName = "";
 
-		// Dangerous operation
 		crtcInfo = XRRGetCrtcInfo(display, resources, resources->crtcs[i]);
 		if(crtcInfo){
 			currentDisplay->x = crtcInfo->x;
@@ -424,9 +411,7 @@ static void ccXFindDisplaysXrandr(Display *display, char *displayName)
 
 	screenCount = XScreenCount(display);
 
-#ifdef DEBUG
-	printf("XRandr: Found %d displays\n", screenCount);
-#endif
+	ccPrintString("XRandr: Found %d displays\n", screenCount);
 
 	for(i = 0; i < screenCount; i++){
 		_displays.amount++;
@@ -490,33 +475,27 @@ void ccFindDisplays()
 	Display *display;
 
 	if(_displays.amount != 0){
-#ifdef DEBUG
-		printf("Displays already found, no need to call ccFindDisplays anymore\n");
-#endif
+		ccPrintString("Displays already found, no need to call ccFindDisplays anymore\n");
 		return;
 	}
 
 	_displays.amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
-	assert(dir != NULL);
+	ccAssert(dir != NULL);
 
 	while((direntry = readdir(dir)) != NULL){
 		if(direntry->d_name[0] != 'X'){
 			continue;
 		}
 		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
-#ifdef DEBUG
-		printf("X: Found root display %s\n", displayName);
-#endif	
+		ccPrintString("X: Found root display %s\n", displayName);
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
 			if(!ccXFindDisplaysXinerama(display, displayName)){
 				ccXFindDisplaysXrandr(display, displayName);
 			}		
-#ifdef DEBUG
-			printf("X: %d displays found\n", _displays.amount);
-#endif	
+			ccPrintString("X: %d displays found\n", _displays.amount);
 			XCloseDisplay(display);
 		}
 	}
