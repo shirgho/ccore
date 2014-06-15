@@ -12,6 +12,9 @@
 //stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
+#ifdef LINUX
+	RRMode XMode;
+#endif
 } ccDisplayData;
 
 //a display (often a monitor)
@@ -29,6 +32,8 @@ typedef struct {
 #ifdef LINUX
 	char *XDisplayName;
 	int XScreen, XineramaScreen;
+	RROutput XOutput;
+	RRMode XOldMode;
 #endif
 
 } ccDisplay;
@@ -101,6 +106,7 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 void ccFindDisplays(); //get all displays currently connected and active
 void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
 void ccFreeDisplays();
+void ccRevertDisplays();
 ccRect ccGetDisplayRect(ccDisplay *display);
 
 int ccGetDisplayAmount();

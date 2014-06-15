@@ -153,6 +153,7 @@ int main(int argc, char** argv)
 	}
 
 	if(window != NULL) ccFreeWindow(window);
+	ccRevertDisplays();
 	ccFreeDisplays();
 
 	return 0;

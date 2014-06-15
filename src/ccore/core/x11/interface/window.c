@@ -185,23 +185,25 @@ void ccCenterWindow(ccWindow *window)
 
 ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 {
+	int minX, minY, maxX, maxY;
 	Display *XDisplay;
 	Window root;
 	XRRScreenResources *resources;
 	XRROutputInfo *outputInfo;
-	double dpi;
-	int widthMM, heightMM, minX, minY, maxX, maxY;
+	XRRCrtcInfo *crtcInfo;
 
 	/* Screen already has the good coordinates */
-	if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
-		return CC_ERROR_NONE;
-	}
+	if(displayData){
+		if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
+			return CC_ERROR_NONE;
+		}
 
-	if(display->resolution->width <= 0 || display->resolution->height <= 0){
+		if(display->resolution->width <= 0 || display->resolution->height <= 0){
 #ifdef DEBUG
-		printf("Error: Resolution supplied too small\n");
+			printf("Error: Resolution supplied not valid\n");
 #endif	
-		return CC_ERROR_RESOLUTION_CHANGE;
+			return CC_ERROR_RESOLUTION_CHANGE;
+		}
 	}
 
 	XDisplay = XOpenDisplay(display->XDisplayName);
@@ -215,44 +217,62 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
-	resources = XRRGetScreenResources(XDisplay, root);
-	outputInfo = XRRGetOutputInfo(XDisplay, resources, resources->outputs[display->XineramaScreen]);
-	if(!outputInfo->crtc){
+	if(displayData){
+		if(displayData->width < minX || displayData->height < minY){
 #ifdef DEBUG
-		printf("X: No valid CRTC output found\n");
+			printf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
+#endif	
+			return CC_ERROR_RESOLUTION_CHANGE;
+		} else if(displayData->width > maxX || displayData->height > maxY){
+#ifdef DEBUG
+			printf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
+#endif	
+			return CC_ERROR_RESOLUTION_CHANGE;
+		}
+
+#ifdef DEBUG
+		printf("X: Setting display %d to %dx%d\n", display->XScreen, displayData->width, displayData->height);
+#endif	
+	}
+
+	resources = XRRGetScreenResources(XDisplay, root);
+	if(!resources){
+#ifdef DEBUG
+		printf("X: Couldn't get screen resources");
 #endif
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
-	XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, 0, 0, None, RR_Rotate_0, NULL, 0);
-	XRRFreeScreenResources(resources);	
+	outputInfo = XRRGetOutputInfo(XDisplay, resources, display->XOutput);
+	if(!outputInfo || outputInfo->connection == RR_Disconnected){
+#ifdef DEBUG
+		printf("X: Couldn't get output info");
+#endif
+		XRRFreeScreenResources(resources);
+		return CC_ERROR_RESOLUTION_CHANGE;
+	}
+	crtcInfo = XRRGetCrtcInfo(XDisplay, resources, outputInfo->crtc);
+	if(!crtcInfo){
+#ifdef DEBUG
+		printf("X: Couldn't get crtc info");
+#endif
+		XRRFreeScreenResources(resources);
+		XRRFreeOutputInfo(outputInfo);
+		return CC_ERROR_RESOLUTION_CHANGE;
+	}
+
+	if(displayData){
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, displayData->XMode, crtcInfo->rotation, &display->XOutput, 1);
+	}else{
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, display->XOldMode, crtcInfo->rotation, &display->XOutput, 1);
+	}
+
+	XRRFreeScreenResources(resources);
 	XRRFreeOutputInfo(outputInfo);
+	XRRFreeCrtcInfo(crtcInfo);
 
-	if(displayData->width < minX || displayData->height < minY){
-#ifdef DEBUG
-		printf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
-#endif	
-		return CC_ERROR_RESOLUTION_CHANGE;
-	} else if(displayData->width > maxX || displayData->height > maxY){
-#ifdef DEBUG
-		printf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
-#endif	
-		return CC_ERROR_RESOLUTION_CHANGE;
+	if(displayData){
+		display->resolution = displayData;
 	}
-
-	dpi = (25.4 * DisplayHeight(XDisplay, display->XScreen)) / DisplayHeightMM(XDisplay, display->XScreen);
-	if(dpi <= 0){
-		dpi = 96;
-	}
-	widthMM = (25.4 * displayData->width) / dpi;
-	heightMM = (25.4 * displayData->height) / dpi;
-
-#ifdef DEBUG
-	printf("X: Setting display %d to %dx%d, with %dx%d mm\n", display->XScreen, displayData->width, displayData->height, widthMM, heightMM);
-#endif	
-
-	XRRSetScreenSize(XDisplay, root, displayData->width, displayData->height, widthMM, heightMM);
-
-	display->resolution = displayData;
 
 	XSync(XDisplay, False);
 	XUngrabServer(XDisplay);
@@ -330,6 +350,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		if(crtcInfo){
 			currentDisplay->x = crtcInfo->x;
 			currentDisplay->y = crtcInfo->y;
+			currentDisplay->XOldMode = crtcInfo->mode;
 		}else{
 			currentDisplay->x = -1;
 			currentDisplay->y = -1;
@@ -337,6 +358,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 		currentDisplay->XineramaScreen = i;
 		currentDisplay->XScreen = 0;
+		currentDisplay->XOutput = resources->outputs[i];
 		currentDisplay->current = 0;
 		currentDisplay->amount = 0;
 
@@ -351,6 +373,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 						vTotal >>= 1;
 					}
 
+					currentResolution.XMode = outputInfo->modes[j];
 					currentResolution.refreshRate = resources->modes[k].dotClock / (resources->modes[k].hTotal * vTotal);
 					currentResolution.width = resources->modes[k].width;
 					currentResolution.height = resources->modes[k].height;
@@ -487,7 +510,6 @@ void ccFindDisplays()
 			XCloseDisplay(display);
 		}
 	}
-
 }
 
 void ccUpdateDisplays()
@@ -497,16 +519,25 @@ void ccUpdateDisplays()
 
 void ccFreeDisplays()
 {
-/*	int i;
+	/*	int i;
+
+		for(i = 0; i < _displays.amount; i++){
+		if(_displays.display + i != NULL){
+		free(_displays.display[i].gpuName);
+		free(_displays.display[i].monitorName);
+		free(_displays.display[i].resolution);
+		}
+		} */
+	free(_displays.display);
+}
+
+void ccRevertDisplays()
+{
+	int i;
 
 	for(i = 0; i < _displays.amount; i++){
-		if(_displays.display + i != NULL){
-			free(_displays.display[i].gpuName);
-			free(_displays.display[i].monitorName);
-			free(_displays.display[i].resolution);
-		}
-	} */
-	free(_displays.display);
+		ccSetResolution(_displays.display + i, NULL);
+	}
 }
 
 ccRect ccGetDisplayRect(ccDisplay *display)
