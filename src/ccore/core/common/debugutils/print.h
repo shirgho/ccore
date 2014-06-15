@@ -2,7 +2,7 @@
 
 #ifdef _DEBUG
 #include <stdio.h>
-#define ccPrintString(...) printf(...)
+#define ccPrintString printf
 #else
-#define ccPrintString(...) 
+#define ccPrintString
 #endif
