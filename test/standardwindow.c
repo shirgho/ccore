@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 
 	printf("Setting resolution\n");
-	ccSetResolution(ccGetDisplay(1), ccGetResolution(ccGetDisplay(1), 4));
+	ccSetResolution(ccGetDisplay(0), ccGetResolution(ccGetDisplay(0), 4));
 	ccCenterWindow(window);
 	ccGLBindContext(window, 3, 2);
 

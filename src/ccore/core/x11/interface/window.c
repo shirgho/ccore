@@ -148,13 +148,23 @@ void ccChangeWM(ccWindow *window, ccWindowMode mode)
 		event.xclient.data.l[1] = fullscreen;
 
 		XSendEvent(window->XDisplay, DefaultRootWindow(window->XDisplay), false, SubstructureNotifyMask, &event);
+
+		if(mode == CC_WINDOW_MODE_FULLSCREEN){
+			XGrabPointer(window->XDisplay, window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, window->XWindow, None, CurrentTime);
+		}else{
+			XUngrabPointer(window->XDisplay, CurrentTime);
+		}
 	}else if(mode == CC_WINDOW_MODE_MINIMIZED){
 		XIconifyWindow(window->XDisplay, window->XWindow, window->XScreen);
+
+		XUngrabPointer(window->XDisplay, CurrentTime);
 	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
 		XGetWindowAttributes(window->XDisplay, DefaultRootWindow(window->XDisplay), &windowAttributes);
 		windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
 		windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
 		XMoveResizeWindow(window->XDisplay, window->XWindow, 0, 0, windowWidth, windowHeight);
+
+		XUngrabPointer(window->XDisplay, CurrentTime);
 	}
 }
 
