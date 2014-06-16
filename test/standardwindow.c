@@ -22,7 +22,6 @@ void renderGL();
 
 int main(int argc, char** argv)
 {
-	ccWindow *window;
 	bool quit;
 	int i;
 
@@ -54,10 +53,10 @@ int main(int argc, char** argv)
 	}
 
 	printf("Creating window\n");
-	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
+	ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 
-	ccCenterWindow(window);
-	ccGLBindContext(window, 3, 2);
+	ccCenterWindow();
+	ccGLBindContext(3, 2);
 
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -71,68 +70,67 @@ int main(int argc, char** argv)
 	quit = false;
 	while(!quit){
 		ccDelay(15);
-		while(window != NULL && ccPollEvent(window)){
-			switch(window->event.type){
+		while(ccPollEvent()){
+			switch(ccGetWindow()->event.type){
 				case CC_EVENT_WINDOW_QUIT:
 					quit = true;
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
-					printf("Updated window size: x:%d y:%d %d x %d\n", window->rect.x, window->rect.y, window->rect.width, window->rect.height);
-					resizeGL(window->rect.width, window->rect.height);
+					printf("Updated window size: x:%d y:%d %d x %d\n", ccGetWindow()->rect.x, ccGetWindow()->rect.y, ccGetWindow()->rect.width, ccGetWindow()->rect.height);
+					resizeGL(ccGetWindow()->rect.width, ccGetWindow()->rect.height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
-					if(window->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE) {
+					if(ccGetWindow()->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE) {
 						quit = true;
 					}
 					break;
 				case CC_EVENT_MOUSE_SCROLL:
-					rotQuad += window->event.scrollDelta << 2;
+					rotQuad += ccGetWindow()->event.scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
-					switch(window->event.key){
+					switch(ccGetWindow()->event.key){
 						case CC_KEY_1:
 							printf("Going full screen on the first two windows\n");
-							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
+							ccChangeWM(CC_WINDOW_MODE_FULLSCREEN);
 							//Use 2 windows full screen
-							ccResizeMoveWindow(window, ccRectConcatenate(2, ccGetDisplayRect(ccGetDisplay(1)), ccGetDisplayRect(ccGetDisplay(0))));
+							ccResizeMoveWindow(ccRectConcatenate(2, ccGetDisplayRect(ccGetDisplay(1)), ccGetDisplayRect(ccGetDisplay(0))));
 							break;
 						case CC_KEY_2:
 							printf("Going full screen\n");
-							ccChangeWM(window, CC_WINDOW_MODE_FULLSCREEN);
+							ccChangeWM(CC_WINDOW_MODE_FULLSCREEN);
 							break;
 						case CC_KEY_3:
 							printf("windowed mode\n");
-							ccChangeWM(window, CC_WINDOW_MODE_WINDOW);
+							ccChangeWM(CC_WINDOW_MODE_WINDOW);
 							break;
 						case CC_KEY_4:
 							printf("minimizing\n");
-							ccChangeWM(window, CC_WINDOW_MODE_MINIMIZED);
+							ccChangeWM(CC_WINDOW_MODE_MINIMIZED);
 							break;
 						case CC_KEY_5:
 							printf("maximizing\n");
-							ccChangeWM(window, CC_WINDOW_MODE_MAXIMIZED);
+							ccChangeWM(CC_WINDOW_MODE_MAXIMIZED);
 							break;
 						case CC_KEY_6:
 							printf("destroying window\n");
-							ccFreeWindow(window);
-							window = NULL;
+							ccFreeWindow();
 							break;
 						case CC_KEY_7:
 							printf("Setting resolution\n");
-							ccSetResolution(ccGetDisplay(0), ccGetResolution(ccGetDisplay(0), 4));
+							ccSetResolution(ccGetDisplay(0), ccGetResolution(ccGetDisplay(0), 10));
 							break;
 						case CC_KEY_8:
 							printf("Reverting resolution\n");
 							ccSetResolution(ccGetDisplay(0), NULL);
 						case CC_KEY_C:
 							printf("centering window\n");
-							ccCenterWindow(window);
+							ccCenterWindow();
 							break;
 						case CC_KEY_UNDEFINED:
 							printf("Key is not supported!\n");
 							break;
 						default:
-							printf("Key: %c\n", (char)window->event.key);
+							printf("Key: %c\n", (char)ccGetWindow()->event.key);
 							break;
 					}
 					break;
@@ -141,13 +139,13 @@ int main(int argc, char** argv)
 			}
 		}
 
-		if(window != NULL) {
+		if(ccGetWindow() != NULL) {
 			renderGL();
-			ccGLSwapBuffers(window);
+			ccGLSwapBuffers();
 		}
 	}
 
-	if(window != NULL) ccFreeWindow(window);
+	ccFreeWindow();
 	ccFreeDisplays();
 
 	return 0;

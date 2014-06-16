@@ -97,96 +97,95 @@ static ccKeyCode translateKey(WPARAM wParam)
 	return CC_KEY_UNDEFINED;
 }
 
-static void updateWindowDisplay(ccWindow *window)
+static void updateWindowDisplay()
 {
 	int i;
 	int area, largestArea;
 	ccRect displayRect;
 	RECT winRect;
 	
-	GetWindowRect(window->winHandle, &winRect);
+	GetWindowRect(_window->winHandle, &winRect);
 
-	window->rect.x = winRect.left;
-	window->rect.y = winRect.top;
+	_window->rect.x = winRect.left;
+	_window->rect.y = winRect.top;
 
 	largestArea = 0;
 
 	for(i = 0; i < _displays->amount; i++)
 	{
 		displayRect = ccGetDisplayRect(&_displays->display[i]);
-		area = ccRectIntersectionArea(&displayRect, &window->rect);
+		area = ccRectIntersectionArea(&displayRect, &_window->rect);
 		if(area > largestArea) {
 			largestArea = area;
-			window->display = &_displays->display[i];
+			_window->display = &_displays->display[i];
 		}
 	}
 }
 
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	ccWindow *activeWindow = (ccWindow*)GetWindowLong(winHandle, GWL_USERDATA);
-	if(activeWindow == NULL) goto skipevent;
+	if(_window == NULL) goto skipevent;
 
-	activeWindow->event.type = CC_EVENT_SKIP;
+	_window->event.type = CC_EVENT_SKIP;
 
 	switch(message) {
 	case WM_CLOSE:
-		activeWindow->event.type = CC_EVENT_WINDOW_QUIT;
+		_window->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
-		activeWindow->rect.width = lParam & 0x0000FFFF;
-		activeWindow->rect.height = (lParam & 0xFFFF0000) >> 16;
-		activeWindow->aspect = (float) activeWindow->rect.width / activeWindow->rect.height;
-		activeWindow->sizeChanged = true;
+		_window->rect.width = lParam & 0x0000FFFF;
+		_window->rect.height = (lParam & 0xFFFF0000) >> 16;
+		_window->aspect = (float)_window->rect.width / _window->rect.height;
+		_window->sizeChanged = true;
 	case WM_MOVE:
-		updateWindowDisplay(activeWindow);
+		updateWindowDisplay(_window);
 		break;
 	case WM_KEYDOWN:
-		activeWindow->event.type = CC_EVENT_KEY_DOWN;
-		activeWindow->event.key = translateKey(wParam);
+		_window->event.type = CC_EVENT_KEY_DOWN;
+		_window->event.key = translateKey(wParam);
 		break;
 	case WM_KEYUP:
-		activeWindow->event.type = CC_EVENT_KEY_UP;
-		activeWindow->event.key = translateKey(wParam);
+		_window->event.type = CC_EVENT_KEY_UP;
+		_window->event.key = translateKey(wParam);
 		break;
 	case WM_MOUSEMOVE:
-		activeWindow->mouse.x = (unsigned short)lParam & 0x0000FFFF;
-		activeWindow->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
-		activeWindow->event.type = CC_EVENT_MOUSE_MOVE;
+		_window->mouse.x = (unsigned short)lParam & 0x0000FFFF;
+		_window->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
+		_window->event.type = CC_EVENT_MOUSE_MOVE;
 		break;
 	case WM_LBUTTONDOWN:
-		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
-		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+		_window->event.type = CC_EVENT_MOUSE_DOWN;
+		_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 		break;
 	case WM_MBUTTONDOWN:
-		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
-		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
+		_window->event.type = CC_EVENT_MOUSE_DOWN;
+		_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
 		break;
 	case WM_RBUTTONDOWN:
-		activeWindow->event.type = CC_EVENT_MOUSE_DOWN;
-		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+		_window->event.type = CC_EVENT_MOUSE_DOWN;
+		_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 		break;
 	case WM_LBUTTONUP:
-		activeWindow->event.type = CC_EVENT_MOUSE_UP;
-		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+		_window->event.type = CC_EVENT_MOUSE_UP;
+		_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 		break;
 	case WM_MBUTTONUP:
-		activeWindow->event.type = CC_EVENT_MOUSE_UP;
-		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
+		_window->event.type = CC_EVENT_MOUSE_UP;
+		_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
 		break;
 	case WM_RBUTTONUP:
-		activeWindow->event.type = CC_EVENT_MOUSE_UP;
-		activeWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+		_window->event.type = CC_EVENT_MOUSE_UP;
+		_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 		break;
 	case WM_MOUSEWHEEL:
-		activeWindow->event.type = CC_EVENT_MOUSE_SCROLL;
-		activeWindow->event.scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
+		_window->event.type = CC_EVENT_MOUSE_SCROLL;
+		_window->event.scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
 		break;
 	case WM_SETFOCUS:
-		activeWindow->event.type = CC_EVENT_FOCUS_GAINED;
+		_window->event.type = CC_EVENT_FOCUS_GAINED;
 		break;
 	case WM_KILLFOCUS:
-		activeWindow->event.type = CC_EVENT_FOCUS_LOST;
+		_window->event.type = CC_EVENT_FOCUS_LOST;
 		break;
 	default:
 	skipevent:
@@ -216,37 +215,46 @@ static void regHinstance(HINSTANCE instanceHandle)
 	RegisterClassEx(&winClass);
 }
 
-bool ccPollEvent(ccWindow *window)
+ccWindow *ccGetWindow()
 {
-	if(window->sizeChanged) {
-		window->sizeChanged = false;
-		window->event.type = CC_EVENT_WINDOW_RESIZE;
+	return _window;
+}
+
+bool ccPollEvent()
+{
+	ccAssert(_window != NULL);
+
+	if(_window->sizeChanged) {
+		_window->sizeChanged = false;
+		_window->event.type = CC_EVENT_WINDOW_RESIZE;
 		return true;
 	}
-
-	if(PeekMessage(&window->msg, window->winHandle, 0, 0, PM_REMOVE)){
-		TranslateMessage(&window->msg);
-		DispatchMessage(&window->msg);
-		return window->event.type==CC_EVENT_SKIP?false:true;
+	
+	if(PeekMessage(&_window->msg, _window->winHandle, 0, 0, PM_REMOVE)){
+		TranslateMessage(&_window->msg);
+		DispatchMessage(&_window->msg);
+		return _window->event.type == CC_EVENT_SKIP?false:true;
 	}
 	else{
 		return false;
 	}
 }
 
-ccWindow *ccNewWindow(ccRect rect, const char* title, int flags)
+void ccNewWindow(ccRect rect, const char* title, int flags)
 {
-	ccWindow *newWindow = malloc(sizeof(ccWindow));
+	ccAssert(_window == NULL);
+
+	_window = malloc(sizeof(ccWindow));
 
 	//Struct initialisation
-	memcpy(&newWindow->rect, &rect, sizeof(ccRect));
-	newWindow->sizeChanged = true;
+	memcpy(&_window->rect, &rect, sizeof(ccRect));
+	_window->sizeChanged = true;
 
 	//Window creation
 	HMODULE moduleHandle = GetModuleHandle(NULL);
 	
 	regHinstance(moduleHandle);
-	newWindow->winHandle = CreateWindowEx(
+	_window->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		"ccWindow",
 		title,
@@ -258,46 +266,46 @@ ccWindow *ccNewWindow(ccRect rect, const char* title, int flags)
 		moduleHandle,
 		NULL);
 
-	SetWindowLong(newWindow->winHandle, GWL_USERDATA, (LONG)newWindow);
-	
 	//apply flags
 	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) {
-		LONG lStyle = GetWindowLong(newWindow->winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(_window->winHandle, GWL_STYLE);
 		lStyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-		SetWindowLong(newWindow->winHandle, GWL_STYLE, lStyle);
+		SetWindowLong(_window->winHandle, GWL_STYLE, lStyle);
 	}
 	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS) {
-		LONG lStyle = GetWindowLong(newWindow->winHandle, GWL_STYLE);
+		LONG lStyle = GetWindowLong(_window->winHandle, GWL_STYLE);
 		lStyle &= ~WS_SYSMENU;
-		SetWindowLong(newWindow->winHandle, GWL_STYLE, lStyle);
+		SetWindowLong(_window->winHandle, GWL_STYLE, lStyle);
 	}
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
-		GetWindowRect(newWindow->winHandle, &rect);
-		SetWindowPos(newWindow->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
+		GetWindowRect(_window->winHandle, &rect);
+		SetWindowPos(_window->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
 	}
 
-	ShowWindow(newWindow->winHandle, SW_SHOW);
-	ccChangeWM(newWindow, CC_WINDOW_MODE_WINDOW);
-
-	return newWindow;
+	ShowWindow(_window->winHandle, SW_SHOW);
+	ccChangeWM(CC_WINDOW_MODE_WINDOW);
 }
 
-void ccFreeWindow(ccWindow *window)
+void ccFreeWindow()
 {
-	wglDeleteContext(window->renderContext);
-	ReleaseDC(window->winHandle, window->hdc);
+	ccAssert(_window != NULL);
 
-	DestroyWindow(window->winHandle);
-	free(window);
+	wglDeleteContext(_window->renderContext);
+	ReleaseDC(_window->winHandle, _window->hdc);
+
+	DestroyWindow(_window->winHandle);
+	free(_window);
 }
 
-ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
+ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 {
 	int pixelFormatIndex;
 	int glVerMajor, glVerMinor;
 
-	window->hdc = GetDC(window->winHandle);
+	ccAssert(_window != NULL);
+
+	_window->hdc = GetDC(_window->winHandle);
 
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
@@ -310,14 +318,14 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 		0, 0, 0, 0, 0, 0, 0
 	};
 
-	pixelFormatIndex = ChoosePixelFormat(window->hdc, &pfd);
-	SetPixelFormat(window->hdc, pixelFormatIndex, &pfd);
+	pixelFormatIndex = ChoosePixelFormat(_window->hdc, &pfd);
+	SetPixelFormat(_window->hdc, pixelFormatIndex, &pfd);
 
-	window->renderContext = wglCreateContext(window->hdc);
-	if(window->renderContext == NULL) return CC_ERROR_GLCONTEXT;
+	_window->renderContext = wglCreateContext(_window->hdc);
+	if(_window->renderContext == NULL) return CC_ERROR_GLCONTEXT;
 
 	//Make window the current context
-	wglMakeCurrent(window->hdc, window->renderContext);
+	wglMakeCurrent(_window->hdc, _window->renderContext);
 
 	//Version check
 	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
@@ -330,49 +338,57 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 	return CC_ERROR_NONE;
 }
 
-void ccGLSwapBuffers(ccWindow *window)
+void ccGLSwapBuffers()
 {
-	SwapBuffers(window->hdc);
+	ccAssert(_window != NULL);
+
+	SwapBuffers(_window->hdc);
 }
 
-void ccChangeWM(ccWindow *window, ccWindowMode mode)
+void ccChangeWM(ccWindowMode mode)
 {
+	ccAssert(_window != NULL);
+
 	switch(mode)
 	{
 	case CC_WINDOW_MODE_MINIMIZED:
-		ShowWindow(window->winHandle, SW_MINIMIZE);
+		ShowWindow(_window->winHandle, SW_MINIMIZE);
 		break;
 	case CC_WINDOW_MODE_WINDOW:
-		ShowWindow(window->winHandle, SW_SHOWDEFAULT);
-		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+		ShowWindow(_window->winHandle, SW_SHOWDEFAULT);
+		SetWindowLongPtr(_window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		ShowWindow(window->winHandle, SW_SHOWDEFAULT);
-		window->rect.width = ccGetResolutionCurrent(window->display)->width;
-		window->rect.height = ccGetResolutionCurrent(window->display)->height;
+		ShowWindow(_window->winHandle, SW_SHOWDEFAULT);
+		_window->rect.width = ccGetResolutionCurrent(_window->display)->width;
+		_window->rect.height = ccGetResolutionCurrent(_window->display)->height;
 
-		SetWindowLongPtr(window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
-		ccResizeMoveWindow(window, (ccRect){ window->display->x, window->display->y, window->rect.width, window->rect.height });
+		SetWindowLongPtr(_window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
+		ccResizeMoveWindow((ccRect){ _window->display->x, _window->display->y, _window->rect.width, _window->rect.height });
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
-		ShowWindow(window->winHandle, SW_MAXIMIZE);
+		ShowWindow(_window->winHandle, SW_MAXIMIZE);
 		break;
 	}
 }
 
-void ccResizeMoveWindow(ccWindow *window, ccRect rect)
+void ccResizeMoveWindow(ccRect rect)
 {
-	window->rect = rect;
-	MoveWindow(window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);
+	ccAssert(_window != NULL);
+
+	_window->rect = rect;
+	MoveWindow(_window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);
 }
 
-void ccCenterWindow(ccWindow *window)
+void ccCenterWindow()
 {
-	ccResizeMoveWindow(window,
-		(ccRect){window->display->x + ((ccGetResolutionCurrent(window->display)->width - window->rect.width) >> 1),
-				 window->display->y + ((ccGetResolutionCurrent(window->display)->height - window->rect.height) >> 1),
-				 window->rect.width,
-				 window->rect.height
+	ccAssert(_window != NULL);
+
+	ccResizeMoveWindow(
+		(ccRect){_window->display->x + ((ccGetResolutionCurrent(_window->display)->width - _window->rect.width) >> 1),
+				 _window->display->y + ((ccGetResolutionCurrent(_window->display)->height - _window->rect.height) >> 1),
+				 _window->rect.width,
+				 _window->rect.height
 	});
 }
 

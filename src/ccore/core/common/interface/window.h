@@ -92,12 +92,13 @@ typedef struct {
 #define ccGetResolutionAmount(display) display->amount
 
 //ccWindow related
-ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
-void ccFreeWindow(ccWindow *window);
-bool ccPollEvent(ccWindow *window); //poll an event from the events that currently need to be processed in the window
-void ccChangeWM(ccWindow *window, ccWindowMode mode);
-void ccResizeMoveWindow(ccWindow *window, ccRect rect);
-void ccCenterWindow(ccWindow *window);
+void ccNewWindow(ccRect rect, const char *title, int flags);
+void ccFreeWindow();
+bool ccPollEvent(); //poll an event from the events that currently need to be processed in the window
+void ccChangeWM(ccWindowMode mode);
+void ccResizeMoveWindow(ccRect rect);
+void ccCenterWindow();
+ccWindow *ccGetWindow();
 
 //resolution
 ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
@@ -114,5 +115,5 @@ ccDisplay *ccGetDisplay(int index);
 ccDisplay *ccGetDefaultDisplay();
 
 //opengl
-ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
-void ccGLSwapBuffers(ccWindow *window); //swap the buffers
+ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); //bind the openGl context to window
+void ccGLSwapBuffers(); //swap the buffers
