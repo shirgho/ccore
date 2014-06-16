@@ -517,12 +517,6 @@ int ccGetDisplayAmount()
 	return _displays.amount;
 }
 
-void ccUpdateDisplays()
-{
-	ccFreeDisplays();
-	ccFindDisplays();
-}
-
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 {
 	int i;

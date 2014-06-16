@@ -105,7 +105,6 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
 //display
 void ccFindDisplays(); //get all displays currently connected and active
-void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
 void ccFreeDisplays();
 void ccRevertDisplays();
 ccRect ccGetDisplayRect(ccDisplay *display);
