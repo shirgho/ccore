@@ -381,7 +381,6 @@ void ccFindDisplays()
 	DEVMODE dm;
 	ccDisplay *currentDisplay;
 	ccDisplayData buffer;
-	ccDisplayData current;
 	int deviceCount = 0;
 	int displayCount;
 	int i;
@@ -426,10 +425,12 @@ void ccFindDisplays()
 
 			currentDisplay->amount = 0;
 
-			current.bitDepth = dm.dmBitsPerPel;
-			current.refreshRate = dm.dmDisplayFrequency;
-			current.width = dm.dmPelsWidth;
-			current.height = dm.dmPelsHeight;
+			currentDisplay->initialResolution = malloc(sizeof(ccDisplayData));
+
+			currentDisplay->initialResolution->bitDepth = dm.dmBitsPerPel;
+			currentDisplay->initialResolution->refreshRate = dm.dmDisplayFrequency;
+			currentDisplay->initialResolution->width = dm.dmPelsWidth;
+			currentDisplay->initialResolution->height = dm.dmPelsHeight;
 
 			i = 0;
 			while(EnumDisplaySettings(device.DeviceName, i, &dm)) {
@@ -449,7 +450,7 @@ void ccFindDisplays()
 					currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
 				}
 
-				if(memcmp(&current, &buffer, sizeof(ccDisplayData)) == 0) currentDisplay->current = currentDisplay->amount;
+				if(memcmp(currentDisplay->initialResolution, &buffer, sizeof(ccDisplayData)) == 0) currentDisplay->current = currentDisplay->amount;
 
 				memcpy(&currentDisplay->resolution[currentDisplay->amount], &buffer, sizeof(ccDisplayData));
 
@@ -475,6 +476,15 @@ void ccFreeDisplays() {
 		free(_displays.display[i].resolution);
 	}
 	free(_displays.display);
+}
+
+void ccRevertDisplays()
+{
+	int i;
+
+	for(i = 0; i < _displays.amount; i++){
+		ccSetResolution(_displays.display + i, NULL);
+	}
 }
 
 ccDisplays *ccGetDisplays()
@@ -532,6 +542,8 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
 	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
+
+	if(displayData == NULL) displayData = display->initialResolution;
 
 	devMode.dmPelsWidth = displayData->width;
 	devMode.dmPelsHeight = displayData->height;
