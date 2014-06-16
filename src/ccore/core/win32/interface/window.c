@@ -447,12 +447,10 @@ void ccFindDisplays()
 
 			currentDisplay->amount = 0;
 
-			currentDisplay->initialResolution = malloc(sizeof(ccDisplayData));
-
-			currentDisplay->initialResolution->bitDepth = dm.dmBitsPerPel;
-			currentDisplay->initialResolution->refreshRate = dm.dmDisplayFrequency;
-			currentDisplay->initialResolution->width = dm.dmPelsWidth;
-			currentDisplay->initialResolution->height = dm.dmPelsHeight;
+			currentDisplay->initialResolution.bitDepth = dm.dmBitsPerPel;
+			currentDisplay->initialResolution.refreshRate = dm.dmDisplayFrequency;
+			currentDisplay->initialResolution.width = dm.dmPelsWidth;
+			currentDisplay->initialResolution.height = dm.dmPelsHeight;
 
 			i = 0;
 			while(EnumDisplaySettings(device.DeviceName, i, &dm)) {
@@ -472,7 +470,7 @@ void ccFindDisplays()
 					currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
 				}
 
-				if(memcmp(currentDisplay->initialResolution, &buffer, sizeof(ccDisplayData)) == 0) currentDisplay->current = currentDisplay->amount;
+				if(memcmp(&currentDisplay->initialResolution, &buffer, sizeof(ccDisplayData)) == 0) currentDisplay->current = currentDisplay->amount;
 
 				memcpy(&currentDisplay->resolution[currentDisplay->amount], &buffer, sizeof(ccDisplayData));
 
@@ -566,11 +564,12 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 {
 	DEVMODE devMode;
+	int i;
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
 	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
 
-	if(displayData == NULL) displayData = display->initialResolution;
+	if(displayData == NULL) displayData = &display->initialResolution;
 
 	devMode.dmPelsWidth = displayData->width;
 	devMode.dmPelsHeight = displayData->height;
@@ -580,6 +579,13 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
 		return CC_ERROR_RESOLUTION_CHANGE;
+	}
+
+	for(int i = 0; i < display->amount; i++) {
+		if(memcmp(&display->resolution[i], displayData, sizeof(ccDisplayData)) == 0) {
+			display->current = i;
+			break;
+		}
 	}
 	
 	return CC_ERROR_NONE;
