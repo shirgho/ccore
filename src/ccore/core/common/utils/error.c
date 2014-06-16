@@ -2,8 +2,6 @@
 
 const char *ccErrorString(ccError error)
 {
-	const char *str;
-
 	switch(error){
 		case CC_ERROR_NONE:
 			return "No errors";
