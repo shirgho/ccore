@@ -1,6 +1,8 @@
 #include "../../common/interface/window.h"
 
-static ccDisplays _displays;
+//note that static pointers are NULL by default
+static ccDisplays *_displays;
+static ccWindow *_window;
 
 static ccKeyCode translateKey(WPARAM wParam)
 {
@@ -109,13 +111,13 @@ static void updateWindowDisplay(ccWindow *window)
 
 	largestArea = 0;
 
-	for(i = 0; i < _displays.amount; i++)
+	for(i = 0; i < _displays->amount; i++)
 	{
-		displayRect = ccGetDisplayRect(&_displays.display[i]);
+		displayRect = ccGetDisplayRect(&_displays->display[i]);
 		area = ccRectIntersectionArea(&displayRect, &window->rect);
 		if(area > largestArea) {
 			largestArea = area;
-			window->display = &_displays.display[i];
+			window->display = &_displays->display[i];
 		}
 	}
 }
@@ -385,27 +387,31 @@ void ccFindDisplays()
 	int displayCount;
 	int i;
 
+	ccAssert(_displays == NULL);
+
+	_displays = malloc(sizeof(ccDisplays));
+
 	dm.dmSize = sizeof(dm);
 	device.cb = sizeof(DISPLAY_DEVICE);
 	display.cb = sizeof(DISPLAY_DEVICE);
-	_displays.amount = 0;
+	_displays->amount = 0;
 
 	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
 		displayCount = 0;
 
 		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
-			_displays.amount++;
+			_displays->amount++;
 			
-			if(_displays.amount == 1) {
-				_displays.display = malloc(sizeof(ccDisplay));
+			if(_displays->amount == 1) {
+				_displays->display = malloc(sizeof(ccDisplay));
 			}
 			else{
-				_displays.display = realloc(_displays.display, sizeof(ccDisplay)*_displays.amount);
+				_displays->display = realloc(_displays->display, sizeof(ccDisplay)*_displays->amount);
 			}
 
 			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
 
-			currentDisplay = &_displays.display[_displays.amount - 1];
+			currentDisplay = &_displays->display[_displays->amount - 1];
 
 			currentDisplay->gpuName = malloc(CC_MAXDEVICENAMESIZE);
 			currentDisplay->monitorName = malloc(CC_MAXDEVICENAMESIZE);
@@ -457,49 +463,58 @@ void ccFindDisplays()
 				currentDisplay->amount++;
 			}
 
-			if(currentDisplay->x == 0 && currentDisplay->y == 0) _displays.primary = _displays.amount - 1;
+			if(currentDisplay->x == 0 && currentDisplay->y == 0) _displays->primary = _displays->amount - 1;
 			
 			displayCount++;
 
 		}
 		deviceCount++;
-
 	}
 }
 
 void ccFreeDisplays() {
 	int i;
-	for(i = 0; i < _displays.amount; i++) {
-		free(_displays.display[i].gpuName);
-		free(_displays.display[i].monitorName);
-		free(_displays.display[i].deviceName);
-		free(_displays.display[i].resolution);
+
+	ccAssert(_displays != NULL);
+
+	for(i = 0; i < _displays->amount; i++) {
+		free(_displays->display[i].gpuName);
+		free(_displays->display[i].monitorName);
+		free(_displays->display[i].deviceName);
+		free(_displays->display[i].resolution);
 	}
-	free(_displays.display);
+	free(_displays->display);
+	free(_displays);
 }
 
 void ccRevertDisplays()
 {
 	int i;
 
-	for(i = 0; i < _displays.amount; i++){
-		ccSetResolution(_displays.display + i, NULL);
+	ccAssert(_displays != NULL);
+
+	for(i = 0; i < _displays->amount; i++){
+		ccSetResolution(_displays->display + i, NULL);
 	}
 }
 
 ccDisplays *ccGetDisplays()
 {
-	return &_displays;
+	return _displays;
 }
 
 ccDisplay *ccGetDefaultDisplay()
 {
-	return &_displays.display[_displays.primary];
+	ccAssert(_displays != NULL);
+
+	return &_displays->display[_displays->primary];
 }
 
 ccDisplay *ccGetDisplay(int index)
 {
-	return &_displays.display[index];
+	ccAssert(_displays != NULL);
+
+	return &_displays->display[index];
 }
 
 ccRect ccGetDisplayRect(ccDisplay *display)
@@ -514,7 +529,9 @@ ccRect ccGetDisplayRect(ccDisplay *display)
 
 int ccGetDisplayAmount()
 {
-	return _displays.amount;
+	ccAssert(_displays != NULL);
+
+	return _displays->amount;
 }
 
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
