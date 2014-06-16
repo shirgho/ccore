@@ -62,7 +62,7 @@ typedef enum {
 } ccWindowFlag;
 
 //the window struct
-typedef struct _ccWindow {
+typedef struct {
 	//Note: dimensions subtract border size
 	float aspect;
 	ccRect rect;
