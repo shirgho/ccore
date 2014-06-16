@@ -56,8 +56,6 @@ int main(int argc, char** argv)
 	printf("Creating window\n");
 	window = ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
 
-	printf("Setting resolution\n");
-	ccSetResolution(ccGetDisplay(0), ccGetResolution(ccGetDisplay(0), 4));
 	ccCenterWindow(window);
 	ccGLBindContext(window, 3, 2);
 
@@ -119,6 +117,13 @@ int main(int argc, char** argv)
 							ccFreeWindow(window);
 							window = NULL;
 							break;
+						case CC_KEY_7:
+							printf("Setting resolution\n");
+							ccSetResolution(ccGetDisplay(0), ccGetResolution(ccGetDisplay(0), 4));
+							break;
+						case CC_KEY_8:
+							printf("Reverting resolution\n");
+							ccSetResolution(ccGetDisplay(0), NULL);
 						case CC_KEY_C:
 							printf("centering window\n");
 							ccCenterWindow(window);
@@ -143,7 +148,6 @@ int main(int argc, char** argv)
 	}
 
 	if(window != NULL) ccFreeWindow(window);
-	ccRevertDisplays();
 	ccFreeDisplays();
 
 	return 0;
