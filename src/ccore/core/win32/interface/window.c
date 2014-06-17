@@ -511,7 +511,7 @@ void ccRevertDisplays()
 	ccAssert(_displays != NULL);
 
 	for(i = 0; i < _displays->amount; i++){
-		ccSetResolution(_displays->display + i, NULL);
+		ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
 	}
 }
 
@@ -564,32 +564,33 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
+ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 {
 	DEVMODE devMode;
+	ccDisplayData displayData;
 	int i;
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
 	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
 
-	if(displayData == NULL) displayData = &display->resolution[display->initial];
+	if(resolutionIndex == -1) {
+		displayData = display->resolution[display->initial];
+	}
+	else{
+		displayData = display->resolution[resolutionIndex];
+	}
 
-	devMode.dmPelsWidth = displayData->width;
-	devMode.dmPelsHeight = displayData->height;
-	devMode.dmBitsPerPel = displayData->bitDepth;
-	devMode.dmDisplayFrequency = displayData->refreshRate;
+	devMode.dmPelsWidth = displayData.width;
+	devMode.dmPelsHeight = displayData.height;
+	devMode.dmBitsPerPel = displayData.bitDepth;
+	devMode.dmDisplayFrequency = displayData.refreshRate;
 	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
 
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
-	for(i = 0; i < display->amount; i++) {
-		if(memcmp(&display->resolution[i], displayData, sizeof(ccDisplayData)) == 0) {
-			display->current = i;
-			break;
-		}
-	}
+	display->current = resolutionIndex;
 	
 	return CC_ERROR_NONE;
 }

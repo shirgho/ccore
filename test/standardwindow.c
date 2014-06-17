@@ -117,11 +117,11 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_7:
 							printf("Setting resolution\n");
-							ccSetResolution(ccGetDisplay(0), ccGetResolution(ccGetDisplay(0), 10));
+							ccSetResolution(ccGetDisplay(0), 10);
 							break;
 						case CC_KEY_8:
 							printf("Reverting resolution\n");
-							ccSetResolution(ccGetDisplay(0), NULL);
+							ccSetResolution(ccGetDisplay(0), CC_DEFAULT_RESOLUTION);
 						case CC_KEY_C:
 							printf("centering window\n");
 							ccCenterWindow();
