@@ -511,7 +511,7 @@ void ccRevertDisplays()
 	ccAssert(_displays != NULL);
 
 	for(i = 0; i < _displays->amount; i++){
-		ccSetResolution(_displays->display + i, NULL);
+		ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
 	}
 }
 
