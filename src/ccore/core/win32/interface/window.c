@@ -530,7 +530,7 @@ ccDisplay *ccGetDefaultDisplay()
 ccDisplay *ccGetDisplay(int index)
 {
 	ccAssert(_displays != NULL);
-	ccAssert(index >= 0 & index < _displays->amount);
+	ccAssert(index >= 0 && index < _displays->amount);
 
 	return &_displays->display[index];
 }
