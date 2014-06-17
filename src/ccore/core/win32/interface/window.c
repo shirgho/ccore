@@ -584,7 +584,7 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
-	for(int i = 0; i < display->amount; i++) {
+	for(i = 0; i < display->amount; i++) {
 		if(memcmp(&display->resolution[i], displayData, sizeof(ccDisplayData)) == 0) {
 			display->current = i;
 			break;
