@@ -21,8 +21,7 @@ typedef struct {
 typedef struct {
 	//current display configuration
 	ccDisplayData *resolution;
-	ccDisplayData initialResolution;
-	int x, y, amount, current;
+	int x, y, amount, current, initial;
 	char *gpuName;
 	char *monitorName;
 	

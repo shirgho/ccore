@@ -399,6 +399,7 @@ void ccFindDisplays()
 	DEVMODE dm;
 	ccDisplay *currentDisplay;
 	ccDisplayData buffer;
+	ccDisplayData initialBuffer;
 	int deviceCount = 0;
 	int displayCount;
 	int i;
@@ -447,10 +448,10 @@ void ccFindDisplays()
 
 			currentDisplay->amount = 0;
 
-			currentDisplay->initialResolution.bitDepth = dm.dmBitsPerPel;
-			currentDisplay->initialResolution.refreshRate = dm.dmDisplayFrequency;
-			currentDisplay->initialResolution.width = dm.dmPelsWidth;
-			currentDisplay->initialResolution.height = dm.dmPelsHeight;
+			initialBuffer.bitDepth = dm.dmBitsPerPel;
+			initialBuffer.refreshRate = dm.dmDisplayFrequency;
+			initialBuffer.width = dm.dmPelsWidth;
+			initialBuffer.height = dm.dmPelsHeight;
 
 			i = 0;
 			while(EnumDisplaySettings(device.DeviceName, i, &dm)) {
@@ -470,8 +471,10 @@ void ccFindDisplays()
 					currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
 				}
 
-				if(memcmp(&currentDisplay->initialResolution, &buffer, sizeof(ccDisplayData)) == 0) currentDisplay->current = currentDisplay->amount;
-
+				if(memcmp(&initialBuffer, &buffer, sizeof(ccDisplayData)) == 0) {
+					currentDisplay->current = currentDisplay->amount;
+					currentDisplay->initial = currentDisplay->current;
+				}
 				memcpy(&currentDisplay->resolution[currentDisplay->amount], &buffer, sizeof(ccDisplayData));
 
 				currentDisplay->amount++;
@@ -569,7 +572,7 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 	devMode.dmSize = sizeof(DEVMODE);
 	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
 
-	if(displayData == NULL) displayData = &display->initialResolution;
+	if(displayData == NULL) displayData = &display->resolution[display->initial];
 
 	devMode.dmPelsWidth = displayData->width;
 	devMode.dmPelsHeight = displayData->height;
