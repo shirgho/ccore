@@ -3,6 +3,25 @@
 //note that static pointers are NULL by default
 static ccWindow *_window;
 
+ccEvent ccGetEvent()
+{
+	ccAssert(_window != NULL);
+
+	return _window->event;
+}
+
+ccRect ccGetWindowRect()
+{
+	ccAssert(_window != NULL);
+
+	return _window->rect;
+}
+
+bool ccWindowExists()
+{
+	return _window != NULL;
+}
+
 static ccKeyCode translateKey(WPARAM wParam)
 {
 	if((wParam >= 'A' && wParam <= 'Z') || (wParam >= '0' && wParam <= '9')) {
@@ -212,11 +231,6 @@ static void regHinstance(HINSTANCE instanceHandle)
 	winClass.hIconSm = NULL;
 
 	RegisterClassEx(&winClass);
-}
-
-ccWindow *ccGetWindow()
-{
-	return _window;
 }
 
 bool ccPollEvent()

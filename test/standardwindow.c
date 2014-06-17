@@ -71,24 +71,24 @@ int main(int argc, char** argv)
 	while(!quit){
 		ccDelay(15);
 		while(ccPollEvent()){
-			switch(ccGetWindow()->event.type){
+			switch(ccGetEvent().type){
 				case CC_EVENT_WINDOW_QUIT:
 					quit = true;
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
-					printf("Updated window size: x:%d y:%d %d x %d\n", ccGetWindow()->rect.x, ccGetWindow()->rect.y, ccGetWindow()->rect.width, ccGetWindow()->rect.height);
-					resizeGL(ccGetWindow()->rect.width, ccGetWindow()->rect.height);
+					printf("Updated window size: x:%d y:%d %d x %d\n", ccGetWindowRect().x, ccGetWindowRect().y, ccGetWindowRect().width, ccGetWindowRect().height);
+					resizeGL(ccGetWindowRect().width, ccGetWindowRect().height);
 					break;
 				case CC_EVENT_MOUSE_DOWN:
-					if(ccGetWindow()->event.mouseButton == CC_MOUSE_BUTTON_MIDDLE) {
+					if(ccGetEvent().mouseButton == CC_MOUSE_BUTTON_MIDDLE) {
 						quit = true;
 					}
 					break;
 				case CC_EVENT_MOUSE_SCROLL:
-					rotQuad += ccGetWindow()->event.scrollDelta << 2;
+					rotQuad += ccGetEvent().scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
-					switch(ccGetWindow()->event.key){
+					switch(ccGetEvent().key){
 						case CC_KEY_1:
 							printf("Going full screen on the first two windows\n");
 							ccChangeWM(CC_WINDOW_MODE_FULLSCREEN);
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 							printf("Key is not supported!\n");
 							break;
 						default:
-							printf("Key: %c\n", (char)ccGetWindow()->event.key);
+							printf("Key: %c\n", (char)ccGetEvent().key);
 							break;
 					}
 					break;
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		if(ccGetWindow() != NULL) {
+		if(ccWindowExists()) {
 			renderGL();
 			ccGLSwapBuffers();
 		}
