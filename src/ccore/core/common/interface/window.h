@@ -21,8 +21,8 @@ typedef struct {
 typedef struct {
 	//current display configuration
 	ccDisplayData *resolution;
-	ccDisplayData initialResolution;
-	int x, y, amount, current;
+	int x, y;
+	unsigned short amount, current, initial;
 	char *gpuName;
 	char *monitorName;
 	
@@ -42,8 +42,7 @@ typedef struct {
 //list of all displays currently connected and active
 typedef struct {
 	ccDisplay* display;
-	int amount;
-	int primary;
+	unsigned short amount, primary;
 } ccDisplays;
 
 //the way a window is shown. Only one window mode can be active at a time
@@ -101,7 +100,7 @@ void ccCenterWindow();
 ccWindow *ccGetWindow();
 
 //resolution
-ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
+ccError ccSetResolution(ccDisplay *display, int resolutionIndex);
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
 //display
