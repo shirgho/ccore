@@ -16,6 +16,7 @@
     <ClCompile Include="src\ccore\core\common\utils\error.c" />
     <ClCompile Include="src\ccore\core\common\utils\rect.c" />
     <ClCompile Include="src\ccore\core\win32\interface\display.c" />
+    <ClCompile Include="src\ccore\core\win32\interface\opengl.c" />
     <ClCompile Include="src\ccore\core\win32\interface\window.c" />
     <ClCompile Include="src\ccore\core\win32\utils\dirUtils.c" />
     <ClCompile Include="src\ccore\core\win32\utils\timing.c" />
@@ -31,6 +32,7 @@
     <ClInclude Include="src\ccore\core\common\debugutils\print.h" />
     <ClInclude Include="src\ccore\core\common\interface\display.h" />
     <ClInclude Include="src\ccore\core\common\interface\event.h" />
+    <ClInclude Include="src\ccore\core\common\interface\opengl.h" />
     <ClInclude Include="src\ccore\core\common\interface\window.h" />
     <ClInclude Include="src\ccore\core\common\types.h" />
     <ClInclude Include="src\ccore\core\common\utils\charUtils.h" />
@@ -39,6 +41,7 @@
     <ClInclude Include="src\ccore\core\common\utils\timing.h" />
     <ClInclude Include="src\ccore\core\win32\core.h" />
     <ClInclude Include="src\ccore\core\win32\interface\display.h" />
+    <ClInclude Include="src\ccore\core\win32\interface\opengl.h" />
     <ClInclude Include="src\ccore\core\win32\interface\window.h" />
     <ClInclude Include="src\ccore\core\win32\utils\dirUtils.h" />
     <ClInclude Include="src\ccore\core\win32\utils\timing.h" />

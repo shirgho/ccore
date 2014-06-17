@@ -48,6 +48,9 @@ typedef struct {
 	unsigned short amount, primary;
 } ccDisplays;
 
+//only access through getters
+ccDisplays *_displays;
+
 #define ccGetResolutionCurrent(display) (&display->resolution[display->current])
 #define ccGetResolution(display, index) (&display->resolution[index])
 #define ccGetResolutionAmount(display) display->amount

@@ -52,6 +52,9 @@ typedef struct {
 
 } ccWindow;
 
+//only access through getters
+ccWindow *_window;
+
 //getters
 ccEvent ccGetEvent();
 ccRect ccGetWindowRect();
@@ -64,7 +67,3 @@ bool ccPollEvent(); //poll an event from the events that currently need to be pr
 void ccChangeWM(ccWindowMode mode);
 void ccResizeMoveWindow(ccRect rect);
 void ccCenterWindow();
-
-//opengl
-ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); //bind the openGl context to window
-void ccGLSwapBuffers(); //swap the buffers

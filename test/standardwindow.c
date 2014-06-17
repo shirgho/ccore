@@ -7,6 +7,7 @@
 
 #include "../src/ccore/core/common/core.h"
 #include "../src/ccore/core/common/interface/window.h"
+#include "../src/ccore/core/common/interface/opengl.h"
 #include "../src/ccore/core/common/utils/timing.h"
 #include "../src/ccore/core/common/interface/event.h"
 #include "../src/ccore/core/common/utils/dirUtils.h"
@@ -141,6 +142,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	ccGlFreeContext();
 	ccFreeWindow();
 	ccFreeDisplays();
 

@@ -1,8 +1,5 @@
 #include "../../common/interface/window.h"
 
-//note that static pointers are NULL by default
-static ccWindow *_window;
-
 ccEvent ccGetEvent()
 {
 	ccAssert(_window != NULL);
@@ -304,58 +301,10 @@ void ccFreeWindow()
 {
 	ccAssert(_window != NULL);
 
-	wglDeleteContext(_window->renderContext);
 	ReleaseDC(_window->winHandle, _window->hdc);
 
 	DestroyWindow(_window->winHandle);
 	free(_window);
-}
-
-ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
-{
-	int pixelFormatIndex;
-	int glVerMajor, glVerMinor;
-
-	ccAssert(_window != NULL);
-
-	_window->hdc = GetDC(_window->winHandle);
-
-	PIXELFORMATDESCRIPTOR pfd = {
-		sizeof(PIXELFORMATDESCRIPTOR),
-		1,
-		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-		PFD_TYPE_RGBA,
-		32,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		16,
-		0, 0, 0, 0, 0, 0, 0
-	};
-
-	pixelFormatIndex = ChoosePixelFormat(_window->hdc, &pfd);
-	SetPixelFormat(_window->hdc, pixelFormatIndex, &pfd);
-
-	_window->renderContext = wglCreateContext(_window->hdc);
-	if(_window->renderContext == NULL) return CC_ERROR_GLCONTEXT;
-
-	//Make window the current context
-	wglMakeCurrent(_window->hdc, _window->renderContext);
-
-	//Version check
-	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
-	glGetIntegerv(GL_MINOR_VERSION, &glVerMinor);
-	if(glVerMajor < glVersionMajor || (glVerMajor == glVersionMajor && glVerMinor < glVersionMinor)) return CC_ERROR_GLVERSION;
-
-	//Fetch extentions after context creation
-	if(glewInit() != GLEW_OK) return CC_ERROR_GLEWINIT;
-
-	return CC_ERROR_NONE;
-}
-
-void ccGLSwapBuffers()
-{
-	ccAssert(_window != NULL);
-
-	SwapBuffers(_window->hdc);
 }
 
 void ccChangeWM(ccWindowMode mode)

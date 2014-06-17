@@ -1,8 +1,5 @@
 #include "../../common/interface/display.h"
 
-//note that static pointers are NULL by default
-static ccDisplays *_displays;
-
 int ccGetDisplayAmount()
 {
 	ccAssert(_displays != NULL);
