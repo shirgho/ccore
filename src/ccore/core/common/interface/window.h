@@ -17,7 +17,6 @@ typedef enum {
 	CC_WINDOW_MODE_FULLSCREEN,
 	CC_WINDOW_MODE_MAXIMIZED,
 	CC_WINDOW_MODE_WINDOW,
-	CC_WINDOW_MODE_MINIMIZED
 } ccWindowMode;
 
 //a window can contain multiple flags to determine the layout and functionality

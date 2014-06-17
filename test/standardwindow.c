@@ -103,10 +103,6 @@ int main(int argc, char** argv)
 							printf("windowed mode\n");
 							ccChangeWM(CC_WINDOW_MODE_WINDOW);
 							break;
-						case CC_KEY_4:
-							printf("minimizing\n");
-							ccChangeWM(CC_WINDOW_MODE_MINIMIZED);
-							break;
 						case CC_KEY_5:
 							printf("maximizing\n");
 							ccChangeWM(CC_WINDOW_MODE_MAXIMIZED);

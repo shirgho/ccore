@@ -364,9 +364,6 @@ void ccChangeWM(ccWindowMode mode)
 
 	switch(mode)
 	{
-	case CC_WINDOW_MODE_MINIMIZED:
-		ShowWindow(_window->winHandle, SW_MINIMIZE);
-		break;
 	case CC_WINDOW_MODE_WINDOW:
 		ShowWindow(_window->winHandle, SW_SHOWDEFAULT);
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
