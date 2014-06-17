@@ -2,50 +2,15 @@
 
 #include "../core.h"
 #include "../utils/error.h"
+#include "display.h"
+#include "../../common/types.h"
+#include "../../common/interface/event.h"
 
 #ifdef X11
 #include "../../x11/interface/window.h"
 #elif defined WIN32
 #include "../../win32/interface/window.h"
 #endif
-
-#define CC_DEFAULT_RESOLUTION -1
-
-//stores display properties
-typedef struct {
-	int width, height, refreshRate, bitDepth;
-#ifdef LINUX
-	RRMode XMode;
-#endif
-} ccDisplayData;
-
-//a display (often a monitor)
-typedef struct {
-	//current display configuration
-	ccDisplayData *resolution;
-	int x, y;
-	unsigned short amount, current, initial;
-	char *gpuName;
-	char *monitorName;
-	
-#ifdef WIN32
-	char* deviceName;
-#endif
-
-#ifdef LINUX
-	char *XDisplayName;
-	int XScreen, XineramaScreen;
-	RROutput XOutput;
-	RRMode XOldMode;
-#endif
-
-} ccDisplay;
-
-//list of all displays currently connected and active
-typedef struct {
-	ccDisplay* display;
-	unsigned short amount, primary;
-} ccDisplays;
 
 //the way a window is shown. Only one window mode can be active at a time
 typedef enum {
@@ -88,10 +53,6 @@ typedef struct {
 
 } ccWindow;
 
-#define ccGetResolutionCurrent(display) (&display->resolution[display->current])
-#define ccGetResolution(display, index) (&display->resolution[index])
-#define ccGetResolutionAmount(display) display->amount
-
 //ccWindow related
 void ccNewWindow(ccRect rect, const char *title, int flags);
 void ccFreeWindow();
@@ -100,20 +61,6 @@ void ccChangeWM(ccWindowMode mode);
 void ccResizeMoveWindow(ccRect rect);
 void ccCenterWindow();
 ccWindow *ccGetWindow();
-
-//resolution
-ccError ccSetResolution(ccDisplay *display, int resolutionIndex);
-bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
-
-//display
-void ccFindDisplays(); //get all displays currently connected and active
-void ccFreeDisplays();
-void ccRevertDisplays();
-ccRect ccGetDisplayRect(ccDisplay *display);
-
-int ccGetDisplayAmount();
-ccDisplay *ccGetDisplay(int index);
-ccDisplay *ccGetDefaultDisplay();
 
 //opengl
 ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); //bind the openGl context to window
