@@ -530,6 +530,7 @@ ccDisplay *ccGetDefaultDisplay()
 ccDisplay *ccGetDisplay(int index)
 {
 	ccAssert(_displays != NULL);
+	ccAssert(index >= 0 & index < _displays->amount);
 
 	return &_displays->display[index];
 }
@@ -537,6 +538,9 @@ ccDisplay *ccGetDisplay(int index)
 ccRect ccGetDisplayRect(ccDisplay *display)
 {
 	ccRect rect;
+
+	ccAssert(display != NULL);
+
 	rect.x = display->x;
 	rect.y = display->y;
 	rect.width = display->resolution[display->current].width;
@@ -555,6 +559,8 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 {
 	int i;
 
+	ccAssert(display != NULL);
+
 	for(i = 0; i < display->amount; i++) {
 		if(memcmp(&display->resolution[i], resolution, sizeof(ccDisplayData)) == 0) {
 			return true;
@@ -568,7 +574,10 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 {
 	DEVMODE devMode;
 	ccDisplayData displayData;
-	int i;
+
+	ccAssert(display != NULL);
+	ccAssert(resolutionIndex < display->amount);
+
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
 	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
