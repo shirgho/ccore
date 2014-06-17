@@ -1,6 +1,7 @@
 #include "../../common/interface/window.h"
 
-static ccDisplays _displays;
+static ccDisplays *_displays;
+static ccWindow *_window;
 
 /* Attribute list for a double buffered OpenGL context, with at least 4 bits per color and a 16 bit depth buffer */
 static int attrList[] =                                             
@@ -12,196 +13,194 @@ static int attrList[] =
 	GLX_DEPTH_SIZE, 16,                                                
 };
 
-ccWindow* ccNewWindow(ccRect rect, const char *title, int flags)
+void ccNewWindow(ccRect rect, const char *title, int flags)
 {
-	ccWindow *output;
 	Window root;
 	Atom delete;
 
-	output = malloc(sizeof(ccWindow));
-	output->XDisplay = XOpenDisplay(NULL);
+	_window = malloc(sizeof(ccWindow));
+	_window->XDisplay = XOpenDisplay(NULL);
 	//TODO: change ccAssert to error
-	ccAssert(output->XDisplay != NULL);
-	root = DefaultRootWindow(output->XDisplay);
-	output->XScreen = DefaultScreen(output->XDisplay);
-	output->XWindow = XCreateSimpleWindow(output->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, BlackPixel(output->XDisplay, output->XScreen), WhitePixel(output->XDisplay, output->XScreen));
+	ccAssert(_window->XDisplay != NULL);
+	root = DefaultRootWindow(_window->XDisplay);
+	_window->XScreen = DefaultScreen(_window->XDisplay);
+	_window->XWindow = XCreateSimpleWindow(_window->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, BlackPixel(_window->XDisplay, _window->XScreen), WhitePixel(_window->XDisplay, _window->XScreen));
 	// Choose types of events
-	XSelectInput(output->XDisplay, output->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
-	XMapWindow(output->XDisplay, output->XWindow);
-	XStoreName(output->XDisplay, output->XWindow, title);
+	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
+	XMapWindow(_window->XDisplay, _window->XWindow);
+	XStoreName(_window->XDisplay, _window->XWindow, title);
 
-	output->mouse.x = output->mouse.y = output->rect.width = output->rect.height = -1;
+	_window->mouse.x = _window->mouse.y = _window->rect.width = _window->rect.height = -1;
 
-	delete = XInternAtom(output->XDisplay, "WM_DELETE_WINDOW", True);
-	XSetWMProtocols(output->XDisplay, output->XWindow, &delete, 1);
-
-	return output;
+	delete = XInternAtom(_window->XDisplay, "WM_DELETE_WINDOW", True);
+	XSetWMProtocols(_window->XDisplay, _window->XWindow, &delete, 1);
 }
 
-void ccFreeWindow(ccWindow *window)
+void ccFreeWindow()
 {
-	ccAssert(window != NULL);
+	ccAssert(_window != NULL);
 	//TODO: don't delete a context before checking whether it exists!
-	glXMakeCurrent(window->XDisplay, None, NULL);
-	glXDestroyContext(window->XDisplay, window->XContext);
-	XCloseDisplay(window->XDisplay);
-	free(window);
+	glXMakeCurrent(_window->XDisplay, None, NULL);
+	glXDestroyContext(_window->XDisplay, _window->XContext);
+	XCloseDisplay(_window->XDisplay);
+	free(_window);
 }
 
-bool ccPollEvent(ccWindow *window)
+bool ccPollEvent()
 {
 	XEvent event;
-	XWindowAttributes windowAttributes;
+	XWindowAttributes _windowAttributes;
 
-	ccAssert(window != NULL);
+	ccAssert(_window != NULL);
 
-	window->event.type = CC_EVENT_SKIP;
-	if(XPending(window->XDisplay) == 0){
+	_window->event.type = CC_EVENT_SKIP;
+	if(XPending(_window->XDisplay) == 0){
 		return false;
 	}
 
-	XNextEvent(window->XDisplay, &event);
+	XNextEvent(_window->XDisplay, &event);
 	switch(event.type){
 		case ButtonPress:
 			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
 			if(event.xbutton.button <= 3){
-				window->event.type = CC_EVENT_MOUSE_DOWN;
-				window->event.mouseButton = event.xbutton.button;
+				_window->event.type = CC_EVENT_MOUSE_DOWN;
+				_window->event.mouseButton = event.xbutton.button;
 			}else if(event.xbutton.button == 4){
-				window->event.type = CC_EVENT_MOUSE_SCROLL;
-				window->event.scrollDelta = 1;
+				_window->event.type = CC_EVENT_MOUSE_SCROLL;
+				_window->event.scrollDelta = 1;
 			}else if(event.xbutton.button == 5){
-				window->event.type = CC_EVENT_MOUSE_SCROLL;
-				window->event.scrollDelta = -1;
+				_window->event.type = CC_EVENT_MOUSE_SCROLL;
+				_window->event.scrollDelta = -1;
 			}
 			break;
 		case ButtonRelease:
-			window->event.type = CC_EVENT_MOUSE_UP;
-			window->event.mouseButton = event.xbutton.button;
+			_window->event.type = CC_EVENT_MOUSE_UP;
+			_window->event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
-			if(window->mouse.x != event.xmotion.x || window->mouse.y != event.xmotion.y){
-				window->event.type = CC_EVENT_MOUSE_MOVE;
-				window->mouse.x = event.xmotion.x;
-				window->mouse.y = event.xmotion.y;
+			if(_window->mouse.x != event.xmotion.x || _window->mouse.y != event.xmotion.y){
+				_window->event.type = CC_EVENT_MOUSE_MOVE;
+				_window->mouse.x = event.xmotion.x;
+				_window->mouse.y = event.xmotion.y;
 			}
 			break;
 		case KeymapNotify:
 			XRefreshKeyboardMapping(&event.xmapping);
 			break;
 		case KeyPress:
-			window->event.type = CC_EVENT_KEY_DOWN;
-			window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
+			_window->event.type = CC_EVENT_KEY_DOWN;
+			_window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
 		case KeyRelease:
-			window->event.type = CC_EVENT_KEY_UP;
-			window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
+			_window->event.type = CC_EVENT_KEY_UP;
+			_window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
 		case ConfigureNotify:
-			if(window->rect.width != event.xconfigure.width || window->rect.height != event.xconfigure.height){
-				window->event.type = CC_EVENT_WINDOW_RESIZE;
-				window->rect.width = event.xconfigure.width;
-				window->rect.height = event.xconfigure.height;
-				window->aspect = window->rect.height / window->rect.width;
-				XGetWindowAttributes(window->XDisplay, window->XWindow, &windowAttributes);
-				window->rect.x = windowAttributes.x;
-				window->rect.y = windowAttributes.y;
+			if(_window->rect.width != event.xconfigure.width || _window->rect.height != event.xconfigure.height){
+				_window->event.type = CC_EVENT_WINDOW_RESIZE;
+				_window->rect.width = event.xconfigure.width;
+				_window->rect.height = event.xconfigure.height;
+				_window->aspect = _window->rect.height / _window->rect.width;
+				XGetWindowAttributes(_window->XDisplay, _window->XWindow, &_windowAttributes);
+				_window->rect.x = _windowAttributes.x;
+				_window->rect.y = _windowAttributes.y;
 			}
 			break;
 		case ClientMessage:
-			window->event.type = CC_EVENT_WINDOW_QUIT;
+			_window->event.type = CC_EVENT_WINDOW_QUIT;
 			break;
 		case EnterNotify:
-			window->event.type = CC_EVENT_FOCUS_GAINED;
+			_window->event.type = CC_EVENT_FOCUS_GAINED;
 			break;
 		case LeaveNotify:
-			window->event.type = CC_EVENT_FOCUS_LOST;
+			_window->event.type = CC_EVENT_FOCUS_LOST;
 			break;
 		case FocusIn:
-			window->event.type = CC_EVENT_FOCUS_GAINED;
+			_window->event.type = CC_EVENT_FOCUS_GAINED;
 			break;
 		case FocusOut:
-			window->event.type = CC_EVENT_FOCUS_LOST;
+			_window->event.type = CC_EVENT_FOCUS_LOST;
 			break;
 	}
 
 	return true;
 }
 
-void ccChangeWM(ccWindow *window, ccWindowMode mode)
+void ccChangeWM(ccWindowMode mode)
 {
 	XEvent event;
 	XWindowAttributes windowAttributes;
 	Atom wmState, fullscreen;
 	int windowWidth, windowHeight;
 
-	ccAssert(window);
+	ccAssert(_window);
 
 	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
-		wmState = XInternAtom(window->XDisplay, "_NET_WM_STATE", false);
-		fullscreen = XInternAtom(window->XDisplay, "_NET_WM_STATE_FULLSCREEN", false);
+		wmState = XInternAtom(_window->XDisplay, "_NET_WM_STATE", false);
+		fullscreen = XInternAtom(_window->XDisplay, "_NET_WM_STATE_FULLSCREEN", false);
 
 		memset(&event, 0, sizeof(event));
 		event.type = ClientMessage;
-		event.xclient.window = window->XWindow;
+		event.xclient.window = _window->XWindow;
 		event.xclient.message_type = wmState;
 		event.xclient.format = 32;
 		event.xclient.data.l[0] = mode == CC_WINDOW_MODE_FULLSCREEN;
 		event.xclient.data.l[1] = fullscreen;
 
-		XSendEvent(window->XDisplay, DefaultRootWindow(window->XDisplay), false, SubstructureNotifyMask, &event);
+		XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
 
 		if(mode == CC_WINDOW_MODE_FULLSCREEN){
-			XGrabPointer(window->XDisplay, window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, window->XWindow, None, CurrentTime);
+			XGrabPointer(_window->XDisplay, _window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, _window->XWindow, None, CurrentTime);
 		}else{
-			XUngrabPointer(window->XDisplay, CurrentTime);
+			XUngrabPointer(_window->XDisplay, CurrentTime);
 		}
 	}else if(mode == CC_WINDOW_MODE_MINIMIZED){
-		XIconifyWindow(window->XDisplay, window->XWindow, window->XScreen);
+		XIconifyWindow(_window->XDisplay, _window->XWindow, _window->XScreen);
 
-		XUngrabPointer(window->XDisplay, CurrentTime);
+		XUngrabPointer(_window->XDisplay, CurrentTime);
 	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
-		XGetWindowAttributes(window->XDisplay, DefaultRootWindow(window->XDisplay), &windowAttributes);
+		XGetWindowAttributes(_window->XDisplay, DefaultRootWindow(_window->XDisplay), &windowAttributes);
 		windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
 		windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
-		XMoveResizeWindow(window->XDisplay, window->XWindow, 0, 0, windowWidth, windowHeight);
+		XMoveResizeWindow(_window->XDisplay, _window->XWindow, 0, 0, windowWidth, windowHeight);
 
-		XUngrabPointer(window->XDisplay, CurrentTime);
+		XUngrabPointer(_window->XDisplay, CurrentTime);
 	}
 }
 
-void ccResizeMoveWindow(ccWindow *window, ccRect rect)
+void ccResizeMoveWindow(ccRect rect)
 {
-	ccAssert(window);
+	ccAssert(_window);
 
-	XMoveResizeWindow(window->XDisplay, window->XWindow, rect.x, rect.y, rect.width, rect.height);
+	XMoveResizeWindow(_window->XDisplay, _window->XWindow, rect.x, rect.y, rect.width, rect.height);
 }
 
-void ccCenterWindow(ccWindow *window)
+void ccCenterWindow()
 {
 	//TODO send _NET_WM_WINDOW_TYPE_SPLASH event
 	XEvent event;
 	Atom wmState, splash;
 
-	ccAssert(window);
+	ccAssert(_window);
 
-	wmState = XInternAtom(window->XDisplay, "_NET_WM_TYPE", false);
-	splash = XInternAtom(window->XDisplay, "_NET_WM_TYPE_SPLASH", false);
+	wmState = XInternAtom(_window->XDisplay, "_NET_WM_TYPE", false);
+	splash = XInternAtom(_window->XDisplay, "_NET_WM_TYPE_SPLASH", false);
 
 	memset(&event, 0, sizeof(event));
 	event.type = ClientMessage;
-	event.xclient.window = window->XWindow;
+	event.xclient.window = _window->XWindow;
 	event.xclient.message_type = wmState;
 	event.xclient.format = 32;
 	event.xclient.data.l[0] = 0;
 	event.xclient.data.l[1] = splash;
 
-	XSendEvent(window->XDisplay, DefaultRootWindow(window->XDisplay), false, SubstructureNotifyMask, &event);
+	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
 }
 
-ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
+ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 {
 	int minX, minY, maxX, maxY;
+	ccDisplayData *displayData;
 	Display *XDisplay;
 	Window root;
 	XRRScreenResources *resources;
@@ -209,7 +208,8 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 	XRRCrtcInfo *crtcInfo;
 
 	/* Screen already has the good coordinates */
-	if(displayData){
+	if(resolutionIndex >= 0){
+		displayData = display->resolution + resolutionIndex;
 		if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
 			return CC_ERROR_NONE;
 		}
@@ -218,6 +218,9 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 			ccPrintString("Error: Resolution supplied not valid\n");
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
+	}else{
+		/* Supress warnings */
+		displayData = NULL;
 	}
 
 	XDisplay = XOpenDisplay(display->XDisplayName);
@@ -229,7 +232,7 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
-	if(displayData){
+	if(resolutionIndex >= 0){
 		if(displayData->width < minX || displayData->height < minY){
 			ccPrintString("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
 			return CC_ERROR_RESOLUTION_CHANGE;
@@ -260,7 +263,7 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
-	if(displayData){
+	if(resolutionIndex >= 0){
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, displayData->XMode, crtcInfo->rotation, &display->XOutput, 1);
 	}else{
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, display->XOldMode, crtcInfo->rotation, &display->XOutput, 1);
@@ -270,7 +273,7 @@ ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData)
 	XRRFreeOutputInfo(outputInfo);
 	XRRFreeCrtcInfo(crtcInfo);
 
-	if(displayData){
+	if(resolutionIndex >= 0){
 		display->resolution = displayData;
 	}
 
@@ -325,13 +328,13 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 			continue;
 		}
 
-		_displays.amount++;
-		if(_displays.amount == 1){
-			_displays.display = malloc(sizeof(ccDisplay));
+		_displays->amount++;
+		if(_displays->amount == 1){
+			_displays->display = malloc(sizeof(ccDisplay));
 		}else{
-			_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
+			_displays->display = realloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
 		}
-		currentDisplay = _displays.display + _displays.amount - 1;
+		currentDisplay = _displays->display + _displays->amount - 1;
 
 		displayNameLength = strlen(displayName);
 		currentDisplay->XDisplayName = malloc(displayNameLength + 1);
@@ -414,13 +417,13 @@ static void ccXFindDisplaysXrandr(Display *display, char *displayName)
 	ccPrintString("XRandr: Found %d displays\n", screenCount);
 
 	for(i = 0; i < screenCount; i++){
-		_displays.amount++;
-		if(_displays.amount == 1){
-			_displays.display = malloc(sizeof(ccDisplay));
+		_displays->amount++;
+		if(_displays->amount == 1){
+			_displays->display = malloc(sizeof(ccDisplay));
 		}else{
-			_displays.display = realloc(_displays.display, sizeof(ccDisplay) * _displays.amount);
+			_displays->display = realloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
 		}
-		currentDisplay = _displays.display + _displays.amount - 1;
+		currentDisplay = _displays->display + _displays->amount - 1;
 
 		displayNameLength = strlen(displayName);
 		currentDisplay->monitorName = malloc(displayNameLength + 1);
@@ -474,12 +477,12 @@ void ccFindDisplays()
 	struct dirent *direntry;
 	Display *display;
 
-	if(_displays.amount != 0){
+	if(_displays->amount != 0){
 		ccPrintString("Displays already found, no need to call ccFindDisplays anymore\n");
 		return;
 	}
 
-	_displays.amount = 0;
+	_displays->amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
 	ccAssert(dir != NULL);
@@ -495,7 +498,7 @@ void ccFindDisplays()
 			if(!ccXFindDisplaysXinerama(display, displayName)){
 				ccXFindDisplaysXrandr(display, displayName);
 			}		
-			ccPrintString("X: %d displays found\n", _displays.amount);
+			ccPrintString("X: %d displays found\n", _displays->amount);
 			XCloseDisplay(display);
 		}
 	}
@@ -510,22 +513,22 @@ void ccFreeDisplays()
 {
 	/*	int i;
 
-		for(i = 0; i < _displays.amount; i++){
-		if(_displays.display + i != NULL){
-		free(_displays.display[i].gpuName);
-		free(_displays.display[i].monitorName);
-		free(_displays.display[i].resolution);
+		for(i = 0; i < _displays->amount; i++){
+		if(_displays->display + i != NULL){
+		free(_displays->display[i].gpuName);
+		free(_displays->display[i].monitorName);
+		free(_displays->display[i].resolution);
 		}
 		} */
-	free(_displays.display);
+	free(_displays->display);
 }
 
 void ccRevertDisplays()
 {
 	int i;
 
-	for(i = 0; i < _displays.amount; i++){
-		ccSetResolution(_displays.display + i, NULL);
+	for(i = 0; i < _displays->amount; i++){
+		ccSetResolution(_displays->display + i, -1);
 	}
 }
 
@@ -543,30 +546,30 @@ ccRect ccGetDisplayRect(ccDisplay *display)
 
 int ccGetDisplayAmount()
 {
-	return _displays.amount;
+	return _displays->amount;
 }
 
 ccDisplay *ccGetDisplay(int index)
 {
-	return _displays.display + index;
+	return _displays->display + index;
 }
 
 ccDisplay *ccGetDefaultDisplay()
 {
-	return _displays.display + _displays.primary;
+	return _displays->display + _displays->primary;
 }
 
-ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor)
+ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 
-	ccAssert(window != NULL);
+	ccAssert(_window != NULL);
 
-	visual = glXChooseVisual(window->XDisplay, window->XScreen, attrList);
+	visual = glXChooseVisual(_window->XDisplay, _window->XScreen, attrList);
 	ccAssert(visual != NULL);
 
-	window->XContext = glXCreateContext(window->XDisplay, visual, NULL, GL_TRUE);
-	glXMakeCurrent(window->XDisplay, window->XWindow, window->XContext);
+	_window->XContext = glXCreateContext(_window->XDisplay, visual, NULL, GL_TRUE);
+	glXMakeCurrent(_window->XDisplay, _window->XWindow, _window->XContext);
 
 	if(glewInit() != GLEW_OK){
 		return CC_ERROR_GLEWINIT;
@@ -575,7 +578,7 @@ ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor
 	return CC_ERROR_NONE;
 }
 
-void ccGLSwapBuffers(ccWindow *window)
+void ccGLSwapBuffers()
 {
-	glXSwapBuffers(window->XDisplay, window->XWindow);
+	glXSwapBuffers(_window->XDisplay, _window->XWindow);
 }
