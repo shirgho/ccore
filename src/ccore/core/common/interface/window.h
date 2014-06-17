@@ -9,6 +9,8 @@
 #include "../../win32/interface/window.h"
 #endif
 
+#define CC_DEFAULT_RESOLUTION -1
+
 //stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
