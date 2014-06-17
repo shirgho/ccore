@@ -1,6 +1,6 @@
 #include "../core.h"
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #include <assert.h>
 #define ccAssert(x) assert(x)
 #else

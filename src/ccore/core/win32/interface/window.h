@@ -8,5 +8,6 @@
 #include "../../common/interface/event.h"
 #include "../../common/utils/error.h"
 #include "../../common/utils/charUtils.h"
+#include "../../common/debugutils/assert.h"
 
 #define CC_MAXDEVICENAMESIZE 128

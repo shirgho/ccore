@@ -21,6 +21,7 @@ typedef struct {
 typedef struct {
 	//current display configuration
 	ccDisplayData *resolution;
+	ccDisplayData initialResolution;
 	int x, y, amount, current;
 	char *gpuName;
 	char *monitorName;
@@ -61,7 +62,7 @@ typedef enum {
 } ccWindowFlag;
 
 //the window struct
-typedef struct _ccWindow {
+typedef struct {
 	//Note: dimensions subtract border size
 	float aspect;
 	ccRect rect;
@@ -91,12 +92,13 @@ typedef struct _ccWindow {
 #define ccGetResolutionAmount(display) display->amount
 
 //ccWindow related
-ccWindow* ccNewWindow(ccRect rect, const char *title, int flags);
-void ccFreeWindow(ccWindow *window);
-bool ccPollEvent(ccWindow *window); //poll an event from the events that currently need to be processed in the window
-void ccChangeWM(ccWindow *window, ccWindowMode mode);
-void ccResizeMoveWindow(ccWindow *window, ccRect rect);
-void ccCenterWindow(ccWindow *window);
+void ccNewWindow(ccRect rect, const char *title, int flags);
+void ccFreeWindow();
+bool ccPollEvent(); //poll an event from the events that currently need to be processed in the window
+void ccChangeWM(ccWindowMode mode);
+void ccResizeMoveWindow(ccRect rect);
+void ccCenterWindow();
+ccWindow *ccGetWindow();
 
 //resolution
 ccError ccSetResolution(ccDisplay *display, ccDisplayData *displayData);
@@ -104,7 +106,6 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
 //display
 void ccFindDisplays(); //get all displays currently connected and active
-void ccUpdateDisplays(); //update the display list - TODO: update window display pointers
 void ccFreeDisplays();
 void ccRevertDisplays();
 ccRect ccGetDisplayRect(ccDisplay *display);
@@ -114,5 +115,5 @@ ccDisplay *ccGetDisplay(int index);
 ccDisplay *ccGetDefaultDisplay();
 
 //opengl
-ccError ccGLBindContext(ccWindow *window, int glVersionMajor, int glVersionMinor); //bind the openGl context to window
-void ccGLSwapBuffers(ccWindow *window); //swap the buffers
+ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); //bind the openGl context to window
+void ccGLSwapBuffers(); //swap the buffers
