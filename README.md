@@ -6,16 +6,12 @@ It is currently developed for Win32 (Windows 2000 and higher) and Linux with X11
 
 ### Minimum requirements for compiling ###
 **Linux:**
-- scons (http://scons.org)
 - libx11-dev
 - libxrandr-dev
-
-**Windows:**
-- Visual Studio
+- libxinerama-dev
 
 ### TODO ###
 **Major:**
-- File IO
 - Mac & BSD support
 
 **Minor:**

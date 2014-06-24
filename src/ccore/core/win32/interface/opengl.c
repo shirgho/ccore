@@ -40,7 +40,7 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	return CC_ERROR_NONE;
 }
 
-void ccGlFreeContext()
+void ccGLFreeContext()
 {
 	ccAssert(_window != NULL);
 

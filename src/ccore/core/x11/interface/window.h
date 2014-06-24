@@ -3,12 +3,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <dirent.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <X11/extensions/Xrandr.h>
-#include <X11/extensions/Xinerama.h>
+
+//TODO: fix GL include fuckup
+#include "../../common/interface/opengl.h"
+#include "../../../../../lib/glew/GL/glew.h"
 #include <GL/gl.h>
 #include <GL/glx.h>
 
