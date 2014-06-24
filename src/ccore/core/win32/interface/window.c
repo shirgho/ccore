@@ -302,7 +302,7 @@ void ccFreeWindow()
 	ccAssert(_window != NULL);
 
 	ReleaseDC(_window->winHandle, _window->hdc);
-
+	//TODO: release context
 	DestroyWindow(_window->winHandle);
 	free(_window);
 }
