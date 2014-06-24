@@ -202,6 +202,7 @@ void ccFindDisplays()
 
 	ccAssert(_displays == NULL);
 
+	_displays = malloc(sizeof(ccDisplays));
 	_displays->amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
