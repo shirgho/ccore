@@ -19,16 +19,10 @@ ccRect ccRectConcatenate(int amount, ...)
 		r = va_arg(rects, ccRect);
 		if(i == 0) rect = r;
 		else {
-			if(r.x < rect.x) {
-				rect.width += rect.x - r.x;
-				rect.x = r.x;
-			}
-			if(r.y < rect.y) {
-				rect.height += rect.y - r.y;
-				rect.y = r.y;
-			}
-			if(r.width - rect.x > rect.width) rect.width = r.width - rect.x;
-			if(r.height - rect.y > rect.height) rect.height = r.height - rect.y;
+			if(r.x < rect.x) rect.x = r.x;
+			if(r.y < rect.y) rect.y = r.y;
+			if(r.x + r.width > rect.x + rect.width) rect.width += r.x + r.width - rect.x - rect.width;
+			if(r.y + r.height > rect.y + rect.height) rect.height += r.y + r.height - rect.y - rect.height;
 		}
 	}
 	va_end(rects);
