@@ -18,6 +18,7 @@
 
 float rotQuad = 0.0f;
 
+void initGL();
 void resizeGL(unsigned int width, unsigned int height);
 void renderGL();
 
@@ -44,12 +45,16 @@ int main(int argc, char** argv)
 	printf("Finding displays\n");
 	ccFindDisplays();
 	for(i = 0; i < ccGetDisplayAmount(); i++) {
+		ccAssert(ccGetDisplay(i) != NULL);
+
 		printf("Display: %s, Device: %s\nX: %d, Y: %d\n", ccGetDisplay(i)->monitorName, ccGetDisplay(i)->gpuName, ccGetDisplay(i)->x, ccGetDisplay(i)->y);
 	}
 	
 	printf("Printing resolutions from default display\n");
 	//Find all resolutions of one display and print them
 	for(i = 0; i < ccGetDefaultDisplay()->amount; i++) {
+		ccAssert(ccGetDefaultDisplay()->resolution + i != NULL);
+
 		printf("%dx%d\t%dbpp\t%dHz\n", ccGetDefaultDisplay()->resolution[i].width, ccGetDefaultDisplay()->resolution[i].height, ccGetDefaultDisplay()->resolution[i].bitDepth, ccGetDefaultDisplay()->resolution[i].refreshRate);
 	}
 
@@ -59,14 +64,8 @@ int main(int argc, char** argv)
 	ccCenterWindow();
 	ccGLBindContext(3, 2);
 
-	glShadeModel(GL_SMOOTH);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClearDepth(1.0f);                  
-	glEnable(GL_DEPTH_TEST);             
-	glDepthFunc(GL_LEQUAL);              
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	rotQuad = 0;                                                
-	glFlush();  
+	initGL();
+	rotQuad = 10.0f;
 
 	quit = false;
 	while(!quit){
@@ -101,16 +100,19 @@ int main(int argc, char** argv)
 							ccChangeWM(CC_WINDOW_MODE_FULLSCREEN);
 							break;
 						case CC_KEY_3:
-							printf("windowed mode\n");
+							printf("Windowed mode\n");
 							ccChangeWM(CC_WINDOW_MODE_WINDOW);
 							break;
 						case CC_KEY_5:
-							printf("maximizing\n");
+							printf("Maximizing\n");
 							ccChangeWM(CC_WINDOW_MODE_MAXIMIZED);
 							break;
 						case CC_KEY_6:
-							printf("destroying window\n");
+							printf("Generating a new window\n");
 							ccFreeWindow();
+							ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore CSchmore", 0);
+							ccGLBindContext(3, 2);
+							initGL();
 							break;
 						case CC_KEY_7:
 							printf("Setting resolution\n");
@@ -120,7 +122,7 @@ int main(int argc, char** argv)
 							printf("Reverting resolution\n");
 							ccSetResolution(ccGetDisplay(0), CC_DEFAULT_RESOLUTION);
 						case CC_KEY_C:
-							printf("centering window\n");
+							printf("Centering window\n");
 							ccCenterWindow();
 							break;
 						case CC_KEY_UNDEFINED:
@@ -147,6 +149,17 @@ int main(int argc, char** argv)
 	ccFreeDisplays();
 
 	return 0;
+}
+
+void initGL()
+{
+	glShadeModel(GL_SMOOTH);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearDepth(1.0f);                  
+	glEnable(GL_DEPTH_TEST);             
+	glDepthFunc(GL_LEQUAL);              
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glFlush();  
 }
 
 void resizeGL(unsigned int width, unsigned int height)

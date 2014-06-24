@@ -46,15 +46,13 @@ void ccNewWindow(ccRect rect, const char *title, int flags)
 
 void ccFreeWindow()
 {
-	ccAssert(_window != NULL);
-	//TODO: don't delete a context before checking whether it exists!
-	/*
-	glXMakeCurrent(_window->XDisplay, None, NULL);
-	glXDestroyContext(_window->XDisplay, _window->XContext);
-	*/
-
+	ccAssert(_window != NULL);	
+	
+	XUnmapWindow(_window->XDisplay, _window->XWindow);
 	XCloseDisplay(_window->XDisplay);
+
 	free(_window);
+	_window = NULL;
 }
 
 bool ccPollEvent()
@@ -62,7 +60,9 @@ bool ccPollEvent()
 	XEvent event;
 	XWindowAttributes _windowAttributes;
 
-	ccAssert(_window != NULL);
+	if(!_window){
+		return false;
+	}
 
 	_window->event.type = CC_EVENT_SKIP;
 	if(XPending(_window->XDisplay) == 0){
