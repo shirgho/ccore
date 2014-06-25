@@ -305,6 +305,7 @@ void ccFreeWindow()
 	//TODO: release context
 	DestroyWindow(_window->winHandle);
 	free(_window);
+	_window = NULL;
 }
 
 void ccChangeWM(ccWindowMode mode)
