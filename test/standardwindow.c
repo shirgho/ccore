@@ -121,6 +121,7 @@ int main(int argc, char** argv)
 						case CC_KEY_8:
 							printf("Reverting resolution\n");
 							ccSetResolution(ccGetDisplay(0), CC_DEFAULT_RESOLUTION);
+							break;
 						case CC_KEY_C:
 							printf("Centering window\n");
 							ccCenterWindow();
