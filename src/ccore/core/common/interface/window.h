@@ -48,6 +48,7 @@ typedef struct {
 	HWND winHandle;
 	HGLRC renderContext;
 	bool sizeChanged;
+	LONG style;
 #endif
 
 } ccWindow;

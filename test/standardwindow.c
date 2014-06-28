@@ -113,6 +113,7 @@ int main(int argc, char** argv)
 							ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore CSchmore", 0);
 							ccGLBindContext(3, 2);
 							initGL();
+							ccCenterWindow();
 							break;
 						case CC_KEY_7:
 							printf("Setting resolution\n");
