@@ -181,13 +181,12 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	ccAssert(display != NULL);
 	ccAssert(resolutionIndex < display->amount);
 
+	if(resolutionIndex == CC_DEFAULT_RESOLUTION) resolutionIndex = display->initial;
 	if(resolutionIndex == display->current) return CC_ERROR_NONE;
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
 	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
-
-	if(resolutionIndex == CC_DEFAULT_RESOLUTION) resolutionIndex = display->initial;
 
 	displayData = display->resolution[resolutionIndex];
 
