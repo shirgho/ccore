@@ -323,11 +323,13 @@ void ccChangeWM(ccWindowMode mode)
 	{
 	case CC_WINDOW_MODE_WINDOW:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
-		ShowWindow(_window->winHandle, SW_SHOWDEFAULT);
+		ShowWindow(_window->winHandle, SW_SHOW);
+		ccResizeMoveWindow(ccGetDisplayRect(_window->display), true);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style & ~(WS_CAPTION | WS_THICKFRAME));
-		ShowWindow(_window->winHandle, SW_MAXIMIZE);
+		ShowWindow(_window->winHandle, SW_SHOW);
+		ccResizeMoveWindow(ccGetDisplayRect(_window->display), false);
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
@@ -338,11 +340,10 @@ void ccChangeWM(ccWindowMode mode)
 
 void ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
-	RECT windowRect;
-
 	ccAssert(_window != NULL);
 
 	if(addBorder) {
+		RECT windowRect;
 		windowRect.left = rect.x;
 		windowRect.top = rect.y;
 		windowRect.right = rect.x + rect.width;
