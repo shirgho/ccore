@@ -140,7 +140,13 @@ static void updateWindowDisplay()
 static void updateWindowResolution()
 {
 	RECT winRect;
+	
 	GetClientRect(_window->winHandle, &winRect);
+
+	if(winRect.right - winRect.left == _window->rect.width && winRect.bottom - winRect.top == _window->rect.height) {
+		return;
+	}
+
 	_window->rect.width = winRect.right - winRect.left;
 	_window->rect.height = winRect.bottom - winRect.top;
 	_window->aspect = (float)_window->rect.width / _window->rect.height;
