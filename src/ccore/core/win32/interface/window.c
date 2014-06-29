@@ -158,7 +158,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		_window->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
-	case WM_STYLECHANGED:
 		updateWindowResolution();
 		break;
 	case WM_MOVE:
@@ -325,7 +324,6 @@ void ccChangeWM(ccWindowMode mode)
 	case CC_WINDOW_MODE_WINDOW:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
 		ShowWindow(_window->winHandle, SW_SHOWDEFAULT);
-		ccCenterWindow();
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style & ~(WS_CAPTION | WS_THICKFRAME));
@@ -338,13 +336,24 @@ void ccChangeWM(ccWindowMode mode)
 	}
 }
 
-void ccResizeMoveWindow(ccRect rect)
+void ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
 	RECT windowRect;
 
 	ccAssert(_window != NULL);
 
-	MoveWindow(_window->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE);
+	if(addBorder) {
+		windowRect.left = rect.x;
+		windowRect.top = rect.y;
+		windowRect.right = rect.x + rect.width;
+		windowRect.bottom = rect.y + rect.height;
+		AdjustWindowRectEx(&windowRect, _window->style, FALSE, WS_EX_APPWINDOW);
+
+		MoveWindow(_window->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE);
+	}
+	else{
+		MoveWindow(_window->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE);
+	}
 }
 
 void ccCenterWindow()
@@ -359,5 +368,5 @@ void ccCenterWindow()
 				 _window->display->y + ((ccGetResolutionCurrent(_window->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
 				 windowRect.right - windowRect.left,
 				 windowRect.bottom - windowRect.top
-	});
+	}, false);
 }
