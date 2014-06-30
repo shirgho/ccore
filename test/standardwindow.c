@@ -146,6 +146,7 @@ int main(int argc, char** argv)
 
 	ccGLFreeContext();
 	ccFreeWindow();
+	ccRevertDisplays();
 	ccFreeDisplays();
 
 	return 0;

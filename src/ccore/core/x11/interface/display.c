@@ -122,6 +122,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 	return true;
 }
 
+/*
 static void ccXFindDisplaysXrandr(Display *display, char *displayName)
 {
 	int i, j, k, screenCount, sizeCount, rateCount, displayNameLength;
@@ -191,7 +192,7 @@ static void ccXFindDisplaysXrandr(Display *display, char *displayName)
 			}
 		}
 	}
-}
+} */
 
 void ccFindDisplays()
 {
@@ -217,7 +218,7 @@ void ccFindDisplays()
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
 			if(!ccXFindDisplaysXinerama(display, displayName)){
-				ccXFindDisplaysXrandr(display, displayName);
+				//ccXFindDisplaysXrandr(display, displayName);
 			}		
 			ccPrintString("X: %d displays found\n", _displays->amount);
 			XCloseDisplay(display);
@@ -248,7 +249,7 @@ void ccRevertDisplays()
 	ccAssert(_displays != NULL);
 
 	for(i = 0; i < _displays->amount; i++){
-		ccSetResolution(_displays->display + i, -1);
+		ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
 	}
 }
 
@@ -300,7 +301,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
-	if(resolutionIndex >= 0){
+	if(resolutionIndex != CC_DEFAULT_RESOLUTION){
 		if(displayData->width < minX || displayData->height < minY){
 			ccPrintString("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
 			return CC_ERROR_RESOLUTION_CHANGE;
@@ -331,7 +332,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 
-	if(resolutionIndex >= 0){
+	if(resolutionIndex != CC_DEFAULT_RESOLUTION){
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, displayData->XMode, crtcInfo->rotation, &display->XOutput, 1);
 	}else{
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, display->XOldMode, crtcInfo->rotation, &display->XOutput, 1);
