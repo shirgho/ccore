@@ -46,6 +46,7 @@ typedef struct {
 	HDC hdc;
 	MSG msg;
 	HWND winHandle;
+	HHOOK llKeyHook;
 	HGLRC renderContext;
 	bool sizeChanged;
 	LONG style;
