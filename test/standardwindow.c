@@ -93,7 +93,7 @@ int main(int argc, char** argv)
 							printf("Going full screen on the first two windows\n");
 							ccChangeWM(CC_WINDOW_MODE_FULLSCREEN);
 							//Use 2 windows full screen
-							ccResizeMoveWindow(ccRectConcatenate(2, ccGetDisplayRect(ccGetDisplay(1)), ccGetDisplayRect(ccGetDisplay(0))));
+							ccResizeMoveWindow(ccRectConcatenate(2, ccGetDisplayRect(ccGetDisplay(1)), ccGetDisplayRect(ccGetDisplay(0))), false);
 							break;
 						case CC_KEY_2:
 							printf("Going full screen\n");
@@ -102,6 +102,11 @@ int main(int argc, char** argv)
 						case CC_KEY_3:
 							printf("Windowed mode\n");
 							ccChangeWM(CC_WINDOW_MODE_WINDOW);
+							break;
+						case CC_KEY_4:
+							printf("Set window resolution\n");
+							ccResizeMoveWindow((ccRect){ 0, 0, 800, 600 }, true);
+							ccCenterWindow();
 							break;
 						case CC_KEY_5:
 							printf("Maximizing\n");
@@ -113,6 +118,7 @@ int main(int argc, char** argv)
 							ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore CSchmore", 0);
 							ccGLBindContext(3, 2);
 							initGL();
+							ccCenterWindow();
 							break;
 						case CC_KEY_7:
 							printf("Setting resolution\n");
@@ -121,6 +127,7 @@ int main(int argc, char** argv)
 						case CC_KEY_8:
 							printf("Reverting resolution\n");
 							ccSetResolution(ccGetDisplay(0), CC_DEFAULT_RESOLUTION);
+							break;
 						case CC_KEY_C:
 							printf("Centering window\n");
 							ccCenterWindow();

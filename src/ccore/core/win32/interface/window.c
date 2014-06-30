@@ -137,6 +137,22 @@ static void updateWindowDisplay()
 	}
 }
 
+static void updateWindowResolution()
+{
+	RECT winRect;
+	
+	GetClientRect(_window->winHandle, &winRect);
+
+	if(winRect.right - winRect.left == _window->rect.width && winRect.bottom - winRect.top == _window->rect.height) {
+		return;
+	}
+
+	_window->rect.width = winRect.right - winRect.left;
+	_window->rect.height = winRect.bottom - winRect.top;
+	_window->aspect = (float)_window->rect.width / _window->rect.height;
+	_window->sizeChanged = true;
+}
+
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if(_window == NULL) goto skipevent;
@@ -148,10 +164,8 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		_window->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
-		_window->rect.width = lParam & 0x0000FFFF;
-		_window->rect.height = (lParam & 0xFFFF0000) >> 16;
-		_window->aspect = (float)_window->rect.width / _window->rect.height;
-		_window->sizeChanged = true;
+		updateWindowResolution();
+		break;
 	case WM_MOVE:
 		updateWindowDisplay(_window);
 		break;
@@ -252,49 +266,48 @@ bool ccPollEvent()
 
 void ccNewWindow(ccRect rect, const char* title, int flags)
 {
+	HMODULE moduleHandle = GetModuleHandle(NULL);
+	RECT windowRect;
+
 	ccAssert(_window == NULL);
 
+	//initialize struct
 	_window = malloc(sizeof(ccWindow));
-
-	//Struct initialisation
 	memcpy(&_window->rect, &rect, sizeof(ccRect));
 	_window->sizeChanged = true;
 
-	//Window creation
-	HMODULE moduleHandle = GetModuleHandle(NULL);
+	//apply flags
+	_window->style = WS_OVERLAPPEDWINDOW;
+	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) _window->style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS) _window->style &= ~WS_SYSMENU;
+
+	windowRect.left = rect.x;
+	windowRect.top = rect.y;
+	windowRect.right = rect.x + rect.width;
+	windowRect.bottom = rect.y + rect.height;
+	AdjustWindowRectEx(&windowRect, _window->style, FALSE, WS_EX_APPWINDOW);
 	
 	regHinstance(moduleHandle);
 	_window->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		"ccWindow",
 		title,
-		WS_OVERLAPPEDWINDOW,
-		rect.x, rect.y,
-		rect.width, rect.height,
+		_window->style,
+		windowRect.left, windowRect.top,
+		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		NULL,
 		NULL,
 		moduleHandle,
 		NULL);
+	_window->style |= WS_VISIBLE;
 
-	//apply flags
-	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) {
-		LONG lStyle = GetWindowLong(_window->winHandle, GWL_STYLE);
-		lStyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-		SetWindowLong(_window->winHandle, GWL_STYLE, lStyle);
-	}
-	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS) {
-		LONG lStyle = GetWindowLong(_window->winHandle, GWL_STYLE);
-		lStyle &= ~WS_SYSMENU;
-		SetWindowLong(_window->winHandle, GWL_STYLE, lStyle);
-	}
+	ShowWindow(_window->winHandle, SW_SHOW);
+
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
 		GetWindowRect(_window->winHandle, &rect);
 		SetWindowPos(_window->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
 	}
-
-	ShowWindow(_window->winHandle, SW_SHOW);
-	ccChangeWM(CC_WINDOW_MODE_WINDOW);
 }
 
 void ccFreeWindow()
@@ -302,7 +315,7 @@ void ccFreeWindow()
 	ccAssert(_window != NULL);
 
 	ReleaseDC(_window->winHandle, _window->hdc);
-	//TODO: release context
+	//TODO: release context?
 	DestroyWindow(_window->winHandle);
 	free(_window);
 	_window = NULL;
@@ -315,39 +328,52 @@ void ccChangeWM(ccWindowMode mode)
 	switch(mode)
 	{
 	case CC_WINDOW_MODE_WINDOW:
-		ShowWindow(_window->winHandle, SW_SHOWDEFAULT);
-		SetWindowLongPtr(_window->winHandle, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
+		ShowWindow(_window->winHandle, SW_SHOW);
+		ccResizeMoveWindow(ccGetDisplayRect(_window->display), true);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
-		ShowWindow(_window->winHandle, SW_SHOWDEFAULT);
-		_window->rect.width = ccGetResolutionCurrent(_window->display)->width;
-		_window->rect.height = ccGetResolutionCurrent(_window->display)->height;
-
-		SetWindowLongPtr(_window->winHandle, GWL_STYLE, WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
-		ccResizeMoveWindow((ccRect){ _window->display->x, _window->display->y, _window->rect.width, _window->rect.height });
+		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style & ~(WS_CAPTION | WS_THICKFRAME));
+		ShowWindow(_window->winHandle, SW_SHOW);
+		ccResizeMoveWindow(ccGetDisplayRect(_window->display), false);
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
+		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
 		ShowWindow(_window->winHandle, SW_MAXIMIZE);
 		break;
 	}
 }
 
-void ccResizeMoveWindow(ccRect rect)
+void ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
 	ccAssert(_window != NULL);
 
-	_window->rect = rect;
-	MoveWindow(_window->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE);
+	if(addBorder) {
+		RECT windowRect;
+		windowRect.left = rect.x;
+		windowRect.top = rect.y;
+		windowRect.right = rect.x + rect.width;
+		windowRect.bottom = rect.y + rect.height;
+		AdjustWindowRectEx(&windowRect, _window->style, FALSE, WS_EX_APPWINDOW);
+
+		MoveWindow(_window->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE);
+	}
+	else{
+		MoveWindow(_window->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE);
+	}
 }
 
 void ccCenterWindow()
 {
+	RECT windowRect;
+
 	ccAssert(_window != NULL);
 
+	GetWindowRect(_window->winHandle, &windowRect);
 	ccResizeMoveWindow(
-		(ccRect){_window->display->x + ((ccGetResolutionCurrent(_window->display)->width - _window->rect.width) >> 1),
-				 _window->display->y + ((ccGetResolutionCurrent(_window->display)->height - _window->rect.height) >> 1),
-				 _window->rect.width,
-				 _window->rect.height
-	});
+		(ccRect){_window->display->x + ((ccGetResolutionCurrent(_window->display)->width - (windowRect.right - windowRect.left)) >> 1),
+				 _window->display->y + ((ccGetResolutionCurrent(_window->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
+				 windowRect.right - windowRect.left,
+				 windowRect.bottom - windowRect.top
+	}, false);
 }
