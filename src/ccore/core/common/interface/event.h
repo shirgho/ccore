@@ -136,6 +136,11 @@ typedef enum {
 	CC_KEY_DOWN
 } ccKeyCode;
 
+typedef struct {
+	ccKeyCode keyCode; //CCORE supported key code described in the enum above
+	unsigned int scanCode; //hardware dependent unique scancode, for custom key mapping
+} ccKeyData;
+
 // The event structure used by ccWindow, set by the call ccPollEvent
 typedef struct {
 	// The type of data inside the union depends on the type of event
@@ -144,7 +149,7 @@ typedef struct {
 	union {
 		ccMouseButtonType mouseButton;
 		ccPoint mousePosition;
-		ccKeyCode key;
+		ccKeyData key;
 		short scrollDelta;
 	};
 } ccEvent;

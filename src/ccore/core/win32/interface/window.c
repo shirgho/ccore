@@ -102,7 +102,7 @@ static void processRid(HRAWINPUT rawInput)
 	RAWINPUT* raw = (RAWINPUT*)_window->lpb;
 
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
-		printf("mouse");
+		
 	}
 	else if(raw->header.dwType == RIM_TYPEKEYBOARD)
 	{
@@ -201,10 +201,9 @@ static void processRid(HRAWINPUT rawInput)
 			break;
 		}
 
-		if(keyCode != CC_KEY_UNDEFINED) {
-			_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
-			_window->event.key = keyCode;
-		}
+		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
+		_window->event.key.keyCode = keyCode;
+		_window->event.key.scanCode = vkCode;
 	}
 }
 
