@@ -147,20 +147,87 @@ static void processRid(HRAWINPUT rawInput)
 	{
 		ccKeyCode keyCode = CC_KEY_UNDEFINED;
 		UINT vkCode = raw->data.keyboard.VKey;
-		const bool E0 = ((raw->data.keyboard.Flags & RI_KEY_E0) != 0);
-		const bool E1 = ((raw->data.keyboard.Flags & RI_KEY_E1) != 0);
 
 		if(vkCode == 255) {
 			return;
 		}
-		else if(vkCode == VK_SHIFT) {
-			vkCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX);
-		}
 
-		switch(vkCode)
+		if((vkCode >= '0' && vkCode <= '9') || (vkCode >= 'A' && vkCode <= 'Z')) {
+			keyCode = vkCode;
+		}
+		else if(vkCode >= VK_F1 && vkCode <= VK_F12) {
+			keyCode = CC_KEY_F1 + vkCode - VK_F1;
+		}
+		else if(vkCode >= VK_NUMPAD0 && vkCode <= VK_NUMPAD9) {
+			keyCode = CC_KEY_NUM0 + vkCode - VK_NUMPAD0;
+		}
+		else switch(vkCode)
 		{
+		case VK_LEFT:
+			keyCode = CC_KEY_LEFT;
+			break;
+		case VK_UP:
+			keyCode = CC_KEY_UP;
+			break;
+		case VK_RIGHT:
+			keyCode = CC_KEY_RIGHT;
+			break;
+		case VK_DOWN:
+			keyCode = CC_KEY_DOWN;
+			break;
+		case VK_BACK:
+			keyCode = CC_KEY_BACKSPACE;
+			break;
+		case VK_TAB:
+			keyCode = CC_KEY_TAB;
+			break;
+		case VK_RETURN:
+			keyCode = CC_KEY_RETURN;
+			break;
+		case VK_ESCAPE:
+			keyCode = CC_KEY_ESCAPE;
+			break;
+		case VK_SPACE:
+			keyCode = CC_KEY_SPACE;
+			break;
+		case VK_CAPITAL:
+			keyCode = CC_KEY_CAPSLOCK;
+			break;
+		case VK_INSERT:
+			keyCode = CC_KEY_INSERT;
+			break;
+		case VK_DELETE:
+			keyCode = CC_KEY_DELETE;
+			break;
+		case VK_HOME:
+			keyCode = CC_KEY_HOME;
+			break;
+		case VK_END:
+			keyCode = CC_KEY_END;
+			break;
+		case VK_PRIOR:
+			keyCode = CC_KEY_PAGEUP;
+			break;
+		case VK_NEXT:
+			keyCode = CC_KEY_PAGEDOWN;
+			break;
+		case VK_SNAPSHOT:
+			keyCode = CC_KEY_PRINTSCREEN;
+			break;
+		case VK_SCROLL:
+			keyCode = CC_KEY_SCROLLLOCK;
+			break;
+		case VK_NUMLOCK:
+			keyCode = CC_KEY_NUMLOCK;
+			break;
+		case VK_PAUSE:
+			keyCode = CC_KEY_PAUSEBREAK;
+			break;
 		case VK_CONTROL:
-			keyCode = E0?CC_KEY_RCONTROL:CC_KEY_LCONTROL;
+			keyCode = raw->data.keyboard.Flags & RI_KEY_E0?CC_KEY_RCONTROL:CC_KEY_LCONTROL;
+			break;
+		case VK_SHIFT:
+			keyCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX) == VK_LSHIFT?CC_KEY_LSHIFT:CC_KEY_RSHIFT;
 			break;
 		case VK_LSHIFT:
 			keyCode = CC_KEY_LSHIFT;
@@ -168,13 +235,8 @@ static void processRid(HRAWINPUT rawInput)
 		case VK_RSHIFT:
 			keyCode = CC_KEY_RSHIFT;
 			break;
-		case VK_PAUSE:
-			keyCode = CC_KEY_PAUSEBREAK;
-			printf("Numlock\n");
-			break;
-		case VK_NUMLOCK:
-			keyCode = CC_KEY_NUMLOCK;
-			printf("Pause\n");
+		case VK_MENU:
+			keyCode = raw->data.keyboard.Flags & RI_KEY_E0?CC_KEY_RMENU:CC_KEY_LMENU;
 			break;
 		}
 
