@@ -1,5 +1,9 @@
 #include "../../common/interface/window.h"
 
+static ccEvent* keyEventStack;
+static int keyEventStackSize;
+static int keyEventStackPos;
+
 ccEvent ccGetEvent()
 {
 	ccAssert(_window != NULL);
@@ -17,99 +21,6 @@ ccRect ccGetWindowRect()
 bool ccWindowExists()
 {
 	return _window != NULL;
-}
-
-static ccKeyCode translateKey(WPARAM wParam)
-{
-	if((wParam >= 'A' && wParam <= 'Z') || (wParam >= '0' && wParam <= '9')) {
-		return wParam;
-	}
-
-	switch(wParam)
-	{
-	case VK_BACK:
-		return CC_KEY_BACKSPACE;
-		break;
-	case VK_TAB:
-		return CC_KEY_TAB;
-		break;
-	case VK_RETURN:
-		return CC_KEY_RETURN;
-		break;
-	case VK_ESCAPE:
-		return CC_KEY_ESCAPE;
-		break;
-	case VK_SPACE:
-		return CC_KEY_SPACE;
-		break;
-	case VK_LSHIFT:
-		return CC_KEY_LSHIFT;
-		break;
-	case VK_RSHIFT:
-		return CC_KEY_RSHIFT;
-		break;
-	case VK_LCONTROL:
-		return CC_KEY_LCONTROL;
-		break;
-	case VK_RCONTROL:
-		return CC_KEY_RCONTROL;
-		break;
-	case VK_LEFT:
-		return CC_KEY_LEFT;
-		break;
-	case VK_RIGHT:
-		return CC_KEY_RIGHT;
-		break;
-	case VK_UP:
-		return CC_KEY_UP;
-		break;
-	case VK_DOWN:
-		return CC_KEY_DOWN;
-		break;
-	case VK_CAPITAL:
-		return CC_KEY_CAPSLOCK;
-		break;
-	case VK_INSERT:
-		return CC_KEY_INSERT;
-		break;
-	case VK_DELETE:
-		return CC_KEY_DELETE;
-		break;
-	case VK_HOME:
-		return CC_KEY_HOME;
-		break;
-	case VK_END:
-		return CC_KEY_END;
-		break;
-	case VK_PRIOR:
-		return CC_KEY_PAGEUP;
-		break;
-	case VK_NEXT:
-		return CC_KEY_PAGEDOWN;
-		break;
-	case VK_SNAPSHOT:
-		return CC_KEY_PRINTSCREEN;
-		break;
-	case VK_SCROLL:
-		return CC_KEY_SCROLLLOCK;
-		break;
-	case VK_PAUSE:
-		return CC_KEY_PAUSEBREAK;
-		break;
-	case VK_NUMLOCK:
-		return CC_KEY_NUMLOCK;
-		break;
-	}
-
-	if(wParam >= VK_F1 && wParam <= VK_F12) {
-		return CC_KEY_F1 + wParam - VK_F1;
-	}
-
-	if(wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9) {
-		return CC_KEY_NUM0 + wParam - VK_NUMPAD0;
-	}
-
-	return CC_KEY_UNDEFINED;
 }
 
 static void updateWindowDisplay()
@@ -153,6 +64,56 @@ static void updateWindowResolution()
 	_window->sizeChanged = true;
 }
 
+static LRESULT CALLBACK llKeyProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if(nCode == HC_ACTION) {
+		DWORD wParamKey = ((PKBDLLHOOKSTRUCT)lParam)->vkCode;
+		ccKeyCode ccKey = CC_KEY_UNDEFINED;
+
+		if((wParamKey >= CC_KEY_A && wParamKey <= CC_KEY_Z) || (wParamKey >= CC_KEY_0 && wParamKey <= CC_KEY_9)) {
+			ccKey = wParamKey;
+		}
+		else if(wParamKey >= VK_F1 && wParamKey <= VK_F12) {
+			ccKey = CC_KEY_F1 + wParamKey - VK_F1;
+		}
+		else if(wParamKey >= VK_NUMPAD0 && wParamKey <= VK_NUMPAD9) {
+			ccKey = CC_KEY_NUM0 + wParamKey - VK_NUMPAD0;
+		}
+		else{
+			switch(wParamKey) {
+			case VK_LCONTROL:
+				ccKey = CC_KEY_LCONTROL;
+				break;
+			case VK_RCONTROL:
+				ccKey = CC_KEY_RCONTROL;
+				break;
+			case VK_LSHIFT:
+				ccKey = CC_KEY_LSHIFT;
+				break;
+			case VK_RSHIFT:
+				ccKey = CC_KEY_RSHIFT;
+				break;
+			}
+		}
+
+		if(ccKey != CC_KEY_UNDEFINED && (wParam == WM_KEYUP || wParam == WM_KEYDOWN)) {
+
+			if(keyEventStackPos == keyEventStackSize) {
+				keyEventStackSize++;
+				printf("new stack size: %d\n", keyEventStackSize);
+				keyEventStack = realloc(keyEventStack, keyEventStackSize*sizeof(ccEvent));
+			}
+
+			keyEventStack[keyEventStackPos].type = wParam == WM_KEYUP? CC_EVENT_KEY_UP : CC_EVENT_KEY_DOWN;
+			keyEventStack[keyEventStackPos].key = ccKey;
+
+			keyEventStackPos++;
+		}
+	}
+
+	return CallNextHookEx(NULL, nCode, wParam, lParam);
+}
+
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if(_window == NULL) goto skipevent;
@@ -168,14 +129,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		break;
 	case WM_MOVE:
 		updateWindowDisplay(_window);
-		break;
-	case WM_KEYDOWN:
-		_window->event.type = CC_EVENT_KEY_DOWN;
-		_window->event.key = translateKey(wParam);
-		break;
-	case WM_KEYUP:
-		_window->event.type = CC_EVENT_KEY_UP;
-		_window->event.key = translateKey(wParam);
 		break;
 	case WM_MOUSEMOVE:
 		_window->mouse.x = (unsigned short)lParam & 0x0000FFFF;
@@ -247,6 +200,12 @@ static void regHinstance(HINSTANCE instanceHandle)
 bool ccPollEvent()
 {
 	ccAssert(_window != NULL);
+	
+	if(keyEventStackPos != 0) {
+		keyEventStackPos--;
+		_window->event = keyEventStack[keyEventStackPos];
+		return true;
+	}
 
 	if(_window->sizeChanged) {
 		_window->sizeChanged = false;
@@ -259,9 +218,8 @@ bool ccPollEvent()
 		DispatchMessage(&_window->msg);
 		return _window->event.type == CC_EVENT_SKIP?false:true;
 	}
-	else{
-		return false;
-	}
+
+	return false;
 }
 
 void ccNewWindow(ccRect rect, const char* title, int flags)
@@ -270,6 +228,10 @@ void ccNewWindow(ccRect rect, const char* title, int flags)
 	RECT windowRect;
 
 	ccAssert(_window == NULL);
+
+	keyEventStackSize = 1;
+	keyEventStackPos = 0;
+	keyEventStack = malloc(sizeof(ccEvent));
 
 	//initialize struct
 	_window = malloc(sizeof(ccWindow));
@@ -299,6 +261,9 @@ void ccNewWindow(ccRect rect, const char* title, int flags)
 		NULL,
 		moduleHandle,
 		NULL);
+
+	_window->llKeyHook = SetWindowsHookEx(WH_KEYBOARD_LL, llKeyProc, NULL, 0);
+
 	_window->style |= WS_VISIBLE;
 
 	ShowWindow(_window->winHandle, SW_SHOW);
@@ -314,6 +279,9 @@ void ccFreeWindow()
 {
 	ccAssert(_window != NULL);
 
+	free(keyEventStack);
+
+	UnhookWindowsHookEx(_window->llKeyHook);
 	ReleaseDC(_window->winHandle, _window->hdc);
 	//TODO: release context?
 	DestroyWindow(_window->winHandle);

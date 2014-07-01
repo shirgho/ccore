@@ -132,6 +132,18 @@ int main(int argc, char** argv)
 							printf("Centering window\n");
 							ccCenterWindow();
 							break;
+						case CC_KEY_LCONTROL:
+							printf("Left control\n");
+							break;
+						case CC_KEY_RCONTROL:
+							printf("Right control\n");
+							break;
+						case CC_KEY_LSHIFT:
+							printf("Left shift\n");
+							break;
+						case CC_KEY_RSHIFT:
+							printf("Right shift\n");
+							break;
 						case CC_KEY_UNDEFINED:
 							printf("Key is not supported!\n");
 							break;
