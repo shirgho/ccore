@@ -1,6 +1,6 @@
 #include "../../common/interface/window.h"
 
-static char _vkToKeyCode[256] = {
+static unsigned char _vkToKeyCode[256] = {
 	['0'] = CC_KEY_0,
 	['1'] = CC_KEY_1,
 	['2'] = CC_KEY_2,
@@ -93,6 +93,8 @@ static char _vkToKeyCode[256] = {
 	[VK_DOWN] = CC_KEY_DOWN
 };
 
+static unsigned char _keyCodeToVk[256] = {255};
+
 ccKeyCode ccScanCodeToKeyCode(unsigned int scanCode)
 {
 	ccAssert(scanCode >= 0 && scanCode <= 255);
@@ -102,12 +104,17 @@ ccKeyCode ccScanCodeToKeyCode(unsigned int scanCode)
 
 unsigned int ccKeyCodeToScanCode(ccKeyCode keyCode)
 {
-	int i;
-	for(i = 0; i < 256; i++)
-	{
-		if(_vkToKeyCode[i] == keyCode) return i;
+	if(_keyCodeToVk[keyCode] == 255) {
+		int i;
+		for(i = 0; i < 256; i++) {
+			if(_vkToKeyCode[i] == keyCode) {
+				_keyCodeToVk[keyCode] = i;
+				break;
+			}
+		}
 	}
-	return 255;
+
+	return _keyCodeToVk[keyCode];
 }
 
 ccEvent ccGetEvent()
