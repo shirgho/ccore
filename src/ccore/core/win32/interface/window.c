@@ -59,57 +59,7 @@ static void updateWindowResolution()
 	_window->aspect = (float)_window->rect.width / _window->rect.height;
 	_window->sizeChanged = true;
 }
-/*
-static LRESULT CALLBACK llKeyProc(int nCode, WPARAM wParam, LPARAM lParam)
-{
-	if(nCode == HC_ACTION) {
-		DWORD wParamKey = ((PKBDLLHOOKSTRUCT)lParam)->vkCode;
-		ccKeyCode ccKey = CC_KEY_UNDEFINED;
 
-		if((wParamKey >= CC_KEY_A && wParamKey <= CC_KEY_Z) || (wParamKey >= CC_KEY_0 && wParamKey <= CC_KEY_9)) {
-			ccKey = wParamKey;
-		}
-		else if(wParamKey >= VK_F1 && wParamKey <= VK_F12) {
-			ccKey = CC_KEY_F1 + wParamKey - VK_F1;
-		}
-		else if(wParamKey >= VK_NUMPAD0 && wParamKey <= VK_NUMPAD9) {
-			ccKey = CC_KEY_NUM0 + wParamKey - VK_NUMPAD0;
-		}
-		else{
-			switch(wParamKey) {
-			case VK_LCONTROL:
-				ccKey = CC_KEY_LCONTROL;
-				break;
-			case VK_RCONTROL:
-				ccKey = CC_KEY_RCONTROL;
-				break;
-			case VK_LSHIFT:
-				ccKey = CC_KEY_LSHIFT;
-				break;
-			case VK_RSHIFT:
-				ccKey = CC_KEY_RSHIFT;
-				break;
-			}
-		}
-
-		if(ccKey != CC_KEY_UNDEFINED && (wParam == WM_KEYUP || wParam == WM_KEYDOWN)) {
-
-			if(keyEventStackPos == keyEventStackSize) {
-				keyEventStackSize++;
-				printf("new stack size: %d\n", keyEventStackSize);
-				keyEventStack = realloc(keyEventStack, keyEventStackSize*sizeof(ccEvent));
-			}
-
-			keyEventStack[keyEventStackPos].type = wParam == WM_KEYUP? CC_EVENT_KEY_UP : CC_EVENT_KEY_DOWN;
-			keyEventStack[keyEventStackPos].key = ccKey;
-
-			keyEventStackPos++;
-		}
-	}
-
-	return CallNextHookEx(NULL, nCode, wParam, lParam);
-}
-*/
 static bool initializeRawInput()
 {
 	_window->rid[RAWINPUT_KEYBOARD].usUsagePage = 0x01;
@@ -241,7 +191,7 @@ static void processRid(HRAWINPUT rawInput)
 		}
 
 		if(keyCode != CC_KEY_UNDEFINED) {
-			_window->event.type = CC_EVENT_KEY_DOWN;
+			_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 			_window->event.key = keyCode;
 		}
 	}
