@@ -64,8 +64,13 @@ static bool initializeRawInput()
 {
 	_window->rid[RAWINPUT_KEYBOARD].usUsagePage = 0x01;
 	_window->rid[RAWINPUT_KEYBOARD].usUsage = 0x06;
-	_window->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_INPUTSINK;
+	_window->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_NOLEGACY;
 	_window->rid[RAWINPUT_KEYBOARD].hwndTarget = _window->winHandle;
+
+	_window->rid[RAWINPUT_MOUSE].usUsagePage = 0x01;
+	_window->rid[RAWINPUT_MOUSE].usUsage = 0x02;
+	_window->rid[RAWINPUT_MOUSE].dwFlags = RIDEV_NOLEGACY;
+	_window->rid[RAWINPUT_MOUSE].hwndTarget = _window->winHandle;
 
 	return RegisterRawInputDevices(_window->rid, NRAWINPUTDEVICES, sizeof(_window->rid[0]));
 }
@@ -74,6 +79,9 @@ static void freeRawInput()
 {
 	_window->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
 	_window->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;
+
+	_window->rid[RAWINPUT_MOUSE].dwFlags = RIDEV_REMOVE;
+	_window->rid[RAWINPUT_MOUSE].hwndTarget = NULL;
 
 	RegisterRawInputDevices(_window->rid, NRAWINPUTDEVICES, sizeof(_window->rid[0]));
 }
@@ -93,7 +101,10 @@ static void processRid(HRAWINPUT rawInput)
 	//TODO: make lpb of type RAWINPUT*
 	RAWINPUT* raw = (RAWINPUT*)_window->lpb;
 
-	if(raw->header.dwType == RIM_TYPEKEYBOARD)
+	if(raw->header.dwType == RIM_TYPEMOUSE) {
+		printf("mouse");
+	}
+	else if(raw->header.dwType == RIM_TYPEKEYBOARD)
 	{
 		ccKeyCode keyCode = CC_KEY_UNDEFINED;
 		UINT vkCode = raw->data.keyboard.VKey;
@@ -204,6 +215,9 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 	_window->event.type = CC_EVENT_SKIP;
 
 	switch(message) {
+	case WM_KEYDOWN:
+		printf("KD");
+		break;
 	case WM_INPUT:
 		processRid((HRAWINPUT)lParam);
 		break;

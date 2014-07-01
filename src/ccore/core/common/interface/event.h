@@ -145,6 +145,6 @@ typedef struct {
 		ccMouseButtonType mouseButton;
 		ccPoint mousePosition;
 		ccKeyCode key;
-		int scrollDelta;
+		short scrollDelta;
 	};
 } ccEvent;
