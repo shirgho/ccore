@@ -138,7 +138,7 @@ typedef enum {
 
 typedef struct {
 	ccKeyCode keyCode; //CCORE supported key code described in the enum above
-	unsigned int scanCode; //hardware dependent unique scancode, for custom key mapping
+	unsigned short scanCode; //hardware dependent unique scancode, for custom key mapping
 } ccKeyData;
 
 // The event structure used by ccWindow, set by the call ccPollEvent

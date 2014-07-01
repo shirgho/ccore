@@ -320,7 +320,7 @@ static void processRid(HRAWINPUT rawInput)
 
 		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 		_window->event.key.keyCode = keyCode;
-		_window->event.key.scanCode = vkCode;
+		_window->event.key.scanCode = raw->data.keyboard.MakeCode;
 	}
 }
 

@@ -88,6 +88,7 @@ int main(int argc, char** argv)
 					rotQuad += ccGetEvent().scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
+					printf("scancode %d", ccGetEvent().key.scanCode);
 					switch(ccGetEvent().key.keyCode){
 						case CC_KEY_1:
 							printf("Going full screen on the first two windows\n");
