@@ -87,6 +87,7 @@ int main(int argc, char** argv)
 				case CC_EVENT_MOUSE_SCROLL:
 					rotQuad += ccGetEvent().scrollDelta << 2;
 					break;
+				case CC_EVENT_KEY_DOWN:
 
 					switch(ccGetEvent().keyCode){
 						case CC_KEY_1:

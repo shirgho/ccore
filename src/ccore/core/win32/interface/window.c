@@ -120,7 +120,6 @@ static void processRid(HRAWINPUT rawInput)
 		}
 
 		//fill event with data
-		printf("%d\n", vkCode);
 		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 		_window->event.keyCode = vkCode;
 	}
