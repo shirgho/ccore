@@ -86,7 +86,7 @@ typedef struct {
 	union {
 		ccMouseButtonType mouseButton;
 		ccPoint mousePosition;
-		char keyCode;
+		unsigned char keyCode;
 		short scrollDelta;
 	};
 } ccEvent;
