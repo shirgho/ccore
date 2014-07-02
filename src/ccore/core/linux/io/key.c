@@ -1,19 +1,11 @@
 #include "key.h"
 
-ccKeyData ccGetKeyPressed()
+char ccGetKeyPressed()
 {
-	ccKeyData key;
-
-	key.keyCode = CC_KEY_UNDEFINED;
-
-	return key;
+	return '\0';
 }
 
-ccKeyData ccGetKeyReleased()
+char ccGetKeyReleased()
 {
-	ccKeyData key;
-
-	key.keyCode = CC_KEY_UNDEFINED;
-
-	return key;
+	return '\0';
 }

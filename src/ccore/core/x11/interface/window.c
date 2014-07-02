@@ -19,18 +19,6 @@ bool ccWindowExists()
 	return _window != NULL;
 }
 
-ccKeyCode ccScanCodeToKeyCode(unsigned short scanCode)
-{
-	//TODO implement this
-	return 0;
-}
-
-unsigned short ccKeyCodeToScanCode(ccKeyCode keyCode)
-{
-	//TODO implement this
-	return 0;
-}
-
 void ccSetWindowEvent(const char *type, const char *atom, bool value)
 {	
 	XEvent event;
@@ -104,13 +92,13 @@ bool ccPollEvent()
 	}
 
 #ifdef LINUX
-	_window->event.key = ccGetKeyPressed();
-	if(_window->event.key.keyCode != CC_KEY_UNDEFINED){
+	_window->event.keyCode = ccGetKeyPressed();
+	if(_window->event.keyCode != CC_KEY_UNDEFINED){
 		_window->event.type = CC_EVENT_KEY_DOWN;
 		return true;
 	}
-	_window->event.key = ccGetKeyReleased();
-	if(_window->event.key.keyCode != CC_KEY_UNDEFINED){
+	_window->event.keyCode = ccGetKeyReleased();
+	if(_window->event.keyCode != CC_KEY_UNDEFINED){
 		_window->event.type = CC_EVENT_KEY_UP;
 		return true;
 	}
@@ -153,11 +141,11 @@ bool ccPollEvent()
 		case KeyPress:
 			//TODO: ignore undefined
 			_window->event.type = CC_EVENT_KEY_DOWN;
-			_window->event.key.keyCode = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
+			//_window->event.key.keyCode = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
 		case KeyRelease:
 			_window->event.type = CC_EVENT_KEY_UP;
-			_window->event.key.keyCode = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
+			//_window->event.key.keyCode = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
 		case ConfigureNotify:
 			if(_window->rect.width != event.xconfigure.width || _window->rect.height != event.xconfigure.height){

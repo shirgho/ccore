@@ -12,43 +12,6 @@
 #include "../../win32/interface/window.h"
 #endif
 
-#define CC_KEY_0 '0'
-#define CC_KEY_1 '1'
-#define CC_KEY_2 '2'
-#define CC_KEY_3 '3'
-#define CC_KEY_4 '4'
-#define CC_KEY_5 '5'
-#define CC_KEY_6 '6'
-#define CC_KEY_7 '7'
-#define CC_KEY_8 '8'
-#define CC_KEY_9 '9'
-
-#define CC_KEY_A 'A'
-#define CC_KEY_B 'B'
-#define CC_KEY_C 'C'
-#define CC_KEY_D 'D'
-#define CC_KEY_E 'E'
-#define CC_KEY_F 'F'
-#define CC_KEY_G 'G'
-#define CC_KEY_H 'H'
-#define CC_KEY_I 'I'
-#define CC_KEY_J 'J'
-#define CC_KEY_K 'K'
-#define CC_KEY_L 'L'
-#define CC_KEY_M 'M'
-#define CC_KEY_N 'N'
-#define CC_KEY_O 'O'
-#define CC_KEY_P 'P'
-#define CC_KEY_Q 'Q'
-#define CC_KEY_R 'R'
-#define CC_KEY_S 'S'
-#define CC_KEY_T 'T'
-#define CC_KEY_U 'U'
-#define CC_KEY_V 'V'
-#define CC_KEY_W 'W'
-#define CC_KEY_X 'X'
-#define CC_KEY_Y 'Y'
-#define CC_KEY_Z 'Z'
 
 //the way a window is shown. Only one window mode can be active at a time
 typedef enum {
