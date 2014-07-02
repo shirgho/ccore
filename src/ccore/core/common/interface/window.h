@@ -46,10 +46,13 @@ typedef struct {
 	HDC hdc;
 	MSG msg;
 	HWND winHandle;
-	HHOOK llKeyHook;
 	HGLRC renderContext;
 	bool sizeChanged;
 	LONG style;
+	RAWINPUTDEVICE rid[NRAWINPUTDEVICES];
+	LPBYTE lpb;
+	UINT lpbSize;
+	UINT dwSize;
 #endif
 
 } ccWindow;
@@ -61,6 +64,8 @@ ccWindow *_window;
 ccEvent ccGetEvent();
 ccRect ccGetWindowRect();
 bool ccWindowExists();
+ccKeyCode ccScanCodeToKeyCode(unsigned short scanCode);
+unsigned short ccKeyCodeToScanCode(ccKeyCode keyCode);
 
 //window functions
 void ccNewWindow(ccRect rect, const char *title, int flags);

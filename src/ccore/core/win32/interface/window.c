@@ -1,8 +1,117 @@
 #include "../../common/interface/window.h"
 
-static ccEvent* keyEventStack;
-static int keyEventStackSize;
-static int keyEventStackPos;
+static unsigned char _vkToKeyCode[256] = {
+	['0'] = CC_KEY_0,
+	['1'] = CC_KEY_1,
+	['2'] = CC_KEY_2,
+	['3'] = CC_KEY_3,
+	['4'] = CC_KEY_4,
+	['5'] = CC_KEY_5,
+	['6'] = CC_KEY_6,
+	['7'] = CC_KEY_7,
+	['8'] = CC_KEY_8,
+	['9'] = CC_KEY_9,
+
+	['A'] = CC_KEY_A,
+	['B'] = CC_KEY_B,
+	['C'] = CC_KEY_C,
+	['D'] = CC_KEY_D,
+	['E'] = CC_KEY_E,
+	['F'] = CC_KEY_F,
+	['G'] = CC_KEY_G,
+	['H'] = CC_KEY_H,
+	['I'] = CC_KEY_I,
+	['J'] = CC_KEY_J,
+	['K'] = CC_KEY_K,
+	['L'] = CC_KEY_L,
+	['M'] = CC_KEY_M,
+	['N'] = CC_KEY_N,
+	['O'] = CC_KEY_O,
+	['P'] = CC_KEY_P,
+	['Q'] = CC_KEY_Q,
+	['R'] = CC_KEY_R,
+	['S'] = CC_KEY_S,
+	['T'] = CC_KEY_T,
+	['U'] = CC_KEY_U,
+	['V'] = CC_KEY_V,
+	['W'] = CC_KEY_W,
+	['X'] = CC_KEY_X,
+	['Y'] = CC_KEY_Y,
+	['Z'] = CC_KEY_Z,
+
+	[VK_F1] = CC_KEY_F1,
+	[VK_F2] = CC_KEY_F2,
+	[VK_F3] = CC_KEY_F3,
+	[VK_F4] = CC_KEY_F4,
+	[VK_F5] = CC_KEY_F5,
+	[VK_F6] = CC_KEY_F6,
+	[VK_F7] = CC_KEY_F7,
+	[VK_F8] = CC_KEY_F8,
+	[VK_F9] = CC_KEY_F9,
+	[VK_F10] = CC_KEY_F10,
+	[VK_F11] = CC_KEY_F11,
+	[VK_F12] = CC_KEY_F12,
+
+	[VK_NUMPAD0] = CC_KEY_NUM0,
+	[VK_NUMPAD1] = CC_KEY_NUM1,
+	[VK_NUMPAD2] = CC_KEY_NUM2,
+	[VK_NUMPAD3] = CC_KEY_NUM3,
+	[VK_NUMPAD4] = CC_KEY_NUM4,
+	[VK_NUMPAD5] = CC_KEY_NUM5,
+	[VK_NUMPAD6] = CC_KEY_NUM6,
+	[VK_NUMPAD7] = CC_KEY_NUM7,
+	[VK_NUMPAD8] = CC_KEY_NUM8,
+	[VK_NUMPAD9] = CC_KEY_NUM9,
+
+	[VK_BACK] = CC_KEY_BACKSPACE,
+	[VK_TAB] = CC_KEY_TAB,
+	[VK_RETURN] = CC_KEY_RETURN,
+	[VK_ESCAPE] = CC_KEY_ESCAPE,
+	[VK_SPACE] = CC_KEY_SPACE,
+	[VK_CAPITAL] = CC_KEY_CAPSLOCK,
+	[VK_INSERT] = CC_KEY_INSERT,
+	[VK_DELETE] = CC_KEY_DELETE,
+	[VK_HOME] = CC_KEY_HOME,
+	[VK_END] = CC_KEY_END,
+	[VK_PRIOR] = CC_KEY_PAGEUP,
+	[VK_NEXT] = CC_KEY_PAGEDOWN,
+	[VK_SNAPSHOT] = CC_KEY_PRINTSCREEN,
+	[VK_SCROLL] = CC_KEY_SCROLLLOCK,
+	[VK_NUMLOCK] = CC_KEY_NUMLOCK,
+	[VK_PAUSE] = CC_KEY_PAUSEBREAK,
+
+	[VK_LSHIFT] = CC_KEY_LSHIFT,
+	[VK_RSHIFT] = CC_KEY_RSHIFT,
+	[VK_LCONTROL] = CC_KEY_LCONTROL,
+	[VK_RCONTROL] = CC_KEY_RCONTROL,
+
+	[VK_LEFT] = CC_KEY_LEFT,
+	[VK_RIGHT] = CC_KEY_RIGHT,
+	[VK_UP] = CC_KEY_UP,
+	[VK_DOWN] = CC_KEY_DOWN
+};
+
+static unsigned char _keyCodeToVk[256];
+
+ccKeyCode ccScanCodeToKeyCode(unsigned short scanCode)
+{
+	return (ccKeyCode)_vkToKeyCode[scanCode];
+}
+
+unsigned short ccKeyCodeToScanCode(ccKeyCode keyCode)
+{
+	if(_keyCodeToVk[keyCode] == 0) {
+		unsigned char i;
+		for(i = 0; i < 256; i++) {
+			if(_vkToKeyCode[i] == keyCode) {
+				_keyCodeToVk[keyCode] = i;
+				break;
+			}
+		}
+	}
+
+	return _keyCodeToVk[keyCode];
+}
 
 ccEvent ccGetEvent()
 {
@@ -64,54 +173,73 @@ static void updateWindowResolution()
 	_window->sizeChanged = true;
 }
 
-static LRESULT CALLBACK llKeyProc(int nCode, WPARAM wParam, LPARAM lParam)
+static bool initializeRawInput()
 {
-	if(nCode == HC_ACTION) {
-		DWORD wParamKey = ((PKBDLLHOOKSTRUCT)lParam)->vkCode;
-		ccKeyCode ccKey = CC_KEY_UNDEFINED;
+	_window->rid[RAWINPUT_KEYBOARD].usUsagePage = 0x01;
+	_window->rid[RAWINPUT_KEYBOARD].usUsage = 0x06;
+	_window->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_NOLEGACY;
+	_window->rid[RAWINPUT_KEYBOARD].hwndTarget = _window->winHandle;
 
-		if((wParamKey >= CC_KEY_A && wParamKey <= CC_KEY_Z) || (wParamKey >= CC_KEY_0 && wParamKey <= CC_KEY_9)) {
-			ccKey = wParamKey;
-		}
-		else if(wParamKey >= VK_F1 && wParamKey <= VK_F12) {
-			ccKey = CC_KEY_F1 + wParamKey - VK_F1;
-		}
-		else if(wParamKey >= VK_NUMPAD0 && wParamKey <= VK_NUMPAD9) {
-			ccKey = CC_KEY_NUM0 + wParamKey - VK_NUMPAD0;
-		}
-		else{
-			switch(wParamKey) {
-			case VK_LCONTROL:
-				ccKey = CC_KEY_LCONTROL;
-				break;
-			case VK_RCONTROL:
-				ccKey = CC_KEY_RCONTROL;
-				break;
-			case VK_LSHIFT:
-				ccKey = CC_KEY_LSHIFT;
-				break;
-			case VK_RSHIFT:
-				ccKey = CC_KEY_RSHIFT;
-				break;
-			}
-		}
+	_window->rid[RAWINPUT_MOUSE].usUsagePage = 0x01;
+	_window->rid[RAWINPUT_MOUSE].usUsage = 0x02;
+	_window->rid[RAWINPUT_MOUSE].dwFlags = RIDEV_NOLEGACY;
+	_window->rid[RAWINPUT_MOUSE].hwndTarget = _window->winHandle;
 
-		if(ccKey != CC_KEY_UNDEFINED && (wParam == WM_KEYUP || wParam == WM_KEYDOWN)) {
+	return RegisterRawInputDevices(_window->rid, NRAWINPUTDEVICES, sizeof(_window->rid[0]));
+}
 
-			if(keyEventStackPos == keyEventStackSize) {
-				keyEventStackSize++;
-				printf("new stack size: %d\n", keyEventStackSize);
-				keyEventStack = realloc(keyEventStack, keyEventStackSize*sizeof(ccEvent));
-			}
+static void freeRawInput()
+{
+	_window->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
+	_window->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;
 
-			keyEventStack[keyEventStackPos].type = wParam == WM_KEYUP? CC_EVENT_KEY_UP : CC_EVENT_KEY_DOWN;
-			keyEventStack[keyEventStackPos].key = ccKey;
+	_window->rid[RAWINPUT_MOUSE].dwFlags = RIDEV_REMOVE;
+	_window->rid[RAWINPUT_MOUSE].hwndTarget = NULL;
 
-			keyEventStackPos++;
-		}
+	RegisterRawInputDevices(_window->rid, NRAWINPUTDEVICES, sizeof(_window->rid[0]));
+}
+
+static void processRid(HRAWINPUT rawInput)
+{
+	//TODO: process mouse here too
+	GetRawInputData(rawInput, RID_INPUT, NULL, &_window->dwSize, sizeof(RAWINPUTHEADER));
+
+	if(_window->dwSize > _window->lpbSize) {
+		_window->lpb = _window->lpbSize == 0?malloc(_window->dwSize):realloc(_window->lpb, _window->dwSize);
+		_window->lpbSize = _window->dwSize;
 	}
 
-	return CallNextHookEx(NULL, nCode, wParam, lParam);
+	GetRawInputData(rawInput, RID_INPUT, _window->lpb, &_window->dwSize, sizeof(RAWINPUTHEADER));
+
+	//TODO: make lpb of type RAWINPUT*
+	RAWINPUT* raw = (RAWINPUT*)_window->lpb;
+
+	if(raw->header.dwType == RIM_TYPEMOUSE) {
+		
+	}
+	else if(raw->header.dwType == RIM_TYPEKEYBOARD)
+	{
+		ccKeyCode keyCode = CC_KEY_UNDEFINED;
+		UINT vkCode = raw->data.keyboard.VKey;
+
+		//Parse raw keycodes
+
+		if(vkCode == 255) {
+			return;
+		}
+		else if(vkCode == VK_CONTROL) {
+			vkCode = raw->data.keyboard.Flags & RI_KEY_E0?VK_RCONTROL:VK_LCONTROL;
+		}
+		else if(vkCode == VK_SHIFT) {
+			vkCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX);
+		}
+
+		//fill event with data
+
+		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
+		_window->event.key.keyCode = _vkToKeyCode[vkCode];
+		_window->event.key.scanCode = vkCode;
+	}
 }
 
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
@@ -121,6 +249,9 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 	_window->event.type = CC_EVENT_SKIP;
 
 	switch(message) {
+	case WM_INPUT:
+		processRid((HRAWINPUT)lParam);
+		break;
 	case WM_CLOSE:
 		_window->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
@@ -200,12 +331,6 @@ static void regHinstance(HINSTANCE instanceHandle)
 bool ccPollEvent()
 {
 	ccAssert(_window != NULL);
-	
-	if(keyEventStackPos != 0) {
-		keyEventStackPos--;
-		_window->event = keyEventStack[keyEventStackPos];
-		return true;
-	}
 
 	if(_window->sizeChanged) {
 		_window->sizeChanged = false;
@@ -213,10 +338,10 @@ bool ccPollEvent()
 		return true;
 	}
 	
-	if(PeekMessage(&_window->msg, _window->winHandle, 0, 0, PM_REMOVE)){
+	if(PeekMessage(&_window->msg, NULL, 0, 0, PM_REMOVE)){
 		TranslateMessage(&_window->msg);
 		DispatchMessage(&_window->msg);
-		return _window->event.type == CC_EVENT_SKIP?false:true;
+		return true;
 	}
 
 	return false;
@@ -229,14 +354,12 @@ void ccNewWindow(ccRect rect, const char* title, int flags)
 
 	ccAssert(_window == NULL);
 
-	keyEventStackSize = 1;
-	keyEventStackPos = 0;
-	keyEventStack = malloc(sizeof(ccEvent));
-
 	//initialize struct
 	_window = malloc(sizeof(ccWindow));
 	memcpy(&_window->rect, &rect, sizeof(ccRect));
 	_window->sizeChanged = true;
+
+	_window->lpbSize = 0;
 
 	//apply flags
 	_window->style = WS_OVERLAPPEDWINDOW;
@@ -262,11 +385,11 @@ void ccNewWindow(ccRect rect, const char* title, int flags)
 		moduleHandle,
 		NULL);
 
-	_window->llKeyHook = SetWindowsHookEx(WH_KEYBOARD_LL, llKeyProc, NULL, 0);
-
 	_window->style |= WS_VISIBLE;
 
 	ShowWindow(_window->winHandle, SW_SHOW);
+
+	initializeRawInput();
 
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
@@ -279,9 +402,10 @@ void ccFreeWindow()
 {
 	ccAssert(_window != NULL);
 
-	free(keyEventStack);
+	freeRawInput();
 
-	UnhookWindowsHookEx(_window->llKeyHook);
+	if(_window->lpbSize != 0) free(_window->lpb);
+
 	ReleaseDC(_window->winHandle, _window->hdc);
 	//TODO: release context?
 	DestroyWindow(_window->winHandle);

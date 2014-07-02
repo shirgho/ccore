@@ -127,14 +127,17 @@ typedef enum {
 	CC_KEY_RCONTROL,
 	CC_KEY_LSHIFT,
 	CC_KEY_RSHIFT,
-	CC_KEY_LMENU,
-	CC_KEY_RMENU,
 
 	CC_KEY_LEFT,
 	CC_KEY_RIGHT,
 	CC_KEY_UP,
 	CC_KEY_DOWN
 } ccKeyCode;
+
+typedef struct {
+	ccKeyCode keyCode; //CCORE supported key code described in the enum above
+	unsigned short scanCode; //hardware dependent unique scancode, for custom key mapping
+} ccKeyData;
 
 // The event structure used by ccWindow, set by the call ccPollEvent
 typedef struct {
@@ -144,7 +147,7 @@ typedef struct {
 	union {
 		ccMouseButtonType mouseButton;
 		ccPoint mousePosition;
-		ccKeyCode key;
-		int scrollDelta;
+		ccKeyData key;
+		short scrollDelta;
 	};
 } ccEvent;
