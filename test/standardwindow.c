@@ -152,6 +152,9 @@ int main(int argc, char** argv)
 						case CC_KEY_UNDEFINED:
 							printf("Key %d is not supported!\n", ccGetEvent().key.scanCode);
 							break;
+						default:
+							printf("Key is not used\n");
+							break;
 					}
 					break;
 				default:

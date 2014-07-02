@@ -123,76 +123,76 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 }
 
 /*
-static void ccXFindDisplaysXrandr(Display *display, char *displayName)
-{
-	int i, j, k, screenCount, sizeCount, rateCount, displayNameLength;
-	short *refreshRates;
-	ccDisplay *currentDisplay;
-	ccDisplayData currentResolution;
-	Window root;
-	Rotation rotation;
-	SizeID currentSize;
-	XWindowAttributes attrList;
-	XRRScreenConfiguration *screenConfig;
-	XRRScreenSize *sizes;
+   static void ccXFindDisplaysXrandr(Display *display, char *displayName)
+   {
+   int i, j, k, screenCount, sizeCount, rateCount, displayNameLength;
+   short *refreshRates;
+   ccDisplay *currentDisplay;
+   ccDisplayData currentResolution;
+   Window root;
+   Rotation rotation;
+   SizeID currentSize;
+   XWindowAttributes attrList;
+   XRRScreenConfiguration *screenConfig;
+   XRRScreenSize *sizes;
 
-	screenCount = XScreenCount(display);
+   screenCount = XScreenCount(display);
 
-	ccPrintString("XRandr: Found %d displays\n", screenCount);
+   ccPrintString("XRandr: Found %d displays\n", screenCount);
 
-	for(i = 0; i < screenCount; i++){
-		_displays->amount++;
-		if(_displays->amount == 1){
-			_displays->display = malloc(sizeof(ccDisplay));
-		}else{
-			_displays->display = realloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
-		}
-		currentDisplay = _displays->display + _displays->amount - 1;
+   for(i = 0; i < screenCount; i++){
+   _displays->amount++;
+   if(_displays->amount == 1){
+   _displays->display = malloc(sizeof(ccDisplay));
+   }else{
+   _displays->display = realloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
+   }
+   currentDisplay = _displays->display + _displays->amount - 1;
 
-		displayNameLength = strlen(displayName);
-		currentDisplay->monitorName = malloc(displayNameLength + 1);
-		memcpy(currentDisplay->monitorName, displayName, displayNameLength);
-		currentDisplay->monitorName[displayNameLength] = '\0';
-		currentDisplay->gpuName = "";
+   displayNameLength = strlen(displayName);
+   currentDisplay->monitorName = malloc(displayNameLength + 1);
+   memcpy(currentDisplay->monitorName, displayName, displayNameLength);
+   currentDisplay->monitorName[displayNameLength] = '\0';
+   currentDisplay->gpuName = "";
 
-		root = RootWindow(display, i);
-		XGetWindowAttributes(display, root, &attrList);
+   root = RootWindow(display, i);
+   XGetWindowAttributes(display, root, &attrList);
 
-		currentDisplay->XineramaScreen = -1;
-		currentDisplay->XScreen = i;
-		currentDisplay->x = attrList.x;
-		currentDisplay->y = attrList.y;
+   currentDisplay->XineramaScreen = -1;
+   currentDisplay->XScreen = i;
+   currentDisplay->x = attrList.x;
+   currentDisplay->y = attrList.y;
 
-		screenConfig = XRRGetScreenInfo(display, root);
-		currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
-		sizes = XRRConfigSizes(screenConfig, &sizeCount);
+   screenConfig = XRRGetScreenInfo(display, root);
+   currentSize = XRRConfigCurrentConfiguration(screenConfig, &rotation);
+   sizes = XRRConfigSizes(screenConfig, &sizeCount);
 
-		for(j = 0; j < sizeCount; j++){
-			currentResolution.width = sizes[j].width;
-			currentResolution.height = sizes[j].height;
+   for(j = 0; j < sizeCount; j++){
+   currentResolution.width = sizes[j].width;
+   currentResolution.height = sizes[j].height;
 
-			if(j == currentSize){
-				currentDisplay->current = j;
-			}
+   if(j == currentSize){
+   currentDisplay->current = j;
+   }
 
-			refreshRates = XRRRates(display, currentDisplay->XScreen, j, &rateCount);
-			rateCount = 0;
-			for(k = 0; k < rateCount; k++){
-				currentResolution.refreshRate = refreshRates[k];
+   refreshRates = XRRRates(display, currentDisplay->XScreen, j, &rateCount);
+   rateCount = 0;
+   for(k = 0; k < rateCount; k++){
+   currentResolution.refreshRate = refreshRates[k];
 
-				currentResolution.bitDepth = attrList.depth;
+   currentResolution.bitDepth = attrList.depth;
 
-				currentDisplay->amount++;
-				if(currentDisplay->amount == 1){
-					currentDisplay->resolution = malloc(sizeof(ccDisplayData));
-				}else{
-					currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
-				}
-				memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
-			}
-		}
-	}
-} */
+   currentDisplay->amount++;
+   if(currentDisplay->amount == 1){
+   currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+   }else{
+   currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+   }
+   memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
+   }
+   }
+   }
+   } */
 
 void ccFindDisplays()
 {
@@ -282,14 +282,16 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	ccAssert(resolutionIndex < display->amount);
 
 	/* Screen already has the good coordinates */
-	displayData = display->resolution + resolutionIndex;
-	if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
-		return CC_ERROR_NONE;
-	}
+	if(resolutionIndex != CC_DEFAULT_RESOLUTION){
+		displayData = display->resolution + resolutionIndex;
+		if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
+			return CC_ERROR_NONE;
+		}
 
-	if(display->resolution->width <= 0 || display->resolution->height <= 0){
-		ccPrintString("Error: Resolution supplied not valid\n");
-		return CC_ERROR_RESOLUTION_CHANGE;
+		if(display->resolution->width <= 0 || display->resolution->height <= 0){
+			ccPrintString("Error: Resolution supplied not valid\n");
+			return CC_ERROR_RESOLUTION_CHANGE;
+		}
 	}
 
 	XDisplay = XOpenDisplay(display->XDisplayName);
@@ -342,9 +344,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	XRRFreeOutputInfo(outputInfo);
 	XRRFreeCrtcInfo(crtcInfo);
 
-	if(resolutionIndex >= 0){
-		display->resolution = displayData;
-	}
+	display->resolution = displayData;
 
 	XSync(XDisplay, False);
 	XUngrabServer(XDisplay);
