@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	}
 
 	printf("Creating window\n");
-	ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", 0);
+	ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", CC_WINDOW_FLAG_NORESIZE);
 
 	ccCenterWindow();
 	ccGLBindContext(3, 2);

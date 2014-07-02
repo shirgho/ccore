@@ -19,6 +19,25 @@ bool ccWindowExists()
 	return _window != NULL;
 }
 
+void ccSetWindowEvent(const char *type, const char *atom, bool value)
+{	
+	XEvent event;
+	Atom wmTypeFrom, wmTypeTo;
+	
+	wmTypeFrom = XInternAtom(_window->XDisplay, type, false);
+	wmTypeTo = XInternAtom(_window->XDisplay, atom, false);
+
+	memset(&event, 0, sizeof(event));
+	event.type = ClientMessage;
+	event.xclient.window = _window->XWindow;
+	event.xclient.message_type = wmTypeFrom;
+	event.xclient.format = 32;
+	event.xclient.data.l[0] = value;
+	event.xclient.data.l[1] = wmTypeTo;
+
+	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
+}
+
 void ccNewWindow(ccRect rect, const char *title, int flags)
 {
 	Window root;
@@ -27,14 +46,22 @@ void ccNewWindow(ccRect rect, const char *title, int flags)
 	ccAssert(_window == NULL);
 
 	_window = malloc(sizeof(ccWindow));
+	ccAssert(_window != NULL);
+
 	_window->XDisplay = XOpenDisplay(NULL);
 	//TODO: change ccAssert to error
 	ccAssert(_window->XDisplay != NULL);
+
 	root = DefaultRootWindow(_window->XDisplay);
 	_window->XScreen = DefaultScreen(_window->XDisplay);
-	_window->XWindow = XCreateSimpleWindow(_window->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, BlackPixel(_window->XDisplay, _window->XScreen), WhitePixel(_window->XDisplay, _window->XScreen));
+	_window->XWindow = XCreateSimpleWindow(_window->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, 0, 0);
 	// Choose types of events
 	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
+
+	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE){
+		ccSetWindowEvent("_NET_WM_ALLOWED_ACTIONS", "_NET_WM_ACTION_RESIZE", true);
+	}
+
 	XMapWindow(_window->XDisplay, _window->XWindow);
 	XStoreName(_window->XDisplay, _window->XWindow, title);
 
@@ -99,6 +126,7 @@ bool ccPollEvent()
 			XRefreshKeyboardMapping(&event.xmapping);
 			break;
 		case KeyPress:
+			//TODO: ignore undefined
 			_window->event.type = CC_EVENT_KEY_DOWN;
 			_window->event.key = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
 			break;
@@ -175,8 +203,9 @@ void ccChangeWM(ccWindowMode mode)
 	}
 }
 
-void ccResizeMoveWindow(ccRect rect)
+void ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
+	//TODO implement addBorder
 	ccAssert(_window);
 
 	XMoveResizeWindow(_window->XDisplay, _window->XWindow, rect.x, rect.y, rect.width, rect.height);
