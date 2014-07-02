@@ -88,7 +88,6 @@ int main(int argc, char** argv)
 					rotQuad += ccGetEvent().scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
-
 					switch(ccGetEvent().keyCode){
 						case CC_KEY_1:
 							printf("Going full screen on the first two windows\n");
@@ -144,6 +143,9 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_RSHIFT:
 							printf("Right shift\n");
+							break;
+						case CC_KEY_NUM2:
+							printf("num2 key\n");
 							break;
 						default:
 							printf("Key is not used\n");
