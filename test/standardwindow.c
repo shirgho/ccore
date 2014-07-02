@@ -88,7 +88,11 @@ int main(int argc, char** argv)
 					rotQuad += ccGetEvent().scrollDelta << 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
-					printf("scancode %d", ccGetEvent().key.scanCode);
+
+					//debug key code conversions
+					if(ccScanCodeToKeyCode(ccGetEvent().key.scanCode) == CC_KEY_X) printf("X was pressed\n");
+					if(ccKeyCodeToScanCode(CC_KEY_Y) == ccGetEvent().key.scanCode) printf("Y was pressed\n");
+
 					switch(ccGetEvent().key.keyCode){
 						case CC_KEY_1:
 							printf("Going full screen on the first two windows\n");
@@ -146,10 +150,7 @@ int main(int argc, char** argv)
 							printf("Right shift\n");
 							break;
 						case CC_KEY_UNDEFINED:
-							printf("Key is not supported!\n");
-							break;
-						default:
-							printf("Key: %c\n", (char)ccGetEvent().key.keyCode);
+							printf("Key %d is not supported!\n", ccGetEvent().key.scanCode);
 							break;
 					}
 					break;

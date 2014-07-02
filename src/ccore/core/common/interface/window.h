@@ -64,8 +64,8 @@ ccWindow *_window;
 ccEvent ccGetEvent();
 ccRect ccGetWindowRect();
 bool ccWindowExists();
-ccKeyCode ccScanCodeToKeyCode(unsigned int scanCode);
-unsigned int ccKeyCodeToScanCode(ccKeyCode keyCode);
+ccKeyCode ccScanCodeToKeyCode(unsigned short scanCode);
+unsigned short ccKeyCodeToScanCode(ccKeyCode keyCode);
 
 //window functions
 void ccNewWindow(ccRect rect, const char *title, int flags);

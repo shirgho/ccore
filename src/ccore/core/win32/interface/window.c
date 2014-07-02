@@ -84,8 +84,6 @@ static unsigned char _vkToKeyCode[256] = {
 	[VK_RSHIFT] = CC_KEY_RSHIFT,
 	[VK_LCONTROL] = CC_KEY_LCONTROL,
 	[VK_RCONTROL] = CC_KEY_RCONTROL,
-	[VK_LMENU] = CC_KEY_LMENU,
-	[VK_RMENU] = CC_KEY_RMENU,
 
 	[VK_LEFT] = CC_KEY_LEFT,
 	[VK_RIGHT] = CC_KEY_RIGHT,
@@ -93,19 +91,17 @@ static unsigned char _vkToKeyCode[256] = {
 	[VK_DOWN] = CC_KEY_DOWN
 };
 
-static unsigned char _keyCodeToVk[256] = {255};
+static unsigned char _keyCodeToVk[256];
 
-ccKeyCode ccScanCodeToKeyCode(unsigned int scanCode)
+ccKeyCode ccScanCodeToKeyCode(unsigned short scanCode)
 {
-	ccAssert(scanCode >= 0 && scanCode <= 255);
-
 	return (ccKeyCode)_vkToKeyCode[scanCode];
 }
 
-unsigned int ccKeyCodeToScanCode(ccKeyCode keyCode)
+unsigned short ccKeyCodeToScanCode(ccKeyCode keyCode)
 {
-	if(_keyCodeToVk[keyCode] == 255) {
-		int i;
+	if(_keyCodeToVk[keyCode] == 0) {
+		unsigned char i;
 		for(i = 0; i < 256; i++) {
 			if(_vkToKeyCode[i] == keyCode) {
 				_keyCodeToVk[keyCode] = i;
@@ -226,101 +222,23 @@ static void processRid(HRAWINPUT rawInput)
 		ccKeyCode keyCode = CC_KEY_UNDEFINED;
 		UINT vkCode = raw->data.keyboard.VKey;
 
+		//Parse raw keycodes
+
 		if(vkCode == 255) {
 			return;
 		}
+		else if(vkCode == VK_CONTROL) {
+			vkCode = raw->data.keyboard.Flags & RI_KEY_E0?VK_RCONTROL:VK_LCONTROL;
+		}
+		else if(vkCode == VK_SHIFT) {
+			vkCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX);
+		}
 
-		if((vkCode >= '0' && vkCode <= '9') || (vkCode >= 'A' && vkCode <= 'Z')) {
-			keyCode = vkCode;
-		}
-		else if(vkCode >= VK_F1 && vkCode <= VK_F12) {
-			keyCode = CC_KEY_F1 + vkCode - VK_F1;
-		}
-		else if(vkCode >= VK_NUMPAD0 && vkCode <= VK_NUMPAD9) {
-			keyCode = CC_KEY_NUM0 + vkCode - VK_NUMPAD0;
-		}
-		else switch(vkCode)
-		{
-		case VK_LEFT:
-			keyCode = CC_KEY_LEFT;
-			break;
-		case VK_UP:
-			keyCode = CC_KEY_UP;
-			break;
-		case VK_RIGHT:
-			keyCode = CC_KEY_RIGHT;
-			break;
-		case VK_DOWN:
-			keyCode = CC_KEY_DOWN;
-			break;
-		case VK_BACK:
-			keyCode = CC_KEY_BACKSPACE;
-			break;
-		case VK_TAB:
-			keyCode = CC_KEY_TAB;
-			break;
-		case VK_RETURN:
-			keyCode = CC_KEY_RETURN;
-			break;
-		case VK_ESCAPE:
-			keyCode = CC_KEY_ESCAPE;
-			break;
-		case VK_SPACE:
-			keyCode = CC_KEY_SPACE;
-			break;
-		case VK_CAPITAL:
-			keyCode = CC_KEY_CAPSLOCK;
-			break;
-		case VK_INSERT:
-			keyCode = CC_KEY_INSERT;
-			break;
-		case VK_DELETE:
-			keyCode = CC_KEY_DELETE;
-			break;
-		case VK_HOME:
-			keyCode = CC_KEY_HOME;
-			break;
-		case VK_END:
-			keyCode = CC_KEY_END;
-			break;
-		case VK_PRIOR:
-			keyCode = CC_KEY_PAGEUP;
-			break;
-		case VK_NEXT:
-			keyCode = CC_KEY_PAGEDOWN;
-			break;
-		case VK_SNAPSHOT:
-			keyCode = CC_KEY_PRINTSCREEN;
-			break;
-		case VK_SCROLL:
-			keyCode = CC_KEY_SCROLLLOCK;
-			break;
-		case VK_NUMLOCK:
-			keyCode = CC_KEY_NUMLOCK;
-			break;
-		case VK_PAUSE:
-			keyCode = CC_KEY_PAUSEBREAK;
-			break;
-		case VK_CONTROL:
-			keyCode = raw->data.keyboard.Flags & RI_KEY_E0?CC_KEY_RCONTROL:CC_KEY_LCONTROL;
-			break;
-		case VK_SHIFT:
-			keyCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX) == VK_LSHIFT?CC_KEY_LSHIFT:CC_KEY_RSHIFT;
-			break;
-		case VK_LSHIFT:
-			keyCode = CC_KEY_LSHIFT;
-			break;
-		case VK_RSHIFT:
-			keyCode = CC_KEY_RSHIFT;
-			break;
-		case VK_MENU:
-			keyCode = raw->data.keyboard.Flags & RI_KEY_E0?CC_KEY_RMENU:CC_KEY_LMENU;
-			break;
-		}
+		//fill event with data
 
 		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
-		_window->event.key.keyCode = keyCode;
-		_window->event.key.scanCode = raw->data.keyboard.MakeCode;
+		_window->event.key.keyCode = _vkToKeyCode[vkCode];
+		_window->event.key.scanCode = vkCode;
 	}
 }
 
