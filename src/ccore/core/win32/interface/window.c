@@ -1,118 +1,5 @@
 #include "../../common/interface/window.h"
 
-static unsigned char _vkToKeyCode[256] = {
-	['0'] = CC_KEY_0,
-	['1'] = CC_KEY_1,
-	['2'] = CC_KEY_2,
-	['3'] = CC_KEY_3,
-	['4'] = CC_KEY_4,
-	['5'] = CC_KEY_5,
-	['6'] = CC_KEY_6,
-	['7'] = CC_KEY_7,
-	['8'] = CC_KEY_8,
-	['9'] = CC_KEY_9,
-
-	['A'] = CC_KEY_A,
-	['B'] = CC_KEY_B,
-	['C'] = CC_KEY_C,
-	['D'] = CC_KEY_D,
-	['E'] = CC_KEY_E,
-	['F'] = CC_KEY_F,
-	['G'] = CC_KEY_G,
-	['H'] = CC_KEY_H,
-	['I'] = CC_KEY_I,
-	['J'] = CC_KEY_J,
-	['K'] = CC_KEY_K,
-	['L'] = CC_KEY_L,
-	['M'] = CC_KEY_M,
-	['N'] = CC_KEY_N,
-	['O'] = CC_KEY_O,
-	['P'] = CC_KEY_P,
-	['Q'] = CC_KEY_Q,
-	['R'] = CC_KEY_R,
-	['S'] = CC_KEY_S,
-	['T'] = CC_KEY_T,
-	['U'] = CC_KEY_U,
-	['V'] = CC_KEY_V,
-	['W'] = CC_KEY_W,
-	['X'] = CC_KEY_X,
-	['Y'] = CC_KEY_Y,
-	['Z'] = CC_KEY_Z,
-
-	[VK_F1] = CC_KEY_F1,
-	[VK_F2] = CC_KEY_F2,
-	[VK_F3] = CC_KEY_F3,
-	[VK_F4] = CC_KEY_F4,
-	[VK_F5] = CC_KEY_F5,
-	[VK_F6] = CC_KEY_F6,
-	[VK_F7] = CC_KEY_F7,
-	[VK_F8] = CC_KEY_F8,
-	[VK_F9] = CC_KEY_F9,
-	[VK_F10] = CC_KEY_F10,
-	[VK_F11] = CC_KEY_F11,
-	[VK_F12] = CC_KEY_F12,
-
-	[VK_NUMPAD0] = CC_KEY_NUM0,
-	[VK_NUMPAD1] = CC_KEY_NUM1,
-	[VK_NUMPAD2] = CC_KEY_NUM2,
-	[VK_NUMPAD3] = CC_KEY_NUM3,
-	[VK_NUMPAD4] = CC_KEY_NUM4,
-	[VK_NUMPAD5] = CC_KEY_NUM5,
-	[VK_NUMPAD6] = CC_KEY_NUM6,
-	[VK_NUMPAD7] = CC_KEY_NUM7,
-	[VK_NUMPAD8] = CC_KEY_NUM8,
-	[VK_NUMPAD9] = CC_KEY_NUM9,
-
-	[VK_BACK] = CC_KEY_BACKSPACE,
-	[VK_TAB] = CC_KEY_TAB,
-	[VK_RETURN] = CC_KEY_RETURN,
-	[VK_ESCAPE] = CC_KEY_ESCAPE,
-	[VK_SPACE] = CC_KEY_SPACE,
-	[VK_CAPITAL] = CC_KEY_CAPSLOCK,
-	[VK_INSERT] = CC_KEY_INSERT,
-	[VK_DELETE] = CC_KEY_DELETE,
-	[VK_HOME] = CC_KEY_HOME,
-	[VK_END] = CC_KEY_END,
-	[VK_PRIOR] = CC_KEY_PAGEUP,
-	[VK_NEXT] = CC_KEY_PAGEDOWN,
-	[VK_SNAPSHOT] = CC_KEY_PRINTSCREEN,
-	[VK_SCROLL] = CC_KEY_SCROLLLOCK,
-	[VK_NUMLOCK] = CC_KEY_NUMLOCK,
-	[VK_PAUSE] = CC_KEY_PAUSEBREAK,
-
-	[VK_LSHIFT] = CC_KEY_LSHIFT,
-	[VK_RSHIFT] = CC_KEY_RSHIFT,
-	[VK_LCONTROL] = CC_KEY_LCONTROL,
-	[VK_RCONTROL] = CC_KEY_RCONTROL,
-
-	[VK_LEFT] = CC_KEY_LEFT,
-	[VK_RIGHT] = CC_KEY_RIGHT,
-	[VK_UP] = CC_KEY_UP,
-	[VK_DOWN] = CC_KEY_DOWN
-};
-
-static unsigned char _keyCodeToVk[256];
-
-ccKeyCode ccScanCodeToKeyCode(unsigned short scanCode)
-{
-	return (ccKeyCode)_vkToKeyCode[scanCode];
-}
-
-unsigned short ccKeyCodeToScanCode(ccKeyCode keyCode)
-{
-	if(_keyCodeToVk[keyCode] == 0) {
-		unsigned char i;
-		for(i = 0; i < 256; i++) {
-			if(_vkToKeyCode[i] == keyCode) {
-				_keyCodeToVk[keyCode] = i;
-				break;
-			}
-		}
-	}
-
-	return _keyCodeToVk[keyCode];
-}
-
 ccEvent ccGetEvent()
 {
 	ccAssert(_window != NULL);
@@ -201,7 +88,6 @@ static void freeRawInput()
 
 static void processRid(HRAWINPUT rawInput)
 {
-	//TODO: process mouse here too
 	GetRawInputData(rawInput, RID_INPUT, NULL, &_window->dwSize, sizeof(RAWINPUTHEADER));
 
 	if(_window->dwSize > _window->lpbSize) {
@@ -219,7 +105,6 @@ static void processRid(HRAWINPUT rawInput)
 	}
 	else if(raw->header.dwType == RIM_TYPEKEYBOARD)
 	{
-		ccKeyCode keyCode = CC_KEY_UNDEFINED;
 		UINT vkCode = raw->data.keyboard.VKey;
 
 		//Parse raw keycodes
@@ -235,10 +120,9 @@ static void processRid(HRAWINPUT rawInput)
 		}
 
 		//fill event with data
-
+		printf("%d\n", vkCode);
 		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
-		_window->event.key.keyCode = _vkToKeyCode[vkCode];
-		_window->event.key.scanCode = vkCode;
+		_window->event.keyCode = vkCode;
 	}
 }
 
