@@ -19,3 +19,7 @@
 #include "../../common/debugutils/assert.h"
 #include "../../common/debugutils/print.h"
 #include "key.h"
+
+#ifdef LINUX
+#include "../../linux/io/key.h"
+#endif

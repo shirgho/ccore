@@ -103,6 +103,19 @@ bool ccPollEvent()
 		return false;
 	}
 
+#ifdef LINUX
+	_window->event.key = ccGetKeyPressed();
+	if(_window->event.key.keyCode != CC_KEY_UNDEFINED){
+		_window->event.type = CC_EVENT_KEY_DOWN;
+		return true;
+	}
+	_window->event.key = ccGetKeyReleased();
+	if(_window->event.key.keyCode != CC_KEY_UNDEFINED){
+		_window->event.type = CC_EVENT_KEY_UP;
+		return true;
+	}
+#endif
+
 	_window->event.type = CC_EVENT_SKIP;
 	if(XPending(_window->XDisplay) == 0){
 		return false;
