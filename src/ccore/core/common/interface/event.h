@@ -4,7 +4,16 @@
 
 #define CC_KEY_UNDEFINED 0
 
-#define CC_KEY_(NUMBER) ('NUMBER')
+#define CC_KEY_0 '0'
+#define CC_KEY_1 '1'
+#define CC_KEY_2 '2'
+#define CC_KEY_3 '3'
+#define CC_KEY_4 '4'
+#define CC_KEY_5 '5'
+#define CC_KEY_6 '6'
+#define CC_KEY_7 '7'
+#define CC_KEY_8 '8'
+#define CC_KEY_9 '9'
 
 #define CC_KEY_A 'A'
 #define CC_KEY_B 'B'
