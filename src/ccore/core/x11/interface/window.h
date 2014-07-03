@@ -18,7 +18,3 @@
 #include "../../common/utils/error.h"
 #include "../../common/debugutils/assert.h"
 #include "../../common/debugutils/print.h"
-
-#ifdef LINUX
-#include "../../linux/io/key.h"
-#endif

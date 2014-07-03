@@ -141,11 +141,11 @@ bool ccPollEvent()
 		case KeyPress:
 			//TODO: ignore undefined
 			_window->event.type = CC_EVENT_KEY_DOWN;
-			//_window->event.key.keyCode = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
+			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case KeyRelease:
 			_window->event.type = CC_EVENT_KEY_UP;
-			//_window->event.key.keyCode = ccXLookupKey(XLookupKeysym(&event.xkey, 0));
+			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case ConfigureNotify:
 			if(_window->rect.width != event.xconfigure.width || _window->rect.height != event.xconfigure.height){
