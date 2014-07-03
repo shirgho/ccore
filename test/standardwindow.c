@@ -114,6 +114,7 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_6:
 							printf("Generating a new window\n");
+							ccGLFreeContext();
 							ccFreeWindow();
 							ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore CSchmore", 0);
 							ccGLBindContext(3, 2);
