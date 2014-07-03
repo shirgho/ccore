@@ -2,8 +2,6 @@
 
 #include <X11/keysym.h>
 
-typedef CC_KEY int
-
 #define CC_KEY_0 XK_0
 #define CC_KEY_1 XK_1
 #define CC_KEY_2 XK_2

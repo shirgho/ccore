@@ -65,7 +65,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex);
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
 //display
-void ccFindDisplays(); //get all displays currently connected and active
-void ccFreeDisplays();
-void ccRevertDisplays();
+ccError ccFindDisplays(); //get all displays currently connected and active
+ccError ccFreeDisplays();
+ccError ccRevertDisplays();
 ccRect ccGetDisplayRect(ccDisplay *display);

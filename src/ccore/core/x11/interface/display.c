@@ -122,7 +122,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 	return true;
 }
 
-void ccFindDisplays()
+ccError ccFindDisplays()
 {
 	char displayName[64];
 	DIR *dir;
@@ -131,7 +131,7 @@ void ccFindDisplays()
 
 	ccAssert(_displays == NULL);
 
-	_displays = malloc(sizeof(ccDisplays));
+	ccMalloc(_displays, sizeof(ccDisplays));
 	_displays->amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
@@ -147,14 +147,17 @@ void ccFindDisplays()
 		if(display != NULL){
 			if(!ccXFindDisplaysXinerama(display, displayName)){
 				//ccXFindDisplaysXrandr(display, displayName);
+				return CC_ERROR_NODISPLAY;
 			}		
 			ccPrintString("X: %d displays found\n", _displays->amount);
 			XCloseDisplay(display);
 		}
 	}
+
+	return CC_ERROR_NONE;
 }
 
-void ccFreeDisplays()
+ccError ccFreeDisplays()
 {
 	ccAssert(_displays != NULL);
 
@@ -168,17 +171,25 @@ void ccFreeDisplays()
 		}
 		} */
 	free(_displays->display);
+
+	return CC_ERROR_NONE;
 }
 
-void ccRevertDisplays()
+ccError ccRevertDisplays()
 {
 	int i;
+	ccError output;
 
 	ccAssert(_displays != NULL);
 
 	for(i = 0; i < _displays->amount; i++){
-		ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
+		output = ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
+		if(output != CC_ERROR_NONE){
+			return output;
+		}
 	}
+
+	return CC_ERROR_NONE;
 }
 
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)

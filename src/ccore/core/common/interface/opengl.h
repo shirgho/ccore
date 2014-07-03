@@ -16,5 +16,5 @@
 
 //opengl
 ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); //bind the openGl context to window
-void ccGLFreeContext(); //free context
-void ccGLSwapBuffers(); //swap the buffers
+ccError ccGLFreeContext(); //free context
+ccError ccGLSwapBuffers(); //swap the buffers

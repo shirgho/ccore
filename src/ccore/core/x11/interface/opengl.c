@@ -29,12 +29,16 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	return CC_ERROR_NONE;
 }
 
-void ccGLFreeContext()
+ccError ccGLFreeContext()
 {
 	glXDestroyContext(_window->XDisplay, _window->XContext);
+	
+	return CC_ERROR_NONE;
 }
 
-void ccGLSwapBuffers()
+ccError ccGLSwapBuffers()
 {
 	glXSwapBuffers(_window->XDisplay, _window->XWindow);
+
+	return CC_ERROR_NONE;
 }

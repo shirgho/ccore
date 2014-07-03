@@ -67,9 +67,9 @@ ccRect ccGetWindowRect();
 bool ccWindowExists();
 
 //window functions
-void ccNewWindow(ccRect rect, const char *title, int flags);
-void ccFreeWindow();
+ccError ccNewWindow(ccRect rect, const char *title, int flags);
+ccError ccFreeWindow();
 bool ccPollEvent(); //poll an event from the events that currently need to be processed in the window
-void ccChangeWM(ccWindowMode mode);
-void ccResizeMoveWindow(ccRect rect, bool addBorder); //addBorder indicates whether the border size is included in the rect or whether it has to be added
-void ccCenterWindow();
+ccError ccChangeWM(ccWindowMode mode);
+ccError ccResizeMoveWindow(ccRect rect, bool addBorder); //addBorder indicates whether the border size is included in the rect or whether it has to be added
+ccError ccCenterWindow();

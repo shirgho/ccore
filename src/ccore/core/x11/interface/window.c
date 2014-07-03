@@ -19,7 +19,7 @@ bool ccWindowExists()
 	return _window != NULL;
 }
 
-void ccSetWindowEvent(const char *type, const char *atom, bool value)
+ccError ccSetWindowEvent(const char *type, const char *atom, bool value)
 {	
 	XEvent event;
 	Atom wmTypeFrom, wmTypeTo;
@@ -36,9 +36,11 @@ void ccSetWindowEvent(const char *type, const char *atom, bool value)
 	event.xclient.data.l[1] = wmTypeTo;
 
 	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
+
+	return CC_ERROR_NONE;
 }
 
-void ccNewWindow(ccRect rect, const char *title, int flags)
+ccError ccNewWindow(ccRect rect, const char *title, int flags)
 {
 	Window root;
 	Atom delete;
@@ -46,6 +48,9 @@ void ccNewWindow(ccRect rect, const char *title, int flags)
 	ccAssert(_window == NULL);
 
 	_window = malloc(sizeof(ccWindow));
+	if(_window == NULL){
+		return CC_ERROR_OUT_OF_MEMORY;
+	}
 	ccAssert(_window != NULL);
 
 	_window->XDisplay = XOpenDisplay(NULL);
@@ -69,9 +74,11 @@ void ccNewWindow(ccRect rect, const char *title, int flags)
 
 	delete = XInternAtom(_window->XDisplay, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(_window->XDisplay, _window->XWindow, &delete, 1);
+
+	return CC_ERROR_NONE;
 }
 
-void ccFreeWindow()
+ccError ccFreeWindow()
 {
 	ccAssert(_window != NULL);	
 	
@@ -80,6 +87,8 @@ void ccFreeWindow()
 
 	free(_window);
 	_window = NULL;
+
+	return CC_ERROR_NONE;
 }
 
 bool ccPollEvent()
@@ -90,19 +99,6 @@ bool ccPollEvent()
 	if(!_window){
 		return false;
 	}
-
-#ifdef LINUX
-	_window->event.keyCode = ccGetKeyPressed();
-	if(_window->event.keyCode != CC_KEY_UNDEFINED){
-		_window->event.type = CC_EVENT_KEY_DOWN;
-		return true;
-	}
-	_window->event.keyCode = ccGetKeyReleased();
-	if(_window->event.keyCode != CC_KEY_UNDEFINED){
-		_window->event.type = CC_EVENT_KEY_UP;
-		return true;
-	}
-#endif
 
 	_window->event.type = CC_EVENT_SKIP;
 	if(XPending(_window->XDisplay) == 0){
@@ -178,7 +174,7 @@ bool ccPollEvent()
 	return true;
 }
 
-void ccChangeWM(ccWindowMode mode)
+ccError ccChangeWM(ccWindowMode mode)
 {
 	XEvent event;
 	XWindowAttributes windowAttributes;
@@ -214,17 +210,21 @@ void ccChangeWM(ccWindowMode mode)
 
 		XUngrabPointer(_window->XDisplay, CurrentTime);
 	}
+
+	return CC_ERROR_NONE;
 }
 
-void ccResizeMoveWindow(ccRect rect, bool addBorder)
+ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
 	//TODO implement addBorder
 	ccAssert(_window);
 
 	XMoveResizeWindow(_window->XDisplay, _window->XWindow, rect.x, rect.y, rect.width, rect.height);
+
+	return CC_ERROR_NONE;
 }
 
-void ccCenterWindow()
+ccError ccCenterWindow()
 {
 	//TODO send _NET_WM_WINDOW_TYPE_SPLASH event
 	XEvent event;
@@ -244,6 +244,8 @@ void ccCenterWindow()
 	event.xclient.data.l[1] = splash;
 
 	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
+
+	return CC_ERROR_NONE;
 }
 
 ccRect ccGetDisplayRect(ccDisplay *display)
