@@ -2,7 +2,11 @@
 
 #include "../types.h"
 
-#define CC_KEY_UNDEFINED 0
+#ifdef X11
+#include "../../x11/interface/event.h"
+#elif defined WIN32
+#include "../../win32/interface/event.h"
+#endif
 
 #define CC_KEY_0 '0'
 #define CC_KEY_1 '1'

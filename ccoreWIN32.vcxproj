@@ -41,6 +41,7 @@
     <ClInclude Include="src\ccore\core\common\utils\timing.h" />
     <ClInclude Include="src\ccore\core\win32\core.h" />
     <ClInclude Include="src\ccore\core\win32\interface\display.h" />
+    <ClInclude Include="src\ccore\core\win32\interface\event.h" />
     <ClInclude Include="src\ccore\core\win32\interface\opengl.h" />
     <ClInclude Include="src\ccore\core\win32\interface\window.h" />
     <ClInclude Include="src\ccore\core\win32\utils\dirUtils.h" />
