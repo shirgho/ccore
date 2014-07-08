@@ -56,3 +56,5 @@ typedef struct {
 		int scrollDelta;
 	};
 } ccEvent;
+
+char ccKeyToChar(int key);

@@ -149,7 +149,7 @@ int main(int argc, char** argv)
 							printf("num2 key\n");
 							break;
 						default:
-							printf("Key is not used\n");
+							printf("Key %c is not used\n", ccKeyToChar(ccGetEvent().keyCode));
 							break;
 					}
 					break;
