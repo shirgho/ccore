@@ -3,6 +3,7 @@
 int ccGetDisplayAmount()
 {
 	ccAssert(_displays != NULL);
+	ccAssert(_displays->amount != 0);
 
 	return _displays->amount;
 }
@@ -18,6 +19,7 @@ ccDisplay *ccGetDisplay(int index)
 ccDisplay *ccGetDefaultDisplay()
 {
 	ccAssert(_displays != NULL);
+	ccAssert(_displays->display != NULL);
 
 	return _displays->display + _displays->primary;
 }
@@ -39,6 +41,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 	}
 
 	currentResolution.bitDepth = -1;
+	_displays->primary = 0;
 
 	root = RootWindow(display, 0);
 	resources = XRRGetScreenResources(display, root);
@@ -67,7 +70,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		memcpy(currentDisplay->monitorName, outputInfo->name, outputInfo->nameLen);
 
 		currentDisplay->XDisplayName[displayNameLength] = '\0';
-		currentDisplay->gpuName = "";
+		currentDisplay->gpuName = "Undefined";
 
 		crtcInfo = XRRGetCrtcInfo(display, resources, resources->crtcs[i]);
 		if(crtcInfo){
@@ -134,7 +137,9 @@ ccError ccFindDisplays()
 	ccMalloc(_displays, sizeof(ccDisplays));
 	_displays->amount = 0;
 
+#ifdef LINUX
 	dir = opendir("/tmp/.X11-unix");
+#endif
 	ccAssert(dir != NULL);
 
 	while((direntry = readdir(dir)) != NULL){
@@ -220,39 +225,9 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	ccAssert(display != NULL);
 	ccAssert(resolutionIndex < display->amount);
 
-	/* Screen already has the good coordinates */
-	if(resolutionIndex != CC_DEFAULT_RESOLUTION){
-		displayData = display->resolution + resolutionIndex;
-		if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
-			return CC_ERROR_NONE;
-		}
-
-		if(display->resolution->width <= 0 || display->resolution->height <= 0){
-			ccPrintString("Error: Resolution supplied not valid\n");
-			return CC_ERROR_RESOLUTION_CHANGE;
-		}
-	}
-
 	XDisplay = XOpenDisplay(display->XDisplayName);
 	root = RootWindow(XDisplay, display->XScreen);
 	XGrabServer(XDisplay);
-
-	if(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY)){
-		ccPrintString("X: Unable to get screen size range\n");
-		return CC_ERROR_RESOLUTION_CHANGE;
-	}
-
-	if(resolutionIndex != CC_DEFAULT_RESOLUTION){
-		if(displayData->width < minX || displayData->height < minY){
-			ccPrintString("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
-			return CC_ERROR_RESOLUTION_CHANGE;
-		} else if(displayData->width > maxX || displayData->height > maxY){
-			ccPrintString("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
-			return CC_ERROR_RESOLUTION_CHANGE;
-		}
-
-		ccPrintString("X: Setting display %d to %dx%d\n", display->XScreen, displayData->width, displayData->height);
-	}
 
 	resources = XRRGetScreenResources(XDisplay, root);
 	if(!resources){
@@ -274,16 +249,39 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	}
 
 	if(resolutionIndex != CC_DEFAULT_RESOLUTION){
+		displayData = display->resolution + resolutionIndex;
+		if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
+			return CC_ERROR_NONE;
+		}
+
+		if(display->resolution->width <= 0 || display->resolution->height <= 0){
+			ccPrintString("Error: Resolution supplied not valid\n");
+			return CC_ERROR_RESOLUTION_CHANGE;
+		}
+
+		if(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY)){
+			ccPrintString("X: Unable to get screen size range\n");
+			return CC_ERROR_RESOLUTION_CHANGE;
+		}
+
+		if(displayData->width < minX || displayData->height < minY){
+			ccPrintString("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
+			return CC_ERROR_RESOLUTION_CHANGE;
+		} else if(displayData->width > maxX || displayData->height > maxY){
+			ccPrintString("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
+			return CC_ERROR_RESOLUTION_CHANGE;
+		}
+
+		ccPrintString("X: Setting display %d to %dx%d\n", display->XScreen, displayData->width, displayData->height);
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, displayData->XMode, crtcInfo->rotation, &display->XOutput, 1);
 	}else{
+		ccPrintString("X: Reverting display %d\n", display->XScreen);
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, display->XOldMode, crtcInfo->rotation, &display->XOutput, 1);
 	}
 
 	XRRFreeScreenResources(resources);
 	XRRFreeOutputInfo(outputInfo);
 	XRRFreeCrtcInfo(crtcInfo);
-
-	display->resolution = displayData;
 
 	XSync(XDisplay, False);
 	XUngrabServer(XDisplay);

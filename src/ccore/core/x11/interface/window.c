@@ -54,7 +54,6 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	ccAssert(_window != NULL);
 
 	_window->XDisplay = XOpenDisplay(NULL);
-	//TODO: change ccAssert to error
 	ccAssert(_window->XDisplay != NULL);
 
 	root = DefaultRootWindow(_window->XDisplay);
