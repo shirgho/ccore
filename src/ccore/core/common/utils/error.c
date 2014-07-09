@@ -30,6 +30,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_WINDOWDESTRUCTION:
 			return "Can't destroy the window";
 			break;
+		case CC_ERROR_WINDOW_MODE:
+			return "Couldn't change the window mode";
+			break;
 		case CC_ERROR_RESOLUTION_CHANGE:
 			return "Could not change display resolution";
 			break;
