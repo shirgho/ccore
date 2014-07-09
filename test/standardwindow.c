@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	}
 
 	printf("Creating window\n");
-	ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", CC_WINDOW_FLAG_NORESIZE);
+	if(ccNewWindow((ccRect){ 0, 0, 1024, 768 }, "CCore test application", CC_WINDOW_FLAG_NORESIZE) != CC_ERROR_NONE) printf("Error creating window!\n");
 
 	ccCenterWindow();
 	ccGLBindContext(3, 2);
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_MOUSE_SCROLL:
-					rotQuad += ccGetEvent().scrollDelta << 2;
+					rotQuad += ccGetEvent().scrollDelta * 2;
 					break;
 				case CC_EVENT_KEY_DOWN:
 					switch(ccGetEvent().keyCode){
