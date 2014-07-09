@@ -37,12 +37,10 @@ typedef enum {
 
 // The type of mouse button pressed, used inside the ccEvent union
 typedef enum {
-	CC_MOUSE_BUTTON_NONE = 0,
-	CC_MOUSE_BUTTON_LEFT = 1,
-	CC_MOUSE_BUTTON_MIDDLE = 2,
-	CC_MOUSE_BUTTON_RIGHT = 3,
-	CC_MOUSE_BUTTON_SPECIAL_1 = 4,
-	CC_MOUSE_BUTTON_SPECIAL_2 = 5
+	CC_MOUSE_BUTTON_NONE,
+	CC_MOUSE_BUTTON_LEFT,
+	CC_MOUSE_BUTTON_MIDDLE,
+	CC_MOUSE_BUTTON_RIGHT
 } ccMouseButtonType;
 
 // The event structure used by ccWindow, set by the call ccPollEvent
@@ -52,7 +50,7 @@ typedef struct {
 	// The union contains different data types for different events
 	union {
 		ccMouseButtonType mouseButton;
-		ccPoint mousePosition;
+		ccPoint mouseVector;
 		unsigned int keyCode;
 		float scrollDelta;
 	};

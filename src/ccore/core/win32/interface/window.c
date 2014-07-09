@@ -101,7 +101,48 @@ static void processRid(HRAWINPUT rawInput)
 	RAWINPUT* raw = (RAWINPUT*)_window->lpb;
 
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
+		USHORT buttonFlags = raw->data.mouse.usButtonFlags;
 		
+		if(buttonFlags == 0) {
+			POINT screenCoordinates;
+
+			GetCursorPos(&screenCoordinates);
+			ScreenToClient(_window->winHandle, &screenCoordinates);
+			_window->mouse.x = screenCoordinates.x;
+			_window->mouse.y = screenCoordinates.y;
+
+			_window->event.type = CC_EVENT_MOUSE_MOVE;
+			_window->event.mouseVector.x = raw->data.mouse.lLastX;
+			_window->event.mouseVector.y = raw->data.mouse.lLastY;
+		}
+		else if(buttonFlags & RI_MOUSE_WHEEL) {
+			_window->event.type = CC_EVENT_MOUSE_SCROLL;
+			_window->event.scrollDelta = (float)((short)raw->data.mouse.usButtonData) / WHEEL_DELTA;
+		}
+		else if(buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) {
+			_window->event.type = CC_EVENT_MOUSE_DOWN;
+			_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+		}
+		else if(buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) {
+			_window->event.type = CC_EVENT_MOUSE_DOWN;
+			_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+		}
+		else if(buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) {
+			_window->event.type = CC_EVENT_MOUSE_DOWN;
+			_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+		}
+		else if(buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP) {
+			_window->event.type = CC_EVENT_MOUSE_UP;
+			_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+		}
+		else if(buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) {
+			_window->event.type = CC_EVENT_MOUSE_DOWN;
+			_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
+		}
+		else if(buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) {
+			_window->event.type = CC_EVENT_MOUSE_UP;
+			_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
+		}
 	}
 	else if(raw->header.dwType == RIM_TYPEKEYBOARD)
 	{
@@ -143,39 +184,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		break;
 	case WM_MOVE:
 		updateWindowDisplay(_window);
-		break;
-	case WM_MOUSEMOVE:
-		_window->mouse.x = (unsigned short)lParam & 0x0000FFFF;
-		_window->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
-		_window->event.type = CC_EVENT_MOUSE_MOVE;
-		break;
-	case WM_LBUTTONDOWN:
-		_window->event.type = CC_EVENT_MOUSE_DOWN;
-		_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
-		break;
-	case WM_MBUTTONDOWN:
-		_window->event.type = CC_EVENT_MOUSE_DOWN;
-		_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
-		break;
-	case WM_RBUTTONDOWN:
-		_window->event.type = CC_EVENT_MOUSE_DOWN;
-		_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
-		break;
-	case WM_LBUTTONUP:
-		_window->event.type = CC_EVENT_MOUSE_UP;
-		_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
-		break;
-	case WM_MBUTTONUP:
-		_window->event.type = CC_EVENT_MOUSE_UP;
-		_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
-		break;
-	case WM_RBUTTONUP:
-		_window->event.type = CC_EVENT_MOUSE_UP;
-		_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
-		break;
-	case WM_MOUSEWHEEL:
-		_window->event.type = CC_EVENT_MOUSE_SCROLL;
-		_window->event.scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
 		break;
 	case WM_SETFOCUS:
 		_window->event.type = CC_EVENT_FOCUS_GAINED;
@@ -270,8 +278,8 @@ ccError ccNewWindow(ccRect rect, const char* title, int flags)
 
 	_window->style |= WS_VISIBLE;
 
-	if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOWCREATION;
-
+	ShowWindow(_window->winHandle, SW_SHOW);
+	
 	initializeRawInput();
 
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
