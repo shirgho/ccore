@@ -69,7 +69,7 @@ static bool initializeRawInput()
 
 	_window->rid[RAWINPUT_MOUSE].usUsagePage = 0x01;
 	_window->rid[RAWINPUT_MOUSE].usUsage = 0x02;
-	_window->rid[RAWINPUT_MOUSE].dwFlags = RIDEV_NOLEGACY;
+	_window->rid[RAWINPUT_MOUSE].dwFlags = 0;
 	_window->rid[RAWINPUT_MOUSE].hwndTarget = _window->winHandle;
 
 	return RegisterRawInputDevices(_window->rid, NRAWINPUTDEVICES, sizeof(_window->rid[0]));
@@ -104,13 +104,6 @@ static void processRid(HRAWINPUT rawInput)
 		USHORT buttonFlags = raw->data.mouse.usButtonFlags;
 		
 		if(buttonFlags == 0) {
-			POINT screenCoordinates;
-
-			GetCursorPos(&screenCoordinates);
-			ScreenToClient(_window->winHandle, &screenCoordinates);
-			_window->mouse.x = screenCoordinates.x;
-			_window->mouse.y = screenCoordinates.y;
-
 			_window->event.type = CC_EVENT_MOUSE_MOVE;
 			_window->event.mouseVector.x = raw->data.mouse.lLastX;
 			_window->event.mouseVector.y = raw->data.mouse.lLastY;
@@ -168,7 +161,7 @@ static void processRid(HRAWINPUT rawInput)
 
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if(_window == NULL) goto skipevent;
+	if(_window == NULL) DefWindowProc(winHandle, message, wParam, lParam);
 
 	_window->event.type = CC_EVENT_SKIP;
 
@@ -185,6 +178,10 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 	case WM_MOVE:
 		updateWindowDisplay(_window);
 		break;
+	case WM_MOUSEMOVE:
+		_window->mouse.x = (unsigned short)lParam & 0x0000FFFF;
+		_window->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
+		break;
 	case WM_SETFOCUS:
 		_window->event.type = CC_EVENT_FOCUS_GAINED;
 		break;
@@ -192,7 +189,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		_window->event.type = CC_EVENT_FOCUS_LOST;
 		break;
 	default:
-	skipevent:
 		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
 	}
