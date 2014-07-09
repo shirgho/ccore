@@ -18,9 +18,13 @@ typedef enum {
 
 #define ccMalloc(x, size) { \
 	x = malloc(size); \
-	if(!x){ \
-		return CC_ERROR_OUT_OF_MEMORY; \
-	}}\
+	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
+	}\
+
+#define ccRealloc(x, size) { \
+	x = realloc(x, size); \
+	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
+	}\
 	
 
 const char *ccErrorString(ccError error);
