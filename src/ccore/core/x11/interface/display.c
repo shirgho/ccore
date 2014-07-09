@@ -27,6 +27,7 @@ ccDisplay *ccGetDefaultDisplay()
 static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int i, j, k, displayNameLength, eventBase, errorBase;
+	bool foundCrtc;
 	unsigned int vTotal;
 	ccDisplay *currentDisplay;
 	ccDisplayData currentResolution;
@@ -72,12 +73,25 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		currentDisplay->XDisplayName[displayNameLength] = '\0';
 		currentDisplay->gpuName = "Undefined";
 
-		crtcInfo = XRRGetCrtcInfo(display, resources, resources->crtcs[i]);
-		if(crtcInfo){
+		foundCrtc = false;
+		for(j = 0; j < resources->ncrtc; j++){	
+			if(resources->crtcs[j] != outputInfo->crtc){
+				continue;
+			}
+			crtcInfo = XRRGetCrtcInfo(display, resources, resources->crtcs[j]);
+			if(crtcInfo->mode == None){
+				continue;
+			}
+
 			currentDisplay->x = crtcInfo->x;
 			currentDisplay->y = crtcInfo->y;
 			currentDisplay->XOldMode = crtcInfo->mode;
-		}else{
+			foundCrtc = true;
+
+			XRRFreeCrtcInfo(crtcInfo);
+			break;
+		}
+		if(!foundCrtc){
 			currentDisplay->x = -1;
 			currentDisplay->y = -1;
 		}
@@ -116,7 +130,6 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 			}
 		}
 
-		XRRFreeCrtcInfo(crtcInfo);
 		XRRFreeOutputInfo(outputInfo);
 	}
 
