@@ -9,6 +9,7 @@ typedef enum {
 
 	//Window related
 	CC_ERROR_WINDOWCREATION, //The window can't be created
+	CC_ERROR_WINDOWDESTRUCTION, //The window can't be destroyed
 
 	//OpenGL related
 	CC_ERROR_GLVERSION, //The target OpenGL version is not supported
