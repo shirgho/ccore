@@ -31,5 +31,4 @@ typedef enum {
 	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
 	}\
 	
-
 const char *ccErrorString(ccError error);
