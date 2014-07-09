@@ -230,7 +230,7 @@ bool ccPollEvent()
 	return false;
 }
 
-void ccNewWindow(ccRect rect, const char* title, int flags)
+ccError ccNewWindow(ccRect rect, const char* title, int flags)
 {
 	HMODULE moduleHandle = GetModuleHandle(NULL);
 	RECT windowRect;
@@ -238,7 +238,7 @@ void ccNewWindow(ccRect rect, const char* title, int flags)
 	ccAssert(_window == NULL);
 
 	//initialize struct
-	_window = malloc(sizeof(ccWindow));
+	ccMalloc(_window, sizeof(ccWindow));
 	memcpy(&_window->rect, &rect, sizeof(ccRect));
 	_window->sizeChanged = true;
 
@@ -253,7 +253,7 @@ void ccNewWindow(ccRect rect, const char* title, int flags)
 	windowRect.top = rect.y;
 	windowRect.right = rect.x + rect.width;
 	windowRect.bottom = rect.y + rect.height;
-	AdjustWindowRectEx(&windowRect, _window->style, FALSE, WS_EX_APPWINDOW);
+	if(AdjustWindowRectEx(&windowRect, _window->style, FALSE, WS_EX_APPWINDOW) == FALSE) return CC_ERROR_WINDOWCREATION;
 	
 	regHinstance(moduleHandle);
 	_window->winHandle = CreateWindowEx(
@@ -270,18 +270,20 @@ void ccNewWindow(ccRect rect, const char* title, int flags)
 
 	_window->style |= WS_VISIBLE;
 
-	ShowWindow(_window->winHandle, SW_SHOW);
+	if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOWCREATION;
 
 	initializeRawInput();
 
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
-		GetWindowRect(_window->winHandle, &rect);
-		SetWindowPos(_window->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW);
+		if(GetWindowRect(_window->winHandle, &rect) == FALSE) return CC_ERROR_WINDOWCREATION;
+		if(SetWindowPos(_window->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) return CC_ERROR_WINDOWCREATION;
 	}
+
+	return CC_ERROR_NONE;
 }
 
-void ccFreeWindow()
+ccError ccFreeWindow()
 {
 	ccAssert(_window != NULL);
 
@@ -290,13 +292,14 @@ void ccFreeWindow()
 	if(_window->lpbSize != 0) free(_window->lpb);
 
 	ReleaseDC(_window->winHandle, _window->hdc);
-	//TODO: release context?
-	DestroyWindow(_window->winHandle);
+	if(DestroyWindow(_window->winHandle) == FALSE) return CC_ERROR_WINDOWDESTRUCTION;
 	free(_window);
 	_window = NULL;
+
+	return CC_ERROR_NONE;
 }
 
-void ccChangeWM(ccWindowMode mode)
+ccError ccChangeWM(ccWindowMode mode)
 {
 	ccAssert(_window != NULL);
 
@@ -304,22 +307,24 @@ void ccChangeWM(ccWindowMode mode)
 	{
 	case CC_WINDOW_MODE_WINDOW:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
-		ShowWindow(_window->winHandle, SW_SHOW);
+		if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
 		ccResizeMoveWindow(ccGetDisplayRect(_window->display), true);
 		break;
 	case CC_WINDOW_MODE_FULLSCREEN:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style & ~(WS_CAPTION | WS_THICKFRAME));
-		ShowWindow(_window->winHandle, SW_SHOW);
+		if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
 		ccResizeMoveWindow(ccGetDisplayRect(_window->display), false);
 		break;
 	case CC_WINDOW_MODE_MAXIMIZED:
 		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
-		ShowWindow(_window->winHandle, SW_MAXIMIZE);
+		if(ShowWindow(_window->winHandle, SW_MAXIMIZE) == FALSE) return CC_ERROR_WINDOW_MODE;
 		break;
 	}
+	
+	return CC_ERROR_NONE;
 }
 
-void ccResizeMoveWindow(ccRect rect, bool addBorder)
+ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
 	ccAssert(_window != NULL);
 
@@ -329,23 +334,25 @@ void ccResizeMoveWindow(ccRect rect, bool addBorder)
 		windowRect.top = rect.y;
 		windowRect.right = rect.x + rect.width;
 		windowRect.bottom = rect.y + rect.height;
-		AdjustWindowRectEx(&windowRect, _window->style, FALSE, WS_EX_APPWINDOW);
+		if(AdjustWindowRectEx(&windowRect, _window->style, FALSE, WS_EX_APPWINDOW) == FALSE) return CC_ERROR_WINDOW_MODE;
 
-		MoveWindow(_window->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE);
+		if(MoveWindow(_window->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE) == FALSE) return CC_ERROR_WINDOW_MODE;
 	}
 	else{
-		MoveWindow(_window->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE);
+		if(MoveWindow(_window->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE) == FALSE) return CC_ERROR_WINDOW_MODE;
 	}
+
+	return CC_ERROR_NONE;
 }
 
-void ccCenterWindow()
+ccError ccCenterWindow()
 {
 	RECT windowRect;
 
 	ccAssert(_window != NULL);
 
-	GetWindowRect(_window->winHandle, &windowRect);
-	ccResizeMoveWindow(
+	if(GetWindowRect(_window->winHandle, &windowRect) == FALSE) return CC_ERROR_WINDOW_MODE;
+	return ccResizeMoveWindow(
 		(ccRect){_window->display->x + ((ccGetResolutionCurrent(_window->display)->width - (windowRect.right - windowRect.left)) >> 1),
 				 _window->display->y + ((ccGetResolutionCurrent(_window->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
 				 windowRect.right - windowRect.left,

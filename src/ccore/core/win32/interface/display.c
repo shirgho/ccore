@@ -22,7 +22,7 @@ ccDisplay *ccGetDefaultDisplay()
 	return &_displays->display[_displays->primary];
 }
 
-void ccFindDisplays()
+ccError ccFindDisplays()
 {
 	DISPLAY_DEVICE device;
 	DISPLAY_DEVICE display;
@@ -36,7 +36,9 @@ void ccFindDisplays()
 
 	ccAssert(_displays == NULL);
 
-	_displays = malloc(sizeof(ccDisplays));
+	ccMalloc(_displays, sizeof(ccDisplays));
+
+	if(_displays == NULL) return CC_ERROR_OUT_OF_MEMORY;
 
 	dm.dmSize = sizeof(dm);
 	device.cb = sizeof(DISPLAY_DEVICE);
@@ -50,19 +52,19 @@ void ccFindDisplays()
 			_displays->amount++;
 
 			if(_displays->amount == 1) {
-				_displays->display = malloc(sizeof(ccDisplay));
+				ccMalloc(_displays->display, sizeof(ccDisplay));
 			}
 			else{
-				_displays->display = realloc(_displays->display, sizeof(ccDisplay)*_displays->amount);
+				ccRealloc(_displays->display, sizeof(ccDisplay)*_displays->amount);
 			}
 
 			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
 
 			currentDisplay = &_displays->display[_displays->amount - 1];
 
-			currentDisplay->gpuName = malloc(CC_MAXDEVICENAMESIZE);
-			currentDisplay->monitorName = malloc(CC_MAXDEVICENAMESIZE);
-			currentDisplay->deviceName = malloc(CC_MAXDEVICENAMESIZE);
+			ccMalloc(currentDisplay->gpuName, CC_MAXDEVICENAMESIZE);
+			ccMalloc(currentDisplay->monitorName, CC_MAXDEVICENAMESIZE);
+			ccMalloc(currentDisplay->deviceName, CC_MAXDEVICENAMESIZE);
 
 			memcpy(currentDisplay->gpuName, device.DeviceString, 128);
 			memcpy(currentDisplay->monitorName, display.DeviceString, 128);
@@ -95,10 +97,10 @@ void ccFindDisplays()
 				if(ccResolutionExists(currentDisplay, &buffer)) continue;
 
 				if(currentDisplay->amount == 0) {
-					currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+					ccMalloc(currentDisplay->resolution, sizeof(ccDisplayData));
 				}
 				else{
-					currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
+					ccRealloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
 				}
 
 				if(memcmp(&initialBuffer, &buffer, sizeof(ccDisplayData)) == 0) {
@@ -117,9 +119,11 @@ void ccFindDisplays()
 		}
 		deviceCount++;
 	}
+
+	return CC_ERROR_NONE;
 }
 
-void ccFreeDisplays() {
+ccError ccFreeDisplays() {
 	int i;
 
 	ccAssert(_displays != NULL);
@@ -132,9 +136,11 @@ void ccFreeDisplays() {
 	}
 	free(_displays->display);
 	free(_displays);
+
+	return CC_ERROR_NONE;
 }
 
-void ccRevertDisplays()
+ccError ccRevertDisplays()
 {
 	int i;
 
@@ -143,6 +149,8 @@ void ccRevertDisplays()
 	for(i = 0; i < _displays->amount; i++){
 		ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
 	}
+
+	return CC_ERROR_NONE;
 }
 
 ccRect ccGetDisplayRect(ccDisplay *display)
