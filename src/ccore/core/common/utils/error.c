@@ -18,6 +18,12 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_GLEWINIT:
 			return "GLEW could not be initialized";
 			break;
+		case CC_ERROR_OUT_OF_MEMORY:
+			return "Out of memory";
+			break;
+		case CC_ERROR_CANTSWAP:
+			return "Failed to swap the buffers";
+			break;
 		case CC_ERROR_RESOLUTION_CHANGE:
 			return "Could not change display resolution";
 			break;
