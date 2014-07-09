@@ -196,6 +196,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	devMode.dmDisplayFrequency = displayData.refreshRate;
 	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
 
+	//TODO: CDS_FULLSCREEN probably initiates exclusive fullscreen!
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
