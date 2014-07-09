@@ -19,21 +19,21 @@ bool ccWindowExists()
 	return _window != NULL;
 }
 
-ccError ccSetWindowEvent(const char *type, const char *atom, bool value)
+static ccError ccSetWindowState(const char *type, bool value)
 {	
 	XEvent event;
-	Atom wmTypeFrom, wmTypeTo;
-	
-	wmTypeFrom = XInternAtom(_window->XDisplay, type, false);
-	wmTypeTo = XInternAtom(_window->XDisplay, atom, false);
+	Atom wmState, newWmState;
+
+	wmState = XInternAtom(_window->XDisplay, "_NET_WM_STATE", false);
+	newWmState = XInternAtom(_window->XDisplay, type, false);
 
 	memset(&event, 0, sizeof(event));
 	event.type = ClientMessage;
 	event.xclient.window = _window->XWindow;
-	event.xclient.message_type = wmTypeFrom;
+	event.xclient.message_type = wmState;
 	event.xclient.format = 32;
 	event.xclient.data.l[0] = value;
-	event.xclient.data.l[1] = wmTypeTo;
+	event.xclient.data.l[1] = newWmState;
 
 	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
 
@@ -62,8 +62,8 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	// Choose types of events
 	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 
-	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE){
-		ccSetWindowEvent("_NET_WM_ALLOWED_ACTIONS", "_NET_WM_ACTION_RESIZE", true);
+	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP){
+		ccSetWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
 	XMapWindow(_window->XDisplay, _window->XWindow);
@@ -80,7 +80,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 ccError ccFreeWindow()
 {
 	ccAssert(_window != NULL);	
-	
+
 	XUnmapWindow(_window->XDisplay, _window->XWindow);
 	XCloseDisplay(_window->XDisplay);
 
@@ -175,26 +175,13 @@ bool ccPollEvent()
 
 ccError ccChangeWM(ccWindowMode mode)
 {
-	XEvent event;
 	XWindowAttributes windowAttributes;
-	Atom wmState, fullscreen;
 	int windowWidth, windowHeight;
 
 	ccAssert(_window);
 
 	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
-		wmState = XInternAtom(_window->XDisplay, "_NET_WM_STATE", false);
-		fullscreen = XInternAtom(_window->XDisplay, "_NET_WM_STATE_FULLSCREEN", false);
-
-		memset(&event, 0, sizeof(event));
-		event.type = ClientMessage;
-		event.xclient.window = _window->XWindow;
-		event.xclient.message_type = wmState;
-		event.xclient.format = 32;
-		event.xclient.data.l[0] = mode == CC_WINDOW_MODE_FULLSCREEN;
-		event.xclient.data.l[1] = fullscreen;
-
-		XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
+		ccSetWindowState("_NET_WM_STATE_FULLSCREEN", mode == CC_WINDOW_MODE_FULLSCREEN);
 
 		if(mode == CC_WINDOW_MODE_FULLSCREEN){
 			XGrabPointer(_window->XDisplay, _window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, _window->XWindow, None, CurrentTime);
@@ -202,13 +189,20 @@ ccError ccChangeWM(ccWindowMode mode)
 			XUngrabPointer(_window->XDisplay, CurrentTime);
 		}
 	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
+		if(_window->oldMode == CC_WINDOW_MODE_FULLSCREEN){	
+			ccSetWindowState("_NET_WM_STATE_FULLSCREEN", false);
+		}
 		XGetWindowAttributes(_window->XDisplay, DefaultRootWindow(_window->XDisplay), &windowAttributes);
 		windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
 		windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
 		XMoveResizeWindow(_window->XDisplay, _window->XWindow, 0, 0, windowWidth, windowHeight);
 
+		ccSetWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
+
 		XUngrabPointer(_window->XDisplay, CurrentTime);
 	}
+
+	_window->oldMode = mode;
 
 	return CC_ERROR_NONE;
 }
