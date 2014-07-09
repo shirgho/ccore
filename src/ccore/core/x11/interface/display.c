@@ -57,9 +57,9 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 		_displays->amount++;
 		if(_displays->amount == 1){
-			_displays->display = malloc(sizeof(ccDisplay));
+			ccMalloc(_displays->display, sizeof(ccDisplay));
 		}else{
-			_displays->display = realloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
+			ccRealloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
 		}
 		currentDisplay = _displays->display + _displays->amount - 1;
 
@@ -120,9 +120,9 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 					currentDisplay->amount++;
 					if(currentDisplay->amount == 1){
-						currentDisplay->resolution = malloc(sizeof(ccDisplayData));
+						ccMalloc(currentDisplay->resolution, sizeof(ccDisplayData));
 					}else{
-						currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
+						ccRealloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
 					}
 					memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
 					break;

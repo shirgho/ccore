@@ -47,7 +47,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 
 	ccAssert(_window == NULL);
 
-	_window = malloc(sizeof(ccWindow));
+	ccMalloc(_window, sizeof(ccWindow));
 	if(_window == NULL){
 		return CC_ERROR_OUT_OF_MEMORY;
 	}
