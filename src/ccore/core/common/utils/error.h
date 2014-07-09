@@ -7,6 +7,9 @@ typedef enum {
 	CC_ERROR_NODISPLAY, //The window couldn't find a display to attach to
 	CC_ERROR_RESOLUTION_CHANGE, //Resolution change failed
 
+	//Window related
+	CC_ERROR_WINDOWCREATION, //The window can't be created
+
 	//OpenGL related
 	CC_ERROR_GLVERSION, //The target OpenGL version is not supported
 	CC_ERROR_GLCONTEXT, //OpenGL context creation failed

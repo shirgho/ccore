@@ -24,6 +24,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_CANTSWAP:
 			return "Failed to swap the buffers";
 			break;
+		case CC_ERROR_WINDOWCREATION:
+			return "Can't create a window";
+			break;
 		case CC_ERROR_RESOLUTION_CHANGE:
 			return "Could not change display resolution";
 			break;
