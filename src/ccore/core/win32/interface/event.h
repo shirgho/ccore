@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 #define CC_KEY_0 '0'
 #define CC_KEY_1 '1'
 #define CC_KEY_2 '2'
