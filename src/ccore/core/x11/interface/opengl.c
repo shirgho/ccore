@@ -17,7 +17,9 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	ccAssert(_window != NULL);
 
 	visual = glXChooseVisual(_window->XDisplay, _window->XScreen, attrList);
-	ccAssert(visual != NULL);
+	if(!visual){
+		return CC_ERROR_GLCONTEXT;
+	}
 
 	_window->XContext = glXCreateContext(_window->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(_window->XDisplay, _window->XWindow, _window->XContext);
@@ -31,6 +33,9 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 ccError ccGLFreeContext()
 {
+	if(!_window->XContext){
+		return CC_ERROR_GLCONTEXT;
+	}
 	glXDestroyContext(_window->XDisplay, _window->XContext);
 	
 	return CC_ERROR_NONE;
@@ -38,6 +43,9 @@ ccError ccGLFreeContext()
 
 ccError ccGLSwapBuffers()
 {
+	if(!_window->XContext){
+		return CC_ERROR_GLCONTEXT;
+	}
 	glXSwapBuffers(_window->XDisplay, _window->XWindow);
 
 	return CC_ERROR_NONE;
