@@ -6,6 +6,8 @@
 #include "../../common/types.h"
 #include "../../common/interface/event.h"
 
+#include <stdarg.h>
+
 #ifdef X11
 #include "../../x11/interface/window.h"
 #elif defined WIN32
@@ -71,6 +73,6 @@ bool ccWindowExists();
 ccError ccNewWindow(ccRect rect, const char *title, int flags);
 ccError ccFreeWindow();
 bool ccPollEvent(); //poll an event from the events that currently need to be processed in the window
-ccError ccChangeWM(ccWindowMode mode);
+ccError ccChangeWM(ccWindowMode mode, ...); //optional: add displays to span when fullscreen
 ccError ccResizeMoveWindow(ccRect rect, bool addBorder); //addBorder indicates whether the border size is included in the rect or whether it has to be added
 ccError ccCenterWindow();
