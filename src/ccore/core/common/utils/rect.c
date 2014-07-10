@@ -9,18 +9,23 @@ int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB)
 
 ccRect ccRectConcatenate(int amount, ccRect* rectArray)
 {
-	ccRect rect;
 	int i;
+	int xmin, ymin, xmax, ymax;
 
 	for(i = 0; i < amount; i++) {
-		if(i == 0) rect = rectArray[i];
+		if(i == 0) {
+			xmin = rectArray[i].x;
+			xmax = rectArray[i].x + rectArray[i].width;
+			ymin = rectArray[i].y;
+			ymax = rectArray[i].y + rectArray[i].height;
+		}
 		else {
-			if(rectArray[i].x < rect.x) rect.x = rectArray[i].x;
-			if(rectArray[i].y < rect.y) rect.y = rectArray[i].y;
-			if(rectArray[i].x + rectArray[i].width > rect.x + rect.width) rect.width += rectArray[i].x + rectArray[i].width - rect.x - rect.width;
-			if(rectArray[i].y + rectArray[i].height > rect.y + rect.height) rect.height += rectArray[i].y + rectArray[i].height - rect.y - rect.height;
+			if(rectArray[i].x < xmin) xmin = rectArray[i].x;
+			if(rectArray[i].y < ymin) ymin = rectArray[i].y;
+			if(rectArray[i].x + rectArray[i].width > xmax) xmax = rectArray[i].x + rectArray[i].width;
+			if(rectArray[i].y + rectArray[i].height > ymax) ymax = rectArray[i].y + rectArray[i].height;
 		}
 	}
 
-	return rect;
+	return (ccRect){ xmin, ymin, xmax - xmin, ymax - ymin };
 }
