@@ -303,29 +303,59 @@ ccError ccFreeWindow()
 	return CC_ERROR_NONE;
 }
 
-ccError ccChangeWM(ccWindowMode mode)
+ccError ccSetWindowed()
 {
 	ccAssert(_window != NULL);
 
-	switch(mode)
-	{
-	case CC_WINDOW_MODE_WINDOW:
-		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
-		if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
-		ccResizeMoveWindow(ccGetDisplayRect(_window->display), true);
-		break;
-	case CC_WINDOW_MODE_FULLSCREEN:
-		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style & ~(WS_CAPTION | WS_THICKFRAME));
-		if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
-		ccResizeMoveWindow(ccGetDisplayRect(_window->display), false);
-		break;
-	case CC_WINDOW_MODE_MAXIMIZED:
-		SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
-		if(ShowWindow(_window->winHandle, SW_MAXIMIZE) == FALSE) return CC_ERROR_WINDOW_MODE;
-		break;
-	}
-	
+	SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
+	if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
+	ccResizeMoveWindow(ccGetDisplayRect(_window->display), true);
+
 	return CC_ERROR_NONE;
+}
+
+ccError ccSetMaximized()
+{
+	ccAssert(_window != NULL);
+
+	SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style | WS_CAPTION);
+	if(ShowWindow(_window->winHandle, SW_MAXIMIZE) == FALSE) return CC_ERROR_WINDOW_MODE;
+
+	return CC_ERROR_NONE;
+}
+
+ccError ccSetFullscreen(int displayCount, ...)
+{
+	ccAssert(_window != NULL);
+
+	SetWindowLongPtr(_window->winHandle, GWL_STYLE, _window->style & ~(WS_CAPTION | WS_THICKFRAME));
+	if(ShowWindow(_window->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
+
+	if(displayCount == 0) {
+		return ccResizeMoveWindow(ccGetDisplayRect(_window->display), false);
+	}
+	else{
+		va_list displays;
+		ccRect* rectList;
+		ccRect spanRect;
+		int i;
+
+		ccMalloc(rectList, displayCount * sizeof(ccRect));
+
+		va_start(displays, displayCount);
+
+		for(i = 0; i < displayCount; i++) {
+			rectList[i] = ccGetDisplayRect(va_arg(displays, ccDisplay*));
+		}
+
+		spanRect = ccRectConcatenate(displayCount, rectList);
+		
+		free(rectList);
+
+		va_end(displays);
+
+		return ccResizeMoveWindow(spanRect, false);
+	}
 }
 
 ccError ccResizeMoveWindow(ccRect rect, bool addBorder)

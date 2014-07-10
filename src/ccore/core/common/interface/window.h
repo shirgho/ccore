@@ -14,14 +14,6 @@
 #include "../../win32/interface/window.h"
 #endif
 
-
-//the way a window is shown. Only one window mode can be active at a time
-typedef enum {
-	CC_WINDOW_MODE_FULLSCREEN,
-	CC_WINDOW_MODE_MAXIMIZED,
-	CC_WINDOW_MODE_WINDOW,
-} ccWindowMode;
-
 //a window can contain multiple flags to determine the layout and functionality
 typedef enum {
 	CC_WINDOW_FLAG_NORESIZE = 1,
@@ -73,6 +65,9 @@ bool ccWindowExists();
 ccError ccNewWindow(ccRect rect, const char *title, int flags);
 ccError ccFreeWindow();
 bool ccPollEvent(); //poll an event from the events that currently need to be processed in the window
-ccError ccChangeWM(ccWindowMode mode, ...); //optional: add displays to span when fullscreen
 ccError ccResizeMoveWindow(ccRect rect, bool addBorder); //addBorder indicates whether the border size is included in the rect or whether it has to be added
 ccError ccCenterWindow();
+
+ccError ccSetWindowed();
+ccError ccSetMaximized();
+ccError ccSetFullscreen(int displayCount, ...);

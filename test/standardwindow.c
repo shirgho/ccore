@@ -91,17 +91,15 @@ int main(int argc, char** argv)
 					switch(ccGetEvent().keyCode){
 						case CC_KEY_1:
 							printf("Going full screen on the first two windows\n");
-							ccChangeWM(CC_WINDOW_MODE_FULLSCREEN);
-							//Use 2 windows full screen
-							ccResizeMoveWindow(ccRectConcatenate(2, ccGetDisplayRect(ccGetDisplay(1)), ccGetDisplayRect(ccGetDisplay(0))), false);
+							ccSetFullscreen(2, ccGetDisplay(3), ccGetDisplay(2));
 							break;
 						case CC_KEY_2:
-							printf("Going full screen\n");
-							ccChangeWM(CC_WINDOW_MODE_FULLSCREEN);
+							printf("Going full screen on current window\n");
+							ccSetFullscreen(0);
 							break;
 						case CC_KEY_3:
 							printf("Windowed mode\n");
-							ccChangeWM(CC_WINDOW_MODE_WINDOW);
+							ccSetWindowed();
 							break;
 						case CC_KEY_4:
 							printf("Set window resolution\n");
@@ -110,7 +108,7 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_5:
 							printf("Maximizing\n");
-							ccChangeWM(CC_WINDOW_MODE_MAXIMIZED);
+							ccSetMaximized();
 							break;
 						case CC_KEY_6:
 							printf("Generating a new window\n");
