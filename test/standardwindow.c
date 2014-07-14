@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 					switch(ccGetEvent().keyCode){
 						case CC_KEY_1:
 							printf("Going full screen on the first two windows\n");
-							ccSetFullscreen(2, ccGetDisplay(2), ccGetDisplay(3));
+							ccSetFullscreen(2, ccGetDisplay(0), ccGetDisplay(1));
 							break;
 						case CC_KEY_2:
 							printf("Going full screen on current window\n");

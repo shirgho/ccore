@@ -97,7 +97,6 @@ static void processRid(HRAWINPUT rawInput)
 
 	GetRawInputData(rawInput, RID_INPUT, _window->lpb, &_window->dwSize, sizeof(RAWINPUTHEADER));
 
-	//TODO: make lpb of type RAWINPUT*
 	RAWINPUT* raw = (RAWINPUT*)_window->lpb;
 
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
