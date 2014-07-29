@@ -6,6 +6,8 @@ It is currently developed for Win32 (Windows 2000 and higher) and Linux with X11
 
 ### Minimum requirements for compiling ###
 **Linux:**
+- scons (for building)
+- libglu1-mesa-dev
 - libx11-dev
 - libxrandr-dev
 - libxinerama-dev
@@ -16,6 +18,7 @@ It is currently developed for Win32 (Windows 2000 and higher) and Linux with X11
 
 **Minor:**
 - Let the user map keycodes to keys pressed
+- Makefile support for Unix
 
 **Extensions:**
 - Networking
