@@ -30,4 +30,4 @@ typedef struct {
 #endif
 
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);
-ccRect ccRectConcatenate(int amount, ...);
+ccRect ccRectConcatenate(int amount, ccRect* rectArray);

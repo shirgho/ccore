@@ -31,7 +31,6 @@ typedef struct {
 	ccDisplay *display;
 
 #ifdef LINUX
-	ccWindowMode oldMode;
 	Display *XDisplay; 
 	Window XWindow;
 	int XScreen;

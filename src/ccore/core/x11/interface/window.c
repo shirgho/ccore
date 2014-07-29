@@ -19,7 +19,7 @@ bool ccWindowExists()
 	return _window != NULL;
 }
 
-static ccError ccSetWindowState(const char *type, bool value)
+static ccError setWindowState(const char *type, bool value)
 {	
 	XEvent event;
 	Atom wmState, newWmState;
@@ -63,7 +63,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP){
-		ccSetWindowState("_NET_WM_STATE_ABOVE", true);
+		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
 	XMapWindow(_window->XDisplay, _window->XWindow);
@@ -173,6 +173,21 @@ bool ccPollEvent()
 	return true;
 }
 
+ccError ccSetWindowed()
+{
+	return CC_ERROR_NONE;
+}
+
+ccError ccSetMaximized()
+{
+	return CC_ERROR_NONE;
+}
+
+ccError ccSetFullscreen(int displayCount, ...)
+{
+	return CC_ERROR_NONE;
+}
+/*
 ccError ccChangeWM(ccWindowMode mode)
 {
 	XWindowAttributes windowAttributes;
@@ -181,7 +196,7 @@ ccError ccChangeWM(ccWindowMode mode)
 	ccAssert(_window);
 
 	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
-		ccSetWindowState("_NET_WM_STATE_FULLSCREEN", mode == CC_WINDOW_MODE_FULLSCREEN);
+		setWindowState("_NET_WM_STATE_FULLSCREEN", mode == CC_WINDOW_MODE_FULLSCREEN);
 
 		if(mode == CC_WINDOW_MODE_FULLSCREEN){
 			XGrabPointer(_window->XDisplay, _window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, _window->XWindow, None, CurrentTime);
@@ -190,14 +205,14 @@ ccError ccChangeWM(ccWindowMode mode)
 		}
 	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
 		if(_window->oldMode == CC_WINDOW_MODE_FULLSCREEN){	
-			ccSetWindowState("_NET_WM_STATE_FULLSCREEN", false);
+			setWindowState("_NET_WM_STATE_FULLSCREEN", false);
 		}
 		XGetWindowAttributes(_window->XDisplay, DefaultRootWindow(_window->XDisplay), &windowAttributes);
 		windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
 		windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
 		XMoveResizeWindow(_window->XDisplay, _window->XWindow, 0, 0, windowWidth, windowHeight);
 
-		ccSetWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
+		setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 
 		XUngrabPointer(_window->XDisplay, CurrentTime);
 	}
@@ -206,6 +221,7 @@ ccError ccChangeWM(ccWindowMode mode)
 
 	return CC_ERROR_NONE;
 }
+*/
 
 ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
