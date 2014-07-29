@@ -187,19 +187,12 @@ ccError ccSetWindowed()
 
 ccError ccSetMaximized()
 {
-	XWindowAttributes windowAttributes;
-	int windowWidth, windowHeight;
-
 	ccAssert(_window);
 
 	ccSetWindowed();
 
-	XGetWindowAttributes(_window->XDisplay, DefaultRootWindow(_window->XDisplay), &windowAttributes);
-	windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
-	windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
-	XMoveResizeWindow(_window->XDisplay, _window->XWindow, 0, 0, windowWidth, windowHeight);
-
-	//setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
+	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
+	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", true);
 
 	return CC_ERROR_NONE;
 }
