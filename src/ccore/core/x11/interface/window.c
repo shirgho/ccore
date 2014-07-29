@@ -175,53 +175,47 @@ bool ccPollEvent()
 
 ccError ccSetWindowed()
 {
+	ccAssert(_window);
+
+	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
+
+	//TODO add check for the pointer
+	XUngrabPointer(_window->XDisplay, CurrentTime);
+
 	return CC_ERROR_NONE;
 }
 
 ccError ccSetMaximized()
-{
-	return CC_ERROR_NONE;
-}
-
-ccError ccSetFullscreen(int displayCount, ...)
-{
-	return CC_ERROR_NONE;
-}
-/*
-ccError ccChangeWM(ccWindowMode mode)
 {
 	XWindowAttributes windowAttributes;
 	int windowWidth, windowHeight;
 
 	ccAssert(_window);
 
-	if(mode == CC_WINDOW_MODE_FULLSCREEN || mode == CC_WINDOW_MODE_WINDOW){
-		setWindowState("_NET_WM_STATE_FULLSCREEN", mode == CC_WINDOW_MODE_FULLSCREEN);
+	ccSetWindowed();
 
-		if(mode == CC_WINDOW_MODE_FULLSCREEN){
-			XGrabPointer(_window->XDisplay, _window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, _window->XWindow, None, CurrentTime);
-		}else{
-			XUngrabPointer(_window->XDisplay, CurrentTime);
-		}
-	}else if(mode == CC_WINDOW_MODE_MAXIMIZED){
-		if(_window->oldMode == CC_WINDOW_MODE_FULLSCREEN){	
-			setWindowState("_NET_WM_STATE_FULLSCREEN", false);
-		}
-		XGetWindowAttributes(_window->XDisplay, DefaultRootWindow(_window->XDisplay), &windowAttributes);
-		windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
-		windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
-		XMoveResizeWindow(_window->XDisplay, _window->XWindow, 0, 0, windowWidth, windowHeight);
+	XGetWindowAttributes(_window->XDisplay, DefaultRootWindow(_window->XDisplay), &windowAttributes);
+	windowWidth = windowAttributes.width - windowAttributes.x - (windowAttributes.border_width << 1);
+	windowHeight = windowAttributes.height - windowAttributes.y - (windowAttributes.border_width << 1);
+	XMoveResizeWindow(_window->XDisplay, _window->XWindow, 0, 0, windowWidth, windowHeight);
 
-		setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
-
-		XUngrabPointer(_window->XDisplay, CurrentTime);
-	}
-
-	_window->oldMode = mode;
+	//setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 
 	return CC_ERROR_NONE;
 }
-*/
+
+ccError ccSetFullscreen(int displayCount, ...)
+{
+	ccAssert(_window);
+
+	//TODO implement multiple displays
+	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
+
+	//TODO add check for the pointer
+	XGrabPointer(_window->XDisplay, _window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, _window->XWindow, None, CurrentTime);
+
+	return CC_ERROR_NONE;
+}
 
 ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 {
