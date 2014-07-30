@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../common/debugutils/assert.h"
-#include "../../common/debugutils/print.h"
+#include "../../../include/assert.h"
+#include "../../../include/print.h"
 
 #include <dirent.h>
 #include <string.h>

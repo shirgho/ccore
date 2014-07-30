@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../common/utils/dirUtils.h"
-#include "../../common/utils/charUtils.h"
+#include "../../../include/dirUtils.h"
+#include "../../../include/charUtils.h"
 
 #include <stdlib.h>
 #include <string.h>

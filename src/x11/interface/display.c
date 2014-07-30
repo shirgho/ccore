@@ -1,4 +1,4 @@
-#include "../../common/interface/display.h"
+#include "../../../include/display.h"
 
 int ccGetDisplayAmount()
 {

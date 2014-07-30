@@ -8,13 +8,13 @@
 #include <X11/Xatom.h>
 
 //TODO: fix GL include fuckup
-#include "../../common/interface/opengl.h"
-#include "../../../../../lib/glew/GL/glew.h"
+#include "../../../include/opengl.h"
+#include "../../../lib/glew/GL/glew.h"
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-#include "../../common/types.h"
-#include "../../common/interface/event.h"
-#include "../../common/utils/error.h"
-#include "../../common/debugutils/assert.h"
-#include "../../common/debugutils/print.h"
+#include "../../../include/types.h"
+#include "../../../include/event.h"
+#include "../../../include/error.h"
+#include "../../../include/assert.h"
+#include "../../../include/print.h"
