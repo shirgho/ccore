@@ -5,16 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/ccore/core/common/core.h"
-#include "../src/ccore/core/common/interface/window.h"
-#include "../src/ccore/core/common/interface/opengl.h"
-#include "../src/ccore/core/common/utils/timing.h"
-#include "../src/ccore/core/common/interface/event.h"
-#include "../src/ccore/core/common/utils/dirUtils.h"
-#include "../src/ccore/core/common/utils/charUtils.h"
-#include "../src/ccore/core/common/debugutils/print.h"
-
-#include "../src/ccore/modules/clipboard/common/clipboard.h"
+#include "../include/window.h"
+#include "../include/opengl.h"
+#include "../include/timing.h"
+#include "../include/event.h"
+#include "../include/dirUtils.h"
+#include "../include/charUtils.h"
+#include "../include/print.h"
 
 float rotQuad = 0.0f;
 

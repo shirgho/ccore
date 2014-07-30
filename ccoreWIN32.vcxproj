@@ -11,44 +11,41 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\glew\glew.c" />
-    <ClCompile Include="src\ccore\core\common\interface\event.c" />
-    <ClCompile Include="src\ccore\core\common\utils\charUtils.c" />
-    <ClCompile Include="src\ccore\core\common\utils\error.c" />
-    <ClCompile Include="src\ccore\core\common\utils\rect.c" />
-    <ClCompile Include="src\ccore\core\win32\interface\display.c" />
-    <ClCompile Include="src\ccore\core\win32\interface\opengl.c" />
-    <ClCompile Include="src\ccore\core\win32\interface\window.c" />
-    <ClCompile Include="src\ccore\core\win32\utils\dirUtils.c" />
-    <ClCompile Include="src\ccore\core\win32\utils\timing.c" />
-    <ClCompile Include="src\ccore\modules\clipboard\win32\clipboard.c" />
-    <ClCompile Include="test\standardwindow.c" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="include\assert.h" />
+    <ClInclude Include="include\charUtils.h" />
+    <ClInclude Include="include\core.h" />
+    <ClInclude Include="include\dirUtils.h" />
+    <ClInclude Include="include\display.h" />
+    <ClInclude Include="include\error.h" />
+    <ClInclude Include="include\event.h" />
+    <ClInclude Include="include\opengl.h" />
+    <ClInclude Include="include\print.h" />
+    <ClInclude Include="include\timing.h" />
+    <ClInclude Include="include\types.h" />
+    <ClInclude Include="include\window.h" />
     <ClInclude Include="lib\glew\GL\glew.h" />
     <ClInclude Include="lib\glew\GL\glxew.h" />
     <ClInclude Include="lib\glew\GL\wglew.h" />
-    <ClInclude Include="src\ccore\core\common\core.h" />
-    <ClInclude Include="src\ccore\core\common\debugutils\assert.h" />
-    <ClInclude Include="src\ccore\core\common\debugutils\print.h" />
-    <ClInclude Include="src\ccore\core\common\interface\display.h" />
-    <ClInclude Include="src\ccore\core\common\interface\event.h" />
-    <ClInclude Include="src\ccore\core\common\interface\opengl.h" />
-    <ClInclude Include="src\ccore\core\common\interface\window.h" />
-    <ClInclude Include="src\ccore\core\common\types.h" />
-    <ClInclude Include="src\ccore\core\common\utils\charUtils.h" />
-    <ClInclude Include="src\ccore\core\common\utils\dirUtils.h" />
-    <ClInclude Include="src\ccore\core\common\utils\error.h" />
-    <ClInclude Include="src\ccore\core\common\utils\timing.h" />
-    <ClInclude Include="src\ccore\core\win32\core.h" />
-    <ClInclude Include="src\ccore\core\win32\interface\display.h" />
-    <ClInclude Include="src\ccore\core\win32\interface\event.h" />
-    <ClInclude Include="src\ccore\core\win32\interface\opengl.h" />
-    <ClInclude Include="src\ccore\core\win32\interface\window.h" />
-    <ClInclude Include="src\ccore\core\win32\utils\dirUtils.h" />
-    <ClInclude Include="src\ccore\core\win32\utils\timing.h" />
-    <ClInclude Include="src\ccore\modules\clipboard\common\clipboard.h" />
-    <ClInclude Include="src\ccore\modules\clipboard\win32\clipboard.h" />
+    <ClInclude Include="src\win32\core.h" />
+    <ClInclude Include="src\win32\interface\display.h" />
+    <ClInclude Include="src\win32\interface\event.h" />
+    <ClInclude Include="src\win32\interface\opengl.h" />
+    <ClInclude Include="src\win32\interface\window.h" />
+    <ClInclude Include="src\win32\utils\dirUtils.h" />
+    <ClInclude Include="src\win32\utils\timing.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\glew\glew.c" />
+    <ClCompile Include="src\common\charUtils.c" />
+    <ClCompile Include="src\common\error.c" />
+    <ClCompile Include="src\common\event.c" />
+    <ClCompile Include="src\common\rect.c" />
+    <ClCompile Include="src\win32\interface\display.c" />
+    <ClCompile Include="src\win32\interface\opengl.c" />
+    <ClCompile Include="src\win32\interface\window.c" />
+    <ClCompile Include="src\win32\utils\dirUtils.c" />
+    <ClCompile Include="src\win32\utils\timing.c" />
+    <ClCompile Include="test\standardwindow.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>
