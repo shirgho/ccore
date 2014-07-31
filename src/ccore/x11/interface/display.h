@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../include/assert.h"
-#include "../../../include/print.h"
+#include "../../../../include/ccore/assert.h"
+#include "../../../../include/ccore/print.h"
 
 #include <dirent.h>
 #include <string.h>

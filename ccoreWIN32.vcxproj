@@ -11,41 +11,41 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\assert.h" />
-    <ClInclude Include="include\charUtils.h" />
-    <ClInclude Include="include\core.h" />
-    <ClInclude Include="include\dirUtils.h" />
-    <ClInclude Include="include\display.h" />
-    <ClInclude Include="include\error.h" />
-    <ClInclude Include="include\event.h" />
-    <ClInclude Include="include\opengl.h" />
-    <ClInclude Include="include\print.h" />
-    <ClInclude Include="include\timing.h" />
-    <ClInclude Include="include\types.h" />
-    <ClInclude Include="include\window.h" />
+    <ClCompile Include="lib\glew\glew.c" />
+    <ClCompile Include="src\ccore\common\charUtils.c" />
+    <ClCompile Include="src\ccore\common\error.c" />
+    <ClCompile Include="src\ccore\common\event.c" />
+    <ClCompile Include="src\ccore\common\rect.c" />
+    <ClCompile Include="src\ccore\win32\interface\display.c" />
+    <ClCompile Include="src\ccore\win32\interface\opengl.c" />
+    <ClCompile Include="src\ccore\win32\interface\window.c" />
+    <ClCompile Include="src\ccore\win32\utils\dirUtils.c" />
+    <ClCompile Include="src\ccore\win32\utils\timing.c" />
+    <ClCompile Include="test\standardwindow.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\ccore\assert.h" />
+    <ClInclude Include="include\ccore\charUtils.h" />
+    <ClInclude Include="include\ccore\core.h" />
+    <ClInclude Include="include\ccore\dirUtils.h" />
+    <ClInclude Include="include\ccore\display.h" />
+    <ClInclude Include="include\ccore\error.h" />
+    <ClInclude Include="include\ccore\event.h" />
+    <ClInclude Include="include\ccore\opengl.h" />
+    <ClInclude Include="include\ccore\print.h" />
+    <ClInclude Include="include\ccore\timing.h" />
+    <ClInclude Include="include\ccore\types.h" />
+    <ClInclude Include="include\ccore\window.h" />
     <ClInclude Include="lib\glew\GL\glew.h" />
     <ClInclude Include="lib\glew\GL\glxew.h" />
     <ClInclude Include="lib\glew\GL\wglew.h" />
-    <ClInclude Include="src\win32\core.h" />
-    <ClInclude Include="src\win32\interface\display.h" />
-    <ClInclude Include="src\win32\interface\event.h" />
-    <ClInclude Include="src\win32\interface\opengl.h" />
-    <ClInclude Include="src\win32\interface\window.h" />
-    <ClInclude Include="src\win32\utils\dirUtils.h" />
-    <ClInclude Include="src\win32\utils\timing.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="lib\glew\glew.c" />
-    <ClCompile Include="src\common\charUtils.c" />
-    <ClCompile Include="src\common\error.c" />
-    <ClCompile Include="src\common\event.c" />
-    <ClCompile Include="src\common\rect.c" />
-    <ClCompile Include="src\win32\interface\display.c" />
-    <ClCompile Include="src\win32\interface\opengl.c" />
-    <ClCompile Include="src\win32\interface\window.c" />
-    <ClCompile Include="src\win32\utils\dirUtils.c" />
-    <ClCompile Include="src\win32\utils\timing.c" />
-    <ClCompile Include="test\standardwindow.c" />
+    <ClInclude Include="src\ccore\win32\core.h" />
+    <ClInclude Include="src\ccore\win32\interface\display.h" />
+    <ClInclude Include="src\ccore\win32\interface\event.h" />
+    <ClInclude Include="src\ccore\win32\interface\opengl.h" />
+    <ClInclude Include="src\ccore\win32\interface\window.h" />
+    <ClInclude Include="src\ccore\win32\utils\dirUtils.h" />
+    <ClInclude Include="src\ccore\win32\utils\timing.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>
@@ -76,7 +76,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\Job\Documents\GitHub\ccore\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

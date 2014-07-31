@@ -6,12 +6,12 @@
 
 //Load all extensions using GLEW
 #define GLEW_STATIC
-#include "../lib/glew/GL/glew.h"
+#include "../../lib/glew/GL/glew.h"
 
 #ifdef X11
-#include "../src/x11/interface/opengl.h"
+#include "../../src/ccore/x11/interface/opengl.h"
 #elif defined WIN32
-#include "../src/win32/interface/opengl.h"
+#include "../../src/ccore/win32/interface/opengl.h"
 #endif
 
 //opengl

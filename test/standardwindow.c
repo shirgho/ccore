@@ -5,13 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/window.h"
-#include "../include/opengl.h"
-#include "../include/timing.h"
-#include "../include/event.h"
-#include "../include/dirUtils.h"
-#include "../include/charUtils.h"
-#include "../include/print.h"
+#include <ccore/window.h>
+#include <ccore/opengl.h>
+#include <ccore/timing.h>
+#include <ccore/event.h>
+#include <ccore/dirUtils.h>
+#include <ccore/charUtils.h>
+#include <ccore/print.h>
 
 float rotQuad = 0.0f;
 

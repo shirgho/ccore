@@ -1,4 +1,4 @@
-#include "../../../include/display.h"
+#include "../../../../include/ccore/display.h"
 
 int ccGetDisplayAmount()
 {

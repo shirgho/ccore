@@ -9,9 +9,9 @@
 #include <stdarg.h>
 
 #ifdef X11
-#include "../src/x11/interface/window.h"
+#include "../../src/ccore/x11/interface/window.h"
 #elif defined WIN32
-#include "../src/win32/interface/window.h"
+#include "../../src/ccore/win32/interface/window.h"
 #endif
 
 //a window can contain multiple flags to determine the layout and functionality

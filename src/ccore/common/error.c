@@ -1,4 +1,4 @@
-#include "../../include/error.h"
+#include "../../../include/ccore/error.h"
 
 const char *ccErrorString(ccError error)
 {
