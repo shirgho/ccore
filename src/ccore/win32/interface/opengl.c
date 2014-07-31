@@ -1,4 +1,4 @@
-#include "../../../../include/ccore/opengl.h"
+#include <ccore/opengl.h>
 
 ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 {

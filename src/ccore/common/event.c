@@ -1,4 +1,4 @@
-#include "../../../include/ccore/event.h"
+#include <ccore/event.h>
 
 char ccKeyToChar(int key)
 {

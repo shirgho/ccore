@@ -1,4 +1,4 @@
-#include "../../../include/ccore/types.h"
+#include <ccore/types.h>
 
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB)
 {

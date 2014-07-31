@@ -1,4 +1,4 @@
-#include "../../../include/ccore/charUtils.h"
+#include <ccore/charUtils.h>
 
 void ccStrTrimToChar(char* str, char ch, bool includeChar)
 {
