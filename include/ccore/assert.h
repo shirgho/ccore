@@ -22,7 +22,6 @@
 //      along with this program. If not, see <http://www.gnu.org/licenses/>.        \\
 //__________________________________________________________________________________\\
 
-
 #include "core.h"
 
 //ccAssert translates to assert when debugging, it is ignored otherwise.
