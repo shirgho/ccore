@@ -1,5 +1,5 @@
 import os
 
-env = Environment(CC='gcc', CCFLAGS = '-g -Wall -D_DEBUG -O2')
+env = Environment(CC='gcc', CCFLAGS = '-g -Wall -D_DEBUG -O2 -I../include/')
 
-env.Program(target = 'test-x11', source = [Glob('*.c'), Glob('../lib/*/*.c'), Glob('../src/ccore/core/linux/*/*.c'), Glob('../src/ccore/core/common/*/*.c'), Glob('../src/ccore/core/x11/*/*.c')], LIBS=['X11', 'Xrandr', 'Xinerama', 'GL', 'GLU'], LIBPATH=['/usr/lib', '/usr/local/lib', '.'])
+env.Program(target = 'test-x11', source = [Glob('*.c'), Glob('../lib/*/*.c'), Glob('../src/ccore/linux/*/*.c'), Glob('../src/ccore/common/*/*.c'), Glob('../src/ccore/x11/*/*.c')], LIBS=['X11', 'Xrandr', 'Xinerama', 'GL', 'GLU'], LIBPATH=['/usr/lib', '/usr/local/lib', '.'])
