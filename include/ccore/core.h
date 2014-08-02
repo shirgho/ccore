@@ -26,8 +26,8 @@
 //This header usually doesn't need to be included, since it is included in every other ccore header
 
 #ifdef __linux__
-#include "../src/linux/core.h"
-#include "../src/x11/core.h"
+#include "../../src/ccore/linux/core.h"
+#include "../../src/ccore/x11/core.h"
 
 #elif defined _WIN32
 #include "../../src/ccore/win32/core.h"
