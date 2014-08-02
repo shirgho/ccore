@@ -1,4 +1,4 @@
-#include "../../common/interface/window.h"
+#include "window.h"
 
 ccEvent ccGetEvent()
 {

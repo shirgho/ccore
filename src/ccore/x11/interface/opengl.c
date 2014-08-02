@@ -1,4 +1,4 @@
-#include "../../../../include/ccore/opengl.h"
+#include <ccore/opengl.h>
 
 /* Attribute list for a double buffered OpenGL context, with at least 4 bits per color and a 16 bit depth buffer */
 static int attrList[] =
