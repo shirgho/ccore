@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 		printf("Display: %s, Device: %s\nX: %d, Y: %d\n", ccGetDisplay(i)->monitorName, ccGetDisplay(i)->gpuName, ccGetDisplay(i)->x, ccGetDisplay(i)->y);
 	}
 	
-	printf("Printing resolutions from default display\n");
+	printf("Printing resolutions from default display, current: %d\n", ccGetDefaultDisplay()->current);
 	//Find all resolutions of one display and print them
 	for(i = 0; i < ccGetDefaultDisplay()->amount; i++) {
 		ccAssert(ccGetDefaultDisplay()->resolution + i != NULL);

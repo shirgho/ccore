@@ -21,7 +21,7 @@
     <ClCompile Include="src\ccore\win32\interface\window.c" />
     <ClCompile Include="src\ccore\win32\utils\dirUtils.c" />
     <ClCompile Include="src\ccore\win32\utils\timing.c" />
-    <ClCompile Include="test\standardwindow.c" />
+    <ClCompile Include="test\featuretest.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ccore\assert.h" />
