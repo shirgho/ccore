@@ -37,14 +37,39 @@
 
 // Interface colors in hex format
 #define COLOR_CLEAR 0x27586B
+#define COLOR_BACK 0x457385
+#define COLOR_LINES 0xFFFFFF
+
+// Constants
+#define RESOLUTION_DISPLAY_SCALE 0.001f
 
 // These functions will be implemented later in this file
 void initialize();
 void projection(int width, int height);
-void render();
+
+// All data that will be demonstrated is stored in this struct
+typedef struct {
+	// General
+	int current;
+	GLfloat rotation;
+
+	// Displays
+	int displayCount;
+	ccRect* rects;
+	float* rectAlpha;
+
+	// Input
+} showcaseData;
+void initializeShowcase(showcaseData* data);
+void timestepShowcase(showcaseData* data, float timestep);
+void renderShowcase(showcaseData* data);
+void freeShowcase(showcaseData* data);
 
 int main(int argc, char** argv)
 {
+	// All showcase data is contained within data
+	showcaseData data = {0};
+
 	// This variable tells the message loop when to quit
 	bool quit = false;
 
@@ -60,6 +85,7 @@ int main(int argc, char** argv)
 	
 	// This function initializes openGL
 	initialize();
+	initializeShowcase(&data);
 
 	// Event loop resides within this while statement
 	while(!quit) {
@@ -71,13 +97,21 @@ int main(int argc, char** argv)
 			case CC_EVENT_WINDOW_QUIT:
 				quit = true;
 				break;
+			case CC_EVENT_MOUSE_SCROLL:
+				if(ccGetEvent().scrollDelta > 0) data.current --; else data.current++;
+				if(data.current == -1) data.current = 0;
+				if(data.current == 3) data.current = 2;
+				break;
 			}
 		}
 
-		render();
+		timestepShowcase(&data, (float) 15 / 1000);
+		renderShowcase(&data);
 		ccGLSwapBuffers();
 	}
 
+	// Free memory before terminating
+	ccFreeDisplays();
 	ccGLFreeContext();
 	ccFreeWindow();
 }
@@ -102,10 +136,77 @@ void projection(int width, int height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+	gluLookAt(0, 0, 8, 0, 0, 0, 0, 1, 0);
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void render()
+void initializeShowcase(showcaseData* data)
+{
+	int i;
+
+	data->current = 1;
+	data->rotation = 90;
+
+	data->displayCount = ccGetDisplayAmount();
+	data->rects = malloc(sizeof(ccRect)* data->displayCount);
+
+	for(i = 0; i < data->displayCount; i++) {
+		data->rects[i].x = ccGetDisplay(i)->x;
+		data->rects[i].y = ccGetDisplay(i)->y;
+		data->rects[i].width = ccGetDisplay(i)->resolution[ccGetDisplay(i)->current].width;
+		data->rects[i].height = ccGetDisplay(i)->resolution[ccGetDisplay(i)->current].height;
+	}
+}
+
+void timestepShowcase(showcaseData* data, float timestep)
+{
+
+}
+
+void renderShowcase(showcaseData* data)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	switch(data->current)
+	{
+	case 0:
+		// ?
+
+		break;
+	case 1:
+		// Resolutions
+	{
+		int i;
+
+		for(i = 0; i < data->displayCount; i++) {
+			glBegin(GL_TRIANGLES);
+			glColor3f(HEXTOR(COLOR_BACK), HEXTOG(COLOR_BACK), HEXTOB(COLOR_BACK));
+			glVertex2f(data->rects[i].x * RESOLUTION_DISPLAY_SCALE, -data->rects[i].y * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f(data->rects[i].x * RESOLUTION_DISPLAY_SCALE, -(data->rects[i].y + data->rects[i].height) * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f((data->rects[i].x + data->rects[i].width) * RESOLUTION_DISPLAY_SCALE, -(data->rects[i].y + data->rects[i].height) * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f((data->rects[i].x + data->rects[i].width) * RESOLUTION_DISPLAY_SCALE, -(data->rects[i].y + data->rects[i].height) * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f((data->rects[i].x + data->rects[i].width) * RESOLUTION_DISPLAY_SCALE, -data->rects[i].y * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f(data->rects[i].x * RESOLUTION_DISPLAY_SCALE, -data->rects[i].y * RESOLUTION_DISPLAY_SCALE);
+			glEnd();
+
+			glBegin(GL_LINE_LOOP);
+			glColor3f(HEXTOR(COLOR_LINES), HEXTOG(COLOR_LINES), HEXTOB(COLOR_LINES));
+			glVertex2f(data->rects[i].x * RESOLUTION_DISPLAY_SCALE, -data->rects[i].y * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f(data->rects[i].x * RESOLUTION_DISPLAY_SCALE, -(data->rects[i].y + data->rects[i].height) * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f((data->rects[i].x + data->rects[i].width) * RESOLUTION_DISPLAY_SCALE, -(data->rects[i].y + data->rects[i].height) * RESOLUTION_DISPLAY_SCALE);
+			glVertex2f((data->rects[i].x + data->rects[i].width) * RESOLUTION_DISPLAY_SCALE, -data->rects[i].y * RESOLUTION_DISPLAY_SCALE);
+			glEnd();
+		}
+	}
+		break;
+	case 2:
+		// Input
+
+		break;
+	}
+}
+
+void freeShowcase(showcaseData* data)
+{
+	free(data->rects);
 }
