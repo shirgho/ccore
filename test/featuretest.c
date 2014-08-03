@@ -39,6 +39,7 @@
 #define COLOR_CLEAR 0x27586B
 #define COLOR_BACK 0x457385
 #define COLOR_LINES 0xFFFFFF
+#define COLOR_HIGHLIGHT 0xD4A26A
 
 // Constants
 #define RESOLUTION_DISPLAY_SCALE 0.001f
@@ -57,6 +58,7 @@ typedef struct {
 	int displayCount;
 	ccRect* rects;
 	float* rectAlpha;
+	int selectedDisplay;
 
 	// Input
 } showcaseData;
@@ -147,6 +149,7 @@ void initializeShowcase(showcaseData* data)
 	data->current = 1;
 	data->rotation = 90;
 
+	data->selectedDisplay = 0;
 	data->displayCount = ccGetDisplayAmount();
 	data->rects = malloc(sizeof(ccRect)* data->displayCount);
 
@@ -180,6 +183,7 @@ void renderShowcase(showcaseData* data)
 
 		for(i = 0; i < data->displayCount; i++) {
 			glBegin(GL_TRIANGLES);
+			if(i == data->selectedDisplay) glColor3f(HEXTOR(COLOR_HIGHLIGHT), HEXTOG(COLOR_HIGHLIGHT), HEXTOB(COLOR_HIGHLIGHT)); else
 			glColor3f(HEXTOR(COLOR_BACK), HEXTOG(COLOR_BACK), HEXTOB(COLOR_BACK));
 			glVertex2f(data->rects[i].x * RESOLUTION_DISPLAY_SCALE, -data->rects[i].y * RESOLUTION_DISPLAY_SCALE);
 			glVertex2f(data->rects[i].x * RESOLUTION_DISPLAY_SCALE, -(data->rects[i].y + data->rects[i].height) * RESOLUTION_DISPLAY_SCALE);
