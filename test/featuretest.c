@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 	ccFindDisplays();
 
 	// Create a centered window
-	ccNewWindow((ccRect){ 0, 0, 574, 159 }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
+	ccNewWindow((ccRect){ 0, 0, 574, 159 }, "CCORE feature showcase", 0);
 	ccCenterWindow();
 	
 	// Prepare window for renderen with openGL 3.2
@@ -83,18 +83,8 @@ int main(int argc, char** argv)
 	logoTexture = loadTGATexture(imageFileName);
 	free(imageFileName);
 
-	// Display logo for 1 second
+	// Set the projection
 	projectionOrtho(ccGetWindowRect().width, ccGetWindowRect().height);
-	renderLogo();
-	ccGLSwapBuffers();
-	ccDelay(1000);
-
-	// Resize the window
-	newRect = ccGetWindowRect();
-	newRect.width = 800;
-	newRect.height = 600;
-	ccResizeMoveWindow(newRect, true);
-	ccCenterWindow();
 
 	// Event loop resides within this while statement
 	while(!quit) {
@@ -146,8 +136,6 @@ void projectionOrtho(int width, int height)
 
 void renderLogo()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	glBindTexture(GL_TEXTURE_2D, logoTexture);
 	
 	glBegin(GL_QUADS);
@@ -164,5 +152,7 @@ void renderLogo()
 
 void render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	renderLogo();
 }

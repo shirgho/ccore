@@ -57,7 +57,7 @@ static void updateWindowResolution()
 	_window->rect.width = winRect.right - winRect.left;
 	_window->rect.height = winRect.bottom - winRect.top;
 	_window->aspect = (float)_window->rect.width / _window->rect.height;
-	_window->sizeChanged = true;
+	_window->specialEvents |= CC_WIN32_EVENT_RESIZED;
 }
 
 static bool initializeRawInput()
@@ -160,8 +160,6 @@ static void processRid(HRAWINPUT rawInput)
 
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if(_window == NULL) DefWindowProc(winHandle, message, wParam, lParam);
-
 	_window->event.type = CC_EVENT_SKIP;
 
 	switch(message) {
@@ -182,10 +180,10 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		_window->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
 		break;
 	case WM_SETFOCUS:
-		_window->event.type = CC_EVENT_FOCUS_GAINED;
+		_window->specialEvents |= CC_WIN32_EVENT_FOCUS_GAINED;
 		break;
 	case WM_KILLFOCUS:
-		_window->event.type = CC_EVENT_FOCUS_LOST;
+		_window->specialEvents |= CC_WIN32_EVENT_FOCUS_LOST;
 		break;
 	default:
 		return DefWindowProc(winHandle, message, wParam, lParam);
@@ -218,9 +216,19 @@ bool ccPollEvent()
 {
 	ccAssert(_window != NULL);
 
-	if(_window->sizeChanged) {
-		_window->sizeChanged = false;
+	if(_window->specialEvents & CC_WIN32_EVENT_RESIZED) {
+		_window->specialEvents &= ~CC_WIN32_EVENT_RESIZED;
 		_window->event.type = CC_EVENT_WINDOW_RESIZE;
+		return true;
+	}
+	else if(_window->specialEvents & CC_WIN32_EVENT_FOCUS_GAINED) {
+		_window->specialEvents &= ~CC_WIN32_EVENT_FOCUS_GAINED;
+		_window->event.type = CC_EVENT_FOCUS_GAINED;
+		return true;
+	}
+	else if(_window->specialEvents & CC_WIN32_EVENT_FOCUS_LOST) {
+		_window->specialEvents &= ~CC_WIN32_EVENT_FOCUS_LOST;
+		_window->event.type = CC_EVENT_FOCUS_LOST;
 		return true;
 	}
 	
@@ -243,7 +251,7 @@ ccError ccNewWindow(ccRect rect, const char* title, int flags)
 	//initialize struct
 	ccMalloc(_window, sizeof(ccWindow));
 	memcpy(&_window->rect, &rect, sizeof(ccRect));
-	_window->sizeChanged = true;
+	_window->specialEvents = 0;
 
 	_window->lpbSize = 0;
 

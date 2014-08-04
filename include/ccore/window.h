@@ -44,6 +44,15 @@ typedef enum {
 	CC_WINDOW_FLAG_NOBUTTONS = 4
 } ccWindowFlag;
 
+//do not use this enum!
+#ifdef WIN32
+typedef enum {
+	CC_WIN32_EVENT_RESIZED = 1,
+	CC_WIN32_EVENT_FOCUS_GAINED = 2,
+	CC_WIN32_EVENT_FOCUS_LOST = 4
+} ccWin32Event;
+#endif
+
 //the window struct
 typedef struct {
 	//Note: dimensions subtract border size
@@ -65,7 +74,7 @@ typedef struct {
 	MSG msg;
 	HWND winHandle;
 	HGLRC renderContext;
-	bool sizeChanged;
+	int specialEvents;
 	LONG style;
 	RAWINPUTDEVICE rid[NRAWINPUTDEVICES];
 	LPBYTE lpb;
