@@ -29,6 +29,10 @@
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/timing.h>
+#include <ccore/dirUtils.h>
+#include <ccore/charUtils.h>
+
+#include "tga.h"
 
 // Some helper functions for colors
 #define HEXTOR(x) (((x >> 16) & 0xff) / 255.0)
@@ -53,6 +57,12 @@ int main(int argc, char** argv)
 {
 	// This variable tells the message loop when to quit
 	bool quit = false;
+	GLuint texture;
+	char *imageFileName;
+
+	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "image.tga");
+	texture = loadTGATexture(imageFileName);
+	free(imageFileName);
 
 	// Displays must be detected before creating the window
 	ccFindDisplays();
