@@ -216,20 +216,22 @@ bool ccPollEvent()
 {
 	ccAssert(_window != NULL);
 
-	if(_window->specialEvents & CC_WIN32_EVENT_RESIZED) {
-		_window->specialEvents &= ~CC_WIN32_EVENT_RESIZED;
-		_window->event.type = CC_EVENT_WINDOW_RESIZE;
-		return true;
-	}
-	else if(_window->specialEvents & CC_WIN32_EVENT_FOCUS_GAINED) {
-		_window->specialEvents &= ~CC_WIN32_EVENT_FOCUS_GAINED;
-		_window->event.type = CC_EVENT_FOCUS_GAINED;
-		return true;
-	}
-	else if(_window->specialEvents & CC_WIN32_EVENT_FOCUS_LOST) {
-		_window->specialEvents &= ~CC_WIN32_EVENT_FOCUS_LOST;
-		_window->event.type = CC_EVENT_FOCUS_LOST;
-		return true;
+	if(_window->specialEvents) {
+		if(_window->specialEvents & CC_WIN32_EVENT_RESIZED) {
+			_window->specialEvents &= ~CC_WIN32_EVENT_RESIZED;
+			_window->event.type = CC_EVENT_WINDOW_RESIZE;
+			return true;
+		}
+		else if(_window->specialEvents & CC_WIN32_EVENT_FOCUS_GAINED) {
+			_window->specialEvents &= ~CC_WIN32_EVENT_FOCUS_GAINED;
+			_window->event.type = CC_EVENT_FOCUS_GAINED;
+			return true;
+		}
+		else if(_window->specialEvents & CC_WIN32_EVENT_FOCUS_LOST) {
+			_window->specialEvents &= ~CC_WIN32_EVENT_FOCUS_LOST;
+			_window->event.type = CC_EVENT_FOCUS_LOST;
+			return true;
+		}
 	}
 	
 	if(PeekMessage(&_window->msg, NULL, 0, 0, PM_REMOVE)){

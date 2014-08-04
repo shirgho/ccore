@@ -35,9 +35,9 @@
 #include "tga.h"
 
 // Some helper functions for colors
-#define HEXTOR(x) (((x >> 16) & 0xff) / 255.0)
-#define HEXTOG(x) (((x >> 8) & 0xff) / 255.0)
-#define HEXTOB(x) ((x & 0xff) / 255.0)
+#define HEXTOR(x) (((x >> 16) & 0xff) / 255.0f)
+#define HEXTOG(x) (((x >> 8) & 0xff) / 255.0f)
+#define HEXTOB(x) ((x & 0xff) / 255.0f)
 
 // Interface colors in hex format
 #define COLOR_CLEAR 0x27586B
@@ -63,7 +63,6 @@ int main(int argc, char** argv)
 	// This variable tells the message loop when to quit
 	bool quit = false;
 	char *imageFileName;
-	ccRect newRect;
 
 	// Displays must be detected before creating the window
 	ccFindDisplays();
@@ -119,7 +118,7 @@ int main(int argc, char** argv)
 void initialize()
 {
 	// Configure openGL before drawing
-	glClearColor(HEXTOR(COLOR_CLEAR), HEXTOG(COLOR_CLEAR), HEXTOB(COLOR_CLEAR), 1);
+	glClearColor(HEXTOR(COLOR_CLEAR), HEXTOG(COLOR_CLEAR), HEXTOB(COLOR_CLEAR), 1.0f);
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
 	glFlush();
