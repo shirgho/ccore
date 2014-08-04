@@ -50,25 +50,26 @@
 
 // These functions will be implemented later in this file
 void initialize();
-void projection(int width, int height);
+void projectionOrtho(int width, int height);
 void render();
+
+void renderLogo();
+
+// Globals
+GLuint logoTexture;
 
 int main(int argc, char** argv)
 {
 	// This variable tells the message loop when to quit
 	bool quit = false;
-	GLuint texture;
 	char *imageFileName;
-
-	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "image.tga");
-	texture = loadTGATexture(imageFileName);
-	free(imageFileName);
+	ccRect newRect;
 
 	// Displays must be detected before creating the window
 	ccFindDisplays();
 
 	// Create a centered window
-	ccNewWindow((ccRect){ 0, 0, 1400, 800 }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
+	ccNewWindow((ccRect){ 0, 0, 574, 159 }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
 	ccCenterWindow();
 	
 	// Prepare window for renderen with openGL 3.2
@@ -76,6 +77,24 @@ int main(int argc, char** argv)
 	
 	// This function initializes openGL
 	initialize();
+
+	// Load a texture using tga.c
+	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "image.tga");
+	logoTexture = loadTGATexture(imageFileName);
+	free(imageFileName);
+
+	// Display logo for 1 second
+	projectionOrtho(ccGetWindowRect().width, ccGetWindowRect().height);
+	renderLogo();
+	ccGLSwapBuffers();
+	ccDelay(1000);
+
+	// Resize the window
+	newRect = ccGetWindowRect();
+	newRect.width = 800;
+	newRect.height = 600;
+	ccResizeMoveWindow(newRect, true);
+	ccCenterWindow();
 
 	// Event loop resides within this while statement
 	while(!quit) {
@@ -86,6 +105,13 @@ int main(int argc, char** argv)
 			switch(ccGetEvent().type) {
 			case CC_EVENT_WINDOW_QUIT:
 				quit = true;
+				break;
+			case CC_EVENT_KEY_DOWN:
+				switch(ccGetEvent().keyCode) {
+				case CC_KEY_ESCAPE:
+					quit = true;
+					break;
+				}
 				break;
 			}
 		}
@@ -103,25 +129,37 @@ int main(int argc, char** argv)
 void initialize()
 {
 	// Configure openGL before drawing
-	glShadeModel(GL_SMOOTH);
 	glClearColor(HEXTOR(COLOR_CLEAR), HEXTOG(COLOR_CLEAR), HEXTOB(COLOR_CLEAR), 1);
-	glClearDepth(1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
 	glFlush();
-
-	projection(ccGetWindowRect().width, ccGetWindowRect().height);
 }
 
-void projection(int width, int height)
+void projectionOrtho(int width, int height)
 {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-	gluLookAt(0, 0, 8, 0, 0, 0, 0, 1, 0);
+	glOrtho(0, width, 0, height, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
+}
+
+void renderLogo()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glBindTexture(GL_TEXTURE_2D, logoTexture);
+	
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, -1.0f);
+	glVertex2f(0.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(0.0f, 159.0f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(574.0f, 159.0f);
+	glTexCoord2f(1.0f, -1.0f);
+	glVertex2f(574.0f, 0.0f);
+	glEnd();
 }
 
 void render()
