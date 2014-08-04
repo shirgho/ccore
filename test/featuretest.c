@@ -45,9 +45,6 @@
 #define COLOR_LINES 0xFFFFFF
 #define COLOR_LIGHT 0xD4A26A
 
-// Constants
-#define RESOLUTION_DISPLAY_SCALE 0.001f
-
 // These functions will be implemented later in this file
 void initialize();
 void projectionOrtho(int width, int height);
@@ -57,6 +54,9 @@ void renderLogo();
 
 // Globals
 GLuint logoTexture;
+GLuint commandsTexture;
+
+bool logoScreen = true;
 
 int main(int argc, char** argv)
 {
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 	ccFindDisplays();
 
 	// Create a centered window
-	ccNewWindow((ccRect){ 0, 0, 574, 159 }, "CCORE feature showcase", 0);
+	ccNewWindow((ccRect){ 0, 0, 574, 159 }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
 	ccCenterWindow();
 	
 	// Prepare window for renderen with openGL 3.2
@@ -77,9 +77,12 @@ int main(int argc, char** argv)
 	// This function initializes openGL
 	initialize();
 
-	// Load a texture using tga.c
-	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "image.tga");
+	// Load textures using tga.c
+	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "logo.tga");
 	logoTexture = loadTGATexture(imageFileName);
+	free(imageFileName);
+	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "commands.tga");
+	commandsTexture = loadTGATexture(imageFileName);
 	free(imageFileName);
 
 	// Set the projection
@@ -100,6 +103,21 @@ int main(int argc, char** argv)
 				case CC_KEY_ESCAPE:
 					quit = true;
 					break;
+				}
+				break;
+			case CC_EVENT_MOUSE_DOWN:
+				if(logoScreen && ccGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
+					// Proceed to the demo screen
+					ccRect windowRect = ccGetWindowRect();
+
+					logoScreen = false;
+
+					windowRect.width = 800;
+					windowRect.height = 600;
+					ccResizeMoveWindow(windowRect, true);
+					ccCenterWindow();
+
+					projectionOrtho(windowRect.width, windowRect.height);
 				}
 				break;
 			}
@@ -153,5 +171,10 @@ void render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	renderLogo();
+	if(logoScreen) {
+		renderLogo();
+	}
+	else{
+
+	}
 }
