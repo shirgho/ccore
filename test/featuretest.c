@@ -76,6 +76,7 @@ bool logoScreen = true;
 
 int squareCount;
 float *squareAlpha;
+int hsquares, vsquares;
 
 int main(int argc, char** argv)
 {
@@ -83,17 +84,17 @@ int main(int argc, char** argv)
 	bool quit = false;
 	char *imageFileName;
 
-	// Displays must be detected before creating the window
+	// Displays must be detected before creating the window and using display functions
 	ccFindDisplays();
 
-	// Create a centered window
+	// Create a centered window that cannot be resized
 	ccNewWindow((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
 	ccCenterWindow();
 	
-	// Prepare window for renderen with openGL 3.2
+	// Prepare window for rendering with openGL 3.2 or higher
 	ccGLBindContext(3, 2);
 	
-	// This function initializes openGL
+	// This function initializes openGL in this example
 	initialize();
 
 	// Load textures using tga.c
@@ -109,9 +110,9 @@ int main(int argc, char** argv)
 
 	// Event loop resides within this while statement
 	while(!quit) {
-		ccDelay(15); //TODO: don't lock framerate
+		ccDelay(15); //Limit the frame rate
 
-		// Poll all events
+		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
 		while(ccPollEvent()) {
 			switch(ccGetEvent().type) {
 			case CC_EVENT_WINDOW_QUIT:
@@ -210,8 +211,13 @@ int main(int argc, char** argv)
 			}
 		}
 
+		// Process logic
 		timestep();
+
+		// Render using openGL
 		render();
+
+		// Swap the buffers
 		ccGLSwapBuffers();
 	}
 
@@ -220,6 +226,8 @@ int main(int argc, char** argv)
 	ccGLFreeContext();
 	ccFreeWindow();
 }
+
+// All code below this point is not CCORE related
 
 void initialize()
 {
@@ -243,7 +251,9 @@ void setProjection()
 
 	if(!logoScreen) {
 		int i;
-		squareCount = (ccGetWindowRect().width / SQUARE_SIZE)*(ccGetWindowRect().height / SQUARE_SIZE);
+		hsquares = ceil((double)ccGetWindowRect().width / SQUARE_SIZE);
+		vsquares = ceil((double)ccGetWindowRect().height / SQUARE_SIZE);
+		squareCount = hsquares * vsquares;
 
 		squareAlpha = realloc(squareAlpha ,sizeof(float)*squareCount);
 
@@ -324,7 +334,7 @@ void render()
 			}
 
 			x += SQUARE_SIZE;
-			if(x + SQUARE_SIZE > ccGetWindowRect().width) {
+			if(x == hsquares * SQUARE_SIZE) {
 				x = 0;
 				y += SQUARE_SIZE;
 			}
@@ -337,11 +347,10 @@ void render()
 
 void scrollSquaresUp() {
 	int i;
-	int offset = ccGetWindowRect().width / SQUARE_SIZE;
 
 	for(i = squareCount - 1; i >= 0; i--) {
-		if(i - offset >= 0) {
-			squareAlpha[i] = squareAlpha[i - offset];
+		if(i - hsquares >= 0) {
+			squareAlpha[i] = squareAlpha[i - hsquares];
 		}
 	}
 
@@ -350,11 +359,10 @@ void scrollSquaresUp() {
 
 void scrollSquaresDown() {
 	int i;
-	int offset = ccGetWindowRect().width / SQUARE_SIZE;
 
 	for(i = 0; i < squareCount; i++) {
-		if(i + offset < squareCount) {
-			squareAlpha[i] = squareAlpha[i + offset];
+		if(i + hsquares < squareCount) {
+			squareAlpha[i] = squareAlpha[i + hsquares];
 		}
 	}
 
@@ -363,7 +371,7 @@ void scrollSquaresDown() {
 
 int mouseToIndex()
 {
-	int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((ccGetWindowRect().height - ccGetWindowMouse().y) / SQUARE_SIZE) * (ccGetWindowRect().width / SQUARE_SIZE);
+	int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((ccGetWindowRect().height - ccGetWindowMouse().y) / SQUARE_SIZE) * hsquares;
 	if(index >= squareCount) index = -1;
 	return index;
 }
@@ -371,15 +379,15 @@ int mouseToIndex()
 void crossSquares() {
 	int i;
 	int index = mouseToIndex();
-	int iStart = index - (index % (ccGetWindowRect().width / SQUARE_SIZE));
-	int iEnd = iStart + (ccGetWindowRect().width / SQUARE_SIZE);
+	int iStart = index - (index % hsquares);
+	int iEnd = iStart + hsquares;
 
 	for(i = iStart; i < iEnd; i++) {
 		squareAlpha[i] = 1.0f;
 	}
 
-	iStart = index % (ccGetWindowRect().width / SQUARE_SIZE);
-	for(i = iStart; i < squareCount; i += (ccGetWindowRect().width / SQUARE_SIZE)) {
+	iStart = index % hsquares;
+	for(i = iStart; i < squareCount; i += hsquares) {
 		squareAlpha[i] = 1.0f;
 	}
 }
