@@ -2,15 +2,9 @@
 
 ccRect ccGetDisplayRect(ccDisplay *display)
 {
-	ccRect rect;
-
 	ccAssert(display != NULL);
 
-	rect.x = display->x;
-	rect.y = display->y;
-	rect.width = display->resolution[display->current].width;
-	rect.height = display->resolution[display->current].height;
-	return rect;
+	return (ccRect){ display->x, display->y, display->resolution[display->current].width, display->resolution[display->current].height };
 }
 
 bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
