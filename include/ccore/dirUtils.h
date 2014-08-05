@@ -28,9 +28,9 @@
 //These functions can be used to get OS specific directories to store program data
 
 #ifdef LINUX
-#include "../../src/ccore/linux/utils/dirUtils.h"
+#include "../../src/ccore/linux/utils/lin_dirUtils.h"
 #elif defined WIN32
-#include "../../src/ccore/win32/utils/dirUtils.h"
+#include "../../src/ccore/win32/utils/win_dirUtils.h"
 #endif
 
 char *ccGetUserDir();

@@ -26,11 +26,11 @@
 //This header usually doesn't need to be included, since it is included in every other ccore header
 
 #ifdef __linux__
-#include "../../src/ccore/linux/core.h"
-#include "../../src/ccore/x11/core.h"
+#include "../../src/ccore/linux/lin_core.h"
+#include "../../src/ccore/x11/x11_core.h"
 
 #elif defined _WIN32
-#include "../../src/ccore/win32/core.h"
+#include "../../src/ccore/win32/win_core.h"
 #else
 #error "OS not supported!"
 #endif

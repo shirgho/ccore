@@ -27,9 +27,9 @@
 #include "types.h"
 
 #ifdef X11
-#include "../../src/ccore/x11/interface/event.h"
+#include "../../src/ccore/x11/interface/x11_event.h"
 #elif defined WIN32
-#include "../../src/ccore/win32/interface/event.h"
+#include "../../src/ccore/win32/interface/win_event.h"
 #endif
 
 // A type of event returned used in ccWindow after the function ccPollEvent is called

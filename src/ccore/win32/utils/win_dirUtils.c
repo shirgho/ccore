@@ -1,4 +1,4 @@
-#include "dirUtils.h"
+#include <ccore/dirUtils.h>
 
 #define USERHOME "%HOMEPATH%/"
 

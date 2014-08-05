@@ -18,11 +18,11 @@
     <ClCompile Include="src\ccore\common\utils\com_error.c" />
     <ClCompile Include="src\ccore\common\interface\com_event.c" />
     <ClCompile Include="src\ccore\common\utils\com_rect.c" />
-    <ClCompile Include="src\ccore\win32\interface\display.c" />
-    <ClCompile Include="src\ccore\win32\interface\opengl.c" />
-    <ClCompile Include="src\ccore\win32\interface\window.c" />
-    <ClCompile Include="src\ccore\win32\utils\dirUtils.c" />
-    <ClCompile Include="src\ccore\win32\utils\timing.c" />
+    <ClCompile Include="src\ccore\win32\interface\win_display.c" />
+    <ClCompile Include="src\ccore\win32\interface\win_opengl.c" />
+    <ClCompile Include="src\ccore\win32\interface\win_window.c" />
+    <ClCompile Include="src\ccore\win32\utils\win_dirUtils.c" />
+    <ClCompile Include="src\ccore\win32\utils\win_timing.c" />
     <ClCompile Include="test\featuretest.c" />
     <ClCompile Include="test\tga.c" />
   </ItemGroup>
@@ -42,13 +42,13 @@
     <ClInclude Include="lib\glew\GL\glew.h" />
     <ClInclude Include="lib\glew\GL\glxew.h" />
     <ClInclude Include="lib\glew\GL\wglew.h" />
-    <ClInclude Include="src\ccore\win32\core.h" />
-    <ClInclude Include="src\ccore\win32\interface\display.h" />
-    <ClInclude Include="src\ccore\win32\interface\event.h" />
-    <ClInclude Include="src\ccore\win32\interface\opengl.h" />
-    <ClInclude Include="src\ccore\win32\interface\window.h" />
-    <ClInclude Include="src\ccore\win32\utils\dirUtils.h" />
-    <ClInclude Include="src\ccore\win32\utils\timing.h" />
+    <ClInclude Include="src\ccore\win32\win_core.h" />
+    <ClInclude Include="src\ccore\win32\interface\win_display.h" />
+    <ClInclude Include="src\ccore\win32\interface\win_event.h" />
+    <ClInclude Include="src\ccore\win32\interface\win_opengl.h" />
+    <ClInclude Include="src\ccore\win32\interface\win_window.h" />
+    <ClInclude Include="src\ccore\win32\utils\win_dirUtils.h" />
+    <ClInclude Include="src\ccore\win32\utils\win_timing.h" />
     <ClInclude Include="test\tga.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

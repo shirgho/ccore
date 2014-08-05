@@ -32,9 +32,9 @@
 #include "../../lib/glew/GL/glew.h"
 
 #ifdef X11
-#include "../../src/ccore/x11/interface/opengl.h"
+#include "../../src/ccore/x11/interface/x11_opengl.h"
 #elif defined WIN32
-#include "../../src/ccore/win32/interface/opengl.h"
+#include "../../src/ccore/win32/interface/win_opengl.h"
 #endif
 
 //opengl

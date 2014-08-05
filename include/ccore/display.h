@@ -29,9 +29,9 @@
 #include "assert.h"
 
 #ifdef X11
-#include "../../src/ccore/x11/interface/display.h"
+#include "../../src/ccore/x11/interface/x11_display.h"
 #elif defined WIN32
-#include "../../src/ccore/win32/interface/display.h"
+#include "../../src/ccore/win32/interface/win_display.h"
 #endif
 
 #define CC_DEFAULT_RESOLUTION -1
