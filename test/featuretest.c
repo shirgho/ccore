@@ -26,8 +26,6 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
-#include <math.h> // Math.h for ceil()
-
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/timing.h>
@@ -67,6 +65,9 @@ void scrollSquaresUp();
 void scrollSquaresDown();
 void crossSquares();
 void mouseTrail();
+
+// Custom ceil
+int cceil(float n);
 
 // Globals
 GLuint logoTexture;
@@ -251,8 +252,8 @@ void setProjection()
 
 	if(!logoScreen) {
 		int i;
-		hsquares = ceil((double)ccGetWindowRect().width / SQUARE_SIZE);
-		vsquares = ceil((double)ccGetWindowRect().height / SQUARE_SIZE);
+		hsquares = cceil((float)ccGetWindowRect().width / SQUARE_SIZE);
+		vsquares = cceil((float)ccGetWindowRect().height / SQUARE_SIZE);
 		squareCount = hsquares * vsquares;
 
 		squareAlpha = realloc(squareAlpha ,sizeof(float)*squareCount);
@@ -396,4 +397,11 @@ void mouseTrail()
 {
 	int index = mouseToIndex();
 	if(index != -1) squareAlpha[index] = 1;
+}
+
+int cceil(float n)
+{
+	int i = (int)n;
+	if(n - i == 0) return i;
+	else return i + 1;
 }
