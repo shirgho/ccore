@@ -41,22 +41,39 @@
 
 // Interface colors in hex format
 #define COLOR_CLEAR 0x27586B
-#define COLOR_BACK 0x457385
-#define COLOR_LINES 0xFFFFFF
 #define COLOR_LIGHT 0xD4A26A
+#define COLOR_SQUARE 0x457385
+
+// Dimensions
+#define LOGO_WIDTH 574
+#define LOGO_HEIGHT 159
+#define COMMANDS_WIDTH 500
+#define COMMANDS_HEIGHT 300
+#define RES_WIDTH 800
+#define RES_HEIGHT 600
+#define SQUARE_SIZE 50
 
 // These functions will be implemented later in this file
 void initialize();
 void projectionOrtho(int width, int height);
+void timestep(float step);
 void render();
 
 void renderLogo();
+
+void scrollSquaresUp();
+void scrollSquaresDown();
+void crossSquares(int index);
+void mouseTrail();
 
 // Globals
 GLuint logoTexture;
 GLuint commandsTexture;
 
 bool logoScreen = true;
+
+int squareCount;
+float *squareAlpha;
 
 int main(int argc, char** argv)
 {
@@ -68,7 +85,7 @@ int main(int argc, char** argv)
 	ccFindDisplays();
 
 	// Create a centered window
-	ccNewWindow((ccRect){ 0, 0, 574, 159 }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
+	ccNewWindow((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
 	ccCenterWindow();
 	
 	// Prepare window for renderen with openGL 3.2
@@ -90,39 +107,69 @@ int main(int argc, char** argv)
 
 	// Event loop resides within this while statement
 	while(!quit) {
-		ccDelay(15); //TODO: don't lock framerate
+		ccDelay(5); //TODO: don't lock framerate
 
 		// Poll all events
 		while(ccPollEvent()) {
 			switch(ccGetEvent().type) {
 			case CC_EVENT_WINDOW_QUIT:
+				// Quit when the close button is pressed
 				quit = true;
 				break;
 			case CC_EVENT_KEY_DOWN:
 				switch(ccGetEvent().keyCode) {
 				case CC_KEY_ESCAPE:
+					// Quit when the escape key is pressed
 					quit = true;
 					break;
 				}
+
+				if(!logoScreen) {
+					squareAlpha[ccGetEvent().keyCode % squareCount] = 1.0f;
+				}
 				break;
-			case CC_EVENT_MOUSE_DOWN:
+			case CC_EVENT_MOUSE_UP:
 				if(logoScreen && ccGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
 					// Proceed to the demo screen
 					ccRect windowRect = ccGetWindowRect();
 
 					logoScreen = false;
 
-					windowRect.width = 800;
-					windowRect.height = 600;
+					// Enlarge the window a bit
+					windowRect.width = RES_WIDTH;
+					windowRect.height = RES_HEIGHT;
 					ccResizeMoveWindow(windowRect, true);
 					ccCenterWindow();
 
 					projectionOrtho(windowRect.width, windowRect.height);
 				}
 				break;
+			case CC_EVENT_MOUSE_DOWN:
+				// Create a cross where the mouse was pressed
+				if(!logoScreen) {
+					int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((RES_HEIGHT - ccGetWindowMouse().y) / SQUARE_SIZE) * (RES_WIDTH / SQUARE_SIZE);
+					if(index < squareCount) crossSquares(index);
+				}
+				break;
+			case CC_EVENT_MOUSE_SCROLL:
+				// Scroll all squares for a nice effect
+				if(ccGetEvent().scrollDelta > 0) {
+					scrollSquaresUp();
+				}
+				else{
+					scrollSquaresDown();
+				}
+				break;
+			case CC_EVENT_MOUSE_MOVE:
+				// Highlight squares the mouse is hovering over
+				if(!logoScreen) {
+					mouseTrail();
+				}
+				break;
 			}
 		}
 
+		timestep((float)15 / 1000);
 		render();
 		ccGLSwapBuffers();
 	}
@@ -135,11 +182,20 @@ int main(int argc, char** argv)
 
 void initialize()
 {
-	// Configure openGL before drawing
+	int i;
+
 	glClearColor(HEXTOR(COLOR_CLEAR), HEXTOG(COLOR_CLEAR), HEXTOB(COLOR_CLEAR), 1.0f);
-	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glFlush();
+
+	squareCount = (RES_WIDTH / SQUARE_SIZE)*(RES_HEIGHT / SQUARE_SIZE);
+	squareAlpha = malloc(sizeof(float)*squareCount);
+
+	for(i = 0; i < squareCount; i++) {
+		squareAlpha[i] = 0.0f;
+	}
 }
 
 void projectionOrtho(int width, int height)
@@ -153,18 +209,50 @@ void projectionOrtho(int width, int height)
 
 void renderLogo()
 {
+	glEnable(GL_TEXTURE_2D);
+
 	glBindTexture(GL_TEXTURE_2D, logoTexture);
 	
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, -1.0f);
 	glVertex2f(0.0f, 0.0f);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(0.0f, 159.0f);
+	glVertex2f(0.0f, (float)LOGO_HEIGHT);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(574.0f, 159.0f);
+	glVertex2f((float)LOGO_WIDTH, (float)LOGO_HEIGHT);
 	glTexCoord2f(1.0f, -1.0f);
-	glVertex2f(574.0f, 0.0f);
+	glVertex2f((float)LOGO_WIDTH, 0.0f);
 	glEnd();
+	
+	glDisable(GL_TEXTURE_2D);
+}
+
+void renderCommands()
+{
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, commandsTexture);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, -1.0f);
+	glVertex2f(0.0f, (float)RES_HEIGHT - COMMANDS_HEIGHT);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(0.0f, (float)RES_HEIGHT);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((float)COMMANDS_WIDTH, (float)RES_HEIGHT);
+	glTexCoord2f(1.0f, -1.0f);
+	glVertex2f((float)COMMANDS_WIDTH, (float)RES_HEIGHT - COMMANDS_HEIGHT);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+}
+
+void timestep(float step)
+{
+	int i;
+	for(i = 0; i < squareCount; i++) {
+		if(squareAlpha[i] != 0) squareAlpha[i] *= .98f;
+	}
 }
 
 void render()
@@ -175,6 +263,73 @@ void render()
 		renderLogo();
 	}
 	else{
+		int i, x, y;
+		x = 0;
+		y = 0;
+		for(i = 0; i < squareCount; i++) {
+			glBegin(GL_QUADS);
+			glColor4f(HEXTOR(COLOR_SQUARE), HEXTOG(COLOR_SQUARE), HEXTOB(COLOR_SQUARE), squareAlpha[i]);
+			glVertex2f((float)x, (float)y);
+			glVertex2f((float)x + SQUARE_SIZE, (float)y);
+			glVertex2f((float)x + SQUARE_SIZE, (float)y + SQUARE_SIZE);
+			glVertex2f((float)x, (float)y + SQUARE_SIZE);
+			glEnd();
 
+			x += SQUARE_SIZE;
+			if(x >= RES_WIDTH) {
+				x = 0;
+				y += SQUARE_SIZE;
+			}
+		}
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+		renderCommands();
 	}
+}
+
+void scrollSquaresUp() {
+	int i;
+	int offset = RES_WIDTH / SQUARE_SIZE;
+
+	for(i = squareCount - 1; i >= 0; i--) {
+		if(i - offset >= 0) {
+			squareAlpha[i] = squareAlpha[i - offset];
+		}
+	}
+
+	mouseTrail();
+}
+
+void scrollSquaresDown() {
+	int i;
+	int offset = RES_WIDTH / SQUARE_SIZE;
+
+	for(i = 0; i < squareCount; i++) {
+		if(i + offset < squareCount) {
+			squareAlpha[i] = squareAlpha[i + offset];
+		}
+	}
+
+	mouseTrail();
+}
+
+void crossSquares(int index) {
+	int i;
+	int iStart = index - (index % (RES_WIDTH / SQUARE_SIZE));
+	int iEnd = iStart + (RES_WIDTH / SQUARE_SIZE);
+
+	for(i = iStart; i < iEnd; i++) {
+		squareAlpha[i] = 1.0f;
+	}
+
+	iStart = index % (RES_WIDTH / SQUARE_SIZE);
+	for(i = iStart; i < squareCount; i += (RES_WIDTH / SQUARE_SIZE)) {
+		squareAlpha[i] = 1.0f;
+	}
+}
+
+void mouseTrail()
+{
+	int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((RES_HEIGHT - ccGetWindowMouse().y) / SQUARE_SIZE) * (RES_WIDTH / SQUARE_SIZE);
+	if(index < squareCount) squareAlpha[index] = 1;
 }

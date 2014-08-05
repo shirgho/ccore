@@ -14,6 +14,13 @@ ccRect ccGetWindowRect()
 	return _window->rect;
 }
 
+ccPoint ccGetWindowMouse()
+{
+	ccAssert(_window != NULL);
+
+	return _window->mouse;
+}
+
 bool ccWindowExists()
 {
 	return _window != NULL;
@@ -116,7 +123,7 @@ static void processRid(HRAWINPUT rawInput)
 			_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 		}
 		else if(buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) {
-			_window->event.type = CC_EVENT_MOUSE_DOWN;
+			_window->event.type = CC_EVENT_MOUSE_UP;
 			_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 		}
 		else if(buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) {
