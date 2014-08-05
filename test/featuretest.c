@@ -59,8 +59,6 @@ void setProjection();
 void timestep();
 void render();
 
-void renderLogo();
-
 void scrollSquaresUp();
 void scrollSquaresDown();
 void crossSquares();
