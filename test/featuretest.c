@@ -26,6 +26,8 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
+#include <math.h> // Math.h for ceil()
+
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/timing.h>
@@ -55,15 +57,15 @@
 
 // These functions will be implemented later in this file
 void initialize();
-void projectionOrtho(int width, int height);
-void timestep(float step);
+void setProjection();
+void timestep();
 void render();
 
 void renderLogo();
 
 void scrollSquaresUp();
 void scrollSquaresDown();
-void crossSquares(int index);
+void crossSquares();
 void mouseTrail();
 
 // Globals
@@ -103,11 +105,11 @@ int main(int argc, char** argv)
 	free(imageFileName);
 
 	// Set the projection
-	projectionOrtho(ccGetWindowRect().width, ccGetWindowRect().height);
+	setProjection();
 
 	// Event loop resides within this while statement
 	while(!quit) {
-		ccDelay(5); //TODO: don't lock framerate
+		ccDelay(15); //TODO: don't lock framerate
 
 		// Poll all events
 		while(ccPollEvent()) {
@@ -115,6 +117,10 @@ int main(int argc, char** argv)
 			case CC_EVENT_WINDOW_QUIT:
 				// Quit when the close button is pressed
 				quit = true;
+				break;
+			case CC_EVENT_WINDOW_RESIZE:
+				// Adapt projection and contents to new size
+				setProjection();
 				break;
 			case CC_EVENT_KEY_DOWN:
 				if(logoScreen) break;
@@ -177,14 +183,13 @@ int main(int argc, char** argv)
 					ccResizeMoveWindow(windowRect, true);
 					ccCenterWindow();
 
-					projectionOrtho(windowRect.width, windowRect.height);
+					setProjection();
 				}
 				break;
 			case CC_EVENT_MOUSE_DOWN:
 				// Create a cross where the mouse was pressed
 				if(!logoScreen) {
-					int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((RES_HEIGHT - ccGetWindowMouse().y) / SQUARE_SIZE) * (RES_WIDTH / SQUARE_SIZE);
-					if(index < squareCount) crossSquares(index);
+					crossSquares();
 				}
 				break;
 			case CC_EVENT_MOUSE_SCROLL:
@@ -205,7 +210,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		timestep((float)15 / 1000);
+		timestep();
 		render();
 		ccGLSwapBuffers();
 	}
@@ -218,29 +223,34 @@ int main(int argc, char** argv)
 
 void initialize()
 {
-	int i;
-
 	glClearColor(HEXTOR(COLOR_CLEAR), HEXTOG(COLOR_CLEAR), HEXTOB(COLOR_CLEAR), 1.0f);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glFlush();
-
-	squareCount = (RES_WIDTH / SQUARE_SIZE)*(RES_HEIGHT / SQUARE_SIZE);
-	squareAlpha = malloc(sizeof(float)*squareCount);
-
-	for(i = 0; i < squareCount; i++) {
-		squareAlpha[i] = 0.0f;
-	}
 }
 
-void projectionOrtho(int width, int height)
+void setProjection()
 {
+	int width = ccGetWindowRect().width;
+	int height = ccGetWindowRect().height;
+
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, width, 0, height, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
+
+	if(!logoScreen) {
+		int i;
+		squareCount = (ccGetWindowRect().width / SQUARE_SIZE)*(ccGetWindowRect().height / SQUARE_SIZE);
+
+		squareAlpha = realloc(squareAlpha ,sizeof(float)*squareCount);
+
+		for(i = 0; i < squareCount; i++) {
+			squareAlpha[i] = 0.0f;
+		}
+	}
 }
 
 void renderLogo()
@@ -271,19 +281,19 @@ void renderCommands()
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, -1.0f);
-	glVertex2f(0.0f, (float)RES_HEIGHT - COMMANDS_HEIGHT);
+	glVertex2f(0.0f, (float)ccGetWindowRect().height - COMMANDS_HEIGHT);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(0.0f, (float)RES_HEIGHT);
+	glVertex2f(0.0f, (float)ccGetWindowRect().height);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)RES_HEIGHT);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccGetWindowRect().height);
 	glTexCoord2f(1.0f, -1.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)RES_HEIGHT - COMMANDS_HEIGHT);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccGetWindowRect().height - COMMANDS_HEIGHT);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
 }
 
-void timestep(float step)
+void timestep()
 {
 	int i;
 	for(i = 0; i < squareCount; i++) {
@@ -303,16 +313,18 @@ void render()
 		x = 0;
 		y = 0;
 		for(i = 0; i < squareCount; i++) {
-			glBegin(GL_QUADS);
-			glColor4f(HEXTOR(COLOR_SQUARE), HEXTOG(COLOR_SQUARE), HEXTOB(COLOR_SQUARE), squareAlpha[i]);
-			glVertex2f((float)x, (float)y);
-			glVertex2f((float)x + SQUARE_SIZE, (float)y);
-			glVertex2f((float)x + SQUARE_SIZE, (float)y + SQUARE_SIZE);
-			glVertex2f((float)x, (float)y + SQUARE_SIZE);
-			glEnd();
+			if(squareAlpha[i] != 0) {
+				glBegin(GL_QUADS);
+				glColor4f(HEXTOR(COLOR_SQUARE), HEXTOG(COLOR_SQUARE), HEXTOB(COLOR_SQUARE), squareAlpha[i]);
+				glVertex2f((float)x, (float)y);
+				glVertex2f((float)x + SQUARE_SIZE, (float)y);
+				glVertex2f((float)x + SQUARE_SIZE, (float)y + SQUARE_SIZE);
+				glVertex2f((float)x, (float)y + SQUARE_SIZE);
+				glEnd();
+			}
 
 			x += SQUARE_SIZE;
-			if(x >= RES_WIDTH) {
+			if(x + SQUARE_SIZE > ccGetWindowRect().width) {
 				x = 0;
 				y += SQUARE_SIZE;
 			}
@@ -325,7 +337,7 @@ void render()
 
 void scrollSquaresUp() {
 	int i;
-	int offset = RES_WIDTH / SQUARE_SIZE;
+	int offset = ccGetWindowRect().width / SQUARE_SIZE;
 
 	for(i = squareCount - 1; i >= 0; i--) {
 		if(i - offset >= 0) {
@@ -338,7 +350,7 @@ void scrollSquaresUp() {
 
 void scrollSquaresDown() {
 	int i;
-	int offset = RES_WIDTH / SQUARE_SIZE;
+	int offset = ccGetWindowRect().width / SQUARE_SIZE;
 
 	for(i = 0; i < squareCount; i++) {
 		if(i + offset < squareCount) {
@@ -349,23 +361,31 @@ void scrollSquaresDown() {
 	mouseTrail();
 }
 
-void crossSquares(int index) {
+int mouseToIndex()
+{
+	int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((ccGetWindowRect().height - ccGetWindowMouse().y) / SQUARE_SIZE) * (ccGetWindowRect().width / SQUARE_SIZE);
+	if(index >= squareCount) index = -1;
+	return index;
+}
+
+void crossSquares() {
 	int i;
-	int iStart = index - (index % (RES_WIDTH / SQUARE_SIZE));
-	int iEnd = iStart + (RES_WIDTH / SQUARE_SIZE);
+	int index = mouseToIndex();
+	int iStart = index - (index % (ccGetWindowRect().width / SQUARE_SIZE));
+	int iEnd = iStart + (ccGetWindowRect().width / SQUARE_SIZE);
 
 	for(i = iStart; i < iEnd; i++) {
 		squareAlpha[i] = 1.0f;
 	}
 
-	iStart = index % (RES_WIDTH / SQUARE_SIZE);
-	for(i = iStart; i < squareCount; i += (RES_WIDTH / SQUARE_SIZE)) {
+	iStart = index % (ccGetWindowRect().width / SQUARE_SIZE);
+	for(i = iStart; i < squareCount; i += (ccGetWindowRect().width / SQUARE_SIZE)) {
 		squareAlpha[i] = 1.0f;
 	}
 }
 
 void mouseTrail()
 {
-	int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((RES_HEIGHT - ccGetWindowMouse().y) / SQUARE_SIZE) * (RES_WIDTH / SQUARE_SIZE);
-	if(index < squareCount) squareAlpha[index] = 1;
+	int index = mouseToIndex();
+	if(index != -1) squareAlpha[index] = 1;
 }
