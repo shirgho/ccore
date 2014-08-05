@@ -12,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\glew\glew.c" />
-    <ClCompile Include="src\ccore\common\charUtils.c" />
-    <ClCompile Include="src\ccore\common\error.c" />
-    <ClCompile Include="src\ccore\common\event.c" />
-    <ClCompile Include="src\ccore\common\rect.c" />
+    <ClCompile Include="src\ccore\common\interface\com_display.c" />
+    <ClCompile Include="src\ccore\common\interface\com_window.c" />
+    <ClCompile Include="src\ccore\common\utils\com_charUtils.c" />
+    <ClCompile Include="src\ccore\common\utils\com_error.c" />
+    <ClCompile Include="src\ccore\common\interface\com_event.c" />
+    <ClCompile Include="src\ccore\common\utils\com_rect.c" />
     <ClCompile Include="src\ccore\win32\interface\display.c" />
     <ClCompile Include="src\ccore\win32\interface\opengl.c" />
     <ClCompile Include="src\ccore\win32\interface\window.c" />

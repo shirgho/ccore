@@ -1,29 +1,5 @@
 #include <ccore/display.h>
 
-int ccGetDisplayAmount()
-{
-	ccAssert(_displays != NULL);
-	ccAssert(_displays->amount != 0);
-
-	return _displays->amount;
-}
-
-ccDisplay *ccGetDisplay(int index)
-{
-	ccAssert(_displays != NULL);
-	ccAssert(index >= 0 && index < _displays->amount);
-
-	return _displays->display + index;
-}
-
-ccDisplay *ccGetDefaultDisplay()
-{
-	ccAssert(_displays != NULL);
-	ccAssert(_displays->display != NULL);
-
-	return _displays->display + _displays->primary;
-}
-
 static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int i, j, k, displayNameLength, eventBase, errorBase;
@@ -179,50 +155,15 @@ ccError ccFreeDisplays()
 {
 	ccAssert(_displays != NULL);
 
-	/*	int i;
-
-		for(i = 0; i < _displays->amount; i++){
-		if(_displays->display + i != NULL){
-		free(_displays->display[i].gpuName);
+	int i;
+	for(i = 0; i < _displays->amount; i++){
 		free(_displays->display[i].monitorName);
 		free(_displays->display[i].resolution);
-		}
-		} */
+	}
 	free(_displays->display);
+	free(_displays);
 
 	return CC_ERROR_NONE;
-}
-
-ccError ccRevertDisplays()
-{
-	int i;
-	ccError output;
-
-	ccAssert(_displays != NULL);
-
-	for(i = 0; i < _displays->amount; i++){
-		output = ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
-		if(output != CC_ERROR_NONE){
-			return output;
-		}
-	}
-
-	return CC_ERROR_NONE;
-}
-
-bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
-{
-	int i;
-
-	ccAssert(display != NULL);
-
-	for(i = 0; i < display->amount; i++) {
-		if(memcmp(&display->resolution[i], resolution, sizeof(ccDisplayData)) == 0) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 ccError ccSetResolution(ccDisplay *display, int resolutionIndex)

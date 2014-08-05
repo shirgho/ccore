@@ -1,37 +1,4 @@
 #include <ccore/window.h>
-//TODO: make common
-ccEvent ccGetEvent()
-{
-	ccAssert(_window != NULL);
-
-	return _window->event;
-}
-
-ccRect ccGetWindowRect()
-{
-	ccAssert(_window != NULL);
-
-	return _window->rect;
-}
-
-ccPoint ccGetWindowMouse()
-{
-	ccAssert(_window != NULL);
-
-	return _window->mouse;
-}
-
-ccDisplay *ccGetWindowDisplay()
-{
-	ccAssert(_window != NULL);
-
-	return _window->display;
-}
-
-bool ccWindowExists()
-{
-	return _window != NULL;
-}
 
 static ccError setWindowState(const char *type, bool value)
 {	
@@ -256,16 +223,4 @@ ccError ccCenterWindow()
 	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
 
 	return CC_ERROR_NONE;
-}
-
-ccRect ccGetDisplayRect(ccDisplay *display)
-{
-	ccRect rect;
-
-	rect.x = display->x;
-	rect.y = display->y;
-	rect.width = display->resolution[display->current].width;
-	rect.height = display->resolution[display->current].height;
-
-	return rect;
 }
