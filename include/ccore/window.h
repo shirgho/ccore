@@ -91,6 +91,7 @@ ccWindow *_window;
 ccEvent ccGetEvent();
 ccRect ccGetWindowRect();
 ccPoint ccGetWindowMouse();
+ccDisplay *ccGetWindowDisplay();
 bool ccWindowExists();
 
 //window functions

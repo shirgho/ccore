@@ -117,10 +117,46 @@ int main(int argc, char** argv)
 				quit = true;
 				break;
 			case CC_EVENT_KEY_DOWN:
+				if(logoScreen) break;
+
 				switch(ccGetEvent().keyCode) {
 				case CC_KEY_ESCAPE:
 					// Quit when the escape key is pressed
 					quit = true;
+					break;
+				case CC_KEY_F:
+					// Go full screen on the current display (0 indicates current)
+					ccSetFullscreen(0);
+					break;
+				case CC_KEY_W:
+					// Go to windowed
+					ccSetWindowed();
+					ccResizeMoveWindow((ccRect){ ccGetWindowRect().x, ccGetWindowRect().y, RES_WIDTH, RES_HEIGHT }, true);
+					ccCenterWindow();
+					break;
+				case CC_KEY_M:
+					// Maximize the window
+					ccSetMaximized();
+					break;
+				case CC_KEY_C:
+					// Center the window
+					ccCenterWindow();
+					break;
+				case CC_KEY_X:
+					// Go full screen on the first two displays if possible
+					if(ccGetDisplayAmount() >= 2) {
+						ccSetFullscreen(2, ccGetDisplay(0), ccGetDisplay(1));
+					}
+					break;
+				case CC_KEY_R:
+					// Change the resolution to a random one from the list of possible resolutions
+				{
+					ccSetResolution(ccGetWindowDisplay(), rand() % ccGetResolutionAmount(ccGetWindowDisplay()));
+				}
+					break;
+				case CC_KEY_N:
+					// Revert all resolutions
+					ccRevertDisplays();
 					break;
 				}
 
