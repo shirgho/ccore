@@ -41,7 +41,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	_window->XScreen = DefaultScreen(_window->XDisplay);
 	_window->XWindow = XCreateSimpleWindow(_window->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, 0, 0);
 	// Choose types of events
-	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
+	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP){
 		setWindowState("_NET_WM_STATE_ABOVE", true);
