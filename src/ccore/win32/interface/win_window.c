@@ -14,8 +14,7 @@ static void updateWindowDisplay()
 
 	largestArea = 0;
 
-	for(i = 0; i < ccGetDisplayAmount(); i++)
-	{
+	for(i = 0; i < ccGetDisplayAmount(); i++) {
 		displayRect = ccGetDisplayRect(ccGetDisplay(i));
 		area = ccRectIntersectionArea(&displayRect, &_window->rect);
 		if(area > largestArea) {
