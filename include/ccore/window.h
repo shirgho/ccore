@@ -56,6 +56,7 @@ typedef enum {
 //the window struct
 typedef struct {
 	//Note: dimensions subtract border size
+	int flags;
 	float aspect;
 	ccRect rect;
 	ccPoint mouse;
