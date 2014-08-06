@@ -233,7 +233,7 @@ ccError ccNewWindow(ccRect rect, const char* title, int flags)
 
 	//initialize struct
 	ccMalloc(_window, sizeof(ccWindow));
-	memcpy(&_window->rect, &rect, sizeof(ccRect));
+	_window->rect = rect;
 	_window->specialEvents = 0;
 
 	_window->lpbSize = 0;
