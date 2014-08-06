@@ -63,10 +63,11 @@ typedef struct {
 	ccDisplay *display;
 
 #ifdef X11
-	int flags;
 	Display *XDisplay; 
 	Window XWindow;
 	int XScreen;
+	int windowFlags;
+	bool resizable;
 	GLXContext XContext;
 #endif
 

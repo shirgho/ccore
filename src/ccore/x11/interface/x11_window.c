@@ -21,6 +21,30 @@ static ccError setWindowState(const char *type, bool value)
 	return CC_ERROR_NONE;
 }
 
+static void setResizable(bool resizable)
+{
+	XSizeHints *sizeHints = XAllocSizeHints();
+	long flags = 0;
+
+	if(_window->resizable == resizable) return;
+
+	_window->resizable = resizable;
+
+	XGetWMNormalHints(_window->XDisplay, _window->XWindow, sizeHints, &flags);
+
+	if(resizable) {
+		sizeHints->flags &= ~(PMinSize | PMaxSize);
+	}else{
+		sizeHints->flags |= PMinSize | PMaxSize;
+		sizeHints->min_width = sizeHints->max_width = _window->rect.width;
+		sizeHints->min_height = sizeHints->max_height = _window->rect.height;
+	}
+
+	XSetWMNormalHints(_window->XDisplay, _window->XWindow, sizeHints);
+
+	XFree(sizeHints);
+}
+
 ccError ccNewWindow(ccRect rect, const char *title, int flags)
 {
 	Window root;
@@ -31,6 +55,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	ccMalloc(_window, sizeof(ccWindow));
 	
 	_window->rect = rect;
+	_window->windowFlags = flags;
 
 	_window->XDisplay = XOpenDisplay(NULL);
 	ccAssert(_window->XDisplay != NULL);
@@ -43,17 +68,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 
 	// Disable resizing
-	if(flags & CC_WINDOW_FLAG_NORESIZE) {
-		XSizeHints *sizeHints = XAllocSizeHints();
-
-		sizeHints->min_width = sizeHints->max_width = _window->rect.width;
-		sizeHints->min_height = sizeHints->max_height = _window->rect.height;
-		sizeHints->x = _window->rect.x;
-		sizeHints->y = _window->rect.y;
-		sizeHints->flags = PMaxSize | PMinSize;
-
-		XSetWMProperties(_window->XDisplay, _window->XWindow, NULL, NULL, NULL, 0, sizeHints, NULL, NULL);
-	}
+	if(flags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
 		setWindowState("_NET_WM_STATE_ABOVE", true);
@@ -141,9 +156,13 @@ bool ccPollEvent()
 				_window->rect.width = event.xconfigure.width;
 				_window->rect.height = event.xconfigure.height;
 				_window->aspect = _window->rect.height / _window->rect.width;
+
 				XGetWindowAttributes(_window->XDisplay, _window->XWindow, &_windowAttributes);
+
 				_window->rect.x = _windowAttributes.x;
 				_window->rect.y = _windowAttributes.y;
+
+				if(_window->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 			}
 			break;
 		case ClientMessage:
@@ -170,6 +189,8 @@ ccError ccSetWindowed()
 {
 	ccAssert(_window);
 
+	setResizable(true);
+
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
 
 	//TODO add check for the pointer
@@ -194,6 +215,8 @@ ccError ccSetFullscreen(int displayCount, ...)
 {
 	ccAssert(_window);
 
+	setResizable(true);
+
 	//TODO implement multiple displays
 	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 
@@ -208,6 +231,7 @@ ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 	//TODO implement addBorder
 	ccAssert(_window);
 
+	setResizable(true);
 	XMoveResizeWindow(_window->XDisplay, _window->XWindow, rect.x, rect.y, rect.width, rect.height);
 
 	return CC_ERROR_NONE;

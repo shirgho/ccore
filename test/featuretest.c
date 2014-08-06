@@ -224,6 +224,8 @@ int main(int argc, char** argv)
 	ccFreeDisplays();
 	ccGLFreeContext();
 	ccFreeWindow();
+
+	return 0;
 }
 
 // All code below this point is not CCORE related
