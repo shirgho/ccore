@@ -26,6 +26,8 @@ static void setResizable(bool resizable)
 	XSizeHints *sizeHints = XAllocSizeHints();
 	long flags = 0;
 
+	ccAssert(_window != NULL);
+
 	if(_window->resizable == resizable) return;
 
 	_window->resizable = resizable;
@@ -58,7 +60,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	_window->windowFlags = flags;
 
 	_window->XDisplay = XOpenDisplay(NULL);
-	ccAssert(_window->XDisplay != NULL);
+	if(_window->XDisplay == NULL) return CC_ERROR_WINDOWCREATION;
 
 	root = DefaultRootWindow(_window->XDisplay);
 	_window->XScreen = DefaultScreen(_window->XDisplay);
@@ -68,6 +70,7 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 
 	// Disable resizing
+	_window->resizable = true;
 	if(flags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
@@ -77,10 +80,10 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	XMapWindow(_window->XDisplay, _window->XWindow);
 	XStoreName(_window->XDisplay, _window->XWindow, title);
 
-	_window->mouse.x = _window->mouse.y = _window->rect.width = _window->rect.height = -1;
-
 	delete = XInternAtom(_window->XDisplay, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(_window->XDisplay, _window->XWindow, &delete, 1);
+
+	ccUpdateWindowDisplay();
 
 	return CC_ERROR_NONE;
 }
@@ -162,7 +165,11 @@ bool ccPollEvent()
 				_window->rect.x = _windowAttributes.x;
 				_window->rect.y = _windowAttributes.y;
 
+				ccUpdateWindowDisplay();
+
 				if(_window->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
+
+				printf("Changed to %dx%d\n", _window->rect.width, _window->rect.height);
 			}
 			break;
 		case ClientMessage:
@@ -239,24 +246,19 @@ ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 
 ccError ccCenterWindow()
 {
-	//TODO send _NET_WM_WINDOW_TYPE_SPLASH event
-	XEvent event;
-	Atom wmState, splash;
+	ccDisplayData *currentResolution;
+	ccRect newRect;
 
-	ccAssert(_window);
+	ccAssert(_window->display != NULL);
 
-	wmState = XInternAtom(_window->XDisplay, "_NET_WM_TYPE", false);
-	splash = XInternAtom(_window->XDisplay, "_NET_WM_TYPE_SPLASH", false);
+	currentResolution = ccGetResolutionCurrent(_window->display);
 
-	memset(&event, 0, sizeof(event));
-	event.type = ClientMessage;
-	event.xclient.window = _window->XWindow;
-	event.xclient.message_type = wmState;
-	event.xclient.format = 32;
-	event.xclient.data.l[0] = 0;
-	event.xclient.data.l[1] = splash;
+	newRect.x = (currentResolution->width - _window->rect.width) >> 1;
+	newRect.y = (currentResolution->height - _window->rect.height) >> 1;
+	newRect.width = _window->rect.width;
+	newRect.height = _window->rect.height;
 
-	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
+	ccResizeMoveWindow(newRect, true);
 
 	return CC_ERROR_NONE;
 }
