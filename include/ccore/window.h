@@ -56,14 +56,14 @@ typedef enum {
 //the window struct
 typedef struct {
 	//Note: dimensions subtract border size
-	int flags;
 	float aspect;
 	ccRect rect;
 	ccPoint mouse;
 	ccEvent event;
 	ccDisplay *display;
 
-#ifdef LINUX
+#ifdef X11
+	int flags;
 	Display *XDisplay; 
 	Window XWindow;
 	int XScreen;
