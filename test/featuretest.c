@@ -222,8 +222,8 @@ int main(int argc, char** argv)
 
 	// Free memory before terminating
 	ccFreeDisplays();
-	ccGLFreeContext();
 	ccFreeWindow();
+	ccGLFreeContext();
 
 	return 0;
 }
