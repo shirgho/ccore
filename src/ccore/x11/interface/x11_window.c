@@ -153,7 +153,7 @@ bool ccPollEvent()
 			_window->event.type = CC_EVENT_KEY_UP;
 			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
-		case ConfigureNotify:
+		case ConfigureNotify: //NOTE: only fires after polling
 			if(_window->rect.width != event.xconfigure.width || _window->rect.height != event.xconfigure.height){
 				_window->event.type = CC_EVENT_WINDOW_RESIZE;
 				_window->rect.width = event.xconfigure.width;
@@ -165,7 +165,7 @@ bool ccPollEvent()
 				_window->rect.x = _windowAttributes.x;
 				_window->rect.y = _windowAttributes.y;
 
-				ccUpdateWindowDisplay();
+				ccUpdateWindowDisplay(); //TODO: also do this when moving the window
 
 				if(_window->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
@@ -240,6 +240,10 @@ ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 
 	setResizable(true);
 	XMoveResizeWindow(_window->XDisplay, _window->XWindow, rect.x, rect.y, rect.width, rect.height);
+	//TODO prime resize event here
+	_window->rect = rect;
+	if(_window->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
+
 
 	return CC_ERROR_NONE;
 }
