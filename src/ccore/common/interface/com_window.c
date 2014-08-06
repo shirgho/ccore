@@ -32,3 +32,22 @@ bool ccWindowExists()
 {
 	return _window != NULL;
 }
+
+void ccUpdateWindowDisplay()
+{
+	int i;
+	int area, largestArea;
+	ccRect displayRect;
+
+	ccAssert(_window != NULL);
+
+	largestArea = 0;
+	for(i = 0; i < ccGetDisplayAmount(); i++) {
+		displayRect = ccGetDisplayRect(ccGetDisplay(i));
+		area = ccRectIntersectionArea(&displayRect, &_window->rect);
+		if(area > largestArea) {
+			largestArea = area;
+			_window->display = ccGetDisplay(i);
+		}
+	}
+}

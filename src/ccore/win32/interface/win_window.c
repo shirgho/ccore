@@ -2,9 +2,6 @@
 
 static void updateWindowDisplay()
 {
-	int i;
-	int area, largestArea;
-	ccRect displayRect;
 	RECT winRect;
 	
 	GetWindowRect(_window->winHandle, &winRect);
@@ -12,16 +9,7 @@ static void updateWindowDisplay()
 	_window->rect.x = winRect.left;
 	_window->rect.y = winRect.top;
 
-	largestArea = 0;
-
-	for(i = 0; i < ccGetDisplayAmount(); i++) {
-		displayRect = ccGetDisplayRect(ccGetDisplay(i));
-		area = ccRectIntersectionArea(&displayRect, &_window->rect);
-		if(area > largestArea) {
-			largestArea = area;
-			_window->display = ccGetDisplay(i);
-		}
-	}
+	ccUpdateWindowDisplay();
 }
 
 static void updateWindowResolution()

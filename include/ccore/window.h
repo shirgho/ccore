@@ -106,3 +106,6 @@ ccError ccCenterWindow();
 ccError ccSetWindowed();
 ccError ccSetMaximized();
 ccError ccSetFullscreen(int displayCount, ...);
+
+//usually for internal use only
+void ccUpdateWindowDisplay();
