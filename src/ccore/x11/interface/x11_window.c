@@ -29,10 +29,8 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	ccAssert(_window == NULL);
 
 	ccMalloc(_window, sizeof(ccWindow));
-	if(_window == NULL){
-		return CC_ERROR_OUT_OF_MEMORY;
-	}
-	ccAssert(_window != NULL);
+	
+	_window->rect = rect;
 
 	_window->XDisplay = XOpenDisplay(NULL);
 	ccAssert(_window->XDisplay != NULL);
@@ -40,10 +38,24 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	root = DefaultRootWindow(_window->XDisplay);
 	_window->XScreen = DefaultScreen(_window->XDisplay);
 	_window->XWindow = XCreateSimpleWindow(_window->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, 0, 0);
+
 	// Choose types of events
 	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 
-	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP){
+	// Disable resizing
+	if(flags & CC_WINDOW_FLAG_NORESIZE) {
+		XSizeHints *sizeHints = XAllocSizeHints();
+
+		sizeHints->min_width = sizeHints->max_width = _window->rect.width;
+		sizeHints->min_height = sizeHints->max_height = _window->rect.height;
+		sizeHints->x = _window->rect.x;
+		sizeHints->y = _window->rect.y;
+		sizeHints->flags = PMaxSize | PMinSize;
+
+		XSetWMProperties(_window->XDisplay, _window->XWindow, NULL, NULL, NULL, 0, sizeHints, NULL, NULL);
+	}
+
+	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
