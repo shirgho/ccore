@@ -37,9 +37,6 @@ typedef struct {
 	int width, height, refreshRate, bitDepth;
 
 	void *data;
-#ifdef LINUX
-	RRMode XMode;
-#endif
 } ccDisplayData;
 
 //display
@@ -52,14 +49,6 @@ typedef struct {
 
 	char *deviceName;
 	void *data;
-
-#ifdef LINUX
-	char *XDisplayName;
-	int XScreen, XineramaScreen;
-	RROutput XOutput;
-	RRMode XOldMode;
-#endif
-
 } ccDisplay;
 
 //list of all displays currently connected and active
