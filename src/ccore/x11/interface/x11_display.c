@@ -156,7 +156,7 @@ ccError ccFindDisplays()
 ccError ccFreeDisplays()
 {
 	int i,j;
-
+	
 	ccAssert(_displays != NULL);
 
 	for(i = 0; i < _displays->amount; i++){

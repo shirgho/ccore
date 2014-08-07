@@ -7,8 +7,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
-//TODO: fix GL include fuckup
-#include "../../../../lib/glew/GL/glew.h"
 #include <ccore/opengl.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
