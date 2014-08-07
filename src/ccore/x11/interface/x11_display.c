@@ -155,14 +155,20 @@ ccError ccFindDisplays()
 
 ccError ccFreeDisplays()
 {
+	int i,j;
+
 	ccAssert(_displays != NULL);
 
-	int i;
 	for(i = 0; i < _displays->amount; i++){
 		free(_displays->display[i].data);
 		free(_displays->display[i].monitorName);
-		free(_displays->display[i].resolution);
 		free(_displays->display[i].deviceName);
+
+		for(j = 0; j < _displays->display[i].amount; j++) {
+			free(_displays->display[i].resolution[j].data);
+		}
+
+		free(_displays->display[i].resolution);
 	}
 	free(_displays->display);
 	free(_displays);
