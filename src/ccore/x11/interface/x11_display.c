@@ -138,7 +138,7 @@ ccError ccFindDisplays()
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
 			if(!ccXFindDisplaysXinerama(display, displayName)){
-				//ccXFindDisplaysXrandr(display, displayName);
+				//ccXFindDisplaysXrandr(display, displayName); <-- what's this ;_;
 				return CC_ERROR_NODISPLAY;
 			}		
 			ccPrintString("X: %d displays found\n", _displays->amount);

@@ -35,6 +35,8 @@
 //stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
+
+	void *data;
 #ifdef LINUX
 	RRMode XMode;
 #endif
@@ -48,7 +50,8 @@ typedef struct {
 	char *gpuName;
 	char *monitorName;
 
-	char* deviceName;
+	char *deviceName;
+	void *data;
 
 #ifdef LINUX
 	char *XDisplayName;
