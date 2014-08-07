@@ -102,7 +102,7 @@ ccError ccFindDisplays()
 }
 
 ccError ccFreeDisplays() {
-	int i;
+	int i, j;
 
 	ccAssert(_displays != NULL);
 
