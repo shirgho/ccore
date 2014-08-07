@@ -39,6 +39,8 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		}
 		currentDisplay = _displays->display + _displays->amount - 1;
 
+		ccMalloc(currentDisplay->data, sizeof(ccDisplay_x11));
+
 		displayNameLength = strlen(displayName);
 		currentDisplay->deviceName = malloc(displayNameLength + 1);
 		memcpy(currentDisplay->deviceName, displayName, displayNameLength);
@@ -61,7 +63,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 			currentDisplay->x = crtcInfo->x;
 			currentDisplay->y = crtcInfo->y;
-			currentDisplay->XOldMode = crtcInfo->mode;
+			((ccDisplay_x11*)currentDisplay->data)->XOldMode = crtcInfo->mode;
 			foundCrtc = true;
 
 			XRRFreeCrtcInfo(crtcInfo);
@@ -72,9 +74,9 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 			currentDisplay->y = -1;
 		}
 
-		currentDisplay->XineramaScreen = i;
-		currentDisplay->XScreen = 0;
-		currentDisplay->XOutput = resources->outputs[i];
+		((ccDisplay_x11*)currentDisplay->data)->XineramaScreen = i;
+		((ccDisplay_x11*)currentDisplay->data)->XScreen = 0;
+		((ccDisplay_x11*)currentDisplay->data)->XOutput = resources->outputs[i];
 		currentDisplay->current = 0;
 		currentDisplay->amount = 0;
 
@@ -89,7 +91,9 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 						vTotal >>= 1;
 					}
 
-					currentResolution.XMode = outputInfo->modes[j];
+					ccMalloc(currentResolution.data, sizeof(ccDisplayData_x11));
+
+					((ccDisplayData_x11*)currentResolution.data)->XMode = outputInfo->modes[j];
 					currentResolution.refreshRate = resources->modes[k].dotClock / (resources->modes[k].hTotal * vTotal);
 					currentResolution.width = resources->modes[k].width;
 					currentResolution.height = resources->modes[k].height;
@@ -155,6 +159,7 @@ ccError ccFreeDisplays()
 
 	int i;
 	for(i = 0; i < _displays->amount; i++){
+		free(_displays->display[i].data);
 		free(_displays->display[i].monitorName);
 		free(_displays->display[i].resolution);
 		free(_displays->display[i].deviceName);
@@ -179,7 +184,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	ccAssert(resolutionIndex < display->amount);
 
 	XDisplay = XOpenDisplay(display->deviceName);
-	root = RootWindow(XDisplay, display->XScreen);
+	root = RootWindow(XDisplay, ((ccDisplay_x11*)display->data)->XScreen);
 	XGrabServer(XDisplay);
 
 	resources = XRRGetScreenResources(XDisplay, root);
@@ -187,7 +192,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 		ccPrintString("X: Couldn't get screen resources");
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
-	outputInfo = XRRGetOutputInfo(XDisplay, resources, display->XOutput);
+	outputInfo = XRRGetOutputInfo(XDisplay, resources, ((ccDisplay_x11*)display->data)->XOutput);
 	if(!outputInfo || outputInfo->connection == RR_Disconnected){
 		ccPrintString("X: Couldn't get output info");
 		XRRFreeScreenResources(resources);
@@ -225,11 +230,11 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
 
-		ccPrintString("X: Setting display %d to %dx%d\n", display->XScreen, displayData->width, displayData->height);
-		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, displayData->XMode, crtcInfo->rotation, &display->XOutput, 1);
+		ccPrintString("X: Setting display %d to %dx%d\n", ((ccDisplay_x11*)display->data)->XScreen, displayData->width, displayData->height);
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplayData_x11*)displayData->data)->XMode, crtcInfo->rotation, &((ccDisplay_x11*)display->data)->XOutput, 1);
 	}else{
-		ccPrintString("X: Reverting display %d\n", display->XScreen);
-		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, display->XOldMode, crtcInfo->rotation, &display->XOutput, 1);
+		ccPrintString("X: Reverting display %d\n", ((ccDisplay_x11*)display->data)->XScreen);
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplay_x11*)display->data)->XOldMode, crtcInfo->rotation, &((ccDisplay_x11*)display->data)->XOutput, 1);
 	}
 
 	XRRFreeScreenResources(resources);
