@@ -1,4 +1,4 @@
-#include <ccore/timing.h>
+#include "win_timing.h"
 
 void ccDelay(int ms)
 {

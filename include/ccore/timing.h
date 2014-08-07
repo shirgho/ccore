@@ -25,10 +25,4 @@
 
 #include "core.h"
 
-#ifdef LINUX
-#include "../../src/ccore/linux/utils/lin_timing.h"
-#elif defined WIN32
-#include "../../src/ccore/win32/utils/win_timing.h"
-#endif
-
 void ccDelay(int ms);
