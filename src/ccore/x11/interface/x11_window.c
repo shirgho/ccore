@@ -5,18 +5,18 @@ static ccError setWindowState(const char *type, bool value)
 	XEvent event;
 	Atom wmState, newWmState;
 
-	wmState = XInternAtom(_window->XDisplay, "_NET_WM_STATE", false);
-	newWmState = XInternAtom(_window->XDisplay, type, false);
+	wmState = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_STATE", false);
+	newWmState = XInternAtom(WINDOW_DATA->XDisplay, type, false);
 
 	memset(&event, 0, sizeof(event));
 	event.type = ClientMessage;
-	event.xclient.window = _window->XWindow;
+	event.xclient.window = WINDOW_DATA->XWindow;
 	event.xclient.message_type = wmState;
 	event.xclient.format = 32;
 	event.xclient.data.l[0] = value;
 	event.xclient.data.l[1] = newWmState;
 
-	XSendEvent(_window->XDisplay, DefaultRootWindow(_window->XDisplay), false, SubstructureNotifyMask, &event);
+	XSendEvent(WINDOW_DATA->XDisplay, DefaultRootWindow(WINDOW_DATA->XDisplay), false, SubstructureNotifyMask, &event);
 
 	return CC_ERROR_NONE;
 }
@@ -28,11 +28,11 @@ static void setResizable(bool resizable)
 
 	ccAssert(_window != NULL);
 
-	if(_window->resizable == resizable) return;
+	if(WINDOW_DATA->resizable == resizable) return;
 
-	_window->resizable = resizable;
+	WINDOW_DATA->resizable = resizable;
 
-	XGetWMNormalHints(_window->XDisplay, _window->XWindow, sizeHints, &flags);
+	XGetWMNormalHints(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, sizeHints, &flags);
 
 	if(resizable) {
 		sizeHints->flags &= ~(PMinSize | PMaxSize);
@@ -42,7 +42,7 @@ static void setResizable(bool resizable)
 		sizeHints->min_height = sizeHints->max_height = _window->rect.height;
 	}
 
-	XSetWMNormalHints(_window->XDisplay, _window->XWindow, sizeHints);
+	XSetWMNormalHints(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, sizeHints);
 
 	XFree(sizeHints);
 }
@@ -57,31 +57,32 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	ccMalloc(_window, sizeof(ccWindow));
 	
 	_window->rect = rect;
-	_window->windowFlags = flags;
+	ccMalloc(_window->data, sizeof(ccWindow_x11));
+	WINDOW_DATA->windowFlags = flags;
 
-	_window->XDisplay = XOpenDisplay(NULL);
-	if(_window->XDisplay == NULL) return CC_ERROR_WINDOWCREATION;
+	WINDOW_DATA->XDisplay = XOpenDisplay(NULL);
+	if(WINDOW_DATA->XDisplay == NULL) return CC_ERROR_WINDOWCREATION;
 
-	root = DefaultRootWindow(_window->XDisplay);
-	_window->XScreen = DefaultScreen(_window->XDisplay);
-	_window->XWindow = XCreateSimpleWindow(_window->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, 0, 0);
+	root = DefaultRootWindow(WINDOW_DATA->XDisplay);
+	WINDOW_DATA->XScreen = DefaultScreen(WINDOW_DATA->XDisplay);
+	WINDOW_DATA->XWindow = XCreateSimpleWindow(WINDOW_DATA->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, 0, 0);
 
 	// Choose types of events
-	XSelectInput(_window->XDisplay, _window->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
+	XSelectInput(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
 
 	// Disable resizing
-	_window->resizable = true;
+	WINDOW_DATA->resizable = true;
 	if(flags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
-	XMapWindow(_window->XDisplay, _window->XWindow);
-	XStoreName(_window->XDisplay, _window->XWindow, title);
+	XMapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
+	XStoreName(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, title);
 
-	delete = XInternAtom(_window->XDisplay, "WM_DELETE_WINDOW", True);
-	XSetWMProtocols(_window->XDisplay, _window->XWindow, &delete, 1);
+	delete = XInternAtom(WINDOW_DATA->XDisplay, "WM_DELETE_WINDOW", True);
+	XSetWMProtocols(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &delete, 1);
 
 	ccUpdateWindowDisplay();
 
@@ -92,9 +93,10 @@ ccError ccFreeWindow()
 {
 	ccAssert(_window != NULL);	
 
-	XUnmapWindow(_window->XDisplay, _window->XWindow);
-	XCloseDisplay(_window->XDisplay);
+	XUnmapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
+	XCloseDisplay(WINDOW_DATA->XDisplay);
 
+	free(_window->data);
 	free(_window);
 	_window = NULL;
 
@@ -111,11 +113,11 @@ bool ccPollEvent()
 	}
 
 	_window->event.type = CC_EVENT_SKIP;
-	if(XPending(_window->XDisplay) == 0){
+	if(XPending(WINDOW_DATA->XDisplay) == 0){
 		return false;
 	}
 
-	XNextEvent(_window->XDisplay, &event);
+	XNextEvent(WINDOW_DATA->XDisplay, &event);
 	switch(event.type){
 		case ButtonPress:
 			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
@@ -160,14 +162,14 @@ bool ccPollEvent()
 				_window->rect.height = event.xconfigure.height;
 				_window->aspect = _window->rect.height / _window->rect.width;
 
-				XGetWindowAttributes(_window->XDisplay, _window->XWindow, &_windowAttributes);
+				XGetWindowAttributes(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &_windowAttributes);
 
 				_window->rect.x = _windowAttributes.x;
 				_window->rect.y = _windowAttributes.y;
 
 				ccUpdateWindowDisplay(); //TODO: also do this when moving the window
 
-				if(_window->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
+				if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
 				printf("Changed to %dx%d\n", _window->rect.width, _window->rect.height);
 			}
@@ -201,7 +203,7 @@ ccError ccSetWindowed()
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
 
 	//TODO add check for the pointer
-	XUngrabPointer(_window->XDisplay, CurrentTime);
+	XUngrabPointer(WINDOW_DATA->XDisplay, CurrentTime);
 
 	return CC_ERROR_NONE;
 }
@@ -228,7 +230,7 @@ ccError ccSetFullscreen(int displayCount, ...)
 	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 
 	//TODO add check for the pointer
-	XGrabPointer(_window->XDisplay, _window->XWindow, True, 0, GrabModeAsync, GrabModeAsync, _window->XWindow, None, CurrentTime);
+	XGrabPointer(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, True, 0, GrabModeAsync, GrabModeAsync, WINDOW_DATA->XWindow, None, CurrentTime);
 
 	return CC_ERROR_NONE;
 }
@@ -239,10 +241,10 @@ ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 	ccAssert(_window);
 
 	setResizable(true);
-	XMoveResizeWindow(_window->XDisplay, _window->XWindow, rect.x, rect.y, rect.width, rect.height);
+	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
 	//TODO prime resize event here
 	_window->rect = rect;
-	if(_window->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
+	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
 
 	return CC_ERROR_NONE;
