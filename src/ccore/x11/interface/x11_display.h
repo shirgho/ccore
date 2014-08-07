@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ccore/display.h>
 #include <ccore/assert.h>
 #include <ccore/print.h>
 

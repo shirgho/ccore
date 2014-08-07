@@ -1,4 +1,4 @@
-#include <ccore/display.h>
+#include "x11_display.h"
 
 static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
@@ -40,13 +40,13 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		currentDisplay = _displays->display + _displays->amount - 1;
 
 		displayNameLength = strlen(displayName);
-		currentDisplay->XDisplayName = malloc(displayNameLength + 1);
-		memcpy(currentDisplay->XDisplayName, displayName, displayNameLength);
+		currentDisplay->deviceName = malloc(displayNameLength + 1);
+		memcpy(currentDisplay->deviceName, displayName, displayNameLength);
 
 		currentDisplay->monitorName = malloc(outputInfo->nameLen + 1);
 		memcpy(currentDisplay->monitorName, outputInfo->name, outputInfo->nameLen);
 
-		currentDisplay->XDisplayName[displayNameLength] = '\0';
+		currentDisplay->deviceName[displayNameLength] = '\0';
 		currentDisplay->gpuName = "Undefined";
 
 		foundCrtc = false;
@@ -126,9 +126,7 @@ ccError ccFindDisplays()
 	ccMalloc(_displays, sizeof(ccDisplays));
 	_displays->amount = 0;
 
-#ifdef LINUX
 	dir = opendir("/tmp/.X11-unix");
-#endif
 	ccAssert(dir != NULL);
 
 	while((direntry = readdir(dir)) != NULL){
@@ -159,6 +157,7 @@ ccError ccFreeDisplays()
 	for(i = 0; i < _displays->amount; i++){
 		free(_displays->display[i].monitorName);
 		free(_displays->display[i].resolution);
+		free(_displays->display[i].deviceName);
 	}
 	free(_displays->display);
 	free(_displays);
@@ -179,7 +178,7 @@ ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
 	ccAssert(display != NULL);
 	ccAssert(resolutionIndex < display->amount);
 
-	XDisplay = XOpenDisplay(display->XDisplayName);
+	XDisplay = XOpenDisplay(display->deviceName);
 	root = RootWindow(XDisplay, display->XScreen);
 	XGrabServer(XDisplay);
 

@@ -28,11 +28,7 @@
 #include "types.h"
 #include "assert.h"
 
-#ifdef X11
-#include "../../src/ccore/x11/interface/x11_display.h"
-#elif defined WIN32
-#include "../../src/ccore/win32/interface/win_display.h"
-#endif
+#include <string.h>
 
 #define CC_DEFAULT_RESOLUTION -1
 
@@ -52,9 +48,7 @@ typedef struct {
 	char *gpuName;
 	char *monitorName;
 
-#ifdef WIN32
 	char* deviceName;
-#endif
 
 #ifdef LINUX
 	char *XDisplayName;

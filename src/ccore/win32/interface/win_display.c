@@ -1,4 +1,4 @@
-#include <ccore/display.h>
+#include "win_display.h"
 
 ccError ccFindDisplays()
 {
