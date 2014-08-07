@@ -73,6 +73,29 @@ typedef struct {
 } ccEvent;
 
 #ifdef X11
+#include <X11/keysym.h>
+#define KEYDEF(x11,win) x11
+#elif defined WIN32
+#include <Windows.h>
+#define KEYDEF(x11,win) win
+#endif
+
+#define CC_KEY_0 KEYDEF(XK_0, '0')
+#define CC_KEY_1 KEYDEF(XK_1, '1')
+#define CC_KEY_2 KEYDEF(XK_2, '2')
+#define CC_KEY_3 KEYDEF(XK_3, '3')
+#define CC_KEY_4 KEYDEF(XK_4, '4')
+#define CC_KEY_5 KEYDEF(XK_5, '5')
+#define CC_KEY_6 KEYDEF(XK_6, '6')
+#define CC_KEY_7 KEYDEF(XK_7, '7')
+#define CC_KEY_8 KEYDEF(XK_8, '8')
+#define CC_KEY_9 KEYDEF(XK_9, '9')
+
+#define CC_KEY_A KEYDEF(XK_a, 'A')
+#define CC_KEY_B KEYDEF(XK_b, 'B')
+#define CC_KEY_F KEYDEF(XK_f, 'F')
+
+#ifdef X11
 
 #include <X11/keysym.h>
 
@@ -92,7 +115,7 @@ typedef struct {
 #define CC_KEY_C XK_c
 #define CC_KEY_D XK_d
 #define CC_KEY_E XK_e
-#define CC_KEY_F XK_f
+
 #define CC_KEY_G XK_g
 #define CC_KEY_H XK_h
 #define CC_KEY_I XK_i
@@ -192,7 +215,7 @@ typedef struct {
 #define CC_KEY_C 'C'
 #define CC_KEY_D 'D'
 #define CC_KEY_E 'E'
-#define CC_KEY_F 'F'
+
 #define CC_KEY_G 'G'
 #define CC_KEY_H 'H'
 #define CC_KEY_I 'I'
