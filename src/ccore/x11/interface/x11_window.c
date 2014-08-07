@@ -1,4 +1,4 @@
-#include <ccore/window.h>
+#include "x11_window.h"
 
 static ccError setWindowState(const char *type, bool value)
 {	

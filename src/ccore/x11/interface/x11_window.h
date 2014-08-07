@@ -11,8 +11,20 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
+#include <ccore/window.h>
 #include <ccore/types.h>
 #include <ccore/event.h>
 #include <ccore/error.h>
 #include <ccore/assert.h>
 #include <ccore/print.h>
+
+typedef struct {
+	Display *XDisplay;
+	Window XWindow;
+	int XScreen;
+	int windowFlags;
+	bool resizable;
+	GLXContext XContext;
+} ccWindow_x11;
+
+#define WINDOW_DATA ((ccWindow_x11*)_window->data)

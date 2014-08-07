@@ -29,12 +29,6 @@
 #include "types.h"
 #include "event.h"
 
-#ifdef X11
-#include "../../src/ccore/x11/interface/x11_window.h"
-#elif defined WIN32
-#include "../../src/ccore/win32/interface/win_window.h"
-#endif
-
 #include <stdarg.h>
 
 //a window can contain multiple flags to determine the layout and functionality
@@ -53,28 +47,7 @@ typedef struct {
 	ccEvent event;
 	ccDisplay *display;
 
-#ifdef X11
-	Display *XDisplay; 
-	Window XWindow;
-	int XScreen;
-	int windowFlags;
-	bool resizable;
-	GLXContext XContext;
-#endif
-
-#ifdef WIN32
-	HDC hdc;
-	MSG msg;
-	HWND winHandle;
-	HGLRC renderContext;
-	int specialEvents;
-	LONG style;
-	RAWINPUTDEVICE rid[NRAWINPUTDEVICES];
-	LPBYTE lpb;
-	UINT lpbSize;
-	UINT dwSize;
-#endif
-
+	void *data;
 } ccWindow;
 
 //only access through getters

@@ -7,7 +7,7 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 	ccAssert(ccWindowExists());
 
-	_window->hdc = GetDC(_window->winHandle);
+	WINDOW_DATA->hdc = GetDC(WINDOW_DATA->winHandle);
 
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
@@ -20,14 +20,14 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 		0, 0, 0, 0, 0, 0, 0
 	};
 
-	pixelFormatIndex = ChoosePixelFormat(_window->hdc, &pfd);
-	SetPixelFormat(_window->hdc, pixelFormatIndex, &pfd);
+	pixelFormatIndex = ChoosePixelFormat(WINDOW_DATA->hdc, &pfd);
+	SetPixelFormat(WINDOW_DATA->hdc, pixelFormatIndex, &pfd);
 
-	_window->renderContext = wglCreateContext(_window->hdc);
-	if(_window->renderContext == NULL) return CC_ERROR_GLCONTEXT;
+	WINDOW_DATA->renderContext = wglCreateContext(WINDOW_DATA->hdc);
+	if(WINDOW_DATA->renderContext == NULL) return CC_ERROR_GLCONTEXT;
 
 	//Make window the current context
-	wglMakeCurrent(_window->hdc, _window->renderContext);
+	wglMakeCurrent(WINDOW_DATA->hdc, WINDOW_DATA->renderContext);
 
 	//Version check
 	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
@@ -44,7 +44,7 @@ ccError ccGLFreeContext()
 {
 	ccAssert(_window != NULL);
 
-	wglDeleteContext(_window->renderContext);
+	wglDeleteContext(WINDOW_DATA->renderContext);
 
 	return CC_ERROR_NONE;
 }
@@ -53,5 +53,5 @@ ccError ccGLSwapBuffers()
 {
 	ccAssert(_window != NULL);
 
-	return SwapBuffers(_window->hdc) == TRUE?CC_ERROR_NONE:CC_ERROR_CANTSWAP;
+	return SwapBuffers(WINDOW_DATA->hdc) == TRUE?CC_ERROR_NONE:CC_ERROR_CANTSWAP;
 }
