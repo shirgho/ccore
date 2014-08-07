@@ -26,11 +26,20 @@
 //This header usually doesn't need to be included, since it is included in every other ccore header
 
 #ifdef __linux__
-#include "../../src/ccore/linux/lin_core.h"
-#include "../../src/ccore/x11/x11_core.h"
+
+#define X11
+#define LINUX
 
 #elif defined _WIN32
-#include "../../src/ccore/win32/win_core.h"
+
+#define WIN32
+
+//Includes openGL libraries when using visual studio:
+#ifdef _MSC_VER
+#pragma comment(lib, "opengl32")
+#pragma comment(lib, "glu32")
+
+#endif
 #else
 #error "OS not supported!"
 #endif

@@ -25,14 +25,7 @@
 
 #include "core.h"
 
-//These functions can be used to get OS specific directories to store program data
-
-#ifdef LINUX
-#include "../../src/ccore/linux/utils/lin_dirUtils.h"
-#elif defined WIN32
-#include "../../src/ccore/win32/utils/win_dirUtils.h"
-#endif
-
+// These functions can be used to get OS specific directories to store program data
 char *ccGetUserDir();
 char *ccGetDataDir();
 char *ccGetTempDir();

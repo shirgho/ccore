@@ -42,7 +42,6 @@
     <ClInclude Include="lib\glew\GL\glew.h" />
     <ClInclude Include="lib\glew\GL\glxew.h" />
     <ClInclude Include="lib\glew\GL\wglew.h" />
-    <ClInclude Include="src\ccore\win32\win_core.h" />
     <ClInclude Include="src\ccore\win32\interface\win_display.h" />
     <ClInclude Include="src\ccore\win32\interface\win_event.h" />
     <ClInclude Include="src\ccore\win32\interface\win_opengl.h" />

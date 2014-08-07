@@ -1,4 +1,4 @@
-#include <ccore/dirUtils.h>
+#include "lin_dirUtils.h"
 
 char *ccGetUserDir()
 {
