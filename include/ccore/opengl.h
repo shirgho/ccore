@@ -31,12 +31,6 @@
 #define GLEW_STATIC
 #include "../../lib/glew/GL/glew.h"
 
-#ifdef X11
-#include "../../src/ccore/x11/interface/x11_opengl.h"
-#elif defined WIN32
-#include "../../src/ccore/win32/interface/win_opengl.h"
-#endif
-
 //opengl
 ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); //bind the openGl context to window
 ccError ccGLFreeContext(); //free context
