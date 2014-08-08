@@ -87,8 +87,8 @@ int main(int argc, char** argv)
 	ccDisplayInitialize();
 
 	// Create a centered window that cannot be resized
-	ccNewWindow((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
-	ccCenterWindow();
+	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
+	ccWindowCenter();
 	
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccGLBindContext(3, 2);
@@ -112,8 +112,8 @@ int main(int argc, char** argv)
 		ccTimeDelay(15); //Limit the frame rate
 
 		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
-		while(ccPollEvent()) {
-			switch(ccGetEvent().type) {
+		while(ccWindowPollEvent()) {
+			switch(ccWindowGetEvent().type) {
 			case CC_EVENT_WINDOW_QUIT:
 				// Quit when the close button is pressed
 				quit = true;
@@ -125,39 +125,39 @@ int main(int argc, char** argv)
 			case CC_EVENT_KEY_DOWN:
 				if(logoScreen) break;
 
-				switch(ccGetEvent().keyCode) {
+				switch(ccWindowGetEvent().keyCode) {
 				case CC_KEY_ESCAPE:
 					// Quit when the escape key is pressed
 					quit = true;
 					break;
 				case CC_KEY_F:
-					// Go full screen on the current display (0 indicates current)
-					ccSetFullscreen(0);
+					// Go full screen on the current display
+					ccWindowSetFullscreen(CC_FULLSCREEN_CURRENT_DISPLAY);
 					break;
 				case CC_KEY_W:
 					// Go to windowed
-					ccSetWindowed();
-					ccResizeMoveWindow((ccRect){ ccGetWindowRect().x, ccGetWindowRect().y, RES_WIDTH, RES_HEIGHT }, true);
-					ccCenterWindow();
+					ccWindowSetWindowed();
+					ccWindowResizeMove((ccRect){ ccWindowGetRect().x, ccWindowGetRect().y, RES_WIDTH, RES_HEIGHT }, true);
+					ccWindowCenter();
 					break;
 				case CC_KEY_M:
 					// Maximize the window
-					ccSetMaximized();
+					ccWindowSetMaximized();
 					break;
 				case CC_KEY_C:
 					// Center the window
-					ccCenterWindow();
+					ccWindowCenter();
 					break;
 				case CC_KEY_X:
 					// Go full screen on the first two displays if possible
 					if(ccDisplayGetAmount() >= 2) {
-						ccSetFullscreen(2, ccDisplayGet(0), ccDisplayGet(1));
+						ccWindowSetFullscreen(2, ccDisplayGet(0), ccDisplayGet(1));
 					}
 					break;
 				case CC_KEY_R:
 					// Change the resolution to a random one from the list of possible resolutions
 				{
-					ccDisplaySetResolution(ccGetWindowDisplay(), rand() % ccDisplayGetResolutionAmount(ccGetWindowDisplay()));
+					ccDisplaySetResolution(ccWindowGetDisplay(), rand() % ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
 				}
 					break;
 				case CC_KEY_N:
@@ -167,21 +167,21 @@ int main(int argc, char** argv)
 				}
 
 				if(!logoScreen) {
-					squareAlpha[ccGetEvent().keyCode % squareCount] = 1.0f;
+					squareAlpha[ccWindowGetEvent().keyCode % squareCount] = 1.0f;
 				}
 				break;
 			case CC_EVENT_MOUSE_UP:
-				if(logoScreen && ccGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
+				if(logoScreen && ccWindowGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
 					// Proceed to the demo screen
-					ccRect windowRect = ccGetWindowRect();
+					ccRect windowRect = ccWindowGetRect();
 
 					logoScreen = false;
 
 					// Enlarge the window a bit
 					windowRect.width = RES_WIDTH;
 					windowRect.height = RES_HEIGHT;
-					ccResizeMoveWindow(windowRect, true);
-					ccCenterWindow();
+					ccWindowResizeMove(windowRect, true);
+					ccWindowCenter();
 
 					setProjection();
 				}
@@ -194,7 +194,7 @@ int main(int argc, char** argv)
 				break;
 			case CC_EVENT_MOUSE_SCROLL:
 				// Scroll all squares for a nice effect
-				if(ccGetEvent().scrollDelta > 0) {
+				if(ccWindowGetEvent().scrollDelta > 0) {
 					scrollSquaresUp();
 				}
 				else{
@@ -223,7 +223,7 @@ int main(int argc, char** argv)
 	// Free memory before terminating
 	ccGLFreeContext();
 	ccDisplayFree();
-	ccFreeWindow();
+	ccWindowFree();
 
 	return 0;
 }
@@ -241,8 +241,8 @@ void initialize()
 
 void setProjection()
 {
-	int width = ccGetWindowRect().width;
-	int height = ccGetWindowRect().height;
+	int width = ccWindowGetRect().width;
+	int height = ccWindowGetRect().height;
 
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
@@ -252,8 +252,8 @@ void setProjection()
 
 	if(!logoScreen) {
 		int i;
-		hsquares = cceil((float)ccGetWindowRect().width / SQUARE_SIZE);
-		vsquares = cceil((float)ccGetWindowRect().height / SQUARE_SIZE);
+		hsquares = cceil((float)ccWindowGetRect().width / SQUARE_SIZE);
+		vsquares = cceil((float)ccWindowGetRect().height / SQUARE_SIZE);
 		squareCount = hsquares * vsquares;
 
 		squareAlpha = realloc(squareAlpha ,sizeof(float)*squareCount);
@@ -292,13 +292,13 @@ void renderCommands()
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, -1.0f);
-	glVertex2f(0.0f, (float)ccGetWindowRect().height - COMMANDS_HEIGHT);
+	glVertex2f(0.0f, (float)ccWindowGetRect().height - COMMANDS_HEIGHT);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(0.0f, (float)ccGetWindowRect().height);
+	glVertex2f(0.0f, (float)ccWindowGetRect().height);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)ccGetWindowRect().height);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowGetRect().height);
 	glTexCoord2f(1.0f, -1.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)ccGetWindowRect().height - COMMANDS_HEIGHT);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowGetRect().height - COMMANDS_HEIGHT);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
@@ -372,7 +372,7 @@ void scrollSquaresDown() {
 
 int mouseToIndex()
 {
-	int index = (ccGetWindowMouse().x / SQUARE_SIZE) + ((ccGetWindowRect().height - ccGetWindowMouse().y) / SQUARE_SIZE) * hsquares;
+	int index = (ccWindowGetMouse().x / SQUARE_SIZE) + ((ccWindowGetRect().height - ccWindowGetMouse().y) / SQUARE_SIZE) * hsquares;
 	if(index >= squareCount) index = -1;
 	return index;
 }

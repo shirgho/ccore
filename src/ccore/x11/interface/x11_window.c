@@ -47,7 +47,7 @@ static void setResizable(bool resizable)
 	XFree(sizeHints);
 }
 
-ccError ccNewWindow(ccRect rect, const char *title, int flags)
+ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Window root;
 	Atom delete;
@@ -84,12 +84,12 @@ ccError ccNewWindow(ccRect rect, const char *title, int flags)
 	delete = XInternAtom(WINDOW_DATA->XDisplay, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &delete, 1);
 
-	ccUpdateWindowDisplay();
+	ccWindowUpdateDisplay();
 
 	return CC_ERROR_NONE;
 }
 
-ccError ccFreeWindow()
+ccError ccWindowFree()
 {
 	ccAssert(_window != NULL);	
 
@@ -103,7 +103,7 @@ ccError ccFreeWindow()
 	return CC_ERROR_NONE;
 }
 
-bool ccPollEvent()
+bool ccWindowPollEvent()
 {
 	XEvent event;
 	XWindowAttributes _windowAttributes;
@@ -167,7 +167,7 @@ bool ccPollEvent()
 				_window->rect.x = _windowAttributes.x;
 				_window->rect.y = _windowAttributes.y;
 
-				ccUpdateWindowDisplay(); //TODO: also do this when moving the window
+				ccWindowUpdateDisplay(); //TODO: also do this when moving the window
 
 				if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
@@ -194,7 +194,7 @@ bool ccPollEvent()
 	return true;
 }
 
-ccError ccSetWindowed()
+ccError ccWindowSetWindowed()
 {
 	ccAssert(_window);
 
@@ -208,11 +208,11 @@ ccError ccSetWindowed()
 	return CC_ERROR_NONE;
 }
 
-ccError ccSetMaximized()
+ccError ccWindowSetMaximized()
 {
 	ccAssert(_window);
 
-	ccSetWindowed();
+	ccWindowSetWindowed();
 
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", true);
@@ -220,7 +220,7 @@ ccError ccSetMaximized()
 	return CC_ERROR_NONE;
 }
 
-ccError ccSetFullscreen(int displayCount, ...)
+ccError ccWindowSetFullscreen(int displayCount, ...)
 {
 	ccAssert(_window);
 
@@ -235,7 +235,7 @@ ccError ccSetFullscreen(int displayCount, ...)
 	return CC_ERROR_NONE;
 }
 
-ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
+ccError ccWindowResizeMove(ccRect rect, bool addBorder)
 {
 	//TODO implement addBorder
 	ccAssert(_window);
@@ -250,7 +250,7 @@ ccError ccResizeMoveWindow(ccRect rect, bool addBorder)
 	return CC_ERROR_NONE;
 }
 
-ccError ccCenterWindow()
+ccError ccWindowCenter()
 {
 	ccDisplayData *currentResolution;
 	ccRect newRect;
@@ -264,7 +264,7 @@ ccError ccCenterWindow()
 	newRect.width = _window->rect.width;
 	newRect.height = _window->rect.height;
 
-	ccResizeMoveWindow(newRect, true);
+	ccWindowResizeMove(newRect, true);
 
 	return CC_ERROR_NONE;
 }

@@ -32,6 +32,8 @@
 #include "types.h"
 #include "event.h"
 
+#define CC_FULLSCREEN_CURRENT_DISPLAY 0
+
 //a window can contain multiple flags to determine the layout and functionality
 typedef enum {
 	CC_WINDOW_FLAG_NORESIZE = 1, //note: this cannot be ensured in linux, the WM ultimately decides whether this is allowed
@@ -55,22 +57,22 @@ typedef struct {
 ccWindow *_window;
 
 //getters
-ccEvent ccGetEvent();
-ccRect ccGetWindowRect();
-ccPoint ccGetWindowMouse();
-ccDisplay *ccGetWindowDisplay();
+ccEvent ccWindowGetEvent();
+ccRect ccWindowGetRect();
+ccPoint ccWindowGetMouse();
+ccDisplay *ccWindowGetDisplay();
 bool ccWindowExists();
 
 //window functions
-ccError ccNewWindow(ccRect rect, const char *title, int flags);
-ccError ccFreeWindow();
-bool ccPollEvent(); //poll an event from the events that currently need to be processed in the window
-ccError ccResizeMoveWindow(ccRect rect, bool addBorder); //addBorder indicates whether the border size is included in the rect or whether it has to be added
-ccError ccCenterWindow();
+ccError ccWindowCreate(ccRect rect, const char *title, int flags);
+ccError ccWindowFree();
+bool ccWindowPollEvent(); //poll an event from the events that currently need to be processed in the window
+ccError ccWindowResizeMove(ccRect rect, bool addBorder); //addBorder indicates whether the border size is included in the rect or whether it has to be added
+ccError ccWindowCenter();
 
-ccError ccSetWindowed();
-ccError ccSetMaximized();
-ccError ccSetFullscreen(int displayCount, ...);
+ccError ccWindowSetWindowed();
+ccError ccWindowSetMaximized();
+ccError ccWindowSetFullscreen(int displayCount, ...);
 
-//usually for internal use only
-void ccUpdateWindowDisplay();
+//usually for internal use only, finds the display the window currently is in
+void ccWindowUpdateDisplay();
