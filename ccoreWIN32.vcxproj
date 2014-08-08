@@ -22,7 +22,7 @@
     <ClCompile Include="src\ccore\win32\interface\win_opengl.c" />
     <ClCompile Include="src\ccore\win32\interface\win_window.c" />
     <ClCompile Include="src\ccore\win32\utils\win_dirUtils.c" />
-    <ClCompile Include="src\ccore\win32\utils\win_timing.c" />
+    <ClCompile Include="src\ccore\win32\utils\win_time.c" />
     <ClCompile Include="test\featuretest.c" />
     <ClCompile Include="test\tga.c" />
   </ItemGroup>
@@ -36,7 +36,7 @@
     <ClInclude Include="include\ccore\event.h" />
     <ClInclude Include="include\ccore\opengl.h" />
     <ClInclude Include="include\ccore\print.h" />
-    <ClInclude Include="include\ccore\timing.h" />
+    <ClInclude Include="include\ccore\time.h" />
     <ClInclude Include="include\ccore\types.h" />
     <ClInclude Include="include\ccore\window.h" />
     <ClInclude Include="lib\glew\GL\glew.h" />
@@ -46,7 +46,7 @@
     <ClInclude Include="src\ccore\win32\interface\win_opengl.h" />
     <ClInclude Include="src\ccore\win32\interface\win_window.h" />
     <ClInclude Include="src\ccore\win32\utils\win_dirUtils.h" />
-    <ClInclude Include="src\ccore\win32\utils\win_timing.h" />
+    <ClInclude Include="src\ccore\win32\utils\win_time.h" />
     <ClInclude Include="test\tga.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

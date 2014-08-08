@@ -28,7 +28,7 @@
 
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
-#include <ccore/timing.h>
+#include <ccore/time.h>
 #include <ccore/dirUtils.h>
 #include <ccore/charUtils.h>
 
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 
 	// Event loop resides within this while statement
 	while(!quit) {
-		ccDelay(15); //Limit the frame rate
+		ccTimeDelay(15); //Limit the frame rate
 
 		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
 		while(ccPollEvent()) {
