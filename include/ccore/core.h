@@ -23,7 +23,7 @@
 
 #pragma once
 
-//This header usually doesn't need to be included, since it is included in every other ccore header
+// This header usually doesn't need to be included, since it is included in every other ccore header
 
 #ifdef __linux__
 
@@ -34,7 +34,7 @@
 
 #define WIN32
 
-//Includes openGL libraries when using visual studio:
+// Includes openGL libraries when using visual studio:
 #ifdef _MSC_VER
 #pragma comment(lib, "opengl32")
 #pragma comment(lib, "glu32")

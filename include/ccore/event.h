@@ -29,27 +29,27 @@
 
 // A type of event returned used in ccWindow after the function ccPollEvent is called
 typedef enum {
-	//Event not handled in ccore, return false on pollEvent
+	// Event not handled in ccore, return false on pollEvent
 	CC_EVENT_SKIP,
-	//A key is pressed, store keycode
+	// A key is pressed, store keycode
 	CC_EVENT_KEY_DOWN,
-	//A key is released, store keycode
+	// A key is released, store keycode
 	CC_EVENT_KEY_UP,
-	//Mouse has moved, store coordinates
+	// Mouse has moved, store coordinates
 	CC_EVENT_MOUSE_MOVE,
-	//Mouse button down, store buttoncode
+	// Mouse button down, store buttoncode
 	CC_EVENT_MOUSE_DOWN,
-	//Mouse button up, store buttoncode
+	// Mouse button up, store buttoncode
 	CC_EVENT_MOUSE_UP,
-	//Mouse wheel moved up
+	// Mouse wheel moved up
 	CC_EVENT_MOUSE_SCROLL,
-	//The keyboard is focussed on the window
+	// The keyboard is focussed on the window
 	CC_EVENT_FOCUS_GAINED,
-	//The keyboard lost focus on the window
+	// The keyboard lost focus on the window
 	CC_EVENT_FOCUS_LOST,
-	//Window close button was pressed
+	// Window close button was pressed
 	CC_EVENT_WINDOW_QUIT,
-	//Window has resized, new dimensions are stored in the window struct before the event fires
+	// Window has resized, new dimensions are stored in the window struct before the event fires
 	CC_EVENT_WINDOW_RESIZE,
 } ccEventType;
 

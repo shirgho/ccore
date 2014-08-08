@@ -23,7 +23,7 @@
 
 #include "core.h"
 
-//ccPrintString will only translate to printf while debugging
+// ccPrintString will only translate to printf while debugging
 
 #ifdef _DEBUG
 #include <stdio.h>

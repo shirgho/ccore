@@ -28,11 +28,11 @@
 #include "window.h"
 #include "error.h"
 
-//Load all extensions using GLEW
+// Load all extensions using GLEW
 #define GLEW_STATIC
 #include "../../lib/glew/GL/glew.h"
 
-//opengl
-ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); //bind the openGl context to window
-ccError ccGLFreeContext(); //free context
-ccError ccGLSwapBuffers(); //swap the buffers
+// opengl
+ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); // Bind the openGl context to window
+ccError ccGLFreeContext(); // Free context
+ccError ccGLSwapBuffers(); // Swap the buffers

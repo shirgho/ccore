@@ -33,14 +33,14 @@
 
 #define CC_DEFAULT_RESOLUTION -1
 
-//stores display properties
+// Stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
 
 	void *data;
 } ccDisplayData;
 
-//display
+// Display
 typedef struct {
 	ccDisplayData *resolution;
 	int x, y;
@@ -52,30 +52,30 @@ typedef struct {
 	void *data;
 } ccDisplay;
 
-//list of all displays currently connected and active
+// List of all displays currently connected and active
 typedef struct {
 	ccDisplay* display;
 	unsigned short amount, primary;
 } ccDisplays;
 
-//only access through getters
+// Only access through getters
 ccDisplays *_displays;
 
 #define ccDisplayGetResolutionCurrent(display) (&display->resolution[display->current])
 #define ccDisplayGetResolution(display, index) (&display->resolution[index])
 #define ccDisplayGetResolutionAmount(display) display->amount
 
-//getters
+// Getters
 int ccDisplayGetAmount();
 ccDisplay *ccDisplayGet(int index);
 ccDisplay *ccDisplayGetDefault();
 
-//resolution
+// Resolution
 ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex);
 bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
-//display
-ccError ccDisplayInitialize(); //get all displays currently connected and active
+// Display
+ccError ccDisplayInitialize(); // Get all displays currently connected and active
 ccError ccDisplayFree();
 ccError ccDisplayRevertModes();
 ccRect ccDisplayGetRect(ccDisplay *display);

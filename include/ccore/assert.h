@@ -23,7 +23,7 @@
 
 #include "core.h"
 
-//ccAssert translates to assert when debugging, it is ignored otherwise.
+// ccAssert translates to assert when debugging, it is ignored otherwise.
 
 #ifdef _DEBUG
 #include <assert.h>
