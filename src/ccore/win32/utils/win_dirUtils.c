@@ -30,19 +30,19 @@ static void scanDirs()
 	ccStrReplaceChar(tempDir, '\\', '/');
 }
 
-char *ccGetUserDir()
+char *ccGetDirUserDir()
 {
 	if(userDir == NULL) scanDirs();
 	return userDir;
 }
 
-char *ccGetDataDir()
+char *ccGetDirDataDir()
 {
 	if(userDir == NULL) scanDirs();
 	return dataDir;
 }
 
-char *ccGetTempDir()
+char *ccGetDirTempDir()
 {
 	if(userDir == NULL) scanDirs();
 	return tempDir;

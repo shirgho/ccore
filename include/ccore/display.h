@@ -61,21 +61,21 @@ typedef struct {
 //only access through getters
 ccDisplays *_displays;
 
-#define ccGetResolutionCurrent(display) (&display->resolution[display->current])
-#define ccGetResolution(display, index) (&display->resolution[index])
-#define ccGetResolutionAmount(display) display->amount
+#define ccDisplayGetResolutionCurrent(display) (&display->resolution[display->current])
+#define ccDisplayGetResolution(display, index) (&display->resolution[index])
+#define ccDisplayGetResolutionAmount(display) display->amount
 
 //getters
-int ccGetDisplayAmount();
-ccDisplay *ccGetDisplay(int index);
-ccDisplay *ccGetDefaultDisplay();
+int ccDisplayGetAmount();
+ccDisplay *ccDisplayGet(int index);
+ccDisplay *ccDisplayGetDefault();
 
 //resolution
-ccError ccSetResolution(ccDisplay *display, int resolutionIndex);
-bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution);
+ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex);
+bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 
 //display
-ccError ccFindDisplays(); //get all displays currently connected and active
-ccError ccFreeDisplays();
-ccError ccRevertDisplays();
-ccRect ccGetDisplayRect(ccDisplay *display);
+ccError ccDisplayInitialize(); //get all displays currently connected and active
+ccError ccDisplayFree();
+ccError ccDisplayRevertModes();
+ccRect ccDisplayGetRect(ccDisplay *display);

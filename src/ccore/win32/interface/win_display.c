@@ -1,6 +1,6 @@
 #include "win_display.h"
 
-ccError ccFindDisplays()
+ccError ccDisplayInitialize()
 {
 	DISPLAY_DEVICE device;
 	DISPLAY_DEVICE display;
@@ -72,7 +72,7 @@ ccError ccFindDisplays()
 				buffer.width = dm.dmPelsWidth;
 				buffer.height = dm.dmPelsHeight;
 
-				if(ccResolutionExists(currentDisplay, &buffer)) continue;
+				if(ccDisplayResolutionExists(currentDisplay, &buffer)) continue;
 
 				if(currentDisplay->amount == 0) {
 					ccMalloc(currentDisplay->resolution, sizeof(ccDisplayData));
@@ -101,7 +101,7 @@ ccError ccFindDisplays()
 	return CC_ERROR_NONE;
 }
 
-ccError ccFreeDisplays() {
+ccError ccDisplayFree() {
 	int i;
 
 	ccAssert(_displays != NULL);
@@ -118,7 +118,7 @@ ccError ccFreeDisplays() {
 	return CC_ERROR_NONE;
 }
 
-ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
+ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 {
 	DEVMODE devMode;
 	ccDisplayData displayData;

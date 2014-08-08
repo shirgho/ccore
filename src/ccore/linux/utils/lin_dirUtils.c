@@ -1,11 +1,11 @@
 #include "lin_dirUtils.h"
 
-char *ccGetUserDir()
+char *ccGetDirUserDir()
 {
 	return CC_USER_LOCATION;
 }
 
-char *ccGetDataDir()
+char *ccGetDirDataDir()
 {
 #ifndef CC_DATA_LOCATION
 	char *buf;
@@ -23,7 +23,7 @@ char *ccGetDataDir()
 #endif
 }
 
-char *ccGetTempDir()
+char *ccGetDirTempDir()
 {
 	return CC_TEMP_LOCATION;
 }

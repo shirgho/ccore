@@ -1,13 +1,13 @@
 #include <ccore/display.h>
 
-ccRect ccGetDisplayRect(ccDisplay *display)
+ccRect ccDisplayGetRect(ccDisplay *display)
 {
 	ccAssert(display != NULL);
 
 	return (ccRect){ display->x, display->y, display->resolution[display->current].width, display->resolution[display->current].height };
 }
 
-bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
+bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 {
 	int i;
 
@@ -22,7 +22,7 @@ bool ccResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-ccError ccRevertDisplays()
+ccError ccDisplayRevertModes()
 {
 	int i;
 	ccError output;
@@ -30,7 +30,7 @@ ccError ccRevertDisplays()
 	ccAssert(_displays != NULL);
 
 	for(i = 0; i < _displays->amount; i++){
-		output = ccSetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
+		output = ccDisplaySetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
 		if(output != CC_ERROR_NONE){
 			return output;
 		}
@@ -39,7 +39,7 @@ ccError ccRevertDisplays()
 	return CC_ERROR_NONE;
 }
 
-ccDisplay *ccGetDefaultDisplay()
+ccDisplay *ccDisplayGetDefault()
 {
 	ccAssert(_displays != NULL);
 	ccAssert(_displays->display != NULL);
@@ -47,7 +47,7 @@ ccDisplay *ccGetDefaultDisplay()
 	return _displays->display + _displays->primary;
 }
 
-ccDisplay *ccGetDisplay(int index)
+ccDisplay *ccDisplayGet(int index)
 {
 	ccAssert(_displays != NULL);
 	ccAssert(index >= 0 && index < _displays->amount);
@@ -55,7 +55,7 @@ ccDisplay *ccGetDisplay(int index)
 	return _displays->display + index;
 }
 
-int ccGetDisplayAmount()
+int ccDisplayGetAmount()
 {
 	ccAssert(_displays != NULL);
 

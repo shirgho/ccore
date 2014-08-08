@@ -42,12 +42,12 @@ void ccUpdateWindowDisplay()
 	ccAssert(_window != NULL);
 
 	largestArea = 0;
-	for(i = 0; i < ccGetDisplayAmount(); i++) {
-		displayRect = ccGetDisplayRect(ccGetDisplay(i));
+	for(i = 0; i < ccDisplayGetAmount(); i++) {
+		displayRect = ccDisplayGetRect(ccDisplayGet(i));
 		area = ccRectIntersectionArea(&displayRect, &_window->rect);
 		if(area > largestArea) {
 			largestArea = area;
-			_window->display = ccGetDisplay(i);
+			_window->display = ccDisplayGet(i);
 		}
 	}
 }

@@ -291,7 +291,7 @@ ccError ccSetWindowed()
 
 	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION);
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
-	ccResizeMoveWindow(ccGetDisplayRect(_window->display), true);
+	ccResizeMoveWindow(ccDisplayGetRect(_window->display), true);
 
 	return CC_ERROR_NONE;
 }
@@ -314,7 +314,7 @@ ccError ccSetFullscreen(int displayCount, ...)
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
 
 	if(displayCount == 0) {
-		return ccResizeMoveWindow(ccGetDisplayRect(_window->display), false);
+		return ccResizeMoveWindow(ccDisplayGetRect(_window->display), false);
 	}
 	else{
 		va_list displays;
@@ -327,7 +327,7 @@ ccError ccSetFullscreen(int displayCount, ...)
 		va_start(displays, displayCount);
 
 		for(i = 0; i < displayCount; i++) {
-			rectList[i] = ccGetDisplayRect(va_arg(displays, ccDisplay*));
+			rectList[i] = ccDisplayGetRect(va_arg(displays, ccDisplay*));
 		}
 
 		spanRect = ccRectConcatenate(displayCount, rectList);
@@ -369,8 +369,8 @@ ccError ccCenterWindow()
 
 	if(GetWindowRect(WINDOW_DATA->winHandle, &windowRect) == FALSE) return CC_ERROR_WINDOW_MODE;
 	return ccResizeMoveWindow(
-		(ccRect){_window->display->x + ((ccGetResolutionCurrent(_window->display)->width - (windowRect.right - windowRect.left)) >> 1),
-				 _window->display->y + ((ccGetResolutionCurrent(_window->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
+		(ccRect){_window->display->x + ((ccDisplayGetResolutionCurrent(_window->display)->width - (windowRect.right - windowRect.left)) >> 1),
+				 _window->display->y + ((ccDisplayGetResolutionCurrent(_window->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
 				 windowRect.right - windowRect.left,
 				 windowRect.bottom - windowRect.top
 	}, false);

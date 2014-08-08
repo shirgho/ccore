@@ -26,6 +26,6 @@
 #include "core.h"
 
 // These functions can be used to get OS specific directories to store program data
-char *ccGetUserDir();
-char *ccGetDataDir();
-char *ccGetTempDir();
+char *ccGetDirUserDir();
+char *ccGetDirDataDir();
+char *ccGetDirTempDir();

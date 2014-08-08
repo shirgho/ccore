@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 	char *imageFileName;
 
 	// Displays must be detected before creating the window and using display functions
-	ccFindDisplays();
+	ccDisplayInitialize();
 
 	// Create a centered window that cannot be resized
 	ccNewWindow((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
@@ -97,10 +97,10 @@ int main(int argc, char** argv)
 	initialize();
 
 	// Load textures using tga.c
-	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "logo.tga");
+	imageFileName = ccStrConcatenate(2, ccGetDirDataDir(), "logo.tga");
 	logoTexture = loadTGATexture(imageFileName);
 	free(imageFileName);
-	imageFileName = ccStrConcatenate(2, ccGetDataDir(), "commands.tga");
+	imageFileName = ccStrConcatenate(2, ccGetDirDataDir(), "commands.tga");
 	commandsTexture = loadTGATexture(imageFileName);
 	free(imageFileName);
 
@@ -150,19 +150,19 @@ int main(int argc, char** argv)
 					break;
 				case CC_KEY_X:
 					// Go full screen on the first two displays if possible
-					if(ccGetDisplayAmount() >= 2) {
-						ccSetFullscreen(2, ccGetDisplay(0), ccGetDisplay(1));
+					if(ccDisplayGetAmount() >= 2) {
+						ccSetFullscreen(2, ccDisplayGet(0), ccDisplayGet(1));
 					}
 					break;
 				case CC_KEY_R:
 					// Change the resolution to a random one from the list of possible resolutions
 				{
-					ccSetResolution(ccGetWindowDisplay(), rand() % ccGetResolutionAmount(ccGetWindowDisplay()));
+					ccDisplaySetResolution(ccGetWindowDisplay(), rand() % ccDisplayGetResolutionAmount(ccGetWindowDisplay()));
 				}
 					break;
 				case CC_KEY_N:
 					// Revert all resolutions
-					ccRevertDisplays();
+					ccDisplayRevertModes();
 					break;
 				}
 
@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 
 	// Free memory before terminating
 	ccGLFreeContext();
-	ccFreeDisplays();
+	ccDisplayFree();
 	ccFreeWindow();
 
 	return 0;

@@ -118,7 +118,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 	return true;
 }
 
-ccError ccFindDisplays()
+ccError ccDisplayInitialize()
 {
 	char displayName[64];
 	DIR *dir;
@@ -153,7 +153,7 @@ ccError ccFindDisplays()
 	return CC_ERROR_NONE;
 }
 
-ccError ccFreeDisplays()
+ccError ccDisplayFree()
 {
 	int i,j;
 	
@@ -176,7 +176,7 @@ ccError ccFreeDisplays()
 	return CC_ERROR_NONE;
 }
 
-ccError ccSetResolution(ccDisplay *display, int resolutionIndex)
+ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 {
 	int minX, minY, maxX, maxY;
 	ccDisplayData *displayData;
