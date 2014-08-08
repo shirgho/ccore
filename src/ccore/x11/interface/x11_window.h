@@ -12,6 +12,7 @@
 #include <GL/glx.h>
 
 #include <ccore/window.h>
+
 #include <ccore/types.h>
 #include <ccore/event.h>
 #include <ccore/error.h>

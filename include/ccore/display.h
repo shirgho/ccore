@@ -23,12 +23,13 @@
 
 #pragma once
 
+#include <string.h>
+
 #include "core.h"
+
 #include "error.h"
 #include "types.h"
 #include "assert.h"
-
-#include <string.h>
 
 #define CC_DEFAULT_RESOLUTION -1
 

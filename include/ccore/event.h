@@ -24,6 +24,7 @@
 #pragma once
 
 #include "core.h"
+
 #include "types.h"
 
 // A type of event returned used in ccWindow after the function ccPollEvent is called

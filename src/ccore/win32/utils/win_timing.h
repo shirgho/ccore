@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ccore/timing.h>
-
 #include <windows.h>
 
+#include <ccore/timing.h>

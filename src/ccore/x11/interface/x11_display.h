@@ -1,14 +1,14 @@
 #pragma once
 
-#include <ccore/display.h>
-#include <ccore/assert.h>
-#include <ccore/print.h>
-
 #include <dirent.h>
 #include <string.h>
-
 #include <X11/extensions/Xrandr.h>
 #include <X11/extensions/Xinerama.h>
+
+#include <ccore/display.h>
+
+#include <ccore/assert.h>
+#include <ccore/print.h>
 
 typedef struct {
 	RRMode XMode;

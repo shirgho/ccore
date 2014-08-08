@@ -23,13 +23,14 @@
 
 #pragma once
 
+#include <stdarg.h>
+
 #include "core.h"
+
 #include "error.h"
 #include "display.h"
 #include "types.h"
 #include "event.h"
-
-#include <stdarg.h>
 
 //a window can contain multiple flags to determine the layout and functionality
 typedef enum {

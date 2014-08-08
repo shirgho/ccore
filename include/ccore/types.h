@@ -24,7 +24,6 @@
 #pragma once
 
 #include <stdlib.h>
-#include <stdarg.h>
 
 #define true 1
 #define false 0

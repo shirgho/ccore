@@ -11,7 +11,7 @@ char *ccGetDataDir()
 	char *buf;
 
 	buf = malloc(4096);
-	readlink("/proc/self/exe", buf, 4096);
+	readlink("/proc/self/exe", buf, 4096); //TODO: what the fuck 4kb why
 
 	buf = dirname(buf);
 	strcat(buf, "/");
