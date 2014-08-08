@@ -257,7 +257,7 @@ ccError ccWindowCenter()
 
 	ccAssert(_window->display != NULL);
 
-	currentResolution = ccGetResolutionCurrent(_window->display);
+	currentResolution = ccDisplayGetResolutionCurrent(_window->display);
 
 	newRect.x = (currentResolution->width - _window->rect.width) >> 1;
 	newRect.y = (currentResolution->height - _window->rect.height) >> 1;
