@@ -199,9 +199,6 @@ ccError ccWindowSetWindowed()
 
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
 
-	//TODO add check for the pointer
-	XUngrabPointer(WINDOW_DATA->XDisplay, CurrentTime);
-
 	return CC_ERROR_NONE;
 }
 
@@ -224,8 +221,6 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	if(displayCount == 0) {
 		setResizable(true);
 		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
-		//XGrabPointer(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, True, 0, GrabModeAsync, GrabModeAsync, WINDOW_DATA->XWindow, None, CurrentTime);
-		// ^ What was this doing? seems redundant
 	}else{
 		XClientMessageEvent xClient;
 		va_list displays;
