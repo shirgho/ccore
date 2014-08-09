@@ -173,6 +173,13 @@ bool ccWindowPollEvent()
 
 				printf("Changed to %dx%d\n", _window->rect.width, _window->rect.height);
 			}
+
+			if(_window->rect.x != event.xconfigure.x || _window->rect.y != event.xconfigure.y) {
+				_window->rect.x = event.xconfigure.x;
+				_window->rect.y = event.xconfigure.y;
+				
+				ccWindowUpdateDisplay();
+			}
 			break;
 		case ClientMessage:
 			_window->event.type = CC_EVENT_WINDOW_QUIT;
@@ -224,13 +231,39 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 {
 	ccAssert(_window);
 
-	setResizable(true);
+	if(displayCount == 0) {
+		setResizable(true);
+		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
+		//XGrabPointer(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, True, 0, GrabModeAsync, GrabModeAsync, WINDOW_DATA->XWindow, None, CurrentTime);
+		// ^ What was this doing? seems redundant
+	}else{
+		XClientMessageEvent xClient;
+		va_list displays;
+		int i;
 
-	//TODO implement multiple displays
-	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
+		va_start(displays, displayCount);
 
-	//TODO add check for the pointer
-	XGrabPointer(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, True, 0, GrabModeAsync, GrabModeAsync, WINDOW_DATA->XWindow, None, CurrentTime);
+		for(i=0;i<displayCount;i++) {
+			//Iterate through displays...
+		}
+
+		va_end(displays);
+
+		memset(&xClient, 0, sizeof(XClientMessageEvent));
+		xClient.type = ClientMessage;
+		xClient.window = WINDOW_DATA->XWindow;
+		xClient.message_type = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_FULLSCREEN_MONITORS", true);
+		xClient.format = 32;
+		xClient.data.l[0] = 1;
+		xClient.data.l[1] = 0;
+		xClient.data.l[2] = 0;
+		xClient.data.l[3] = 1;
+		xClient.data.l[4] = 1;
+		XSendEvent(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, false, SubstructureRedirectMask | SubstructureNotifyMask, (XEvent *)&xClient);
+
+		setResizable(true);
+		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
+	}
 
 	return CC_ERROR_NONE;
 }
@@ -244,7 +277,7 @@ ccError ccWindowResizeMove(ccRect rect, bool addBorder)
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
 	//TODO prime resize event here
 	_window->rect = rect;
-	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
+	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false); //TODO: should this be handled after a system event?
 
 
 	return CC_ERROR_NONE;
