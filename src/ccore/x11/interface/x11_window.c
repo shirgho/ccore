@@ -68,7 +68,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	WINDOW_DATA->XWindow = XCreateSimpleWindow(WINDOW_DATA->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, 0, 0);
 
 	// Choose types of events
-	XSelectInput(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask);
+	XSelectInput(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
 
 	// Disable resizing
 	WINDOW_DATA->resizable = true;
@@ -120,7 +120,6 @@ bool ccWindowPollEvent()
 	XNextEvent(WINDOW_DATA->XDisplay, &event);
 	switch(event.type){
 		case ButtonPress:
-			// 1 = left, 2 = middle, 3 = right, 4 = scroll up, 5 = scroll down
 			if(event.xbutton.button <= 3){
 				_window->event.type = CC_EVENT_MOUSE_DOWN;
 				_window->event.mouseButton = event.xbutton.button;
@@ -147,7 +146,6 @@ bool ccWindowPollEvent()
 			XRefreshKeyboardMapping(&event.xmapping);
 			break;
 		case KeyPress:
-			//TODO: ignore undefined
 			_window->event.type = CC_EVENT_KEY_DOWN;
 			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
@@ -155,7 +153,7 @@ bool ccWindowPollEvent()
 			_window->event.type = CC_EVENT_KEY_UP;
 			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
-		case ConfigureNotify: //NOTE: only fires after polling
+		case ConfigureNotify:
 			if(_window->rect.width != event.xconfigure.width || _window->rect.height != event.xconfigure.height){
 				_window->event.type = CC_EVENT_WINDOW_RESIZE;
 				_window->rect.width = event.xconfigure.width;
@@ -167,11 +165,9 @@ bool ccWindowPollEvent()
 				_window->rect.x = _windowAttributes.x;
 				_window->rect.y = _windowAttributes.y;
 
-				ccWindowUpdateDisplay(); //TODO: also do this when moving the window
+				ccWindowUpdateDisplay();
 
 				if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
-
-				printf("Changed to %dx%d\n", _window->rect.width, _window->rect.height);
 			}
 
 			if(_window->rect.x != event.xconfigure.x || _window->rect.y != event.xconfigure.y) {
@@ -183,12 +179,6 @@ bool ccWindowPollEvent()
 			break;
 		case ClientMessage:
 			_window->event.type = CC_EVENT_WINDOW_QUIT;
-			break;
-		case EnterNotify:
-			_window->event.type = CC_EVENT_FOCUS_GAINED;
-			break;
-		case LeaveNotify:
-			_window->event.type = CC_EVENT_FOCUS_LOST;
 			break;
 		case FocusIn:
 			_window->event.type = CC_EVENT_FOCUS_GAINED;
