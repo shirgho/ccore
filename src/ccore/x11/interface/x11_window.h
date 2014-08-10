@@ -19,6 +19,8 @@
 #include <ccore/assert.h>
 #include <ccore/print.h>
 
+#include "x11_display.h"
+
 typedef struct {
 	Display *XDisplay;
 	Window XWindow;

@@ -217,44 +217,50 @@ ccError ccWindowSetMaximized()
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
 {
+	XEvent event;
+	Atom atom;
+	va_list displays;
+	int i;
+	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
+
 	ccAssert(_window);
 
-	if(displayCount == 0) {
-		setResizable(true);
-		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
+	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
+		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _window->display;
 	}else{
-		va_list displays;
-		int i;
-
 		va_start(displays, displayCount);
 
-		for(i=0;i<displayCount;i++) {
-			//Iterate through displays...
+		topDisplay = bottomDisplay = leftDisplay = rightDisplay = va_arg(displays, ccDisplay*);
+
+		for(i=1;i<displayCount;i++) {
+			current = va_arg(displays, ccDisplay*);
+
+			if(current->x < leftDisplay->x) leftDisplay = current;
+			if(current->y < topDisplay->y) topDisplay = current;
+			if(current->x + ccDisplayGetResolutionCurrent(current)->width > rightDisplay->x + ccDisplayGetResolutionCurrent(rightDisplay)->width) rightDisplay = current;
+			if(current->y + ccDisplayGetResolutionCurrent(current)->height > bottomDisplay->y + ccDisplayGetResolutionCurrent(bottomDisplay)->width) bottomDisplay = current;
 		}
 
 		va_end(displays);
-
-		XEvent event;
-		Atom wmState, newWmState;
-
-		wmState = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_STATE", False);
-		newWmState = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_FULLSCREEN_MONITORS", False);
-
-		memset(&event, 0, sizeof(event));
-		event.type = ClientMessage;
-		event.xclient.window = WINDOW_DATA->XWindow;
-		event.xclient.message_type = newWmState;
-		event.xclient.format = 32;
-		event.xclient.data.l[0] = 1;
-		event.xclient.data.l[1] = 0;
-		event.xclient.data.l[2] = 0;
-		event.xclient.data.l[3] = 0;
-		event.xclient.data.l[4] = 1;
-
-		XSendEvent(WINDOW_DATA->XDisplay, DefaultRootWindow(WINDOW_DATA->XDisplay), false, SubstructureNotifyMask, &event);
-		setResizable(true);
-		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 	}
+
+	atom = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_FULLSCREEN_MONITORS", False);
+
+	memset(&event, 0, sizeof(event));
+	event.type = ClientMessage;
+	event.xclient.window = WINDOW_DATA->XWindow;
+	event.xclient.message_type = atom;
+	event.xclient.format = 32;
+	event.xclient.data.l[0] = DISPLAY_DATA(topDisplay)->XineramaScreen;
+	event.xclient.data.l[1] = DISPLAY_DATA(bottomDisplay)->XineramaScreen;
+	event.xclient.data.l[2] = DISPLAY_DATA(leftDisplay)->XineramaScreen;
+	event.xclient.data.l[3] = DISPLAY_DATA(rightDisplay)->XineramaScreen;
+	event.xclient.data.l[4] = 0;
+
+	XSendEvent(WINDOW_DATA->XDisplay, DefaultRootWindow(WINDOW_DATA->XDisplay), false, SubstructureNotifyMask, &event);
+
+	setResizable(true);
+	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 
 	return CC_ERROR_NONE;
 }

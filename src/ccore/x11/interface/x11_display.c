@@ -75,7 +75,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 		}
 
 		DISPLAY_DATA(currentDisplay)->XineramaScreen = i;
-		DISPLAY_DATA(currentDisplay)->XScreen = 0; //TODO: what does it do, and is it used?
+		DISPLAY_DATA(currentDisplay)->XScreen = 0;
 		DISPLAY_DATA(currentDisplay)->XOutput = resources->outputs[i];
 		currentDisplay->current = 0;
 		currentDisplay->amount = 0;
