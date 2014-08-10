@@ -76,7 +76,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	// Activate always on top if applicable
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
-		setWindowState("_NET_WM_STATE_ABOVE", true);
+		setWindowState("_NET_WM_STATE_ABOVE", true); //TODO: Not verified, does nothing on mint with cinnamon
 	}
 
 	XMapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
@@ -223,7 +223,6 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 		setResizable(true);
 		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 	}else{
-		printf("multi monitor is habbiding\n");
 		va_list displays;
 		int i;
 

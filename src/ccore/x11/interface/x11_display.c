@@ -38,7 +38,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 			ccRealloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
 		}
 		currentDisplay = _displays->display + _displays->amount - 1;
-		
+
 		ccMalloc(currentDisplay->data, sizeof(ccDisplay_x11));
 
 		displayNameLength = strlen(displayName);
@@ -63,7 +63,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 			currentDisplay->x = crtcInfo->x;
 			currentDisplay->y = crtcInfo->y;
-			((ccDisplay_x11*)currentDisplay->data)->XOldMode = crtcInfo->mode;
+			DISPLAY_DATA(currentDisplay)->XOldMode = crtcInfo->mode;
 			foundCrtc = true;
 
 			XRRFreeCrtcInfo(crtcInfo);
@@ -73,11 +73,10 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 			currentDisplay->x = -1;
 			currentDisplay->y = -1;
 		}
-		//TODO: Please replace these references with macro's
-		printf("=%d\n", i);
-		((ccDisplay_x11*)currentDisplay->data)->XineramaScreen = i;
-		((ccDisplay_x11*)currentDisplay->data)->XScreen = 0;
-		((ccDisplay_x11*)currentDisplay->data)->XOutput = resources->outputs[i];
+
+		DISPLAY_DATA(currentDisplay)->XineramaScreen = i;
+		DISPLAY_DATA(currentDisplay)->XScreen = 0; //TODO: what does it do, and is it used?
+		DISPLAY_DATA(currentDisplay)->XOutput = resources->outputs[i];
 		currentDisplay->current = 0;
 		currentDisplay->amount = 0;
 
@@ -191,7 +190,7 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	ccAssert(resolutionIndex < display->amount);
 
 	XDisplay = XOpenDisplay(display->deviceName);
-	root = RootWindow(XDisplay, ((ccDisplay_x11*)display->data)->XScreen);
+	root = RootWindow(XDisplay, DISPLAY_DATA(display)->XScreen);
 	XGrabServer(XDisplay);
 
 	resources = XRRGetScreenResources(XDisplay, root);
@@ -199,7 +198,7 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 		ccPrintString("X: Couldn't get screen resources");
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
-	outputInfo = XRRGetOutputInfo(XDisplay, resources, ((ccDisplay_x11*)display->data)->XOutput);
+	outputInfo = XRRGetOutputInfo(XDisplay, resources, DISPLAY_DATA(display)->XOutput);
 	if(!outputInfo || outputInfo->connection == RR_Disconnected){
 		ccPrintString("X: Couldn't get output info");
 		XRRFreeScreenResources(resources);
@@ -237,11 +236,11 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
 
-		ccPrintString("X: Setting display %d to %dx%d\n", ((ccDisplay_x11*)display->data)->XScreen, displayData->width, displayData->height);
-		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplayData_x11*)displayData->data)->XMode, crtcInfo->rotation, &((ccDisplay_x11*)display->data)->XOutput, 1);
+		ccPrintString("X: Setting display %d to %dx%d\n", DISPLAY_DATA(display)->XScreen, displayData->width, displayData->height);
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplayData_x11*)displayData->data)->XMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	}else{
-		ccPrintString("X: Reverting display %d\n", ((ccDisplay_x11*)display->data)->XScreen);
-		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplay_x11*)display->data)->XOldMode, crtcInfo->rotation, &((ccDisplay_x11*)display->data)->XOutput, 1);
+		ccPrintString("X: Reverting display %d\n", DISPLAY_DATA(display)->XScreen);
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, DISPLAY_DATA(display)->XOldMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	}
 
 	XRRFreeScreenResources(resources);

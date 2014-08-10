@@ -19,3 +19,5 @@ typedef struct {
 	RROutput XOutput;
 	RRMode XOldMode;
 } ccDisplay_x11;
+
+#define DISPLAY_DATA(display) ((ccDisplay_x11*)display->data)
