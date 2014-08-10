@@ -308,7 +308,7 @@ ccError ccWindowSetMaximized()
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_window);
 
 	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME));
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;

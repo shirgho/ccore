@@ -308,7 +308,10 @@ void timestep()
 {
 	int i;
 	for(i = 0; i < squareCount; i++) {
-		if(squareAlpha[i] != 0) squareAlpha[i] *= .98f;
+		if(squareAlpha[i] != 0) {
+			squareAlpha[i] *= .98f;
+			if(squareAlpha[i] < .01f) squareAlpha[i] = 0;
+		}
 	}
 }
 
