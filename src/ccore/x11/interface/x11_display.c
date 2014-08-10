@@ -38,7 +38,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 			ccRealloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
 		}
 		currentDisplay = _displays->display + _displays->amount - 1;
-
+		
 		ccMalloc(currentDisplay->data, sizeof(ccDisplay_x11));
 
 		displayNameLength = strlen(displayName);
@@ -73,7 +73,8 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 			currentDisplay->x = -1;
 			currentDisplay->y = -1;
 		}
-
+		//TODO: Please replace these references with macro's
+		printf("=%d\n", i);
 		((ccDisplay_x11*)currentDisplay->data)->XineramaScreen = i;
 		((ccDisplay_x11*)currentDisplay->data)->XScreen = 0;
 		((ccDisplay_x11*)currentDisplay->data)->XOutput = resources->outputs[i];

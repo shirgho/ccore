@@ -74,6 +74,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	WINDOW_DATA->resizable = true;
 	if(flags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
+	// Activate always on top if applicable
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
@@ -222,7 +223,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 		setResizable(true);
 		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 	}else{
-		XClientMessageEvent xClient;
+		printf("multi monitor is habbiding\n");
 		va_list displays;
 		int i;
 
@@ -234,18 +235,24 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 		va_end(displays);
 
-		memset(&xClient, 0, sizeof(XClientMessageEvent));
-		xClient.type = ClientMessage;
-		xClient.window = WINDOW_DATA->XWindow;
-		xClient.message_type = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_FULLSCREEN_MONITORS", true);
-		xClient.format = 32;
-		xClient.data.l[0] = 1;
-		xClient.data.l[1] = 0;
-		xClient.data.l[2] = 0;
-		xClient.data.l[3] = 1;
-		xClient.data.l[4] = 1;
-		XSendEvent(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, false, SubstructureRedirectMask | SubstructureNotifyMask, (XEvent *)&xClient);
+		XEvent event;
+		Atom wmState, newWmState;
 
+		wmState = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_STATE", False);
+		newWmState = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_FULLSCREEN_MONITORS", False);
+
+		memset(&event, 0, sizeof(event));
+		event.type = ClientMessage;
+		event.xclient.window = WINDOW_DATA->XWindow;
+		event.xclient.message_type = newWmState;
+		event.xclient.format = 32;
+		event.xclient.data.l[0] = 1;
+		event.xclient.data.l[1] = 0;
+		event.xclient.data.l[2] = 0;
+		event.xclient.data.l[3] = 0;
+		event.xclient.data.l[4] = 1;
+
+		XSendEvent(WINDOW_DATA->XDisplay, DefaultRootWindow(WINDOW_DATA->XDisplay), false, SubstructureNotifyMask, &event);
 		setResizable(true);
 		setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 	}
