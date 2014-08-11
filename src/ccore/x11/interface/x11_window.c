@@ -192,13 +192,14 @@ bool ccWindowPollEvent()
 	return true;
 }
 
-ccError ccWindowSetWindowed()
+ccError ccWindowSetWindowed() //Note: this seems to reset the window to (0,0)
 {
 	ccAssert(_window);
 
 	setResizable(true);
-
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
+	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", false);
+	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", false);
 
 	return CC_ERROR_NONE;
 }
@@ -272,7 +273,7 @@ ccError ccWindowResizeMove(ccRect rect, bool addBorder)
 
 	setResizable(true);
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
-	//TODO prime resize event here
+	
 	_window->rect = rect;
 	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false); //TODO: should this be handled after a system event?
 
