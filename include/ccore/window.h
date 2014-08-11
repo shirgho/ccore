@@ -44,7 +44,7 @@ typedef enum {
 // The window struct
 typedef struct {
 	float aspect;
-	ccRect rect; // Note: dimensions subtract border size
+	ccRect rect;
 	ccPoint mouse;
 	ccEvent event;
 	ccDisplay *display;
@@ -66,7 +66,7 @@ bool ccWindowExists();
 ccError ccWindowCreate(ccRect rect, const char *title, int flags);
 ccError ccWindowFree();
 bool ccWindowPollEvent(); // Poll an event from the events that currently need to be processed in the window
-ccError ccWindowResizeMove(ccRect rect, bool addBorder); // addBorder indicates whether the border size is included in the rect or whether it has to be added
+ccError ccWindowResizeMove(ccRect rect);
 ccError ccWindowCenter();
 
 ccError ccWindowSetWindowed();

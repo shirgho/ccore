@@ -192,7 +192,7 @@ bool ccWindowPollEvent()
 	return true;
 }
 
-ccError ccWindowSetWindowed() //Note: this seems to reset the window to (0,0)
+ccError ccWindowSetWindowed()
 {
 	ccAssert(_window);
 
@@ -266,7 +266,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	return CC_ERROR_NONE;
 }
 
-ccError ccWindowResizeMove(ccRect rect, bool addBorder)
+ccError ccWindowResizeMove(ccRect rect)
 {
 	//TODO implement addBorder
 	ccAssert(_window);
@@ -295,7 +295,7 @@ ccError ccWindowCenter()
 	newRect.width = _window->rect.width;
 	newRect.height = _window->rect.height;
 
-	ccWindowResizeMove(newRect, true);
+	ccWindowResizeMove(newRect);
 
 	return CC_ERROR_NONE;
 }
