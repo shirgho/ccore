@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 				case CC_KEY_W:
 					// Go to windowed
 					ccWindowSetWindowed();
-					ccWindowResizeMove((ccRect){ ccWindowGetRect().x, ccWindowGetRect().y, RES_WIDTH, RES_HEIGHT }, true);
+					ccWindowResizeMove((ccRect){ ccWindowGetRect().x, ccWindowGetRect().y, RES_WIDTH, RES_HEIGHT });
 					ccWindowCenter();
 					break;
 				case CC_KEY_M:
@@ -180,7 +180,7 @@ int main(int argc, char** argv)
 					// Enlarge the window a bit
 					windowRect.width = RES_WIDTH;
 					windowRect.height = RES_HEIGHT;
-					ccWindowResizeMove(windowRect, true);
+					ccWindowResizeMove(windowRect);
 					ccWindowCenter();
 
 					setProjection();
