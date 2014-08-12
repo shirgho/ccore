@@ -380,7 +380,7 @@ void scrollSquaresDown() {
 int mouseToIndex()
 {
 	int index = (ccWindowGetMouse().x / SQUARE_SIZE) + ((ccWindowGetRect().height - ccWindowGetMouse().y) / SQUARE_SIZE) * hsquares;
-	if(index >= squareCount) index = -1;
+	if(index >= squareCount || index < 0) index = -1;
 	return index;
 }
 
