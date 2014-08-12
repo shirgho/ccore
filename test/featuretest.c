@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 	while(!quit) {
 		ccTimeDelay(15); //Limit the frame rate
 
-		printf("%ld\n", ccTimeSeconds());
+		printf("second %lld\n", ccTimeSeconds());
 
 		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
 		while(ccWindowPollEvent()) {
