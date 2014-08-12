@@ -26,6 +26,8 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
+#include <time.h>
+
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/time.h>
@@ -110,6 +112,8 @@ int main(int argc, char** argv)
 	// Event loop resides within this while statement
 	while(!quit) {
 		ccTimeDelay(15); //Limit the frame rate
+
+		printf("%ld\n", ccTimeSeconds());
 
 		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
 		while(ccWindowPollEvent()) {

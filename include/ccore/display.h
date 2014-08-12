@@ -55,7 +55,7 @@ typedef struct {
 // List of all displays currently connected and active
 typedef struct {
 	ccDisplay* display;
-	short amount, primary;
+	unsigned short amount, primary;
 } ccDisplays;
 
 // Only access through getters

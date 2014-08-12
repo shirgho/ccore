@@ -25,4 +25,13 @@
 
 #include "core.h"
 
+#define _TO_SECONDS 1000000000L
+#define _TO_MILLISECONDS 1000000L
+#define _TO_MICROSECONDS 1000L
+
+#define ccTimeSeconds() (ccTimeNanoseconds() / _TO_SECONDS)
+#define ccTimeMilliseconds() (ccTimeNanoseconds() / _TO_MILLISECONDS)
+#define ccTimeMicroseconds() (ccTimeNanoseconds() / _TO_MICROSECONDS)
+
 void ccTimeDelay(int ms);
+long ccTimeNanoseconds();

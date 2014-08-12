@@ -268,14 +268,13 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 ccError ccWindowResizeMove(ccRect rect)
 {
-	//TODO implement addBorder
 	ccAssert(_window);
 
 	setResizable(true);
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
 	
 	_window->rect = rect;
-	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false); //TODO: should this be handled after a system event?
+	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
 
 	return CC_ERROR_NONE;
