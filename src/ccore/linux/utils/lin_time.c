@@ -2,7 +2,7 @@
 
 void ccTimeDelay(int ms)
 {
-	usleep(ms * 1000);
+	usleep(ms * _TO_MICROSECONDS);
 }
 
 long ccTimeNanoseconds()
