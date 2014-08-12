@@ -33,6 +33,7 @@
 #include <ccore/time.h>
 #include <ccore/dirUtils.h>
 #include <ccore/charUtils.h>
+#include <ccore/thread.h>
 
 #include "tga.h"
 
@@ -112,8 +113,6 @@ int main(int argc, char** argv)
 	// Event loop resides within this while statement
 	while(!quit) {
 		ccTimeDelay(15); //Limit the frame rate
-
-		printf("second %lld\n", ccTimeSeconds());
 
 		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
 		while(ccWindowPollEvent()) {
