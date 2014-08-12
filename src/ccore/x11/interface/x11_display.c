@@ -1,6 +1,6 @@
 #include "x11_display.h"
 
-static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
+static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int i, j, k, displayNameLength, eventBase, errorBase;
 	bool foundCrtc;
@@ -14,7 +14,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
 		ccPrintString("Xinerama not supported or active\n");
-		return false;
+		return CC_ERROR_NODISPLAY;
 	}
 
 	currentResolution.bitDepth = -1;
@@ -115,7 +115,7 @@ static bool ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	XRRFreeScreenResources(resources);
 
-	return true;
+	return CC_ERROR_NONE;
 }
 
 ccError ccDisplayInitialize()
@@ -141,10 +141,8 @@ ccError ccDisplayInitialize()
 		ccPrintString("X: Found root display %s\n", displayName);
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
-			if(!ccXFindDisplaysXinerama(display, displayName)){
-				//ccXFindDisplaysXrandr(display, displayName); <-- what's this ;_;
-				return CC_ERROR_NODISPLAY;
-			}		
+			ccError error = ccXFindDisplaysXinerama(display, displayName);
+			if(error != CC_ERROR_NONE) return error;
 			ccPrintString("X: %d displays found\n", _displays->amount);
 			XCloseDisplay(display);
 		}
