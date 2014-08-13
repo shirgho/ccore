@@ -41,7 +41,11 @@ typedef enum {
 	CC_ERROR_GLEWINIT, // GLEW could not initialize
 	CC_ERROR_CANTSWAP, // The buffers couldn't swap
 
-	CC_ERROR_OUT_OF_MEMORY // Out of memory exception
+	// Thread related
+	CC_ERROR_THREAD, // CCORE couldn't start a thread
+
+	// Memory related
+	CC_ERROR_OUT_OF_MEMORY
 } ccError;
 
 // The following macro's can be used inside functions that return ccError to catch allocation failures

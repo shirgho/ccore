@@ -27,7 +27,7 @@
 
 #ifdef _DEBUG
 #include <stdio.h>
-#define ccPrintString printf
+#define ccPrintf printf
 #else
-#define ccPrintString
+#define ccPrintf
 #endif

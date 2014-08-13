@@ -36,6 +36,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_RESOLUTION_CHANGE:
 			return "Could not change display resolution";
 			break;
+		case CC_ERROR_THREAD:
+			return "A thread could not be started";
+			break;
 		default:
 			return "Error message not defined";
 			break;

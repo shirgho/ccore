@@ -23,8 +23,21 @@
 
 #pragma once
 
-typedef struct {
-	void *data;
-} ccThread;
+#include "core.h"
+#include "types.h"
+#include "error.h"
 
-ccError ccThreadCreate(ccThread *thread, void *function, void *data);
+typedef void* ccThread;
+
+#ifdef WIN32
+#include <windows.h>
+
+#define ccThreadFunction(name) DWORD WINAPI name(LPVOID lpParam)
+
+#elif defined X11
+
+#endif
+
+ccError ccThreadCreate(ccThread thread, void *function);
+ccError ccThreadStart(ccThread thread, void *data);
+bool ccThreadFinished(ccThread thread);

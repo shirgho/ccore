@@ -34,6 +34,7 @@
 #include <ccore/dirUtils.h>
 #include <ccore/charUtils.h>
 #include <ccore/thread.h>
+#include <ccore/print.h>
 
 #include "tga.h"
 
@@ -67,6 +68,9 @@ void scrollSquaresDown();
 void crossSquares();
 void mouseTrail();
 
+// This function defines a threadable function
+ccThreadFunction(counter);
+
 // Custom ceil
 int cceil(float n);
 
@@ -85,6 +89,20 @@ int main(int argc, char** argv)
 	// This variable tells the message loop when to quit
 	bool quit = false;
 	char *imageFileName;
+
+	// Demonstrate threading
+	ccThread thread;
+
+	ccPrintf("Creating thread:\t%s\n", ccErrorString(ccThreadCreate(&thread, &counter)));
+	ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, NULL)));
+
+	ccPrintf("Waiting for thread");
+
+	while(!ccThreadFinished(thread)) {
+		ccPrintf(".");
+		ccTimeDelay(1);
+	}
+	ccPrintf("\nthread finished!\n");
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -229,6 +247,17 @@ int main(int argc, char** argv)
 	ccWindowFree();
 
 	return 0;
+}
+
+// A thread procedure is implemented here
+
+ccThreadFunction(counter)
+{
+	int count;
+	for(count = 0; count < 200000000; count++) {
+		count++;
+		count--;
+	}
 }
 
 // All code below this point is not CCORE related
