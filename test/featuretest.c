@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 	ccWindowCenter();
 
 	// Prepare window for rendering with openGL 3.2 or higher
-	ccGLBindContext(3, 2);
+	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
 
 	// This function initializes openGL in this example
 	initialize();

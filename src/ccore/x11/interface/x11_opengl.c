@@ -8,6 +8,7 @@ static int attrList[] =
 	GLX_GREEN_SIZE, 4,
 	GLX_BLUE_SIZE, 4,
 	GLX_DEPTH_SIZE, 16,
+	None
 };
 
 ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
