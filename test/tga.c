@@ -597,7 +597,7 @@ loadTGATexture (const char *filename)
   GLuint tex_id = 0;
 
   tga_tex = ReadTGAFile (filename);
-
+  
   if (tga_tex && tga_tex->texels)
     {
       /* generate texture */

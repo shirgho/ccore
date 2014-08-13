@@ -111,10 +111,10 @@ int main(int argc, char** argv)
 	// Create a centered window that cannot be resized
 	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_ALWAYSONTOP);
 	ccWindowCenter();
-	
+
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccGLBindContext(3, 2);
-	
+
 	// This function initializes openGL in this example
 	initialize();
 
@@ -143,99 +143,97 @@ int main(int argc, char** argv)
 		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
 		while(ccWindowPollEvent()) {
 			switch(ccWindowGetEvent().type) {
-			case CC_EVENT_WINDOW_QUIT:
-				// Quit when the close button is pressed
-				quit = true;
-				break;
-			case CC_EVENT_WINDOW_RESIZE:
-				// Adapt projection and contents to new size
-				setProjection();
-				break;
-			case CC_EVENT_KEY_DOWN:
-				if(logoScreen) break;
-
-				switch(ccWindowGetEvent().keyCode) {
-				case CC_KEY_ESCAPE:
-					// Quit when the escape key is pressed
+				case CC_EVENT_WINDOW_QUIT:
+					// Quit when the close button is pressed
 					quit = true;
 					break;
-				case CC_KEY_F:
-					// Go full screen on the current display
-					ccWindowSetFullscreen(CC_FULLSCREEN_CURRENT_DISPLAY);
+				case CC_EVENT_WINDOW_RESIZE:
+					// Adapt projection and contents to new size
+					setProjection();
 					break;
-				case CC_KEY_W:
-					// Go to windowed
-					ccWindowSetWindowed();
-					ccWindowResizeMove((ccRect){ ccWindowGetRect().x, ccWindowGetRect().y, RES_WIDTH, RES_HEIGHT });
-					ccWindowCenter();
-					break;
-				case CC_KEY_M:
-					// Maximize the window
-					ccWindowSetMaximized();
-					break;
-				case CC_KEY_C:
-					// Center the window
-					ccWindowCenter();
-					break;
-				case CC_KEY_X:
-					// Go full screen on the first two displays if possible
-					if(ccDisplayGetAmount() >= 2) {
-						ccWindowSetFullscreen(2, ccDisplayGet(0), ccDisplayGet(1));
+				case CC_EVENT_KEY_DOWN:
+					if(logoScreen) break;
+
+					switch(ccWindowGetEvent().keyCode) {
+						case CC_KEY_ESCAPE:
+							// Quit when the escape key is pressed
+							quit = true;
+							break;
+						case CC_KEY_F:
+							// Go full screen on the current display
+							ccWindowSetFullscreen(CC_FULLSCREEN_CURRENT_DISPLAY);
+							break;
+						case CC_KEY_W:
+							// Go to windowed
+							ccWindowSetWindowed();
+							ccWindowResizeMove((ccRect){ ccWindowGetRect().x, ccWindowGetRect().y, RES_WIDTH, RES_HEIGHT });
+							ccWindowCenter();
+							break;
+						case CC_KEY_M:
+							// Maximize the window
+							ccWindowSetMaximized();
+							break;
+						case CC_KEY_C:
+							// Center the window
+							ccWindowCenter();
+							break;
+						case CC_KEY_X:
+							// Go full screen on the first two displays if possible
+							if(ccDisplayGetAmount() >= 2) {
+								ccWindowSetFullscreen(2, ccDisplayGet(0), ccDisplayGet(1));
+							}
+							break;
+						case CC_KEY_R:
+							// Change the resolution to a random one from the list of possible resolutions
+							ccDisplaySetResolution(ccWindowGetDisplay(), rand() % ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
+							break;
+						case CC_KEY_N:
+							// Revert all resolutions
+							ccDisplayRevertModes();
+							break;
+					}
+
+					if(!logoScreen) {
+						squareAlpha[ccWindowGetEvent().keyCode % squareCount] = 1.0f;
 					}
 					break;
-				case CC_KEY_R:
-					// Change the resolution to a random one from the list of possible resolutions
-				{
-					ccDisplaySetResolution(ccWindowGetDisplay(), rand() % ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
-				}
+				case CC_EVENT_MOUSE_UP:
+					if(logoScreen && ccWindowGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
+						// Proceed to the demo screen
+						ccRect windowRect = ccWindowGetRect();
+
+						logoScreen = false;
+
+						// Enlarge the window a bit
+						windowRect.width = RES_WIDTH;
+						windowRect.height = RES_HEIGHT;
+						ccWindowResizeMove(windowRect);
+						ccWindowCenter();
+
+						setProjection();
+					}
 					break;
-				case CC_KEY_N:
-					// Revert all resolutions
-					ccDisplayRevertModes();
+				case CC_EVENT_MOUSE_DOWN:
+					// Create a cross where the mouse was pressed
+					if(!logoScreen) {
+						crossSquares();
+					}
 					break;
-				}
-
-				if(!logoScreen) {
-					squareAlpha[ccWindowGetEvent().keyCode % squareCount] = 1.0f;
-				}
-				break;
-			case CC_EVENT_MOUSE_UP:
-				if(logoScreen && ccWindowGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
-					// Proceed to the demo screen
-					ccRect windowRect = ccWindowGetRect();
-
-					logoScreen = false;
-
-					// Enlarge the window a bit
-					windowRect.width = RES_WIDTH;
-					windowRect.height = RES_HEIGHT;
-					ccWindowResizeMove(windowRect);
-					ccWindowCenter();
-
-					setProjection();
-				}
-				break;
-			case CC_EVENT_MOUSE_DOWN:
-				// Create a cross where the mouse was pressed
-				if(!logoScreen) {
-					crossSquares();
-				}
-				break;
-			case CC_EVENT_MOUSE_SCROLL:
-				// Scroll all squares for a nice effect
-				if(ccWindowGetEvent().scrollDelta > 0) {
-					scrollSquaresUp();
-				}
-				else{
-					scrollSquaresDown();
-				}
-				break;
-			case CC_EVENT_MOUSE_MOVE:
-				// Highlight squares the mouse is hovering over
-				if(!logoScreen) {
-					mouseTrail();
-				}
-				break;
+				case CC_EVENT_MOUSE_SCROLL:
+					// Scroll all squares for a nice effect
+					if(ccWindowGetEvent().scrollDelta > 0) {
+						scrollSquaresUp();
+					}
+					else{
+						scrollSquaresDown();
+					}
+					break;
+				case CC_EVENT_MOUSE_MOVE:
+					// Highlight squares the mouse is hovering over
+					if(!logoScreen) {
+						mouseTrail();
+					}
+					break;
 			}
 		}
 
@@ -309,7 +307,7 @@ void renderLogo()
 	glEnable(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, logoTexture);
-	
+
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, -1.0f);
 	glVertex2f(0.0f, 0.0f);
@@ -320,7 +318,7 @@ void renderLogo()
 	glTexCoord2f(1.0f, -1.0f);
 	glVertex2f((float)LOGO_WIDTH, 0.0f);
 	glEnd();
-	
+
 	glDisable(GL_TEXTURE_2D);
 }
 
