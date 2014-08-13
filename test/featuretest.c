@@ -99,10 +99,10 @@ int main(int argc, char** argv)
 	ccPrintf("Waiting for thread");
 
 	while(!ccThreadFinished(thread)) {
-		ccPrintf("waiting");
+		ccPrintf(".");
 		ccTimeDelay(1);
 	}
-	ccPrintf("\nthread finished!\n");
+	ccPrintf("\nThread finished!\n");
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -254,8 +254,8 @@ int main(int argc, char** argv)
 ccThreadFunction(counter)
 {
 	int count;
-	for(count = 0;count<=100000;count++) {
-		ccPrintf(".", count);
+	for(count = 0;count<=500;count++) {
+		ccTimeDelay(1);
 	}
 }
 
