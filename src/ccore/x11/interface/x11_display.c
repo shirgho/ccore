@@ -13,7 +13,7 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 	XRRCrtcInfo *crtcInfo;
 
 	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
-		ccPrintString("Xinerama not supported or active\n");
+		ccPrintf("Xinerama not supported or active\n");
 		return CC_ERROR_NODISPLAY;
 	}
 
@@ -27,7 +27,7 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 		outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
 		/* Ignore disconnected devices */
 		if(outputInfo->connection != 0){
-			ccPrintString("X: Ignored disconnected display %d\n", i);
+			ccPrintf("X: Ignored disconnected display %d\n", i);
 			continue;
 		}
 
@@ -138,12 +138,12 @@ ccError ccDisplayInitialize()
 			continue;
 		}
 		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
-		ccPrintString("X: Found root display %s\n", displayName);
+		ccPrintf("X: Found root display %s\n", displayName);
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
 			ccError error = ccXFindDisplaysXinerama(display, displayName);
 			if(error != CC_ERROR_NONE) return error;
-			ccPrintString("X: %d displays found\n", _displays->amount);
+			ccPrintf("X: %d displays found\n", _displays->amount);
 			XCloseDisplay(display);
 		}
 	}
@@ -193,18 +193,18 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 
 	resources = XRRGetScreenResources(XDisplay, root);
 	if(!resources){
-		ccPrintString("X: Couldn't get screen resources");
+		ccPrintf("X: Couldn't get screen resources");
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 	outputInfo = XRRGetOutputInfo(XDisplay, resources, DISPLAY_DATA(display)->XOutput);
 	if(!outputInfo || outputInfo->connection == RR_Disconnected){
-		ccPrintString("X: Couldn't get output info");
+		ccPrintf("X: Couldn't get output info");
 		XRRFreeScreenResources(resources);
 		return CC_ERROR_RESOLUTION_CHANGE;
 	}
 	crtcInfo = XRRGetCrtcInfo(XDisplay, resources, outputInfo->crtc);
 	if(!crtcInfo){
-		ccPrintString("X: Couldn't get crtc info");
+		ccPrintf("X: Couldn't get crtc info");
 		XRRFreeScreenResources(resources);
 		XRRFreeOutputInfo(outputInfo);
 		return CC_ERROR_RESOLUTION_CHANGE;
@@ -217,27 +217,27 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 		}
 
 		if(display->resolution->width <= 0 || display->resolution->height <= 0){
-			ccPrintString("Error: Resolution supplied not valid\n");
+			ccPrintf("Error: Resolution supplied not valid\n");
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
 
 		if(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY)){
-			ccPrintString("X: Unable to get screen size range\n");
+			ccPrintf("X: Unable to get screen size range\n");
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
 
 		if(displayData->width < minX || displayData->height < minY){
-			ccPrintString("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
+			ccPrintf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
 			return CC_ERROR_RESOLUTION_CHANGE;
 		} else if(displayData->width > maxX || displayData->height > maxY){
-			ccPrintString("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
+			ccPrintf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
 			return CC_ERROR_RESOLUTION_CHANGE;
 		}
 
-		ccPrintString("X: Setting display %d to %dx%d\n", DISPLAY_DATA(display)->XScreen, displayData->width, displayData->height);
+		ccPrintf("X: Setting display %d to %dx%d\n", DISPLAY_DATA(display)->XScreen, displayData->width, displayData->height);
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplayData_x11*)displayData->data)->XMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	}else{
-		ccPrintString("X: Reverting display %d\n", DISPLAY_DATA(display)->XScreen);
+		ccPrintf("X: Reverting display %d\n", DISPLAY_DATA(display)->XScreen);
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, DISPLAY_DATA(display)->XOldMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	}
 
