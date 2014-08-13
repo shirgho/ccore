@@ -370,6 +370,7 @@ ReadTGA32bitsRLE (FILE *fp, gl_texture_t *texinfo)
 	      ptr[1] = rgba[1];
 	      ptr[2] = rgba[0];
 	      ptr[3] = rgba[3];
+		  printf("%d %d %d %d", ptr[0], ptr[1], ptr[2], ptr[3]);
 	    }
 	}
       else
