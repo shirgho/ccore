@@ -36,6 +36,8 @@ typedef void* ccThread;
 
 #elif defined X11
 
+#define ccThreadFunction(name) void* name(void *arg)
+
 #endif
 
 ccError ccThreadCreate(ccThread thread, void *function);
