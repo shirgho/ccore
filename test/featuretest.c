@@ -92,9 +92,10 @@ int main(int argc, char** argv)
 
 	// Demonstrate threading
 	ccThread thread;
+	int threadData = 42;
 
 	ccPrintf("Creating thread:\t%s\n", ccErrorString(ccThreadCreate(&thread, &counter)));
-	ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, NULL)));
+	ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, &threadData)));
 
 	ccPrintf("Waiting for thread");
 
@@ -102,7 +103,7 @@ int main(int argc, char** argv)
 		ccPrintf(".");
 		ccTimeDelay(1);
 	}
-	ccPrintf("\nThread finished!\n");
+	ccPrintf("Thread finished!\n");
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -257,6 +258,7 @@ ccThreadFunction(counter)
 	for(count = 0;count<=500;count++) {
 		ccTimeDelay(1);
 	}
+	ccPrintf("\nPassed integer: %d\n", *(int*)ccThreadData);
 }
 
 // All code below this point is not CCORE related

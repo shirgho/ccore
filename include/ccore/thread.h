@@ -31,13 +31,11 @@ typedef void* ccThread;
 
 #ifdef WIN32
 #include <windows.h>
-
 #define ccThreadFunction(name) DWORD WINAPI name(LPVOID lpParam)
-
+#define ccThreadData ((void*)lpParam)
 #elif defined X11
-
 #define ccThreadFunction(name) void* name(void *arg)
-
+#define ccThreadData arg
 #endif
 
 ccError ccThreadCreate(ccThread *thread, void *function);
