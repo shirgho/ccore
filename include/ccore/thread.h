@@ -40,6 +40,6 @@ typedef void* ccThread;
 
 #endif
 
-ccError ccThreadCreate(ccThread thread, void *function);
+ccError ccThreadCreate(ccThread thread, const void *function);
 ccError ccThreadStart(ccThread thread, void *data);
 bool ccThreadFinished(ccThread thread);
