@@ -35,6 +35,7 @@
     <ClInclude Include="include\ccore\display.h" />
     <ClInclude Include="include\ccore\error.h" />
     <ClInclude Include="include\ccore\event.h" />
+    <ClInclude Include="include\ccore\gamepad.h" />
     <ClInclude Include="include\ccore\opengl.h" />
     <ClInclude Include="include\ccore\print.h" />
     <ClInclude Include="include\ccore\thread.h" />
