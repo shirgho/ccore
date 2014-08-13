@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 	ccPrintf("Waiting for thread");
 
 	while(!ccThreadFinished(thread)) {
-		ccPrintf(".");
+		ccPrintf("waiting");
 		ccTimeDelay(1);
 	}
 	ccPrintf("\nthread finished!\n");
@@ -254,9 +254,8 @@ int main(int argc, char** argv)
 ccThreadFunction(counter)
 {
 	int count;
-	for(count = 0; count < 200000000; count++) {
-		count++;
-		count--;
+	for(count = 0;count<=100000;count++) {
+		ccPrintf(".", count);
 	}
 }
 
