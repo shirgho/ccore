@@ -68,7 +68,7 @@ void scrollSquaresDown();
 void crossSquares();
 void mouseTrail();
 
-// This function defines a threadable function
+// This defines a threadable function
 ccThreadFunction(counter);
 
 // Custom ceil
