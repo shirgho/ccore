@@ -67,6 +67,8 @@ typedef enum {
 // The event structure used by ccWindow, set by the call ccPollEvent
 typedef struct {
 	ccEventType type;
+	int originId; // This is a unique ID of the device that caused this event
+
 	// The union contains different data types for different events
 	union {
 		ccMouseButtonType mouseButton;

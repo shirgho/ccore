@@ -68,9 +68,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 
 	for(i = 0; i < usageLength; i++)
 	{
-		char *str = malloc(500);
-		HidD_GetManufacturerString(HidP_Input, &str, 500);
-		printf("button %d @ %s\n", usage[i] - buttonCaps->Range.UsageMin, str);
+		printf("button %d\t%d\n", usage[i] - buttonCaps->Range.UsageMin, raw->header.hDevice);
 	}
 
 	// Free
