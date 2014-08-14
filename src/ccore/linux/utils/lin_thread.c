@@ -23,8 +23,7 @@ ccError ccThreadJoin(ccThread thread)
 
 bool ccThreadFinished(ccThread thread)
 {
-	if(pthread_kill(_THREAD->id, 0) == 0)
-	{
+	if(pthread_kill(_THREAD->id, 0) == 0){
 		return false;
 	}else{
 		free(thread);
