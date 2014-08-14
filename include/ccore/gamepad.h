@@ -34,6 +34,10 @@ typedef enum {
 
 typedef struct {
 	ccGamepadEventType type;
+	
+	ccPoint joystickPosition;
+	unsigned int buttonId;
+	unsigned int gamepadId;
 } ccGamepadEvent;
 
 ccError ccGamepadConnect(); // Connects or reconnects gamepads
