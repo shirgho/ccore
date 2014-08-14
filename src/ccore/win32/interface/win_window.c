@@ -125,6 +125,11 @@ static void processRid(HRAWINPUT rawInput)
 		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 		_window->event.keyCode = vkCode;
 	}
+	else if(raw->header.dwType == RIM_TYPEHID)
+	{
+		_window->event.gamepadEvent = _generateGamepadEvent(raw);
+		if(_window->event.gamepadEvent.type != CC_GAMEPAD_UNHANDLED) _window->event.type = CC_EVENT_GAMEPAD;
+	}
 }
 
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)

@@ -24,3 +24,8 @@ void ccGamepadDisconnect()
 
 	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE));
 }
+
+ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
+{
+	return (ccGamepadEvent){ 0 };
+}

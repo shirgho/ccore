@@ -7,3 +7,5 @@
 #include <ccore/assert.h>
 
 #include "win_window.h"
+
+ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw);

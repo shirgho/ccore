@@ -25,8 +25,10 @@
 
 #include "core.h"
 #include "error.h"
+#include "types.h"
 
 typedef enum {
+	CC_GAMEPAD_UNHANDLED,
 	CC_GAMEPAD_BUTTON_DOWN,
 	CC_GAMEPAD_BUTTON_UP,
 	CC_GAMEPAD_JOYSTICK_MOVE

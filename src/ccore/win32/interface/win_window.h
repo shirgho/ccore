@@ -9,6 +9,8 @@
 #include <ccore/assert.h>
 #include <ccore/gamepad.h>
 
+#include "win_gamepad.h"
+
 #define NRAWINPUTDEVICES 3
 #define RAWINPUT_KEYBOARD 0
 #define RAWINPUT_MOUSE 1
