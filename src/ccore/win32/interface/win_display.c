@@ -40,13 +40,13 @@ ccError ccDisplayInitialize()
 
 			currentDisplay = &_displays->display[_displays->amount - 1];
 
-			ccMalloc(currentDisplay->gpuName, CC_MAXDEVICENAMESIZE);
-			ccMalloc(currentDisplay->monitorName, CC_MAXDEVICENAMESIZE);
+			ccMalloc(currentDisplay->gpuName, CC_MAXDEVICESTRINGSIZE);
+			ccMalloc(currentDisplay->monitorName, CC_MAXDEVICESTRINGSIZE);
 			ccMalloc(currentDisplay->deviceName, CC_MAXDEVICENAMESIZE);
 
-			memcpy(currentDisplay->gpuName, device.DeviceString, 128);
-			memcpy(currentDisplay->monitorName, display.DeviceString, 128);
-			memcpy(currentDisplay->deviceName, display.DeviceName, 128);
+			memcpy(currentDisplay->gpuName, device.DeviceString, CC_MAXDEVICESTRINGSIZE);
+			memcpy(currentDisplay->monitorName, display.DeviceString, CC_MAXDEVICESTRINGSIZE);
+			memcpy(currentDisplay->deviceName, display.DeviceName, CC_MAXDEVICENAMESIZE);
 			ccStrTrimToChar(currentDisplay->deviceName, '\\', false);
 
 			ccStrTrim(currentDisplay->gpuName);
