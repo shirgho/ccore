@@ -5,8 +5,8 @@ static ccError setWindowState(const char *type, bool value)
 	XEvent event;
 	Atom wmState, newWmState;
 
-	wmState = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_STATE", false);
-	newWmState = XInternAtom(WINDOW_DATA->XDisplay, type, false);
+	wmState = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_STATE", 1);
+	newWmState = XInternAtom(WINDOW_DATA->XDisplay, type, 1);
 
 	memset(&event, 0, sizeof(event));
 	event.type = ClientMessage;
@@ -74,11 +74,6 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	WINDOW_DATA->resizable = true;
 	if(flags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
-	// Activate always on top if applicable
-	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
-		setWindowState("_NET_WM_STATE_ABOVE", true); //TODO: Not verified, does nothing on mint with cinnamon
-	}
-
 	XMapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XStoreName(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, title);
 
@@ -86,6 +81,11 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	XSetWMProtocols(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &delete, 1);
 
 	ccWindowUpdateDisplay();
+	
+	// Activate always on top if applicable
+	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
+		setWindowState("_NET_WM_STATE_ABOVE", true); //TODO: Not verified, does nothing on mint with cinnamon
+	}
 
 	return CC_ERROR_NONE;
 }
