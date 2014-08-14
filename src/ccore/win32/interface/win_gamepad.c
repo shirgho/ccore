@@ -68,7 +68,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 
 	for(i = 0; i < usageLength; i++)
 	{
-		printf("usage %d\n", usage[i] - buttonCaps->Range.UsageMin);
+		printf("button %d @ %d\n", usage[i] - buttonCaps->Range.UsageMin, caps.);
 	}
 
 	// Free
