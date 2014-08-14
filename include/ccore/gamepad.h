@@ -42,6 +42,19 @@ typedef struct {
 	unsigned int gamepadId;
 } ccGamepadEvent;
 
+typedef struct {
+	char *name;
+
+	void *data;
+} ccGamepad;
+
+typedef struct {
+	ccGamepad* gamepad;
+	unsigned short amount, primary;
+} ccGamepads;
+
+ccGamepads *_gamepads;
+
 ccError ccGamepadConnect(); // Connects or reconnects gamepads
 int ccGamepadCount();
 void ccGamepadDisconnect(); // Disconnect any connected gamepads
