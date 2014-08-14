@@ -42,6 +42,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_NOGAMEPAD:
 			return "No gamepad could be found";
 			break;
+		case CC_ERROR_GAMEPADDATA:
+			return "The gamepad could not be read";
+			break;
 		default:
 			return "Error message not defined";
 			break;

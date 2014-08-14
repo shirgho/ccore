@@ -46,6 +46,7 @@ typedef enum {
 
 	// Gamepad related
 	CC_ERROR_NOGAMEPAD, // No gamepads could be found
+	CC_ERROR_GAMEPADDATA, // The gamepad couldn not be read
 
 	// Memory related
 	CC_ERROR_OUT_OF_MEMORY

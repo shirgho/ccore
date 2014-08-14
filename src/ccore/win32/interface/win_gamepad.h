@@ -9,4 +9,6 @@
 
 #include "win_window.h"
 
+#define GAMEPAD_MAXBUTTONS 128
+
 ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw);
