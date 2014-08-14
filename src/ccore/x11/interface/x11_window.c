@@ -23,12 +23,18 @@ static ccError setWindowState(const char *type, bool value)
 
 static void setResizable(bool resizable)
 {
-	XSizeHints *sizeHints = XAllocSizeHints();
-	long flags = 0;
+	XSizeHints *sizeHints;
+	long flags;
 
 	ccAssert(_window != NULL);
 
-	if(WINDOW_DATA->resizable == resizable) return;
+	sizeHints = XAllocSizeHints();
+	flags = 0;
+
+	if(WINDOW_DATA->resizable == resizable){
+		XFree(sizeHints);
+		return;
+	}
 
 	WINDOW_DATA->resizable = resizable;
 
@@ -55,13 +61,15 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	ccAssert(_window == NULL);
 
 	ccMalloc(_window, sizeof(ccWindow));
-	
+
 	_window->rect = rect;
 	ccMalloc(_window->data, sizeof(ccWindow_x11));
 	WINDOW_DATA->windowFlags = flags;
 
 	WINDOW_DATA->XDisplay = XOpenDisplay(NULL);
-	if(WINDOW_DATA->XDisplay == NULL) return CC_ERROR_WINDOWCREATION;
+	if(WINDOW_DATA->XDisplay == NULL){
+		return CC_ERROR_WINDOWCREATION;
+	}
 
 	root = DefaultRootWindow(WINDOW_DATA->XDisplay);
 	WINDOW_DATA->XScreen = DefaultScreen(WINDOW_DATA->XDisplay);
@@ -72,7 +80,9 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	// Disable resizing
 	WINDOW_DATA->resizable = true;
-	if(flags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
+	if(flags & CC_WINDOW_FLAG_NORESIZE){
+		setResizable(false);
+	}
 
 	XMapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XStoreName(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, title);
@@ -81,7 +91,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	XSetWMProtocols(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &delete, 1);
 
 	ccWindowUpdateDisplay();
-	
+
 	// Activate always on top if applicable
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
 		setWindowState("_NET_WM_STATE_ABOVE", true);
@@ -168,13 +178,15 @@ bool ccWindowPollEvent()
 
 				ccWindowUpdateDisplay();
 
-				if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
+				if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE){
+					setResizable(false);
+				}
 			}
 
 			if(_window->rect.x != event.xconfigure.x || _window->rect.y != event.xconfigure.y) {
 				_window->rect.x = event.xconfigure.x;
 				_window->rect.y = event.xconfigure.y;
-				
+
 				ccWindowUpdateDisplay();
 			}
 			break;
@@ -236,10 +248,18 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 		for(i=1;i<displayCount;i++) {
 			current = va_arg(displays, ccDisplay*);
 
-			if(current->x < leftDisplay->x) leftDisplay = current;
-			if(current->y < topDisplay->y) topDisplay = current;
-			if(current->x + ccDisplayGetResolutionCurrent(current)->width > rightDisplay->x + ccDisplayGetResolutionCurrent(rightDisplay)->width) rightDisplay = current;
-			if(current->y + ccDisplayGetResolutionCurrent(current)->height > bottomDisplay->y + ccDisplayGetResolutionCurrent(bottomDisplay)->width) bottomDisplay = current;
+			if(current->x < leftDisplay->x){
+				leftDisplay = current;
+			}
+			if(current->y < topDisplay->y){
+				topDisplay = current;
+			}
+			if(current->x + ccDisplayGetResolutionCurrent(current)->width > rightDisplay->x + ccDisplayGetResolutionCurrent(rightDisplay)->width){ 
+				rightDisplay = current;
+			}
+			if(current->y + ccDisplayGetResolutionCurrent(current)->height > bottomDisplay->y + ccDisplayGetResolutionCurrent(bottomDisplay)->width){ 
+				bottomDisplay = current;
+			}
 		}
 
 		va_end(displays);
@@ -272,10 +292,11 @@ ccError ccWindowResizeMove(ccRect rect)
 
 	setResizable(true);
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
-	
-	_window->rect = rect;
-	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) setResizable(false);
 
+	_window->rect = rect;
+	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE){
+		setResizable(false);
+	}
 
 	return CC_ERROR_NONE;
 }
