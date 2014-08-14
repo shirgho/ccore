@@ -1,6 +1,6 @@
 #include "win_gamepad.h"
 
-bool ccGamepadConnect()
+ccError ccGamepadConnect()
 {
 	ccAssert(_window != NULL);
 	
@@ -9,7 +9,7 @@ bool ccGamepadConnect()
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = WINDOW_DATA->winHandle;
 
-	return RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(WINDOW_DATA->rid[0])) == TRUE?true:false;
+	return RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE)) == TRUE?CC_ERROR_NONE:CC_ERROR_NOGAMEPAD;
 }
 
 int ccGamepadCount()

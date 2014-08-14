@@ -24,8 +24,8 @@
 #pragma once
 
 #include "core.h"
-#include "types.h"
+#include "error.h"
 
-bool ccGamepadConnect(); // Connects or reconnects gamepads, returns false if none were found
+ccError ccGamepadConnect(); // Connects or reconnects gamepads
 int ccGamepadCount();
 void ccGamepadDisconnect(); // Disconnect any connected gamepads
