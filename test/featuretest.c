@@ -35,7 +35,6 @@
 #include <ccore/charUtils.h>
 #include <ccore/thread.h>
 #include <ccore/print.h>
-#include <ccore/gamepad.h>
 
 #include "tga.h"
 
@@ -114,9 +113,6 @@ int main(int argc, char** argv)
 	// Create a centered window that cannot be resized
 	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_ALWAYSONTOP);
 	ccWindowCenter();
-
-	// Find gamepads
-	ccPrintf("Looking for gamepads:\t%s\n", ccErrorString(ccGamepadFind()));
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
