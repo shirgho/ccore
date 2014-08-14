@@ -19,5 +19,8 @@ int ccGamepadCount()
 
 void ccGamepadDisconnect()
 {
+	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
+	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = NULL;
 
+	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE));
 }
