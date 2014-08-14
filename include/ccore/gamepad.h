@@ -50,7 +50,7 @@ typedef struct {
 
 typedef struct {
 	ccGamepad* gamepad;
-	unsigned short amount, primary;
+	unsigned int amount;
 } ccGamepads;
 
 ccGamepads *_gamepads;
