@@ -7,10 +7,12 @@
 
 #include <ccore/charUtils.h>
 #include <ccore/assert.h>
+#include <ccore/gamepad.h>
 
-#define NRAWINPUTDEVICES 2
+#define NRAWINPUTDEVICES 3
 #define RAWINPUT_KEYBOARD 0
 #define RAWINPUT_MOUSE 1
+#define RAWINPUT_GAMEPAD 2
 
 typedef enum {
 	CC_WIN32_EVENT_RESIZED = 1,

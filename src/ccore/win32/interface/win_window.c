@@ -39,11 +39,13 @@ static bool initializeRawInput()
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].hwndTarget = WINDOW_DATA->winHandle;
 
-	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES, sizeof(WINDOW_DATA->rid[0]));
+	return RegisterRawInputDevices(WINDOW_DATA->rid, 2, sizeof(WINDOW_DATA->rid[0]));
 }
 
 static void freeRawInput()
 {
+	ccGamepadDisconnect();
+
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;
 
