@@ -39,7 +39,7 @@ static bool initializeRawInput()
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].hwndTarget = WINDOW_DATA->winHandle;
 
-	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES, sizeof(WINDOW_DATA->rid[0]));
+	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - 1, sizeof(WINDOW_DATA->rid[0]));
 }
 
 static void freeRawInput()

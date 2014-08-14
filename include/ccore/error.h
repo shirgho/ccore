@@ -44,6 +44,9 @@ typedef enum {
 	// Thread related
 	CC_ERROR_THREAD, // CCORE couldn't start a thread
 
+	// Gamepad related
+	CC_ERROR_NOGAMEPAD, // No gamepads could be found
+
 	// Memory related
 	CC_ERROR_OUT_OF_MEMORY
 } ccError;

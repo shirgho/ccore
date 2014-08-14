@@ -22,3 +22,20 @@
 //__________________________________________________________________________________//
 
 #pragma once
+
+#include "error.h"
+
+typedef struct {
+
+	void *data;
+} ccGamepad;
+
+typedef struct {
+	unsigned int amount;
+	ccGamepad *gamepads;
+} ccGamepads;
+
+ccGamepads *_gamepads;
+
+ccError ccGamepadFind();
+ccError ccGamepadFree();
