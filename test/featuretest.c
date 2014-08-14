@@ -93,20 +93,20 @@ int main(int argc, char** argv)
 
 	// Demonstrate threading
 	/*
-	ccThread thread;
-	int threadData = 42;
+	   ccThread thread;
+	   int threadData = 42;
 
-	ccPrintf("Creating thread:\t%s\n", ccErrorString(ccThreadCreate(&thread, &counter)));
-	ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, &threadData)));
+	   ccPrintf("Creating thread:\t%s\n", ccErrorString(ccThreadCreate(&thread, &counter)));
+	   ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, &threadData)));
 
-	ccPrintf("Waiting for thread");
+	   ccPrintf("Waiting for thread");
 
-	while(!ccThreadFinished(thread)) {
-		ccPrintf(".");
-		ccTimeDelay(1);
-	}
-	ccPrintf("Thread finished!\n");
-	*/
+	   while(!ccThreadFinished(thread)) {
+	   ccPrintf(".");
+	   ccTimeDelay(1);
+	   }
+	   ccPrintf("Thread finished!\n");
+	   */
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
 	ccWindowCenter();
 
 	// Prepare gamepad capturing
-	ccPrintf("Connecting gamepads: %s\n", ccErrorString(ccGamepadConnect()));
+	ccPrintf("Connecting gamepads: %s, found %d gamepad(s)\n", ccErrorString(ccGamepadConnect()), ccGamepadCount());
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
@@ -239,6 +239,8 @@ int main(int argc, char** argv)
 					if(!logoScreen) {
 						mouseTrail();
 					}
+					break;
+				default:
 					break;
 			}
 		}
@@ -393,7 +395,8 @@ void render()
 	}
 }
 
-void scrollSquaresUp() {
+void scrollSquaresUp()
+{
 	int i;
 
 	for(i = squareCount - 1; i >= 0; i--) {
@@ -405,7 +408,8 @@ void scrollSquaresUp() {
 	mouseTrail();
 }
 
-void scrollSquaresDown() {
+void scrollSquaresDown()
+{
 	int i;
 
 	for(i = 0; i < squareCount; i++) {
@@ -424,7 +428,8 @@ int mouseToIndex()
 	return index;
 }
 
-void crossSquares() {
+void crossSquares()
+{
 	int i;
 	int index = mouseToIndex();
 	int iStart = index - (index % hsquares);
