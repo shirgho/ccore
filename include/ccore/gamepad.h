@@ -26,6 +26,16 @@
 #include "core.h"
 #include "error.h"
 
+typedef enum {
+	CC_GAMEPAD_BUTTON_DOWN,
+	CC_GAMEPAD_BUTTON_UP,
+	CC_GAMEPAD_JOYSTICK_MOVE
+} ccGamepadEventType;
+
+typedef struct {
+	ccGamepadEventType type;
+} ccGamepadEvent;
+
 ccError ccGamepadConnect(); // Connects or reconnects gamepads
 int ccGamepadCount();
 void ccGamepadDisconnect(); // Disconnect any connected gamepads

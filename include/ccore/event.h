@@ -26,6 +26,7 @@
 #include "core.h"
 
 #include "types.h"
+#include "gamepad.h"
 
 // A type of event returned used in ccWindow after the function ccPollEvent is called
 typedef enum {
@@ -51,6 +52,8 @@ typedef enum {
 	CC_EVENT_WINDOW_QUIT,
 	// Window has resized, new dimensions are stored in the window struct before the event fires
 	CC_EVENT_WINDOW_RESIZE,
+	// Gamepad event, see gamepad.h for specifics
+	CC_EVENT_GAMEPAD
 } ccEventType;
 
 // The type of mouse button pressed, used inside the ccEvent union
@@ -70,6 +73,7 @@ typedef struct {
 		ccPoint mouseVector;
 		unsigned int keyCode;
 		float scrollDelta;
+		ccGamepadEvent gamepadEvent;
 	};
 } ccEvent;
 
