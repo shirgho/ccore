@@ -38,6 +38,7 @@
 #ifdef _MSC_VER
 #pragma comment(lib, "opengl32")
 #pragma comment(lib, "glu32")
+#pragma comment(lib, "hid.lib")
 
 #endif
 #else

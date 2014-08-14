@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <hidsdi.h>
 
 #include <ccore/gamepad.h>
 

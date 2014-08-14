@@ -27,5 +27,12 @@ void ccGamepadDisconnect()
 
 ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 {
+	PHIDP_PREPARSED_DATA preparsedData;
+	int bufferSize;
+
+	GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &bufferSize);
+	preparsedData = HeapAlloc(GetProcessHeap(), 0, bufferSize);
+	GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, preparsedData, &bufferSize);
+
 	return (ccGamepadEvent){ 0 };
 }
