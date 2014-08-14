@@ -9,4 +9,5 @@
 #include <ccore/charUtils.h>
 #include <ccore/assert.h>
 
-#define CC_MAXDEVICENAMESIZE 128
+#define CC_MAXDEVICESTRINGSIZE 128
+#define CC_MAXDEVICENAMESIZE 32

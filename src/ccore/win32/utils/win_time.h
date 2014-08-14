@@ -4,4 +4,4 @@
 
 #include <ccore/time.h>
 
-double ticksToNanoSeconds = -1.0;
+double _ticksToNanoSeconds = -1.0;
