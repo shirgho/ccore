@@ -29,13 +29,13 @@ static void updateWindowResolution()
 
 static bool initializeRawInput()
 {
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsagePage = 0x01;
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsage = 0x06;
+	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsagePage = 1;
+	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsage = 6;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_NOLEGACY;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = WINDOW_DATA->winHandle;
 
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsagePage = 0x01;
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsage = 0x02;
+	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsagePage = 1;
+	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsage = 2;
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].hwndTarget = WINDOW_DATA->winHandle;
 

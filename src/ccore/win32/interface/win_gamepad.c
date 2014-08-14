@@ -4,8 +4,8 @@ ccError ccGamepadConnect()
 {
 	ccAssert(_window != NULL);
 	
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 0x01;
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = 0x04;
+	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
+	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = 4;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = WINDOW_DATA->winHandle;
 
