@@ -84,7 +84,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	
 	// Activate always on top if applicable
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
-		setWindowState("_NET_WM_STATE_ABOVE", true); //TODO: Not verified, does nothing on mint with cinnamon
+		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
 	return CC_ERROR_NONE;
