@@ -44,6 +44,7 @@ typedef struct {
 
 typedef struct {
 	char *name;
+	int axisAmount, buttonsAmount;
 
 	void *data;
 } ccGamepad;
