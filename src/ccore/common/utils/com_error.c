@@ -39,6 +39,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_THREAD:
 			return "A thread could not be started";
 			break;
+		case CC_ERROR_NOGAMEPAD:
+			return "No gamepad could be found";
+			break;
 		default:
 			return "Error message not defined";
 			break;

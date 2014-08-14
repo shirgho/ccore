@@ -35,6 +35,7 @@
 #include <ccore/charUtils.h>
 #include <ccore/thread.h>
 #include <ccore/print.h>
+#include <ccore/gamepad.h>
 
 #include "tga.h"
 
@@ -91,6 +92,7 @@ int main(int argc, char** argv)
 	char *imageFileName;
 
 	// Demonstrate threading
+	/*
 	ccThread thread;
 	int threadData = 42;
 
@@ -104,6 +106,7 @@ int main(int argc, char** argv)
 		ccTimeDelay(1);
 	}
 	ccPrintf("Thread finished!\n");
+	*/
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -111,6 +114,9 @@ int main(int argc, char** argv)
 	// Create a centered window that cannot be resized
 	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_ALWAYSONTOP);
 	ccWindowCenter();
+
+	// Find gamepads
+	ccPrintf("Looking for gamepads:\t%s\n", ccErrorString(ccGamepadFind()));
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
@@ -248,6 +254,7 @@ int main(int argc, char** argv)
 	}
 
 	// Free memory before terminating
+	ccGamepadFree();
 	ccGLFreeContext();
 	ccDisplayFree();
 	ccWindowFree();
