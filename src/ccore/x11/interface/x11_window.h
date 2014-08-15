@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -12,12 +14,19 @@
 #include <GL/glx.h>
 
 #include <ccore/window.h>
+#include <ccore/gamepad.h>
 
 #include <ccore/types.h>
 #include <ccore/event.h>
 #include <ccore/error.h>
 #include <ccore/assert.h>
 #include <ccore/print.h>
+
+#ifdef LINUX
+#include "../../linux/interface/lin_gamepad.h"
+#include <sys/ioctl.h>
+#include <linux/joystick.h>
+#endif
 
 #include "x11_display.h"
 

@@ -5,9 +5,13 @@ ccError ccGamepadConnect()
 	DIR *d;
 	struct dirent *dir;
 	char dirName[80];
-	int i, j, amount;
+	int i, j, amount, fd;
 
 	amount = ccGamepadCount();
+	
+	if(amount == 0){
+		return CC_ERROR_NONE;
+	}
 
 	ccGamepadDisconnect();
 
@@ -24,22 +28,32 @@ ccError ccGamepadConnect()
 		while((dir = readdir(d)) != NULL){
 			if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
 				if(j == i){
-					snprintf(dirName, 80, "/dev/input/js%c", *dir->d_name + 2);
-					GAMEPAD_DATA(_gamepads->gamepad + i)->fd = open(dirName, O_RDONLY);
+					snprintf(dirName, 80, "/dev/input/%s", dir->d_name);
+					fd = open(dirName, O_RDONLY);
 					break;
 				}
 				j++;
 			}
 		}
 
-		if(GAMEPAD_DATA(_gamepads->gamepad + i)->fd == NULL){
+		if(fd == -1){
 			closedir(d);
+			//TODO handle error nicely
 			return CC_ERROR_GAMEPADDATA;
 		}
 
-		ioctl(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, JSIOCGAXES, &_gamepads->gamepad[i].axisAmount);
-		ioctl(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, JSIOCGBUTTONS, &_gamepads->gamepad[i].buttonsAmount);
-		ioctl(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, JSIOCGNAME(80), &_gamepads->gamepad[i].name);
+		_gamepads->gamepad[i].axisAmount = _gamepads->gamepad[i].buttonsAmount = 0;
+		ccMalloc(_gamepads->gamepad[i].name, 80);
+
+		ioctl(fd, JSIOCGAXES, &_gamepads->gamepad[i].axisAmount);
+		ioctl(fd, JSIOCGBUTTONS, &_gamepads->gamepad[i].buttonsAmount);
+		ioctl(fd, JSIOCGNAME(80), _gamepads->gamepad[i].name);
+
+		ccPrintf("Gamepad opened device \"%s\" with %d axis and %d buttons\n", _gamepads->gamepad[i].name, _gamepads->gamepad[i].axisAmount,  _gamepads->gamepad[i].buttonsAmount);
+
+		fcntl(fd, F_SETFL, O_NONBLOCK);
+
+		GAMEPAD_DATA(_gamepads->gamepad + i)->fd = fd;
 	}
 
 	closedir(d);
@@ -80,6 +94,7 @@ void ccGamepadDisconnect()
 	}
 
 	for(i = 0; i < _gamepads->amount; i++){
+		close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
 		free(_gamepads->gamepad[i].name);
 		free(_gamepads->gamepad[i].data);
 	}

@@ -31,13 +31,13 @@ typedef enum {
 	CC_GAMEPAD_UNHANDLED = 0,
 	CC_GAMEPAD_BUTTON_DOWN,
 	CC_GAMEPAD_BUTTON_UP,
-	CC_GAMEPAD_JOYSTICK_MOVE
+	CC_GAMEPAD_AXIS_MOVE
 } ccGamepadEventType;
 
 typedef struct {
 	ccGamepadEventType type;
 	
-	ccPoint joystickPosition;
+	int axisValue;
 	unsigned int buttonId;
 	unsigned int gamepadId;
 } ccGamepadEvent;

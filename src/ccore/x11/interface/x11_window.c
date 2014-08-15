@@ -1,5 +1,38 @@
 #include "x11_window.h"
 
+static ccGamepadEvent readGamepads()
+{
+	struct js_event js;
+	ccGamepadEvent event;
+	int i;
+	
+	for(i = 0; i < _gamepads->amount; i++){
+		read(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, &js, sizeof(struct js_event));
+
+		event.axisValue = js.value;
+		event.buttonId = js.number;
+		event.gamepadId = i;
+
+		switch(js.type & ~JS_EVENT_INIT){
+			case JS_EVENT_AXIS:
+				event.type = CC_GAMEPAD_AXIS_MOVE;
+				return event;
+			case JS_EVENT_BUTTON:
+				if(js.value == 0){
+					event.type = CC_GAMEPAD_BUTTON_UP;
+				}else{
+					event.type = CC_GAMEPAD_BUTTON_DOWN;
+				}
+				return event;
+			default:
+				event.type = CC_GAMEPAD_UNHANDLED;
+				break;
+		}
+	}
+
+	return event;
+}
+
 static ccError setWindowState(const char *type, bool value)
 {	
 	XEvent event;
@@ -118,6 +151,7 @@ bool ccWindowPollEvent()
 {
 	XEvent event;
 	XWindowAttributes _windowAttributes;
+	ccGamepadEvent gamepadEvent;
 
 	if(!_window){
 		return false;
@@ -126,6 +160,13 @@ bool ccWindowPollEvent()
 	_window->event.type = CC_EVENT_SKIP;
 	if(XPending(WINDOW_DATA->XDisplay) == 0){
 		return false;
+	}
+
+	gamepadEvent = readGamepads();
+	if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){
+		_window->event.type = CC_EVENT_GAMEPAD;
+		_window->event.gamepadEvent = gamepadEvent;
+		return true;
 	}
 
 	XNextEvent(WINDOW_DATA->XDisplay, &event);
