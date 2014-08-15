@@ -15,7 +15,7 @@ The following libraries are needed:
 - libxinerama-dev
 
 **Release:**
-Run 'make && sudo make install' to install ccore.
+Run `make && sudo make install` to install ccore.
 
 **Test:**
 Change the "custom.py" file to:
