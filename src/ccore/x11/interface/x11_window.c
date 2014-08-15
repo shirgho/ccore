@@ -12,6 +12,11 @@ static ccGamepadEvent readGamepads()
 		event.axisValue = js.value;
 		event.buttonId = js.number;
 		event.gamepadId = i;
+		event.type = CC_GAMEPAD_UNHANDLED;
+
+		if(event.axisValue == 0){
+			continue;
+		}
 
 		switch(js.type & ~JS_EVENT_INIT){
 			case JS_EVENT_AXIS:
@@ -24,9 +29,6 @@ static ccGamepadEvent readGamepads()
 					event.type = CC_GAMEPAD_BUTTON_DOWN;
 				}
 				return event;
-			default:
-				event.type = CC_GAMEPAD_UNHANDLED;
-				break;
 		}
 	}
 

@@ -240,6 +240,9 @@ int main(int argc, char** argv)
 						mouseTrail();
 					}
 					break;
+				case CC_EVENT_GAMEPAD:
+					ccPrintf("Gamepad %d event, %d:%d\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.buttonId, ccWindowGetEvent().gamepadEvent.axisValue);
+					break;
 				default:
 					break;
 			}
