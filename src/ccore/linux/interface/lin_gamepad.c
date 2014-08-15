@@ -53,6 +53,9 @@ ccError ccGamepadConnect()
 
 		fcntl(fd, F_SETFL, O_NONBLOCK);
 
+		ccCalloc(_gamepads->gamepad[i].axis, _gamepads->gamepad[i].axisAmount, sizeof(int));
+		ccCalloc(_gamepads->gamepad[i].buttons, _gamepads->gamepad[i].buttonsAmount, sizeof(char));
+
 		GAMEPAD_DATA(_gamepads->gamepad + i)->fd = fd;
 	}
 
@@ -96,6 +99,8 @@ void ccGamepadDisconnect()
 	for(i = 0; i < _gamepads->amount; i++){
 		close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
 		free(_gamepads->gamepad[i].name);
+		free(_gamepads->gamepad[i].buttons);
+		free(_gamepads->gamepad[i].axis);
 		free(_gamepads->gamepad[i].data);
 	}
 	free(_gamepads->gamepad);

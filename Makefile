@@ -8,3 +8,6 @@ release:
 
 clean:
 	scons -c
+
+install:
+	scons target="install" install

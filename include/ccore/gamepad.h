@@ -37,14 +37,14 @@ typedef enum {
 typedef struct {
 	ccGamepadEventType type;
 	
-	int axisValue;
-	unsigned int buttonId;
+	int value;
+	unsigned short buttonId, axisId;
 	unsigned int gamepadId;
 } ccGamepadEvent;
 
 typedef struct {
-	char *name;
-	int axisAmount, buttonsAmount;
+	char *name, *buttons;
+	int *axis, axisAmount, buttonsAmount;
 
 	void *data;
 } ccGamepad;

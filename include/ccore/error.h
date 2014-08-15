@@ -59,6 +59,11 @@ typedef enum {
 	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
 	}\
 
+#define ccCalloc(x, amount, size) { \
+	x = calloc(amount, size); \
+	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
+	}\
+
 #define ccRealloc(x, size) { \
 	x = realloc(x, size); \
 	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
