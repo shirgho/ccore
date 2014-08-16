@@ -29,13 +29,13 @@ ccError ccGamepadConnect()
 			if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
 				if(j == i){
 					snprintf(dirName, 80, "/dev/input/%s", dir->d_name);
-					fd = open(dirName, O_RDONLY);
 					break;
 				}
 				j++;
 			}
 		}
 
+		fd = open(dirName, O_RDONLY);
 		if(fd == -1){
 			closedir(d);
 			//TODO handle error nicely

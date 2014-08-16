@@ -6,35 +6,36 @@ static ccGamepadEvent readGamepads()
 	ccGamepadEvent event;
 	int i;
 
+	event.type = CC_GAMEPAD_UNHANDLED;
 	for(i = 0; i < _gamepads->amount; i++){
-		read(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, &js, sizeof(struct js_event));
+		if(read(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, &js, sizeof(struct js_event)) > 0){
+			event.gamepadId = i;
+			event.type = CC_GAMEPAD_UNHANDLED;
 
-		event.gamepadId = i;
-		event.type = CC_GAMEPAD_UNHANDLED;
+			switch(js.type & ~JS_EVENT_INIT){
+				case JS_EVENT_AXIS:
+					if(_gamepads->gamepad[i].axis[js.number] != js.value){
+						event.axisId = js.number;
 
-		switch(js.type & ~JS_EVENT_INIT){
-			case JS_EVENT_AXIS:
-				if(_gamepads->gamepad[i].axis[js.number] != js.value){
-					event.axisId = js.number;
+						event.type = CC_GAMEPAD_AXIS_MOVE;
 
-					event.type = CC_GAMEPAD_AXIS_MOVE;
-
-					_gamepads->gamepad[i].axis[js.number] = event.value = js.value;
-					return event;
-				}
-			case JS_EVENT_BUTTON:
-				if(_gamepads->gamepad[i].buttons[js.number] != (js.value != 0)){
-					event.buttonId = js.number;
-
-					if(_gamepads->gamepad[i].buttons[js.number] == 0){
-						event.type = CC_GAMEPAD_BUTTON_DOWN;
-					}else{
-						event.type = CC_GAMEPAD_BUTTON_UP;
+						_gamepads->gamepad[i].axis[js.number] = event.value = js.value;
+						return event;
 					}
+				case JS_EVENT_BUTTON:
+					if(_gamepads->gamepad[i].buttons[js.number] != (js.value != 0)){
+						event.buttonId = js.number;
 
-					_gamepads->gamepad[i].buttons[js.number] = event.value = js.value != 0;
-					return event;
-				}
+						if(_gamepads->gamepad[i].buttons[js.number] == 0){
+							event.type = CC_GAMEPAD_BUTTON_DOWN;
+						}else{
+							event.type = CC_GAMEPAD_BUTTON_UP;
+						}
+
+						_gamepads->gamepad[i].buttons[js.number] = event.value = js.value != 0;
+						return event;
+					}
+			}
 		}
 	}
 
