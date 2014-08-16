@@ -15,7 +15,7 @@ The following libraries are needed:
 - libxinerama-dev
 
 **Release:**
-Run 'scons' and include the files from the include folder like 'featuretest.c' in the test folder.
+Run `make && sudo make install` to install ccore.
 
 **Test:**
 Change the "custom.py" file to:
