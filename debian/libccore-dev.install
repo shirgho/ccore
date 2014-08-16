@@ -1,0 +1,2 @@
+include/ccore usr/include/
+lib/libccore.a usr/lib/

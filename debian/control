@@ -1,0 +1,16 @@
+Source: libccore
+Priority: optional
+Maintainer: Thomas Versteeg <thomasversteeg@gmx.com>
+Build-Depends: debhelper (>= 9), scons, libglu1-mesa-dev, libx11-dev, libxrandr-dev, libxinerama-dev
+Standards-Version: 3.9.5
+Section: libs
+Homepage: https://github.com/jobtalle/ccore
+#Vcs-Git: git://anonscm.debian.org/collab-maint/libccore.git
+#Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/libccore.git;a=summary
+
+Package: libccore-dev
+Section: libdevel
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A low level abstraction layer for games
+ A development library for games which makes it easier to use low level system functionality while maintaining cross-platform useabillity. It is currently developed for Win32 (Windows 2000 and higher) and Linux with X11. We are planning on adding a Mac version later.
