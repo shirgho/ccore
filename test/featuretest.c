@@ -245,8 +245,12 @@ int main(int argc, char** argv)
 						ccPrintf("Gamepad %d axis %d moved %d\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.axisId, ccWindowGetEvent().gamepadEvent.value);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_DOWN){
 						ccPrintf("Gamepad %d button %d down\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.buttonId);
-					}else{
+					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_UP){
 						ccPrintf("Gamepad %d button %d up\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.buttonId);
+					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_CONNECT){
+						ccPrintf("Gamepad connected\n");
+					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_DISCONNECT){
+						ccPrintf("Gamepad disconnected");
 					}
 					break;
 				default:
@@ -265,6 +269,7 @@ int main(int argc, char** argv)
 	}
 
 	// Free memory before terminating
+	ccGamepadDisconnect();
 	ccGLFreeContext();
 	ccDisplayFree();
 	ccWindowFree();

@@ -3,6 +3,7 @@
 static ccGamepadEvent readGamepads()
 {
 	struct js_event js;
+	struct inotify_event ne;
 	ccGamepadEvent event;
 	int i;
 
@@ -36,6 +37,16 @@ static ccGamepadEvent readGamepads()
 						return event;
 					}
 			}
+		}
+	}
+
+	if(read(GAMEPAD_DATA(_gamepads->gamepad)->notifyFd, &ne, sizeof(struct inotify_event)) > 0){
+		event.gamepadId = i;
+		if(ne.mask & IN_DELETE){
+			event.type = CC_GAMEPAD_DISCONNECT;
+			return event;
+		}else if(ne.mask & IN_CREATE){
+			event.type = CC_GAMEPAD_CONNECT;
 		}
 	}
 

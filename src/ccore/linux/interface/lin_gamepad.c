@@ -5,7 +5,7 @@ ccError ccGamepadConnect()
 	DIR *d;
 	struct dirent *dir;
 	char dirName[80];
-	int i, j, amount, fd;
+	int i, j, amount, fd, notifyFd, notifyWatch;
 
 	amount = ccGamepadCount();
 	
@@ -20,6 +20,19 @@ ccError ccGamepadConnect()
 	_gamepads->amount = amount;
 
 	d = opendir("/dev/input");
+
+	// Attach notifications to check if a device connects/disconnects
+	notifyFd = inotify_init();
+	if(notifyFd < 0){
+		goto error;
+	}
+
+	notifyWatch = inotify_add_watch(notifyFd, "/dev/input", IN_CREATE | IN_DELETE);
+	if(notifyFd < 0){
+		goto error;
+	}
+		
+	fcntl(notifyFd, F_SETFL, O_NONBLOCK);
 
 	for(i = 0; i < amount; i++){
 		ccMalloc((_gamepads->gamepad + i)->data, sizeof(ccGamepad_x11));
@@ -36,10 +49,8 @@ ccError ccGamepadConnect()
 		}
 
 		fd = open(dirName, O_RDONLY);
-		if(fd == -1){
-			closedir(d);
-			//TODO handle error nicely
-			return CC_ERROR_GAMEPADDATA;
+		if(fd < 0){
+			goto error;
 		}
 
 		_gamepads->gamepad[i].axisAmount = _gamepads->gamepad[i].buttonsAmount = 0;
@@ -57,11 +68,16 @@ ccError ccGamepadConnect()
 		ccCalloc(_gamepads->gamepad[i].buttons, _gamepads->gamepad[i].buttonsAmount, sizeof(char));
 
 		GAMEPAD_DATA(_gamepads->gamepad + i)->fd = fd;
+		GAMEPAD_DATA(_gamepads->gamepad + i)->notifyFd = notifyFd;
+		GAMEPAD_DATA(_gamepads->gamepad + i)->notifyWatch = notifyWatch;
 	}
 
 	closedir(d);
-
 	return CC_ERROR_NONE;
+
+error:
+	closedir(d);
+	return CC_ERROR_GAMEPADDATA;
 }
 
 int ccGamepadCount()
@@ -96,8 +112,12 @@ void ccGamepadDisconnect()
 		return;
 	}
 
+	inotify_rm_watch(GAMEPAD_DATA(_gamepads->gamepad)->notifyFd, GAMEPAD_DATA(_gamepads->gamepad + i)->notifyWatch);
+	close(GAMEPAD_DATA(_gamepads->gamepad)->notifyFd);
+
 	for(i = 0; i < _gamepads->amount; i++){
-		close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
+		close(GAMEPAD_DATA(_gamepads->gamepad + i)->notifyFd);
+
 		free(_gamepads->gamepad[i].name);
 		free(_gamepads->gamepad[i].buttons);
 		free(_gamepads->gamepad[i].axis);
