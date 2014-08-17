@@ -250,7 +250,7 @@ int main(int argc, char** argv)
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_CONNECT){
 						ccPrintf("Gamepad connected\n");
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_DISCONNECT){
-						ccPrintf("Gamepad disconnected");
+						ccPrintf("Gamepad disconnected\n");
 					}
 					break;
 				default:

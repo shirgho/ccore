@@ -1,5 +1,19 @@
 #include "x11_window.h"
 
+static bool canReadINotify()
+{
+	fd_set set;
+	struct timeval timeout;
+
+	FD_ZERO(&set);
+	FD_SET(GAMEPADS_DATA()->fd, &set);
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 0;
+
+	return select(GAMEPADS_DATA()->fd + 1, &set, NULL, NULL, &timeout) > 0 && 
+		FD_ISSET(GAMEPADS_DATA()->fd, &set);
+}
+
 static ccGamepadEvent readGamepads()
 {
 	struct js_event js;
@@ -40,13 +54,18 @@ static ccGamepadEvent readGamepads()
 		}
 	}
 
-	if(read(GAMEPAD_DATA(_gamepads->gamepad)->notifyFd, &ne, sizeof(struct inotify_event)) > 0){
-		event.gamepadId = i;
-		if(ne.mask & IN_DELETE){
-			event.type = CC_GAMEPAD_DISCONNECT;
+	while(canReadINotify()){
+		if(read(GAMEPADS_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0){
+			if(strncmp("js", ne.name, 2) != 0){
+				continue;
+			}
+			event.gamepadId = i;
+			if(ne.mask & IN_DELETE){
+				event.type = CC_GAMEPAD_DISCONNECT;
+			}else if(ne.mask & IN_CREATE){
+				event.type = CC_GAMEPAD_CONNECT;
+			}
 			return event;
-		}else if(ne.mask & IN_CREATE){
-			event.type = CC_GAMEPAD_CONNECT;
 		}
 	}
 

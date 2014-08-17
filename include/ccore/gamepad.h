@@ -54,6 +54,8 @@ typedef struct {
 typedef struct {
 	ccGamepad* gamepad;
 	unsigned int amount;
+
+	void *data;
 } ccGamepads;
 
 ccGamepads *_gamepads;
