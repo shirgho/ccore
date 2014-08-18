@@ -5,10 +5,10 @@ ccError ccGamepadConnect()
 	DIR *d;
 	struct dirent *dir;
 	char dirName[80];
-	int i, j, amount, fd, watch;
+	int i, amount, fd, watch;
 
 	amount = ccGamepadCount();
-	
+
 	if(amount == 0){
 		return CC_ERROR_NONE;
 	}
@@ -39,14 +39,10 @@ ccError ccGamepadConnect()
 	for(i = 0; i < amount; i++){
 		ccMalloc((_gamepads->gamepad + i)->data, sizeof(ccGamepad_x11));
 
-		j = 0;
 		while((dir = readdir(d)) != NULL){
 			if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
-				if(j == i){
-					snprintf(dirName, 80, "/dev/input/%s", dir->d_name);
-					break;
-				}
-				j++;
+				snprintf(dirName, 80, "/dev/input/%s", dir->d_name);
+				break;
 			}
 		}
 
@@ -85,7 +81,7 @@ int ccGamepadCount()
 	int amount;
 
 	d = opendir("/dev/input");
-		
+
 	if(d == NULL){
 		closedir(d);
 		return -1;

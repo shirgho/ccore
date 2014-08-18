@@ -56,7 +56,7 @@ static ccGamepadEvent readGamepads()
 
 	while(canReadINotify()){
 		if(read(GAMEPADS_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0){
-			if(strncmp("js", ne.name, 2) != 0){
+			if(*ne.name != 'j' || *(ne.name + 1) != 's'){
 				continue;
 			}
 			event.gamepadId = i;
