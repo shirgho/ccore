@@ -47,19 +47,21 @@ typedef struct {
 typedef struct {
 	char *name, *buttons;
 	int *axis, axisAmount, buttonsAmount;
+	bool plugged;
 
 	void *data;
 } ccGamepad;
 
 typedef struct {
 	ccGamepad* gamepad;
-	unsigned int amount;
+	unsigned int totalAmount, pluggedAmount;
 
 	void *data;
 } ccGamepads;
 
 ccGamepads *_gamepads;
 
-ccError ccGamepadConnect(); // Connects or reconnects gamepads
-int ccGamepadCount();
+ccError ccGamepadConnect(); // Connects gamepads
+ccError ccGamepadRefresh(); // Reconnects gamepads
 void ccGamepadDisconnect(); // Disconnect any connected gamepads
+int ccGamepadCount();

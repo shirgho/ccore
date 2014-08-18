@@ -4,9 +4,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <libgen.h>
+#include <limits.h>
 
 #include <ccore/dirUtils.h>
-
 #include <ccore/charUtils.h>
 
 #ifndef CC_USER_LOCATION

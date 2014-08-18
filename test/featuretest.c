@@ -248,9 +248,9 @@ int main(int argc, char** argv)
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_UP){
 						ccPrintf("Gamepad %d button %d up\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.buttonId);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_CONNECT){
-						ccPrintf("Gamepad connected\n");
+						ccPrintf("Gamepad %d connected\n",  ccWindowGetEvent().gamepadEvent.gamepadId);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_DISCONNECT){
-						ccPrintf("Gamepad disconnected\n");
+						ccPrintf("Gamepad %d disconnected\n",  ccWindowGetEvent().gamepadEvent.gamepadId);
 					}
 					break;
 				default:

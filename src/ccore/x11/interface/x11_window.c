@@ -19,10 +19,13 @@ static ccGamepadEvent readGamepads()
 	struct js_event js;
 	struct inotify_event ne;
 	ccGamepadEvent event;
-	int i;
+	int i, id;
 
 	event.type = CC_GAMEPAD_UNHANDLED;
-	for(i = 0; i < _gamepads->amount; i++){
+	for(i = 0; i < _gamepads->totalAmount; i++){
+		if(!_gamepads->gamepad[i].plugged){
+			continue;
+		}
 		if(read(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, &js, sizeof(struct js_event)) > 0){
 			event.gamepadId = i;
 			event.type = CC_GAMEPAD_UNHANDLED;
@@ -59,7 +62,17 @@ static ccGamepadEvent readGamepads()
 			if(*ne.name != 'j' || *(ne.name + 1) != 's'){
 				continue;
 			}
-			event.gamepadId = i;
+
+			ccGamepadRefresh();
+
+			// Find the matching gamepad
+			id = atoi(ne.name + 2);	
+			for(i = 0; i < _gamepads->totalAmount; i++){
+				if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
+					event.gamepadId = i;
+					break;
+				}
+			}
 			if(ne.mask & IN_DELETE){
 				event.type = CC_GAMEPAD_DISCONNECT;
 			}else if(ne.mask & IN_CREATE){
@@ -168,6 +181,8 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
+
+	_window->mouse.x = _window->mouse.y = 0;
 
 	return CC_ERROR_NONE;
 }

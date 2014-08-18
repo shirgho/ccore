@@ -10,8 +10,8 @@ char *ccGetDirDataDir()
 #ifndef CC_DATA_LOCATION
 	char *buf;
 
-	buf = malloc(4096);
-	readlink("/proc/self/exe", buf, 4096); //TODO: what the fuck 4kb why
+	buf = malloc(PATH_MAX);
+	readlink("/proc/self/exe", buf, PATH_MAX);
 
 	buf = dirname(buf);
 	strcat(buf, "/");

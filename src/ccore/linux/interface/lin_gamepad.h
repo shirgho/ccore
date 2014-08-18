@@ -14,7 +14,7 @@
 #include <ccore/print.h>
 
 typedef struct {
-	int fd;
+	int id, fd;
 } ccGamepad_x11;
 
 typedef struct {
