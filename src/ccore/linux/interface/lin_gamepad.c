@@ -6,9 +6,10 @@ static ccError refreshGamepad(int i)
 	int fd;
 
 	if(GAMEPAD_DATA(_gamepads->gamepad + i)->fd <= 0){
-		snprintf(dirName, 30, "/dev/input/%d", GAMEPAD_DATA(_gamepads->gamepad + i)->id);
+		snprintf(dirName, 30, "/dev/input/js%d", GAMEPAD_DATA(_gamepads->gamepad + i)->id);
 		fd = open(dirName, O_RDONLY | O_NONBLOCK);
 		if(fd < 0){
+			perror(dirName);
 			return CC_ERROR_GAMEPADDATA;
 		}
 
@@ -20,8 +21,6 @@ static ccError refreshGamepad(int i)
 		_gamepads->gamepad[i].axisAmount = _gamepads->gamepad[i].buttonsAmount = 0;
 
 		GAMEPAD_DATA(_gamepads->gamepad + i)->fd = fd;
-	
-		ccPrintf("Opening fd\n");
 	}else{
 		fd = GAMEPAD_DATA(_gamepads->gamepad + i)->fd;
 	}	
@@ -44,9 +43,9 @@ static ccError createGamepad(char *locName, int i)
 	ccMalloc((_gamepads->gamepad + i)->data, sizeof(ccGamepad_x11));
 	snprintf(dirName, 30, "/dev/input/%s", locName);
 
-	fd = open(dirName, O_RDONLY | O_NONBLOCK);
+	fd = open(dirName, O_RDONLY | O_NONBLOCK, 0);
 	if(fd < 0){
-		ccPrintf("Error: Couldn't open file location \"%s\" @ createGamepad\n", dirName);
+		perror(dirName);
 		return CC_ERROR_GAMEPADDATA;
 	}
 
@@ -61,8 +60,6 @@ static ccError createGamepad(char *locName, int i)
 	ioctl(fd, JSIOCGAXES, &_gamepads->gamepad[i].axisAmount);
 	ioctl(fd, JSIOCGBUTTONS, &_gamepads->gamepad[i].buttonsAmount);
 	ioctl(fd, JSIOCGNAME(80), _gamepads->gamepad[i].name);
-	
-	ccPrintf("Creating gamepad device %s, %s\n", dirName, _gamepads->gamepad[i].name);
 
 	ccCalloc(_gamepads->gamepad[i].axis, _gamepads->gamepad[i].axisAmount, sizeof(int));
 	ccCalloc(_gamepads->gamepad[i].buttons, _gamepads->gamepad[i].buttonsAmount, sizeof(char));
@@ -83,18 +80,13 @@ ccError ccGamepadConnect()
 
 	amount = ccGamepadCount();
 
-	ccMalloc(_gamepads, sizeof(ccGamepads));
+	if(_gamepads == NULL){
+		ccMalloc(_gamepads, sizeof(ccGamepads));
+	}
 	_gamepads->totalAmount = amount;
 	_gamepads->pluggedAmount = 0;
 
-	if(amount == 0){
-		return CC_ERROR_NONE;
-	}
-
 	ccMalloc(_gamepads->data, sizeof(ccGamepads_x11));
-	ccMalloc(_gamepads->gamepad, sizeof(ccGamepad) * amount);
-
-	d = opendir("/dev/input");
 
 	// Attach notifications to check if a device connects/disconnects
 	fd = inotify_init();
@@ -110,6 +102,13 @@ ccError ccGamepadConnect()
 	GAMEPADS_DATA()->fd = fd;
 	GAMEPADS_DATA()->watch = watch;
 
+	if(amount == 0){
+		return CC_ERROR_NONE;
+	}
+
+	ccMalloc(_gamepads->gamepad, sizeof(ccGamepad) * amount);
+
+	d = opendir("/dev/input");
 	for(i = 0; i < amount; i++){
 		while((dir = readdir(d)) != NULL){
 			if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
@@ -160,7 +159,7 @@ ccError ccGamepadRefresh()
 					}
 				}
 				if(!found){
-					if(createGamepad(dir->d_name, _gamepads->totalAmount + 1) != CC_ERROR_NONE){
+					if(createGamepad(dir->d_name, _gamepads->totalAmount) != CC_ERROR_NONE){
 						goto error;							
 					}
 					_gamepads->totalAmount++;
@@ -197,7 +196,10 @@ ccError ccGamepadRefresh()
 		// Close unplugged gamepads
 		for(i = 0; i < _gamepads->totalAmount; i++){
 			if(!_gamepads->gamepad[i].plugged && GAMEPAD_DATA(_gamepads->gamepad + i)->fd >= 0){
+				free(_gamepads->gamepad[i].axis);
+				free(_gamepads->gamepad[i].buttons);
 				close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
+				GAMEPAD_DATA(_gamepads->gamepad + i)->fd = -1;
 			}
 		}
 	}
@@ -246,16 +248,15 @@ void ccGamepadDisconnect()
 	close(GAMEPADS_DATA()->fd);
 
 	for(i = 0; i < _gamepads->totalAmount; i++){
-		close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
+		if(_gamepads->gamepad[i].plugged){
+			close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
+		}
 
 		free(_gamepads->gamepad[i].name);
-		free(_gamepads->gamepad[i].buttons);
-		free(_gamepads->gamepad[i].axis);
 		free(_gamepads->gamepad[i].data);
 	}
 	free(_gamepads->gamepad);
 	free(_gamepads->data);
-	free(_gamepads);
 
 	_gamepads->totalAmount = _gamepads->pluggedAmount = 0;
 }
