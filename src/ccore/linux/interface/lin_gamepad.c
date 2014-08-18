@@ -155,13 +155,13 @@ ccGamepadEvent ccGamepadEventPoll()
 	return event;
 }
 
-ccError ccGamepadConnect()
+ccError ccGamepadInitialize()
 {
 	DIR *d;
 	struct dirent *dir;
 	int i, amount, fd, watch;
 
-	ccGamepadDisconnect();
+	ccGamepadFree();
 
 	amount = ccGamepadCount();
 
@@ -180,7 +180,7 @@ ccError ccGamepadConnect()
 	}
 
 	watch = inotify_add_watch(fd, "/dev/input", IN_CREATE | IN_DELETE);
-	if(fd < 0){
+	if(watch < 0){
 		goto error;
 	}
 
@@ -188,7 +188,7 @@ ccError ccGamepadConnect()
 	GAMEPADS_DATA()->watch = watch;
 
 	if(amount == 0){
-		return CC_ERROR_NONE;
+		return CC_ERROR_NOGAMEPAD;
 	}
 
 	ccMalloc(_gamepads->gamepad, sizeof(ccGamepad) * amount);
@@ -209,7 +209,11 @@ ccError ccGamepadConnect()
 	return CC_ERROR_NONE;
 
 error:
+	free(_gamepads->data);
+	free(_gamepads);
 	closedir(d);
+	close(fd);
+	close(watch);
 	return CC_ERROR_GAMEPADDATA;
 }
 
@@ -321,7 +325,7 @@ int ccGamepadCount()
 	return amount;
 }
 
-void ccGamepadDisconnect()
+void ccGamepadFree()
 {
 	int i;
 

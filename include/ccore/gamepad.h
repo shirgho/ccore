@@ -61,7 +61,7 @@ typedef struct {
 
 ccGamepads *_gamepads;
 
-ccError ccGamepadConnect(); // Connects gamepads
+ccError ccGamepadInitialize(); // Connects gamepads
 ccError ccGamepadRefresh(); // Reconnects gamepads
-void ccGamepadDisconnect(); // Disconnect any connected gamepads
+void ccGamepadFree(); // Disconnect any connected gamepads
 int ccGamepadCount();
