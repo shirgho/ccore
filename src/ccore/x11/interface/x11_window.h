@@ -24,9 +24,6 @@
 
 #ifdef LINUX
 #include "../../linux/interface/lin_gamepad.h"
-#include <sys/ioctl.h>
-#include <sys/inotify.h>
-#include <linux/joystick.h>
 #endif
 
 #include "x11_display.h"

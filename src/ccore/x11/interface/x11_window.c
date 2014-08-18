@@ -1,90 +1,5 @@
 #include "x11_window.h"
 
-static bool canReadINotify()
-{
-	fd_set set;
-	struct timeval timeout;
-
-	FD_ZERO(&set);
-	FD_SET(GAMEPADS_DATA()->fd, &set);
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 0;
-
-	return select(GAMEPADS_DATA()->fd + 1, &set, NULL, NULL, &timeout) > 0 && 
-		FD_ISSET(GAMEPADS_DATA()->fd, &set);
-}
-
-static ccGamepadEvent readGamepads()
-{
-	struct js_event js;
-	struct inotify_event ne;
-	ccGamepadEvent event;
-	int i, id;
-
-	event.type = CC_GAMEPAD_UNHANDLED;
-	for(i = 0; i < _gamepads->totalAmount; i++){
-		if(!_gamepads->gamepad[i].plugged){
-			continue;
-		}
-		if(read(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, &js, sizeof(struct js_event)) > 0){
-			event.gamepadId = i;
-			event.type = CC_GAMEPAD_UNHANDLED;
-
-			switch(js.type & ~JS_EVENT_INIT){
-				case JS_EVENT_AXIS:
-					if(_gamepads->gamepad[i].axis[js.number] != js.value){
-						event.axisId = js.number;
-
-						event.type = CC_GAMEPAD_AXIS_MOVE;
-
-						_gamepads->gamepad[i].axis[js.number] = event.value = js.value;
-						return event;
-					}
-				case JS_EVENT_BUTTON:
-					if(_gamepads->gamepad[i].buttons[js.number] != (js.value != 0)){
-						event.buttonId = js.number;
-
-						if(_gamepads->gamepad[i].buttons[js.number] == 0){
-							event.type = CC_GAMEPAD_BUTTON_DOWN;
-						}else{
-							event.type = CC_GAMEPAD_BUTTON_UP;
-						}
-
-						_gamepads->gamepad[i].buttons[js.number] = event.value = js.value != 0;
-						return event;
-					}
-			}
-		}
-	}
-
-	while(canReadINotify()){
-		if(read(GAMEPADS_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0){
-			if(*ne.name != 'j' || *(ne.name + 1) != 's'){
-				continue;
-			}
-
-			ccGamepadRefresh();
-
-			// Find the matching gamepad
-			id = atoi(ne.name + 2);	
-			for(i = 0; i < _gamepads->totalAmount; i++){
-				if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
-					event.gamepadId = i;
-					break;
-				}
-			}
-			if(ne.mask & IN_DELETE){
-				event.type = CC_GAMEPAD_DISCONNECT;
-			}else if(ne.mask & IN_CREATE){
-				event.type = CC_GAMEPAD_CONNECT;
-			}
-			return event;
-		}
-	}
-
-	return event;
-}
-
 static ccError setWindowState(const char *type, bool value)
 {	
 	XEvent event;
@@ -213,7 +128,7 @@ bool ccWindowPollEvent()
 
 	_window->event.type = CC_EVENT_SKIP;
 
-	gamepadEvent = readGamepads();
+	gamepadEvent = ccGamepadEventPoll();
 	if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){
 		_window->event.type = CC_EVENT_GAMEPAD;
 		_window->event.gamepadEvent = gamepadEvent;
