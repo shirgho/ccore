@@ -15,7 +15,14 @@
 ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw);
 
 typedef struct {
-	int i;
+	HIDP_CAPS caps;
+	PHIDP_BUTTON_CAPS buttonCaps;
+	PHIDP_VALUE_CAPS valueCaps;
 } ccGamepad_win;
 
-#define GAMEPAD_DATA(gamepad) ((ccGamepad_win*)gamepad->data)
+typedef struct {
+	PHIDP_PREPARSED_DATA preparsedData;
+} ccGamepads_win;
+
+#define GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
+#define GAMEPADS_DATA ((ccGamepads_win*)_gamepads->data)

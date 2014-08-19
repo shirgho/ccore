@@ -5,6 +5,7 @@ ccError ccGamepadInitialize()
 	ccAssert(_window != NULL);
 
 	ccMalloc(_gamepads, sizeof(ccGamepads));
+	ccMalloc(_gamepads->data, sizeof(ccGamepads_win));
 	_gamepads->amount = 0;
 	
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
@@ -29,29 +30,37 @@ void ccGamepadFree()
 
 	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE));
 
+	if(_gamepads->amount != 0) {
+		int i;
+		for(i = 0; i < _gamepads->amount; i++) {
+			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->buttonCaps);
+			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->valueCaps);
+			free(_gamepads->gamepad[i].data);
+		}
+		free(_gamepads->gamepad);
+	}
+
+	free(_gamepads->data);
 	free(_gamepads);
 }
 
 ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 {
-	HANDLE heap;
-	PHIDP_PREPARSED_DATA preparsedData;
-	HIDP_CAPS caps;
-	USHORT capsLength;
 	ULONG usageLength;
 
 	USAGE usage[GAMEPAD_MAXBUTTONS];
 
-	PHIDP_BUTTON_CAPS buttonCaps;
-	PHIDP_VALUE_CAPS valueCaps;
-
 	int bufferSize;
-	int buttonCount;
 	int value;
 	int i;
 
 	// Find the current gamepad or create it
 	ccGamepad *currentGamepad = NULL;
+
+	// Get RID data
+	GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &bufferSize);
+	GAMEPADS_DATA->preparsedData = malloc(bufferSize);
+	GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPADS_DATA->preparsedData, &bufferSize);
 
 	for(i = 0; i < _gamepads->amount; i++) {
 		if(_gamepads->gamepad[i].id == (int)raw->header.hDevice) {
@@ -60,6 +69,8 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		}
 	}
 	if(currentGamepad == NULL) {
+		USHORT capsLength;
+
 		_gamepads->amount++;
 		if(_gamepads->amount == 1) {
 			_gamepads->gamepad = malloc(sizeof(ccGamepad));
@@ -71,49 +82,36 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 
 		// Initialize current gamepad
 		currentGamepad->id = (int)raw->header.hDevice;
+		currentGamepad->data = malloc(sizeof(ccGamepad_win));
+		HidP_GetCaps(GAMEPADS_DATA->preparsedData, &GAMEPAD_DATA->caps);
+
+		GAMEPAD_DATA->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* GAMEPAD_DATA->caps.NumberInputButtonCaps);
+		GAMEPAD_DATA->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* GAMEPAD_DATA->caps.NumberInputValueCaps);
+
+		capsLength = GAMEPAD_DATA->caps.NumberInputButtonCaps;
+		HidP_GetButtonCaps(HidP_Input, GAMEPAD_DATA->buttonCaps, &capsLength, GAMEPADS_DATA->preparsedData);
+		capsLength = GAMEPAD_DATA->caps.NumberInputValueCaps;
+		HidP_GetValueCaps(HidP_Input, GAMEPAD_DATA->valueCaps, &capsLength, GAMEPADS_DATA->preparsedData);
 	}
 
-	printf("%d\n", currentGamepad);
-
-	heap = GetProcessHeap();
-
-	// Get RID data
-	GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &bufferSize);
-	preparsedData = malloc(bufferSize);
-	GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, preparsedData, &bufferSize);
-
-	// Get controller data
-	HidP_GetCaps(preparsedData, &caps);
-	buttonCaps = HeapAlloc(heap, 0, sizeof(HIDP_BUTTON_CAPS)* caps.NumberInputButtonCaps);
-
-	// Get button data
-	capsLength = caps.NumberInputButtonCaps;
-	HidP_GetButtonCaps(HidP_Input, buttonCaps, &capsLength, preparsedData);
-	buttonCount = buttonCaps->Range.UsageMax - buttonCaps->Range.UsageMin + 1;
-	
-	// Get value data
-	valueCaps = HeapAlloc(heap, 0, sizeof(HIDP_VALUE_CAPS)* caps.NumberInputValueCaps);
-	capsLength = caps.NumberInputValueCaps;
-	HidP_GetValueCaps(HidP_Input, valueCaps, &capsLength, preparsedData);
-
 	// Get buttons
-	usageLength = buttonCount;
-	HidP_GetUsages(HidP_Input, buttonCaps->UsagePage, 0, usage, &usageLength, preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+	usageLength = GAMEPAD_DATA->buttonCaps->Range.UsageMax - GAMEPAD_DATA->buttonCaps->Range.UsageMin + 1;
+	HidP_GetUsages(HidP_Input, GAMEPAD_DATA->buttonCaps->UsagePage, 0, usage, &usageLength, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 
 	for(i = 0; i < (int)usageLength; i++)
 	{
-		printf("button %d\t%d\n", usage[i] - buttonCaps->Range.UsageMin, raw->header.hDevice);
+		printf("button %d\t%d\n", usage[i] - GAMEPAD_DATA->buttonCaps->Range.UsageMin, raw->header.hDevice);
 	}
 
 	// Get axes
-	for(i = 0; i < (int)caps.NumberInputValueCaps; i++)
+	for(i = 0; i < (int)GAMEPAD_DATA->caps.NumberInputValueCaps; i++)
 	{
-		HidP_GetUsageValue(HidP_Input, valueCaps[i].UsagePage, 0, valueCaps[i].Range.UsageMin, &value, preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].Range.UsageMin, &value, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 		//printf("value %d\t%d\n", value, raw->header.hDevice);
 	}
 
 	// Free
-	free(preparsedData);
+	free(GAMEPADS_DATA->preparsedData);
 
 	return (ccGamepadEvent){ 0 };
 }
