@@ -40,6 +40,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 
 	int bufferSize;
 	int buttonCount;
+	int value;
 	int i;
 
 	heap = GetProcessHeap();
@@ -69,6 +70,13 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 	for(i = 0; i < usageLength; i++)
 	{
 		printf("button %d\t%d\n", usage[i] - buttonCaps->Range.UsageMin, raw->header.hDevice);
+	}
+
+	// Get axes
+	for(i = 0; i < caps.NumberInputValueCaps; i++)
+	{
+		HidP_GetUsageValue(HidP_Input, valueCaps[i].UsagePage, 0, valueCaps[i].Range.UsageMin, &value, preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+		printf("value %d\t%d\n", value, raw->header.hDevice);
 	}
 
 	// Free

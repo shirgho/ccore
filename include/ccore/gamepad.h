@@ -45,8 +45,12 @@ typedef struct {
 } ccGamepadEvent;
 
 typedef struct {
-	char *name, *buttons;
-	int *axis, axisAmount, buttonsAmount;
+	char *name;
+	bool *button;
+	double *axis;
+
+	int axisAmount, buttonAmount;
+
 	bool plugged;
 
 	void *data;
