@@ -91,6 +91,31 @@ ccGamepadEvent ccGamepadEventPoll()
 	ccGamepadEvent event;
 	int i, id;
 
+	while(canReadINotify()){
+		if(read(GAMEPADS_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0){
+			if(*ne.name != 'j' || *(ne.name + 1) != 's'){
+				continue;
+			}
+
+			ccGamepadRefresh();
+
+			// Find the matching gamepad
+			id = atoi(ne.name + 2);	
+			for(i = 0; i < _gamepads->totalAmount; i++){
+				if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
+					event.gamepadId = i;
+					break;
+				}
+			}
+			if(ne.mask & IN_DELETE){
+				event.type = CC_GAMEPAD_DISCONNECT;
+			}else if(ne.mask & IN_CREATE){
+				event.type = CC_GAMEPAD_CONNECT;
+			}
+			return event;
+		}
+	}
+
 	event.type = CC_GAMEPAD_UNHANDLED;
 	for(i = 0; i < _gamepads->totalAmount; i++){
 		if(!_gamepads->gamepad[i].plugged){
@@ -124,31 +149,6 @@ ccGamepadEvent ccGamepadEventPoll()
 						return event;
 					}
 			}
-		}
-	}
-
-	while(canReadINotify()){
-		if(read(GAMEPADS_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0){
-			if(*ne.name != 'j' || *(ne.name + 1) != 's'){
-				continue;
-			}
-
-			ccGamepadRefresh();
-
-			// Find the matching gamepad
-			id = atoi(ne.name + 2);	
-			for(i = 0; i < _gamepads->totalAmount; i++){
-				if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
-					event.gamepadId = i;
-					break;
-				}
-			}
-			if(ne.mask & IN_DELETE){
-				event.type = CC_GAMEPAD_DISCONNECT;
-			}else if(ne.mask & IN_CREATE){
-				event.type = CC_GAMEPAD_CONNECT;
-			}
-			return event;
 		}
 	}
 
@@ -234,6 +234,7 @@ ccError ccGamepadRefresh()
 
 	// A new item needs to be added to the list
 	if(amount > _gamepads->totalAmount){
+		ccPrintf("%d gamepad(s) connected\n", amount - _gamepads->totalAmount);
 		ccRealloc(_gamepads->gamepad, sizeof(ccGamepad) * amount);
 
 		// Scan the directories for the newest device and add it
@@ -258,12 +259,16 @@ ccError ccGamepadRefresh()
 	}
 
 	if(amount > _gamepads->pluggedAmount){
+		ccPrintf("%d gamepad(s) reconnected\n", amount - _gamepads->pluggedAmount);
+
 		for(i = 0; i < _gamepads->totalAmount; i++){
 			if(!_gamepads->gamepad[i].plugged){
 				refreshGamepad(i);
 			}
 		}
 	}else if(amount < _gamepads->pluggedAmount){
+		ccPrintf("%d gamepad(s) disconnected\n", _gamepads->pluggedAmount - amount);
+
 		// Set the plugged status for all the gamepads
 		for(i = 0; i < _gamepads->totalAmount; i++){
 			_gamepads->gamepad[i].plugged = false;
@@ -344,8 +349,7 @@ void ccGamepadFree()
 		free(_gamepads->gamepad[i].name);
 		free(_gamepads->gamepad[i].data);
 	}
-	free(_gamepads->gamepad);
-	free(_gamepads->data);
+	//free(_gamepads->gamepad);
 
 	_gamepads->totalAmount = _gamepads->pluggedAmount = 0;
 }
