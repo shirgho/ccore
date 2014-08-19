@@ -44,8 +44,6 @@ static bool initializeRawInput()
 
 static void freeRawInput()
 {
-	ccGamepadDisconnect();
-
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;
 
@@ -71,7 +69,7 @@ static void processRid(HRAWINPUT rawInput)
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
 		USHORT buttonFlags = raw->data.mouse.usButtonFlags;
 
-		_window->event.originId = raw->header.hDevice;
+		_window->event.originId = (int)raw->header.hDevice;
 		
 		if(buttonFlags == 0) {
 			_window->event.type = CC_EVENT_MOUSE_MOVE;
@@ -124,7 +122,7 @@ static void processRid(HRAWINPUT rawInput)
 		}
 
 		//fill event with data
-		_window->event.originId = raw->header.hDevice;
+		_window->event.originId = (int)raw->header.hDevice;
 		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 		_window->event.keyCode = vkCode;
 	}
