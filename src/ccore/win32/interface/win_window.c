@@ -44,7 +44,7 @@ static bool initializeRawInput()
 
 static void freeRawInput()
 {
-	ccGamepadDisconnect();
+	ccGamepadFree();
 
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;

@@ -116,9 +116,7 @@ int main(int argc, char** argv)
 	ccWindowCenter();
 
 	// Prepare gamepad capturing
-	ccPrintf("Connecting gamepads: %s, found %d gamepad(s)\n", ccErrorString(ccGamepadInitialize()), ccGamepadCount());
-	ccGamepadFree();
-	ccPrintf("Connecting gamepads: %s, found %d gamepad(s)\n", ccErrorString(ccGamepadInitialize()), ccGamepadCount());
+	ccGamepadInitialize();
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));

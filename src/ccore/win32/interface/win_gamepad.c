@@ -1,6 +1,6 @@
 #include "win_gamepad.h"
 
-ccError ccGamepadConnect()
+ccError ccGamepadInitialize()
 {
 	ccAssert(_window != NULL);
 	
@@ -17,7 +17,7 @@ int ccGamepadCount()
 	return 0;
 }
 
-void ccGamepadDisconnect()
+void ccGamepadFree()
 {
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = NULL;
