@@ -49,7 +49,7 @@ typedef struct {
 	bool *button;
 	double *axis;
 
-	int axisAmount, buttonAmount;
+	int axisAmount, buttonAmount, id;
 
 	bool plugged;
 
@@ -58,7 +58,7 @@ typedef struct {
 
 typedef struct {
 	ccGamepad* gamepad;
-	unsigned int totalAmount, pluggedAmount;
+	int amount;
 
 	void *data;
 } ccGamepads;
