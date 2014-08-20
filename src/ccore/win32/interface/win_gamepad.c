@@ -117,10 +117,13 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
 		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].Range.UsageMin, &value, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
-		/*
-		if(i==2 && raw->header.hDevice == _gamepads->gamepad[0].id)
-			printf("value %f\t%d\n", (double)(value/200.0), GAMEPAD_DATA->valueCaps[i].NotRange);
-			*/
+		
+		currentGamepad->axis[i] = (double)value / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
+		if(GAMEPAD_DATA->valueCaps[i].PhysicalMax == 255) currentGamepad->axis[i] -= 0.5;
+
+		if(i==5 && raw->header.hDevice == _gamepads->gamepad[0].id)
+			printf("value %f\n%", currentGamepad->axis[i]);
+			
 	}
 
 	return (ccGamepadEvent){ 0 };
