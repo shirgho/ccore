@@ -49,10 +49,6 @@ ccError ccDisplayInitialize()
 			memcpy(currentDisplay->deviceName, display.DeviceName, CC_MAXDEVICENAMESIZE);
 			ccStrTrimToChar(currentDisplay->deviceName, '\\', false);
 
-			ccStrTrim(currentDisplay->gpuName);
-			ccStrTrim(currentDisplay->monitorName);
-			ccStrTrim(currentDisplay->deviceName);
-
 			currentDisplay->x = dm.dmPosition.x;
 			currentDisplay->y = dm.dmPosition.y;
 
@@ -114,6 +110,7 @@ ccError ccDisplayFree() {
 	}
 	free(_displays->display);
 	free(_displays);
+	
 
 	return CC_ERROR_NONE;
 }

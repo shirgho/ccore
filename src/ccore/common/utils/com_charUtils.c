@@ -16,11 +16,6 @@ void ccStrReplaceChar(char *str, char ch, char newCh)
 	}
 }
 
-void ccStrTrim(char *str)
-{
-	str = realloc(str, strlen(str) + 1);
-}
-
 char *ccStrConcatenate(int amount, ...)
 {
 	va_list strings;

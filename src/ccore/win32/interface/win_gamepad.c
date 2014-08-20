@@ -53,7 +53,6 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	int i, j;
 
 	int newInt;
-	bool newBool;
 
 	// Find the current gamepad or create it
 	ccGamepad *currentGamepad = NULL;
