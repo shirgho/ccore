@@ -106,7 +106,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		GAMEPAD_DATA->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
 
 		for(i = 0; i < currentGamepad->axisAmount; i++) {
-			GAMEPAD_DATA->axisFactor[i] = (double)(GAMEPAD_AXIS_MIN - GAMEPAD_AXIS_MAX) / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
+			GAMEPAD_DATA->axisFactor[i] = (double)(GAMEPAD_AXIS_MAX - GAMEPAD_AXIS_MIN) / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
 			GAMEPAD_DATA->axisNegativeComponent[i] = ((GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin) >> 1) - GAMEPAD_DATA->valueCaps[i].PhysicalMin;
 		}
 	}
@@ -121,7 +121,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 	for(i = 0; i < (int)usageLength; i++)
 	{
 		currentGamepad->button[GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->buttonCaps->Range.UsageMin] = true;
-		printf("button %d\n", GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->buttonCaps->Range.UsageMin);
+		//printf("button %d\n", GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->buttonCaps->Range.UsageMin);
 	}
 
 	// Get axes
