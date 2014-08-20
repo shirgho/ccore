@@ -10,7 +10,7 @@
 #include "win_window.h"
 
 #define GAMEPAD_MAXBUTTONS 128
-#define GAMEPAD_MAXVALUES 128
+#define GAMEPAD_MAXVALUES 128 // not used yet, look into this
 
 ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw);
 
@@ -21,7 +21,9 @@ typedef struct {
 } ccGamepad_win;
 
 typedef struct {
+	int preparsedDataSize;
 	PHIDP_PREPARSED_DATA preparsedData;
+	USAGE usage[GAMEPAD_MAXBUTTONS];
 } ccGamepads_win;
 
 #define GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
