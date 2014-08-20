@@ -17,6 +17,8 @@ typedef struct {
 	HIDP_CAPS caps;
 	PHIDP_BUTTON_CAPS buttonCaps;
 	PHIDP_VALUE_CAPS valueCaps;
+	int *axisNegativeComponent;
+	double *axisFactor;
 } ccGamepad_win;
 
 typedef struct {

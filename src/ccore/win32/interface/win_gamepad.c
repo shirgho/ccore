@@ -31,6 +31,8 @@ void ccGamepadFree()
 		for(i = 0; i < ccGamepadCount(); i++) {
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->buttonCaps);
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->valueCaps);
+			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->axisFactor);
+			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->axisNegativeComponent);
 			free(_gamepads->gamepad[i].data);
 
 			free(_gamepads->gamepad[i].button);
@@ -100,6 +102,13 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		
 		currentGamepad->button = malloc(sizeof(bool)* currentGamepad->buttonAmount);
 		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);
+		GAMEPAD_DATA->axisFactor = malloc(sizeof(double)* currentGamepad->axisAmount);
+		GAMEPAD_DATA->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
+
+		for(i = 0; i < currentGamepad->axisAmount; i++) {
+			GAMEPAD_DATA->axisFactor[i] = (double)(GAMEPAD_AXIS_MIN - GAMEPAD_AXIS_MAX) / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
+			GAMEPAD_DATA->axisNegativeComponent[i] = ((GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin) >> 1) - GAMEPAD_DATA->valueCaps[i].PhysicalMin;
+		}
 	}
 	
 	// Get buttons
@@ -121,10 +130,8 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
 		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].NotRange.Usage, &newInt, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
-		
-		if(i == 5 && event.gamepadId == 0) printf("%d\trange %d-%d\n", newInt, GAMEPAD_DATA->valueCaps[i].PhysicalMin, GAMEPAD_DATA->valueCaps[i].PhysicalMax);
-
-		//newDouble = (double)value / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
+		newInt -= GAMEPAD_DATA->axisNegativeComponent[i];
+		newInt *= GAMEPAD_DATA->axisFactor[i];
 
 		if(newInt != currentGamepad->axis[i]) {
 			currentGamepad->axis[i] = newInt;

@@ -23,9 +23,14 @@
 
 #pragma once
 
+#include <limits.h>
+
 #include "core.h"
 #include "error.h"
 #include "types.h"
+
+#define GAMEPAD_AXIS_MIN SHRT_MIN
+#define GAMEPAD_AXIS_MAX SHRT_MAX
 
 typedef enum {
 	CC_GAMEPAD_UNHANDLED = 0,
