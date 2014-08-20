@@ -28,7 +28,6 @@ Run <code>scons && bin/featuretest</code>, and check if all the features work.
 
 ### TODO ###
 **Major:**
-- Gamepad support
 - Mac & BSD support
 
 **Extensions:**

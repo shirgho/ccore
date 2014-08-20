@@ -10,14 +10,15 @@
 #include "win_window.h"
 
 #define GAMEPAD_MAXBUTTONS 128
-#define GAMEPAD_MAXVALUES 128 // not used yet, look into this
 
-ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw);
+void _generateGamepadEvents(RAWINPUT *raw);
 
 typedef struct {
 	HIDP_CAPS caps;
 	PHIDP_BUTTON_CAPS buttonCaps;
 	PHIDP_VALUE_CAPS valueCaps;
+	int *axisNegativeComponent;
+	double *axisFactor;
 } ccGamepad_win;
 
 typedef struct {

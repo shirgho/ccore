@@ -1,5 +1,22 @@
 #include "win_window.h"
 
+void _ccEventStackPush(ccEvent event)
+{
+	WINDOW_DATA->eventStackPos++;
+
+	if(WINDOW_DATA->eventStackSize == 0) {
+		WINDOW_DATA->eventStack = malloc(sizeof(ccEvent));
+		WINDOW_DATA->eventStackSize++;
+	}
+	else{
+		if(WINDOW_DATA->eventStackPos >= WINDOW_DATA->eventStackSize) {
+			WINDOW_DATA->eventStackSize++;
+			WINDOW_DATA->eventStack = realloc(WINDOW_DATA->eventStack, sizeof(ccEvent)*WINDOW_DATA->eventStackSize);
+		}
+	}
+	WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos] = event;
+}
+
 static void updateWindowDisplay()
 {
 	RECT winRect;
@@ -14,6 +31,7 @@ static void updateWindowDisplay()
 static void updateWindowResolution()
 {
 	RECT winRect;
+	ccEvent resizeEvent;
 	
 	GetClientRect(WINDOW_DATA->winHandle, &winRect);
 
@@ -24,7 +42,9 @@ static void updateWindowResolution()
 	_window->rect.width = winRect.right - winRect.left;
 	_window->rect.height = winRect.bottom - winRect.top;
 	_window->aspect = (float)_window->rect.width / _window->rect.height;
-	WINDOW_DATA->specialEvents |= CC_WIN32_EVENT_RESIZED;
+
+	resizeEvent.type = CC_EVENT_WINDOW_RESIZE;
+	_ccEventStackPush(resizeEvent);
 }
 
 static bool initializeRawInput()
@@ -69,7 +89,7 @@ static void processRid(HRAWINPUT rawInput)
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
 		USHORT buttonFlags = raw->data.mouse.usButtonFlags;
 
-		_window->event.originId = (int)raw->header.hDevice;
+		_window->event.deviceId = (ccDeviceId)raw->header.hDevice;
 		
 		if(buttonFlags == 0) {
 			_window->event.type = CC_EVENT_MOUSE_MOVE;
@@ -122,14 +142,13 @@ static void processRid(HRAWINPUT rawInput)
 		}
 
 		//fill event with data
-		_window->event.originId = (int)raw->header.hDevice;
+		_window->event.deviceId = (ccDeviceId)raw->header.hDevice;
 		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 		_window->event.keyCode = vkCode;
 	}
 	else if(raw->header.dwType == RIM_TYPEHID)
 	{
-		_window->event.gamepadEvent = _generateGamepadEvent(raw);
-		if(_window->event.gamepadEvent.type != CC_GAMEPAD_UNHANDLED) _window->event.type = CC_EVENT_GAMEPAD;
+		_generateGamepadEvents(raw);
 	}
 }
 
@@ -155,10 +174,18 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		_window->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
 		break;
 	case WM_SETFOCUS:
-		WINDOW_DATA->specialEvents |= CC_WIN32_EVENT_FOCUS_GAINED;
+	{
+		ccEvent event;
+		event.type = CC_EVENT_FOCUS_GAINED;
+		_ccEventStackPush(event);
+	}
 		break;
 	case WM_KILLFOCUS:
-		WINDOW_DATA->specialEvents |= CC_WIN32_EVENT_FOCUS_LOST;
+	{
+		ccEvent event;
+		event.type = CC_EVENT_FOCUS_LOST;
+		_ccEventStackPush(event);
+	}
 		break;
 	default:
 		return DefWindowProc(winHandle, message, wParam, lParam);
@@ -190,23 +217,12 @@ static void regHinstance(HINSTANCE instanceHandle)
 bool ccWindowPollEvent()
 {
 	ccAssert(_window != NULL);
+	
+	if(WINDOW_DATA->eventStackPos != -1) {
+		_window->event = WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos];
 
-	if(WINDOW_DATA->specialEvents) {
-		if(WINDOW_DATA->specialEvents & CC_WIN32_EVENT_RESIZED) {
-			WINDOW_DATA->specialEvents &= ~CC_WIN32_EVENT_RESIZED;
-			_window->event.type = CC_EVENT_WINDOW_RESIZE;
-			return true;
-		}
-		else if(WINDOW_DATA->specialEvents & CC_WIN32_EVENT_FOCUS_GAINED) {
-			WINDOW_DATA->specialEvents &= ~CC_WIN32_EVENT_FOCUS_GAINED;
-			_window->event.type = CC_EVENT_FOCUS_GAINED;
-			return true;
-		}
-		else if(WINDOW_DATA->specialEvents & CC_WIN32_EVENT_FOCUS_LOST) {
-			WINDOW_DATA->specialEvents &= ~CC_WIN32_EVENT_FOCUS_LOST;
-			_window->event.type = CC_EVENT_FOCUS_LOST;
-			return true;
-		}
+		WINDOW_DATA->eventStackPos--;
+		return true;
 	}
 	
 	if(PeekMessage(&WINDOW_DATA->msg, NULL, 0, 0, PM_REMOVE)){
@@ -231,8 +247,8 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	_window->rect = rect;
 	ccMalloc(_window->data, sizeof(ccWindow_win));
 
-	WINDOW_DATA->specialEvents = 0;
-
+	WINDOW_DATA->eventStackSize = 0;
+	WINDOW_DATA->eventStackPos = -1;
 	WINDOW_DATA->lpbSize = 0;
 
 	//apply flags
@@ -284,6 +300,7 @@ ccError ccWindowFree()
 
 	ReleaseDC(WINDOW_DATA->winHandle, WINDOW_DATA->hdc);
 	if(DestroyWindow(WINDOW_DATA->winHandle) == FALSE) return CC_ERROR_WINDOWDESTRUCTION;
+	if(WINDOW_DATA->eventStackSize != 0) free(WINDOW_DATA->eventStack);
 
 	free(_window->data);
 	free(_window);
