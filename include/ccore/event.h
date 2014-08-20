@@ -70,7 +70,7 @@ typedef int ccDeviceId;
 // The event structure used by ccWindow, set by the call ccPollEvent
 typedef struct {
 	ccEventType type;
-	ccDeviceId deviceId; // This is a unique ID of the device that caused this event
+	ccDeviceId deviceId; // This is a unique ID of the device that caused this event (mouse or keyboard)
 
 	// The union contains different data types for different events
 	union {

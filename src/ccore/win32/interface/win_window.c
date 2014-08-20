@@ -1,5 +1,22 @@
 #include "win_window.h"
 
+void _ccEventStackPush(ccEvent event)
+{
+	WINDOW_DATA->eventStackPos++;
+
+	if(WINDOW_DATA->eventStackSize == 0) {
+		WINDOW_DATA->eventStack = malloc(sizeof(ccEvent));
+		WINDOW_DATA->eventStackSize++;
+	}
+	else{
+		if(WINDOW_DATA->eventStackPos >= WINDOW_DATA->eventStackSize) {
+			WINDOW_DATA->eventStackSize++;
+			WINDOW_DATA->eventStack = realloc(WINDOW_DATA->eventStack, sizeof(ccEvent)*WINDOW_DATA->eventStackSize);
+		}
+	}
+	WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos] = event;
+}
+
 static void updateWindowDisplay()
 {
 	RECT winRect;
@@ -128,8 +145,7 @@ static void processRid(HRAWINPUT rawInput)
 	}
 	else if(raw->header.dwType == RIM_TYPEHID)
 	{
-		_window->event.gamepadEvent = _generateGamepadEvent(raw);
-		if(_window->event.gamepadEvent.type != CC_GAMEPAD_UNHANDLED) _window->event.type = CC_EVENT_GAMEPAD;
+		_generateGamepadEvents(raw);
 	}
 }
 
@@ -190,7 +206,15 @@ static void regHinstance(HINSTANCE instanceHandle)
 bool ccWindowPollEvent()
 {
 	ccAssert(_window != NULL);
+	
+	if(WINDOW_DATA->eventStackPos != -1) {
+		_window->event = WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos];
 
+		WINDOW_DATA->eventStackPos--;
+		return true;
+	}
+
+	//TODO: replace special events completely by the stack
 	if(WINDOW_DATA->specialEvents) {
 		if(WINDOW_DATA->specialEvents & CC_WIN32_EVENT_RESIZED) {
 			WINDOW_DATA->specialEvents &= ~CC_WIN32_EVENT_RESIZED;
@@ -232,7 +256,8 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	ccMalloc(_window->data, sizeof(ccWindow_win));
 
 	WINDOW_DATA->specialEvents = 0;
-
+	WINDOW_DATA->eventStackSize = 0;
+	WINDOW_DATA->eventStackPos = -1;
 	WINDOW_DATA->lpbSize = 0;
 
 	//apply flags
@@ -284,6 +309,7 @@ ccError ccWindowFree()
 
 	ReleaseDC(WINDOW_DATA->winHandle, WINDOW_DATA->hdc);
 	if(DestroyWindow(WINDOW_DATA->winHandle) == FALSE) return CC_ERROR_WINDOWDESTRUCTION;
+	if(WINDOW_DATA->eventStackSize != 0) free(WINDOW_DATA->eventStack);
 
 	free(_window->data);
 	free(_window);

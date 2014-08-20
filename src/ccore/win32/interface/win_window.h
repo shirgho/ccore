@@ -33,6 +33,12 @@ typedef struct {
 	LPBYTE lpb;
 	UINT lpbSize;
 	UINT dwSize;
+
+	ccEvent *eventStack;
+	int eventStackSize;
+	int eventStackPos;
 } ccWindow_win;
+
+void _ccEventStackPush(ccEvent event);
 
 #define WINDOW_DATA ((ccWindow_win*)_window->data)

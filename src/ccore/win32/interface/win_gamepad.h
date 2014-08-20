@@ -11,7 +11,7 @@
 
 #define GAMEPAD_MAXBUTTONS 128
 
-ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw);
+void _generateGamepadEvents(RAWINPUT *raw);
 
 typedef struct {
 	HIDP_CAPS caps;

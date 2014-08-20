@@ -46,24 +46,24 @@ void ccGamepadFree()
 	free(_gamepads);
 }
 
-ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
+void _generateGamepadEvents(RAWINPUT *raw)
 {
-	ccGamepadEvent event;
+	ccEvent event;
 	ULONG usageLength;
 	int i, j;
 
 	int newInt;
 	bool newBool;
 
-	event.type = CC_GAMEPAD_UNHANDLED;
-
 	// Find the current gamepad or create it
 	ccGamepad *currentGamepad = NULL;
+
+	event.type = CC_EVENT_GAMEPAD;
 
 	for(i = 0; i < ccGamepadCount(); i++) {
 		if(_gamepads->gamepad[i].id == (int)raw->header.hDevice) {
 			currentGamepad = &_gamepads->gamepad[i];
-			event.gamepadId = i;
+			event.gamepadEvent.gamepadId = i;
 			break;
 		}
 	}
@@ -78,7 +78,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 			_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
 		}
 		currentGamepad = &_gamepads->gamepad[ccGamepadCount() - 1];
-		event.gamepadId = ccGamepadCount() - 1;
+		event.gamepadEvent.gamepadId = ccGamepadCount() - 1;
 
 		// Initialize current gamepad
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPADS_DATA->preparsedDataSize);
@@ -121,8 +121,9 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		if(currentGamepad->button[index] == false) {
 			currentGamepad->button[index] = true;
 			
-			event.type = CC_GAMEPAD_BUTTON_DOWN;
-			event.buttonId = index;
+			event.gamepadEvent.type = CC_GAMEPAD_BUTTON_DOWN;
+			event.gamepadEvent.buttonId = index;
+			_ccEventStackPush(event);
 		}
 	}
 	for(i = 0; i < currentGamepad->buttonAmount; i++) {
@@ -134,8 +135,9 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 			}
 			currentGamepad->button[i] = false;
 
-			event.type = CC_GAMEPAD_BUTTON_UP;
-			event.buttonId = i;
+			event.gamepadEvent.type = CC_GAMEPAD_BUTTON_UP;
+			event.gamepadEvent.buttonId = i;
+			_ccEventStackPush(event);
 		}
 	pressed:;
 	}
@@ -157,10 +159,9 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 
 		if(newInt != currentGamepad->axis[i]) {
 			currentGamepad->axis[i] = newInt;
-			event.type = CC_GAMEPAD_AXIS_MOVE;
-			event.axisId = i;
+			event.gamepadEvent.type = CC_GAMEPAD_AXIS_MOVE;
+			event.gamepadEvent.axisId = i;
+			_ccEventStackPush(event);
 		}
 	}
-
-	return event;
 }
