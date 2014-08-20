@@ -31,6 +31,7 @@ static void updateWindowDisplay()
 static void updateWindowResolution()
 {
 	RECT winRect;
+	ccEvent resizeEvent;
 	
 	GetClientRect(WINDOW_DATA->winHandle, &winRect);
 
@@ -41,7 +42,9 @@ static void updateWindowResolution()
 	_window->rect.width = winRect.right - winRect.left;
 	_window->rect.height = winRect.bottom - winRect.top;
 	_window->aspect = (float)_window->rect.width / _window->rect.height;
-	WINDOW_DATA->specialEvents |= CC_WIN32_EVENT_RESIZED;
+
+	resizeEvent.type = CC_EVENT_WINDOW_RESIZE;
+	_ccEventStackPush(resizeEvent);
 }
 
 static bool initializeRawInput()
@@ -171,10 +174,18 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		_window->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
 		break;
 	case WM_SETFOCUS:
-		WINDOW_DATA->specialEvents |= CC_WIN32_EVENT_FOCUS_GAINED;
+	{
+		ccEvent event;
+		event.type = CC_EVENT_FOCUS_GAINED;
+		_ccEventStackPush(event);
+	}
 		break;
 	case WM_KILLFOCUS:
-		WINDOW_DATA->specialEvents |= CC_WIN32_EVENT_FOCUS_LOST;
+	{
+		ccEvent event;
+		event.type = CC_EVENT_FOCUS_LOST;
+		_ccEventStackPush(event);
+	}
 		break;
 	default:
 		return DefWindowProc(winHandle, message, wParam, lParam);
@@ -213,25 +224,6 @@ bool ccWindowPollEvent()
 		WINDOW_DATA->eventStackPos--;
 		return true;
 	}
-
-	//TODO: replace special events completely by the stack
-	if(WINDOW_DATA->specialEvents) {
-		if(WINDOW_DATA->specialEvents & CC_WIN32_EVENT_RESIZED) {
-			WINDOW_DATA->specialEvents &= ~CC_WIN32_EVENT_RESIZED;
-			_window->event.type = CC_EVENT_WINDOW_RESIZE;
-			return true;
-		}
-		else if(WINDOW_DATA->specialEvents & CC_WIN32_EVENT_FOCUS_GAINED) {
-			WINDOW_DATA->specialEvents &= ~CC_WIN32_EVENT_FOCUS_GAINED;
-			_window->event.type = CC_EVENT_FOCUS_GAINED;
-			return true;
-		}
-		else if(WINDOW_DATA->specialEvents & CC_WIN32_EVENT_FOCUS_LOST) {
-			WINDOW_DATA->specialEvents &= ~CC_WIN32_EVENT_FOCUS_LOST;
-			_window->event.type = CC_EVENT_FOCUS_LOST;
-			return true;
-		}
-	}
 	
 	if(PeekMessage(&WINDOW_DATA->msg, NULL, 0, 0, PM_REMOVE)){
 		TranslateMessage(&WINDOW_DATA->msg);
@@ -255,7 +247,6 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	_window->rect = rect;
 	ccMalloc(_window->data, sizeof(ccWindow_win));
 
-	WINDOW_DATA->specialEvents = 0;
 	WINDOW_DATA->eventStackSize = 0;
 	WINDOW_DATA->eventStackPos = -1;
 	WINDOW_DATA->lpbSize = 0;
