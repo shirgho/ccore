@@ -32,7 +32,15 @@
 #define GLEW_STATIC
 #include "../../lib/glew/GL/glew.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 // opengl
 ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); // Bind the openGl context to window
 ccError ccGLFreeContext(); // Free context
 ccError ccGLSwapBuffers(); // Swap the buffers
+
+#ifdef __cplusplus
+}
+#endif

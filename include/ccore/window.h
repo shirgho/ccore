@@ -34,6 +34,11 @@
 
 #define CC_FULLSCREEN_CURRENT_DISPLAY 0
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // A window can contain multiple flags to determine the layout and functionality
 typedef enum {
 	CC_WINDOW_FLAG_NORESIZE = 1, // Note: this cannot be ensured in linux, the WM ultimately decides whether this is allowed
@@ -75,3 +80,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...);
 
 // Usually for internal use only, finds the display the window currently is in
 void ccWindowUpdateDisplay();
+
+#ifdef __cplusplus
+}
+#endif

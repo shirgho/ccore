@@ -27,6 +27,11 @@
 #include "types.h"
 #include "error.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef void* ccThread;
 
 #ifdef WIN32
@@ -42,3 +47,7 @@ ccError ccThreadCreate(ccThread *thread, void *function);
 ccError ccThreadStart(ccThread thread, void *data);
 ccError ccThreadJoin(ccThread thread);
 bool ccThreadFinished(ccThread thread);
+
+#ifdef __cplusplus
+}
+#endif

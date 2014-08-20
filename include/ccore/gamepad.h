@@ -27,6 +27,11 @@
 #include "error.h"
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef enum {
 	CC_GAMEPAD_UNHANDLED = 0,
 	CC_GAMEPAD_BUTTON_DOWN,
@@ -74,3 +79,7 @@ ccGamepads *_gamepads;
 ccError ccGamepadInitialize(); // Connects gamepads
 ccError ccGamepadRefresh(); // Reconnects gamepads
 void ccGamepadFree(); // Disconnect any connected gamepads
+
+#ifdef __cplusplus
+}
+#endif

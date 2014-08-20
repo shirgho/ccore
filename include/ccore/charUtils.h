@@ -29,7 +29,16 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void ccStrTrimToChar(char *str, char ch, bool includeChar);
 void ccStrReplaceChar(char *str, char ch, char newCh);
 void ccStrTrim(char *str);
 char *ccStrConcatenate(int amount, ...);
+
+#ifdef __cplusplus
+}
+#endif

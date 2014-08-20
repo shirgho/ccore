@@ -25,7 +25,16 @@
 
 #include "core.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // These functions can be used to get OS specific directories to store program data
 char *ccGetDirUserDir();
 char *ccGetDirDataDir();
 char *ccGetDirTempDir();
+
+#ifdef __cplusplus
+}
+#endif

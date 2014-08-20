@@ -28,6 +28,11 @@
 #include "types.h"
 #include "gamepad.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // A type of event returned used in ccWindow after the function ccPollEvent is called
 typedef enum {
 	// Event not handled in ccore, return false on pollEvent
@@ -177,3 +182,7 @@ typedef struct {
 #define CC_KEY_DOWN KEYDEF(XK_Down, VK_DOWN)
 
 char ccKeyToChar(int key);
+
+#ifdef __cplusplus
+}
+#endif

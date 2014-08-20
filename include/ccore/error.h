@@ -23,6 +23,11 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef enum {
 	CC_ERROR_NONE = 0, // No errors
 
@@ -70,3 +75,7 @@ typedef enum {
 	}\
 	
 const char *ccErrorString(ccError error);
+
+#ifdef __cplusplus
+}
+#endif

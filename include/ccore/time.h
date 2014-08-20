@@ -35,5 +35,14 @@
 #define ccTimeMilliseconds() (ccTimeNanoseconds() / _TO_MILLISECONDS)
 #define ccTimeMicroseconds() (ccTimeNanoseconds() / _TO_MICROSECONDS)
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void ccTimeDelay(int ms);
 uint64_t ccTimeNanoseconds();
+
+#ifdef __cplusplus
+}
+#endif

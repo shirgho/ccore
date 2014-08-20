@@ -33,6 +33,11 @@
 
 #define CC_DEFAULT_RESOLUTION -1
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // Stores display properties
 typedef struct {
 	int width, height, refreshRate, bitDepth;
@@ -79,3 +84,7 @@ ccError ccDisplayInitialize(); // Get all displays currently connected and activ
 ccError ccDisplayFree();
 ccError ccDisplayRevertModes();
 ccRect ccDisplayGetRect(ccDisplay *display);
+
+#ifdef __cplusplus
+}
+#endif

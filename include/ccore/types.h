@@ -25,6 +25,11 @@
 
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define true 1
 #define false 0
 
@@ -53,3 +58,7 @@ typedef struct {
 
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);
 ccRect ccRectConcatenate(int amount, ccRect* rectArray);
+
+#ifdef __cplusplus
+}
+#endif
