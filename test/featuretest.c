@@ -23,7 +23,7 @@
 
 // When building release under visual studio, disable the terminal
 #if !defined _DEBUG && defined _WIN32 && defined _MSC_VER
-//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
 #include <time.h>
