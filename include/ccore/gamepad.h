@@ -50,7 +50,7 @@ typedef struct {
 typedef struct {
 	char *name;
 	bool *button;
-	double *axis;
+	int *axis;
 
 	int axisAmount, buttonAmount, id;
 

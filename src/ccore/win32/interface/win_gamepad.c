@@ -48,10 +48,9 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 {
 	ccGamepadEvent event;
 	ULONG usageLength;
-	int value;
 	int i;
 
-	double newDouble;
+	int newInt;
 	bool newBool;
 
 	event.type = CC_GAMEPAD_UNHANDLED;
@@ -100,7 +99,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		currentGamepad->axisAmount = GAMEPAD_DATA->caps.NumberInputValueCaps;
 		
 		currentGamepad->button = malloc(sizeof(bool)* currentGamepad->buttonAmount);
-		currentGamepad->axis = malloc(sizeof(double)* currentGamepad->axisAmount);
+		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);
 	}
 	
 	// Get buttons
@@ -117,14 +116,18 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 	}
 
 	// Get axes
+	usageLength = currentGamepad->axisAmount;
+
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
-		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].Range.UsageMin, &value, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
-		newDouble = (double)value / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
-		if(GAMEPAD_DATA->valueCaps[i].PhysicalMax == 255) newDouble -= 0.5;
+		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].NotRange.Usage, &newInt, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+		
+		if(i == 5 && event.gamepadId == 0) printf("%d\trange %d-%d\n", newInt, GAMEPAD_DATA->valueCaps[i].PhysicalMin, GAMEPAD_DATA->valueCaps[i].PhysicalMax);
 
-		if(newDouble != currentGamepad->axis[i]) {
-			currentGamepad->axis[i] = newDouble;
+		//newDouble = (double)value / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
+
+		if(newInt != currentGamepad->axis[i]) {
+			currentGamepad->axis[i] = newInt;
 			event.type = CC_GAMEPAD_AXIS_MOVE;
 			event.axisId = i;
 		}
