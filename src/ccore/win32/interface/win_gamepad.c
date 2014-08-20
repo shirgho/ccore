@@ -132,6 +132,12 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].NotRange.Usage, &newInt, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 		newInt -= GAMEPAD_DATA->axisNegativeComponent[i];
 		newInt *= GAMEPAD_DATA->axisFactor[i];
+		if(newInt < GAMEPAD_AXIS_MIN) {
+			newInt = GAMEPAD_AXIS_MIN;
+		}
+		else if(newInt > GAMEPAD_AXIS_MAX) {
+			newInt = GAMEPAD_AXIS_MAX;
+		}
 
 		if(newInt != currentGamepad->axis[i]) {
 			currentGamepad->axis[i] = newInt;
