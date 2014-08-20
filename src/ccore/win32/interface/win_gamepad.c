@@ -50,7 +50,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 {
 	ccGamepadEvent event;
 	ULONG usageLength;
-	int i;
+	int i, j;
 
 	int newInt;
 	bool newBool;
@@ -100,7 +100,7 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		currentGamepad->buttonAmount = GAMEPAD_DATA->buttonCaps->Range.UsageMax - GAMEPAD_DATA->buttonCaps->Range.UsageMin + 1;
 		currentGamepad->axisAmount = GAMEPAD_DATA->caps.NumberInputValueCaps;
 		
-		currentGamepad->button = malloc(sizeof(bool)* currentGamepad->buttonAmount);
+		currentGamepad->button = calloc(currentGamepad->buttonAmount, sizeof(bool));
 		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);
 		GAMEPAD_DATA->axisFactor = malloc(sizeof(double)* currentGamepad->axisAmount);
 		GAMEPAD_DATA->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
@@ -115,13 +115,29 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 	usageLength = currentGamepad->buttonAmount;
 	HidP_GetUsages(HidP_Input, GAMEPAD_DATA->buttonCaps->UsagePage, 0, GAMEPADS_DATA->usage, &usageLength, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 	
-	for(i = 0; i < currentGamepad->buttonAmount; i++) {
-		currentGamepad->button[i] = false;
-	}
 	for(i = 0; i < (int)usageLength; i++)
 	{
-		currentGamepad->button[GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->buttonCaps->Range.UsageMin] = true;
-		//printf("button %d\n", GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->buttonCaps->Range.UsageMin);
+		int index = GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->buttonCaps->Range.UsageMin;
+		if(currentGamepad->button[index] == false) {
+			currentGamepad->button[index] = true;
+			
+			event.type = CC_GAMEPAD_BUTTON_DOWN;
+			event.buttonId = index;
+		}
+	}
+	for(i = 0; i < currentGamepad->buttonAmount; i++) {
+		if(currentGamepad->button[i] == true) {
+			for(j = 0; j < (int)usageLength; j++) {
+				if(currentGamepad->button[GAMEPADS_DATA->usage[j] - GAMEPAD_DATA->buttonCaps->Range.UsageMin] == true) {
+					goto pressed;
+				}
+			}
+			currentGamepad->button[i] = false;
+
+			event.type = CC_GAMEPAD_BUTTON_UP;
+			event.buttonId = i;
+		}
+	pressed:;
 	}
 
 	// Get axes
