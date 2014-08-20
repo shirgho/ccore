@@ -23,7 +23,7 @@
 
 // When building release under visual studio, disable the terminal
 #if !defined _DEBUG && defined _WIN32 && defined _MSC_VER
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
 #include <time.h>
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
 	ccDisplayInitialize();
 
 	// Create a centered window that cannot be resized
-	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_ALWAYSONTOP);
+	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_ALWAYSONTOP)));
 	ccWindowCenter();
 
 	// Prepare gamepad capturing

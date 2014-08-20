@@ -155,7 +155,6 @@ static void processRid(HRAWINPUT rawInput)
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	_window->event.type = CC_EVENT_SKIP;
-
 	switch(message) {
 	case WM_INPUT:
 		processRid((HRAWINPUT)lParam);
@@ -250,7 +249,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->eventStackSize = 0;
 	WINDOW_DATA->eventStackPos = -1;
 	WINDOW_DATA->lpbSize = 0;
-
+	
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
 	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
@@ -276,11 +275,11 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 		NULL);
 
 	WINDOW_DATA->style |= WS_VISIBLE;
-
+	
 	ShowWindow(WINDOW_DATA->winHandle, SW_SHOW);
 	
 	initializeRawInput();
-
+	
 	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
 		if(GetWindowRect(WINDOW_DATA->winHandle, &rect) == FALSE) return CC_ERROR_WINDOWCREATION;
