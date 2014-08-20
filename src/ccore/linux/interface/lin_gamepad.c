@@ -1,68 +1,49 @@
 #include "lin_gamepad.h"
 
-static ccError refreshGamepad(int i)
+static int openGamepadDescriptor(char *locName)
 {
-	char dirName[30], buf[64];
+	char dirName[30];
 	int fd;
 
-	if(GAMEPAD_DATA(_gamepads->gamepad + i)->fd <= 0){
-		snprintf(dirName, 30, "/dev/input/js%d", GAMEPAD_DATA(_gamepads->gamepad + i)->id);
-		fd = open(dirName, O_RDONLY | O_NONBLOCK);
-		if(fd < 0){
-			perror(dirName);
-			return CC_ERROR_GAMEPADDATA;
-		}
+	snprintf(dirName, 30, "/dev/input/%s", locName);
+	fd = open(dirName, O_RDONLY | O_NONBLOCK, 0);
+	if(fd < 0){
+		perror(dirName);
+	}
 
-		// Clear gamepad buffer
-		while(read(fd, buf, 64) > 0);
-
-		_gamepads->pluggedAmount++;
-		_gamepads->gamepad[i].plugged = true;
-		_gamepads->gamepad[i].axisAmount = _gamepads->gamepad[i].buttonsAmount = 0;
-
-		GAMEPAD_DATA(_gamepads->gamepad + i)->fd = fd;
-	}else{
-		fd = GAMEPAD_DATA(_gamepads->gamepad + i)->fd;
-	}	
-
-	ioctl(fd, JSIOCGAXES, &_gamepads->gamepad[i].axisAmount);
-	ioctl(fd, JSIOCGBUTTONS, &_gamepads->gamepad[i].buttonsAmount);
-	ioctl(fd, JSIOCGNAME(80), _gamepads->gamepad[i].name);
-
-	ccCalloc(_gamepads->gamepad[i].axis, _gamepads->gamepad[i].axisAmount, sizeof(int));
-	ccCalloc(_gamepads->gamepad[i].buttons, _gamepads->gamepad[i].buttonsAmount, sizeof(char));
-
-	return CC_ERROR_NONE;
+	return fd;
 }
 
 static ccError createGamepad(char *locName, int i)
 {
-	char dirName[30], buf[64];
+	char buf[64];
 	int fd;
 
+	if(i == 0){
+		ccMalloc(_gamepads->gamepad, sizeof(ccGamepad));
+	}else{
+		ccRealloc(_gamepads->gamepad, (i + 1) * sizeof(ccGamepad));
+	}
 	ccMalloc((_gamepads->gamepad + i)->data, sizeof(ccGamepad_x11));
-	snprintf(dirName, 30, "/dev/input/%s", locName);
 
-	fd = open(dirName, O_RDONLY | O_NONBLOCK, 0);
+	fd = openGamepadDescriptor(locName);
 	if(fd < 0){
-		perror(dirName);
 		return CC_ERROR_GAMEPADDATA;
 	}
 
 	// Clear gamepad buffer
 	while(read(fd, buf, 64) > 0);
 
-	_gamepads->pluggedAmount++;
 	_gamepads->gamepad[i].plugged = true;
-	_gamepads->gamepad[i].axisAmount = _gamepads->gamepad[i].buttonsAmount = 0;
+	_gamepads->gamepad[i].axisAmount = _gamepads->gamepad[i].buttonAmount = 0;
 	ccMalloc(_gamepads->gamepad[i].name, 80);
 
 	ioctl(fd, JSIOCGAXES, &_gamepads->gamepad[i].axisAmount);
-	ioctl(fd, JSIOCGBUTTONS, &_gamepads->gamepad[i].buttonsAmount);
+	ioctl(fd, JSIOCGBUTTONS, &_gamepads->gamepad[i].buttonAmount);
 	ioctl(fd, JSIOCGNAME(80), _gamepads->gamepad[i].name);
 
 	ccCalloc(_gamepads->gamepad[i].axis, _gamepads->gamepad[i].axisAmount, sizeof(int));
-	ccCalloc(_gamepads->gamepad[i].buttons, _gamepads->gamepad[i].buttonsAmount, sizeof(char));
+	ccCalloc(_gamepads->gamepad[i].button, _gamepads->gamepad[i].buttonAmount, sizeof(char));
 
 	GAMEPAD_DATA(_gamepads->gamepad + i)->fd = fd;
 	GAMEPAD_DATA(_gamepads->gamepad + i)->id = atoi(locName + 2);
@@ -97,19 +78,36 @@ ccGamepadEvent ccGamepadEventPoll()
 				continue;
 			}
 
-			ccGamepadRefresh();
-
 			// Find the matching gamepad
+			event.gamepadId = -1;
 			id = atoi(ne.name + 2);	
-			for(i = 0; i < _gamepads->totalAmount; i++){
+			for(i = 0; i < _gamepads->amount; i++){
 				if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
 					event.gamepadId = i;
 					break;
 				}
 			}
+
 			if(ne.mask & IN_DELETE){
+				if(event.gamepadId != -1){
+					_gamepads->gamepad[event.gamepadId].plugged = false;
+					close(GAMEPAD_DATA(_gamepads->gamepad + event.gamepadId)->fd);
+				}
+
 				event.type = CC_GAMEPAD_DISCONNECT;
 			}else if(ne.mask & IN_CREATE){
+				if(event.gamepadId != -1){
+					_gamepads->gamepad[event.gamepadId].plugged = true;
+					GAMEPAD_DATA(_gamepads + event.gamepadId)->fd = openGamepadDescriptor(ne.name);
+					if(GAMEPAD_DATA(_gamepads + event.gamepadId)->fd < 0){
+						_gamepads->gamepad[event.gamepadId].plugged = false;
+						GAMEPAD_DATA(_gamepads + event.gamepadId)->fd = 0;
+					}
+				}else{
+					createGamepad(ne.name, _gamepads->amount);
+					_gamepads->amount++;
+				}
+
 				event.type = CC_GAMEPAD_CONNECT;
 			}
 			return event;
@@ -117,7 +115,7 @@ ccGamepadEvent ccGamepadEventPoll()
 	}
 
 	event.type = CC_GAMEPAD_UNHANDLED;
-	for(i = 0; i < _gamepads->totalAmount; i++){
+	for(i = 0; i < _gamepads->amount; i++){
 		if(!_gamepads->gamepad[i].plugged){
 			continue;
 		}
@@ -132,20 +130,20 @@ ccGamepadEvent ccGamepadEventPoll()
 
 						event.type = CC_GAMEPAD_AXIS_MOVE;
 
-						_gamepads->gamepad[i].axis[js.number] = event.value = js.value;
+						_gamepads->gamepad[i].axis[js.number] = js.value;
 						return event;
 					}
 				case JS_EVENT_BUTTON:
-					if(_gamepads->gamepad[i].buttons[js.number] != (js.value != 0)){
+					if(_gamepads->gamepad[i].button[js.number] != (js.value != 0)){
 						event.buttonId = js.number;
 
-						if(_gamepads->gamepad[i].buttons[js.number] == 0){
+						if(_gamepads->gamepad[i].button[js.number] == 0){
 							event.type = CC_GAMEPAD_BUTTON_DOWN;
 						}else{
 							event.type = CC_GAMEPAD_BUTTON_UP;
 						}
 
-						_gamepads->gamepad[i].buttons[js.number] = event.value = js.value != 0;
+						_gamepads->gamepad[i].button[js.number] = js.value != 0;
 						return event;
 					}
 			}
@@ -159,19 +157,9 @@ ccError ccGamepadInitialize()
 {
 	DIR *d;
 	struct dirent *dir;
-	int i, amount, fd, watch;
+	int fd, watch;
 
 	ccGamepadFree();
-
-	amount = ccGamepadCount();
-
-	if(_gamepads == NULL){
-		ccMalloc(_gamepads, sizeof(ccGamepads));
-	}
-	_gamepads->totalAmount = amount;
-	_gamepads->pluggedAmount = 0;
-
-	ccMalloc(_gamepads->data, sizeof(ccGamepads_x11));
 
 	// Attach notifications to check if a device connects/disconnects
 	fd = inotify_init();
@@ -184,29 +172,31 @@ ccError ccGamepadInitialize()
 		goto error;
 	}
 
+	if(_gamepads == NULL){
+		ccMalloc(_gamepads, sizeof(ccGamepads));
+		ccMalloc(_gamepads->data, sizeof(ccGamepads_x11));
+	}
+	_gamepads->amount = 0;
+
 	GAMEPADS_DATA()->fd = fd;
 	GAMEPADS_DATA()->watch = watch;
 
-	if(amount == 0){
-		return CC_ERROR_NOGAMEPAD;
-	}
-
-	ccMalloc(_gamepads->gamepad, sizeof(ccGamepad) * amount);
-
 	d = opendir("/dev/input");
-	for(i = 0; i < amount; i++){
-		while((dir = readdir(d)) != NULL){
-			if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
-				if(createGamepad(dir->d_name, i) != CC_ERROR_NONE){
-					goto error;
-				}
-				break;
+	while((dir = readdir(d)) != NULL){
+		if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
+			if(createGamepad(dir->d_name, _gamepads->amount) != CC_ERROR_NONE){
+				goto error;
 			}
+			_gamepads->amount++;
 		}
 	}
 
 	closedir(d);
-	return CC_ERROR_NONE;
+	if(_gamepads->amount == 0){
+		return CC_ERROR_NOGAMEPAD;
+	}else{
+		return CC_ERROR_NONE;
+	}
 
 error:
 	free(_gamepads->data);
@@ -215,119 +205,6 @@ error:
 	close(fd);
 	close(watch);
 	return CC_ERROR_GAMEPADDATA;
-}
-
-ccError ccGamepadRefresh()
-{
-	struct dirent *dir;
-	DIR *d;
-	int i, id, amount;
-	bool found;
-
-	amount = ccGamepadCount();
-
-	if(amount == _gamepads->pluggedAmount){
-		return CC_ERROR_NONE;
-	}
-
-	d = opendir("/dev/input");
-
-	// A new item needs to be added to the list
-	if(amount > _gamepads->totalAmount){
-		ccPrintf("%d gamepad(s) connected\n", amount - _gamepads->totalAmount);
-		ccRealloc(_gamepads->gamepad, sizeof(ccGamepad) * amount);
-
-		// Scan the directories for the newest device and add it
-		while((dir = readdir(d)) != NULL && _gamepads->totalAmount <= amount){
-			if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
-				id = atoi(dir->d_name + 2);
-				found = false;
-				for(i = 0; i < _gamepads->totalAmount; i++){
-					if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
-						found = true;
-						break;
-					}
-				}
-				if(!found){
-					if(createGamepad(dir->d_name, _gamepads->totalAmount) != CC_ERROR_NONE){
-						goto error;							
-					}
-					_gamepads->totalAmount++;
-				}
-			}
-		}
-	}
-
-	if(amount > _gamepads->pluggedAmount){
-		ccPrintf("%d gamepad(s) reconnected\n", amount - _gamepads->pluggedAmount);
-
-		for(i = 0; i < _gamepads->totalAmount; i++){
-			if(!_gamepads->gamepad[i].plugged){
-				refreshGamepad(i);
-			}
-		}
-	}else if(amount < _gamepads->pluggedAmount){
-		ccPrintf("%d gamepad(s) disconnected\n", _gamepads->pluggedAmount - amount);
-
-		// Set the plugged status for all the gamepads
-		for(i = 0; i < _gamepads->totalAmount; i++){
-			_gamepads->gamepad[i].plugged = false;
-		}
-		_gamepads->pluggedAmount = 0;
-
-		while((dir = readdir(d)) != NULL){
-			if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
-				id = atoi(dir->d_name + 2);
-				for(i = 0; i < _gamepads->totalAmount; i++){
-					if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
-						_gamepads->gamepad[i].plugged = true;
-						_gamepads->pluggedAmount++;
-						break;
-					}
-				}
-			}
-		}
-		// Close unplugged gamepads
-		for(i = 0; i < _gamepads->totalAmount; i++){
-			if(!_gamepads->gamepad[i].plugged && GAMEPAD_DATA(_gamepads->gamepad + i)->fd >= 0){
-				free(_gamepads->gamepad[i].axis);
-				free(_gamepads->gamepad[i].buttons);
-				close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
-				GAMEPAD_DATA(_gamepads->gamepad + i)->fd = -1;
-			}
-		}
-	}
-
-	closedir(d);
-	return CC_ERROR_NONE;
-
-error:
-	closedir(d);
-	return CC_ERROR_GAMEPADDATA;
-}
-
-int ccGamepadCount()
-{
-	DIR *d;
-	struct dirent *dir;
-	int amount;
-
-	d = opendir("/dev/input");
-
-	if(d == NULL){
-		closedir(d);
-		return -1;
-	}
-
-	amount = 0;
-	while((dir = readdir(d)) != NULL){
-		if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
-			amount++;
-		}
-	}
-	closedir(d);
-
-	return amount;
 }
 
 void ccGamepadFree()
@@ -341,7 +218,7 @@ void ccGamepadFree()
 	inotify_rm_watch(GAMEPADS_DATA()->fd, GAMEPADS_DATA()->watch);
 	close(GAMEPADS_DATA()->fd);
 
-	for(i = 0; i < _gamepads->totalAmount; i++){
+	for(i = 0; i < _gamepads->amount; i++){
 		if(_gamepads->gamepad[i].plugged){
 			close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
 		}
@@ -349,7 +226,11 @@ void ccGamepadFree()
 		free(_gamepads->gamepad[i].name);
 		free(_gamepads->gamepad[i].data);
 	}
-	//free(_gamepads->gamepad);
+	if(_gamepads->amount != 0){
+		free(_gamepads->gamepad);
+	}
+	free(_gamepads->data);
+	free(_gamepads);
 
-	_gamepads->totalAmount = _gamepads->pluggedAmount = 0;
+	_gamepads->amount = 0;
 }
