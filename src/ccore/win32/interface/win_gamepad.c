@@ -109,6 +109,8 @@ void _generateGamepadEvents(RAWINPUT *raw)
 			GAMEPAD_DATA->axisFactor[i] = (double)(GAMEPAD_AXIS_MAX - GAMEPAD_AXIS_MIN) / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
 			GAMEPAD_DATA->axisNegativeComponent[i] = ((GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin) >> 1) - GAMEPAD_DATA->valueCaps[i].PhysicalMin;
 		}
+
+		event.type = CC_GAMEPAD_CONNECT;
 	}
 	
 	// Get buttons
