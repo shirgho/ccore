@@ -116,7 +116,7 @@ int main(int argc, char** argv)
 	ccWindowCenter();
 
 	// Prepare gamepad capturing
-	ccPrintf("Connecting gamepads: %s, found %d gamepad(s)\n", ccErrorString(ccGamepadInitialize()), ccGamepadCount());
+	ccPrintf("Connecting gamepads: %s\n", ccErrorString(ccGamepadInitialize()));
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 					break;
 				case CC_EVENT_GAMEPAD:
 					if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_AXIS_MOVE){
-						ccPrintf("Gamepad %d axis %d moved %d\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.axisId, ccWindowGetEvent().gamepadEvent.value);
+						ccPrintf("Gamepad %d axis %d moved %f\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.axisId, ccGamepadGet(ccWindowGetEvent().gamepadEvent.gamepadId).axis[ccWindowGetEvent().gamepadEvent.axisId]);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_DOWN){
 						ccPrintf("Gamepad %d button %d down\n", ccWindowGetEvent().gamepadEvent.gamepadId, ccWindowGetEvent().gamepadEvent.buttonId);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_UP){

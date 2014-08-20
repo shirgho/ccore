@@ -39,9 +39,12 @@ typedef enum {
 typedef struct {
 	ccGamepadEventType type;
 	
-	int value;
-	unsigned short buttonId, axisId;
-	unsigned int gamepadId;
+	union {
+		int buttonId;
+		int axisId;
+	};
+
+	int gamepadId;
 } ccGamepadEvent;
 
 typedef struct {
@@ -65,7 +68,9 @@ typedef struct {
 
 ccGamepads *_gamepads;
 
+#define ccGamepadCount() _gamepads->amount
+#define ccGamepadGet(index) _gamepads->gamepad[index]
+
 ccError ccGamepadInitialize(); // Connects gamepads
 ccError ccGamepadRefresh(); // Reconnects gamepads
 void ccGamepadFree(); // Disconnect any connected gamepads
-int ccGamepadCount();

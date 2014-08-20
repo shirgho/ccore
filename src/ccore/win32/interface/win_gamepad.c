@@ -17,11 +17,6 @@ ccError ccGamepadInitialize()
 	return RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE)) == TRUE?CC_ERROR_NONE:CC_ERROR_NOGAMEPAD;
 }
 
-int ccGamepadCount()
-{
-	return 0; //the fuck
-}
-
 void ccGamepadFree()
 {
 	ccAssert(_gamepads);
@@ -31,9 +26,9 @@ void ccGamepadFree()
 
 	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE));
 
-	if(_gamepads->amount != 0) {
+	if(ccGamepadCount() != 0) {
 		int i;
-		for(i = 0; i < _gamepads->amount; i++) {
+		for(i = 0; i < ccGamepadCount(); i++) {
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->buttonCaps);
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->valueCaps);
 			free(_gamepads->gamepad[i].data);
@@ -51,16 +46,23 @@ void ccGamepadFree()
 
 ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 {
+	ccGamepadEvent event;
 	ULONG usageLength;
 	int value;
 	int i;
 
+	double newDouble;
+	bool newBool;
+
+	event.type = CC_GAMEPAD_UNHANDLED;
+
 	// Find the current gamepad or create it
 	ccGamepad *currentGamepad = NULL;
 
-	for(i = 0; i < _gamepads->amount; i++) {
+	for(i = 0; i < ccGamepadCount(); i++) {
 		if(_gamepads->gamepad[i].id == (int)raw->header.hDevice) {
 			currentGamepad = &_gamepads->gamepad[i];
+			event.gamepadId = i;
 			break;
 		}
 	}
@@ -68,13 +70,14 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 		USHORT capsLength;
 
 		_gamepads->amount++;
-		if(_gamepads->amount == 1) {
+		if(ccGamepadCount() == 1) {
 			_gamepads->gamepad = malloc(sizeof(ccGamepad));
 		}
 		else{
-			_gamepads->gamepad = realloc(_gamepads->gamepad, _gamepads->amount * sizeof(ccGamepad));
+			_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
 		}
-		currentGamepad = &_gamepads->gamepad[_gamepads->amount - 1];
+		currentGamepad = &_gamepads->gamepad[ccGamepadCount() - 1];
+		event.gamepadId = ccGamepadCount() - 1;
 
 		// Initialize current gamepad
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPADS_DATA->preparsedDataSize);
@@ -117,14 +120,15 @@ ccGamepadEvent _generateGamepadEvent(RAWINPUT *raw)
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
 		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].Range.UsageMin, &value, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
-		
-		currentGamepad->axis[i] = (double)value / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
-		if(GAMEPAD_DATA->valueCaps[i].PhysicalMax == 255) currentGamepad->axis[i] -= 0.5;
+		newDouble = (double)value / (GAMEPAD_DATA->valueCaps[i].PhysicalMax - GAMEPAD_DATA->valueCaps[i].PhysicalMin);
+		if(GAMEPAD_DATA->valueCaps[i].PhysicalMax == 255) newDouble -= 0.5;
 
-		if(i==5 && raw->header.hDevice == _gamepads->gamepad[0].id)
-			printf("value %f\n%", currentGamepad->axis[i]);
-			
+		if(newDouble != currentGamepad->axis[i]) {
+			currentGamepad->axis[i] = newDouble;
+			event.type = CC_GAMEPAD_AXIS_MOVE;
+			event.axisId = i;
+		}
 	}
 
-	return (ccGamepadEvent){ 0 };
+	return event;
 }
