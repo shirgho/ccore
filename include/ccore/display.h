@@ -78,6 +78,7 @@ ccDisplay *ccDisplayGetDefault();
 // Resolution
 ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex);
 bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution);
+bool ccDisplayResolutionEqual(ccDisplayData *resolutionA, ccDisplayData *resolutionB);
 
 // Display
 ccError ccDisplayInitialize(); // Get all displays currently connected and active

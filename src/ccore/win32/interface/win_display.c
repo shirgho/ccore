@@ -77,8 +77,7 @@ ccError ccDisplayInitialize()
 					ccRealloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
 				}
 				
-				if(buffer.bitDepth == initialBuffer.bitDepth && buffer.height == initialBuffer.height &&
-				buffer.refreshRate == initialBuffer.refreshRate && buffer.width == initialBuffer.width) {
+				if(ccDisplayResolutionEqual(&buffer, &initialBuffer)) {
 					currentDisplay->current = currentDisplay->amount;
 					currentDisplay->initial = currentDisplay->current;
 				}

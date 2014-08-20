@@ -1,5 +1,11 @@
 #include <ccore/display.h>
 
+bool ccDisplayResolutionEqual(ccDisplayData *resolutionA, ccDisplayData *resolutionB)
+{
+	return (resolutionA->bitDepth == resolutionB->bitDepth && resolutionA->height == resolutionB->height &&
+		resolutionA->refreshRate == resolutionB->refreshRate && resolutionA->width == resolutionB->width);
+}
+
 ccRect ccDisplayGetRect(ccDisplay *display)
 {
 	ccAssert(display != NULL);
@@ -14,10 +20,7 @@ bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	ccAssert(display != NULL);
 
 	for(i = 0; i < display->amount; i++) {
-		if(display->resolution[i].bitDepth == resolution->bitDepth &&
-			display->resolution[i].height == resolution->height &&
-			display->resolution[i].refreshRate == resolution->refreshRate &&
-			display->resolution[i].width == resolution->width) {
+		if(ccDisplayResolutionEqual(&display->resolution[i], resolution)) {
 			return true;
 		}
 	}
