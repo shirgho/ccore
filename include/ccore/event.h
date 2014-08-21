@@ -27,7 +27,6 @@
 
 #include "types.h"
 #include "gamepad.h"
-#include "mouse.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -59,9 +58,7 @@ extern "C"
 		// Window has resized, new dimensions are stored in the window struct before the event fires
 		CC_EVENT_WINDOW_RESIZE,
 		// Gamepad event, see gamepad.h for specifics
-		CC_EVENT_GAMEPAD,
-		// Mouse event, see mouse.h
-		CC_EVENT_MOUSE
+		CC_EVENT_GAMEPAD
 	} ccEventType;
 
 	// The type of mouse button pressed, used inside the ccEvent union
@@ -87,7 +84,6 @@ extern "C"
 			unsigned int keyCode;
 			float scrollDelta;
 			ccGamepadEvent gamepadEvent;
-			ccMouseEvent mouseEvent;
 		};
 	} ccEvent;
 

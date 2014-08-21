@@ -8,6 +8,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/extensions/XInput2.h>
 
 #include <ccore/opengl.h>
 #include <GL/gl.h>
@@ -15,7 +16,6 @@
 
 #include <ccore/window.h>
 #include <ccore/gamepad.h>
-#include <ccore/mouse.h>
 
 #include <ccore/types.h>
 #include <ccore/event.h>
@@ -25,7 +25,6 @@
 
 #ifdef LINUX
 #include "../../linux/interface/lin_gamepad.h"
-#include "../../linux/interface/lin_mouse.h"
 #endif
 
 #include "x11_display.h"
@@ -37,6 +36,7 @@ typedef struct {
 	int windowFlags;
 	bool resizable;
 	GLXContext XContext;
+	int XInputOpcode;
 } ccWindow_x11;
 
 #define WINDOW_DATA ((ccWindow_x11*)_window->data)

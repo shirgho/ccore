@@ -53,6 +53,49 @@ static void setResizable(bool resizable)
 	XFree(sizeHints);
 }
 
+bool checkRawSupport()
+{
+	int event, error, mayor, minor;
+
+	if(!XQueryExtension(WINDOW_DATA->XDisplay, "XInputExtension", &WINDOW_DATA->XInputOpcode, &event, &error)){
+		return false;
+	}
+
+	mayor = 2;
+	minor = 0;
+	if(XIQueryVersion(WINDOW_DATA->XDisplay, &mayor, &minor) == BadRequest){
+		return false;
+	}
+
+	return true;
+}
+
+void initRawSupport()
+{
+	XIEventMask mask;
+
+	mask.deviceid = XIAllMasterDevices;
+	mask.mask_len = XIMaskLen(XI_RawMotion);
+	mask.mask = calloc(mask.mask_len, sizeof(char));
+
+    XISetMask(mask.mask, XI_Enter);
+    XISetMask(mask.mask, XI_Leave);
+	XISetMask(mask.mask, XI_ButtonPress);
+	XISetMask(mask.mask, XI_ButtonRelease);
+	XISetMask(mask.mask, XI_KeyPress);
+	XISetMask(mask.mask, XI_KeyRelease);
+
+	XISelectEvents(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &mask, 1);
+
+	mask.deviceid = XIAllDevices;
+	memset(mask.mask, 0, mask.mask_len);
+	XISetMask(mask.mask, XI_RawMotion);
+
+	XISelectEvents(WINDOW_DATA->XDisplay, DefaultRootWindow(WINDOW_DATA->XDisplay), &mask, 1);
+
+	free(mask.mask);
+}
+
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Window root;
@@ -97,6 +140,12 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
+	_window->supportsRawInput = checkRawSupport();
+
+	if(_window->supportsRawInput){
+		initRawSupport();
+	}
+
 	_window->mouse.x = _window->mouse.y = 0;
 
 	return CC_ERROR_NONE;
@@ -120,8 +169,8 @@ bool ccWindowPollEvent(void)
 {
 	XEvent event;
 	XWindowAttributes _windowAttributes;
+	XGenericEventCookie *cookie;
 	ccGamepadEvent gamepadEvent;
-	ccMouseEvent mouseEvent;
 
 	if(!_window){
 		return false;
@@ -135,16 +184,13 @@ bool ccWindowPollEvent(void)
 		_window->event.gamepadEvent = gamepadEvent;
 		return true;
 	}
-	
-	mouseEvent = ccMouseEventPoll();
-	if(mouseEvent.type != CC_MOUSE_UNHANDLED){
-		_window->event.type = CC_EVENT_MOUSE;
-		_window->event.mouseEvent = mouseEvent;
-		return true;
-	}
 
 	if(XPending(WINDOW_DATA->XDisplay) == 0){
 		return false;
+	}
+
+	if(_window->supportsRawInput){
+		cookie = &event.xcookie;
 	}
 
 	XNextEvent(WINDOW_DATA->XDisplay, &event);
@@ -166,7 +212,8 @@ bool ccWindowPollEvent(void)
 			_window->event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
-			if(_window->mouse.x != event.xmotion.x || _window->mouse.y != event.xmotion.y){
+			if(_window->mouse.x != event.xmotion.x ||
+					_window->mouse.y != event.xmotion.y){
 				_window->event.type = CC_EVENT_MOUSE_MOVE;
 				_window->mouse.x = event.xmotion.x;
 				_window->mouse.y = event.xmotion.y;
@@ -184,7 +231,8 @@ bool ccWindowPollEvent(void)
 			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case ConfigureNotify:
-			if(_window->rect.width != event.xconfigure.width || _window->rect.height != event.xconfigure.height){
+			if(_window->rect.width != event.xconfigure.width ||
+					_window->rect.height != event.xconfigure.height){
 				_window->event.type = CC_EVENT_WINDOW_RESIZE;
 				_window->rect.width = event.xconfigure.width;
 				_window->rect.height = event.xconfigure.height;
@@ -202,7 +250,8 @@ bool ccWindowPollEvent(void)
 				}
 			}
 
-			if(_window->rect.x != event.xconfigure.x || _window->rect.y != event.xconfigure.y) {
+			if(_window->rect.x != event.xconfigure.x ||
+					_window->rect.y != event.xconfigure.y) {
 				_window->rect.x = event.xconfigure.x;
 				_window->rect.y = event.xconfigure.y;
 
@@ -218,6 +267,39 @@ bool ccWindowPollEvent(void)
 		case FocusOut:
 			_window->event.type = CC_EVENT_FOCUS_LOST;
 			break;
+	}
+
+	if(_window->supportsRawInput){
+		if(cookie->type == GenericEvent &&
+				cookie->extension == WINDOW_DATA->XInputOpcode && 
+				XGetEventData(WINDOW_DATA->XDisplay, cookie)){
+			switch(cookie->evtype){
+				case XI_RawMotion:
+					break;
+				case XI_Enter:
+					// TODO add CC_EVENT_MOUSE_FOCUS enum
+					_window->event.type = CC_EVENT_FOCUS_GAINED;
+					ccPrintf("Device %d: XI_Enter\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_Leave:
+					_window->event.type = CC_EVENT_FOCUS_LOST;
+					ccPrintf("Device %d: XI_Leave\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_ButtonPress:
+					ccPrintf("Device %d: XI_ButtonPress\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_ButtonRelease:
+					ccPrintf("Device %d: XI_ButtonRelease\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_KeyPress:
+					ccPrintf("Device %d: XI_KeyPress\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_KeyRelease:
+					ccPrintf("Device %d: XI_KeyRelease\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+			}
+		}
+		XFreeEventData(WINDOW_DATA->XDisplay, cookie);
 	}
 
 	return true;

@@ -13,6 +13,7 @@ The following libraries are needed:
 - libx11-dev
 - libxrandr-dev
 - libxinerama-dev
+- libxi-dev
 
 **Release:**
 Run `make && sudo make install` to install ccore.

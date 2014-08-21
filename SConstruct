@@ -3,7 +3,7 @@ import os
 env=Environment(CC='gcc', CCFLAGS='-Iinclude/')
 
 sources=[Glob('lib/*/*.c'), Glob('src/ccore/linux/*/*.c'), Glob('src/ccore/common/*/*.c'), Glob('src/ccore/x11/*/*.c')]
-libs=['X11', 'Xrandr', 'Xinerama', 'GL', 'GLU', 'pthread']
+libs=['X11', 'Xrandr', 'Xinerama', 'Xi', 'GL', 'GLU', 'pthread']
 libpaths=['/usr/lib', '/usr/local/lib', '.']
 
 opts=Variables('custom.py', ARGUMENTS)
