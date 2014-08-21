@@ -15,6 +15,7 @@
 
 #include <ccore/window.h>
 #include <ccore/gamepad.h>
+#include <ccore/mouse.h>
 
 #include <ccore/types.h>
 #include <ccore/event.h>
@@ -24,6 +25,7 @@
 
 #ifdef LINUX
 #include "../../linux/interface/lin_gamepad.h"
+#include "../../linux/interface/lin_mouse.h"
 #endif
 
 #include "x11_display.h"

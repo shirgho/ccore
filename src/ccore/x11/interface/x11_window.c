@@ -121,6 +121,7 @@ bool ccWindowPollEvent()
 	XEvent event;
 	XWindowAttributes _windowAttributes;
 	ccGamepadEvent gamepadEvent;
+	ccMouseEvent mouseEvent;
 
 	if(!_window){
 		return false;
@@ -132,6 +133,13 @@ bool ccWindowPollEvent()
 	if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){
 		_window->event.type = CC_EVENT_GAMEPAD;
 		_window->event.gamepadEvent = gamepadEvent;
+		return true;
+	}
+	
+	mouseEvent = ccMouseEventPoll();
+	if(mouseEvent.type != CC_MOUSE_UNHANDLED){
+		_window->event.type = CC_EVENT_MOUSE;
+		_window->event.mouseEvent = mouseEvent;
 		return true;
 	}
 

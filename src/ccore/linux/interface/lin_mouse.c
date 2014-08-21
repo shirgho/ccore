@@ -166,9 +166,6 @@ ccError ccMouseInitialize()
 	}
 
 error:
-	free(_mice->data);
-	free(_mice);
-	closedir(d);
 	close(fd);
 	close(watch);
 	return CC_ERROR_MOUSEDATA;
