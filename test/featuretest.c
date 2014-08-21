@@ -26,8 +26,6 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
-#define GLEW_STATIC
-
 #include <time.h>
 
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
