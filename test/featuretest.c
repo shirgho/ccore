@@ -26,6 +26,8 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
+#define GLEW_STATIC
+
 #include <time.h>
 
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
@@ -286,6 +288,8 @@ ccThreadFunction(counter)
 		ccTimeDelay(1);
 	}
 	ccPrintf("\nPassed integer: %d\n", *(int*)ccThreadData);
+
+	ccThreadReturn();
 }
 
 // All code below this point is not CCORE related
