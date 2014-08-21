@@ -62,7 +62,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	for(i = 0; i < ccGamepadCount(); i++) {
 		if(_gamepads->gamepad[i].id == (int)raw->header.hDevice) {
 			currentGamepad = &_gamepads->gamepad[i];
-			event.gamepadEvent.gamepadId = i;
+			event.gamepadEvent.id = i;
 			break;
 		}
 	}
@@ -77,7 +77,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 			_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
 		}
 		currentGamepad = &_gamepads->gamepad[ccGamepadCount() - 1];
-		event.gamepadEvent.gamepadId = ccGamepadCount() - 1;
+		event.gamepadEvent.id = ccGamepadCount() - 1;
 
 		// Initialize current gamepad
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPADS_DATA->preparsedDataSize);

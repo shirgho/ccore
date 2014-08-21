@@ -118,7 +118,6 @@ int main(int argc, char** argv)
 
 	// Prepare gamepad capturing
 	ccPrintf("Connecting gamepads: %s\n", ccErrorString(ccGamepadInitialize()));
-	ccPrintf("Connecting mice: %s\n", ccErrorString(ccMouseInitialize()));
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
