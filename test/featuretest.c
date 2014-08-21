@@ -36,7 +36,6 @@
 #include <ccore/thread.h>
 #include <ccore/print.h>
 #include <ccore/gamepad.h>
-#include <ccore/mouse.h>
 
 #include "tga.h"
 
