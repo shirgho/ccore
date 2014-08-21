@@ -79,29 +79,29 @@ ccGamepadEvent ccGamepadEventPoll()
 			}
 
 			// Find the matching gamepad
-			event.gamepadId = -1;
+			event.id = -1;
 			id = atoi(ne.name + 2);	
 			for(i = 0; i < _gamepads->amount; i++){
 				if(GAMEPAD_DATA(_gamepads->gamepad + i)->id == id){
-					event.gamepadId = i;
+					event.id = i;
 					break;
 				}
 			}
 
 			if(ne.mask & IN_DELETE){
-				if(event.gamepadId != -1){
-					_gamepads->gamepad[event.gamepadId].plugged = false;
-					close(GAMEPAD_DATA(_gamepads->gamepad + event.gamepadId)->fd);
+				if(event.id != -1){
+					_gamepads->gamepad[event.id].plugged = false;
+					close(GAMEPAD_DATA(_gamepads->gamepad + event.id)->fd);
 				}
 
 				event.type = CC_GAMEPAD_DISCONNECT;
 			}else if(ne.mask & IN_CREATE){
-				if(event.gamepadId != -1){
-					_gamepads->gamepad[event.gamepadId].plugged = true;
-					GAMEPAD_DATA(_gamepads + event.gamepadId)->fd = openGamepadDescriptor(ne.name);
-					if(GAMEPAD_DATA(_gamepads + event.gamepadId)->fd < 0){
-						_gamepads->gamepad[event.gamepadId].plugged = false;
-						GAMEPAD_DATA(_gamepads + event.gamepadId)->fd = 0;
+				if(event.id != -1){
+					_gamepads->gamepad[event.id].plugged = true;
+					GAMEPAD_DATA(_gamepads + event.id)->fd = openGamepadDescriptor(ne.name);
+					if(GAMEPAD_DATA(_gamepads + event.id)->fd < 0){
+						_gamepads->gamepad[event.id].plugged = false;
+						GAMEPAD_DATA(_gamepads + event.id)->fd = 0;
 					}
 				}else{
 					createGamepad(ne.name, _gamepads->amount);
@@ -120,7 +120,7 @@ ccGamepadEvent ccGamepadEventPoll()
 			continue;
 		}
 		if(read(GAMEPAD_DATA(_gamepads->gamepad + i)->fd, &js, sizeof(struct js_event)) > 0){
-			event.gamepadId = i;
+			event.id = i;
 			event.type = CC_GAMEPAD_UNHANDLED;
 
 			switch(js.type & ~JS_EVENT_INIT){

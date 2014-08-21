@@ -45,6 +45,12 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_GAMEPADDATA:
 			return "The gamepad could not be read";
 			break;
+		case CC_ERROR_NOMOUSE:
+			return "No mouse could be found";
+			break;
+		case CC_ERROR_MOUSEDATA:
+			return "The mouse could not be read";
+			break;
 		default:
 			return "Error message not defined";
 			break;

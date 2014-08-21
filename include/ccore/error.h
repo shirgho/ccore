@@ -53,6 +53,10 @@ typedef enum {
 	CC_ERROR_NOGAMEPAD, // No gamepads could be found
 	CC_ERROR_GAMEPADDATA, // The gamepad couldn not be read
 
+	// Mouse related
+	CC_ERROR_NOMOUSE, // No mice could be found
+	CC_ERROR_MOUSEDATA, // The mice could not be read
+
 	// Memory related
 	CC_ERROR_OUT_OF_MEMORY
 } ccError;

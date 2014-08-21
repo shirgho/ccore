@@ -15,7 +15,12 @@ char *ccGetDirDataDir()
 
 	buf = dirname(buf);
 	strcat(buf, "/");
-	ccStrTrim(buf);
+
+	/* TODO discuss if the last / needs te be removed
+	if(buf[strlen(buf) - 1] == '/'){
+		buf[strlen(buf) - 1] = '\0';
+	}
+	*/
 
 	return buf;
 #else

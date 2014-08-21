@@ -54,7 +54,7 @@ typedef struct {
 		int axisId;
 	};
 
-	int gamepadId;
+	int id;
 } ccGamepadEvent;
 
 typedef struct {
