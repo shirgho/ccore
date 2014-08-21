@@ -31,9 +31,9 @@ extern "C"
 #endif
 
 // These functions can be used to get OS specific directories to store program data
-char *ccGetDirUserDir();
-char *ccGetDirDataDir();
-char *ccGetDirTempDir();
+char *ccGetDirUserDir(void);
+char *ccGetDirDataDir(void);
+char *ccGetDirTempDir(void);
 
 #ifdef __cplusplus
 }

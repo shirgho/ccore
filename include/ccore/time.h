@@ -41,7 +41,7 @@ extern "C"
 #endif
 
 void ccTimeDelay(int ms);
-uint64_t ccTimeNanoseconds();
+uint64_t ccTimeNanoseconds(void);
 
 #ifdef __cplusplus
 }

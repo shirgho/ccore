@@ -38,8 +38,8 @@ extern "C"
 #endif
 // opengl
 ccError ccGLBindContext(int glVersionMajor, int glVersionMinor); // Bind the openGl context to window
-ccError ccGLFreeContext(); // Free context
-ccError ccGLSwapBuffers(); // Swap the buffers
+ccError ccGLFreeContext(void); // Free context
+ccError ccGLSwapBuffers(void); // Swap the buffers
 
 #ifdef __cplusplus
 }
