@@ -19,17 +19,17 @@ static ccError createMouse(char *locName, int i)
 	char buf[64];
 	int fd;
 
+	fd = openMouseDescriptor(locName);
+	if(fd < 0){
+		return CC_ERROR_MOUSEDATA;
+	}
+
 	if(i == 0){
 		ccMalloc(_mice->mouse, sizeof(ccMouse));
 	}else{
 		ccRealloc(_mice->mouse, (i + 1) * sizeof(ccMouse));
 	}
 	ccMalloc((_mice->mouse + i)->data, sizeof(ccMouse_x11));
-
-	fd = openMouseDescriptor(locName);
-	if(fd < 0){
-		return CC_ERROR_MOUSEDATA;
-	}
 
 	// Clear mouse buffer
 	while(read(fd, buf, 64) > 0);
@@ -71,7 +71,7 @@ ccMouseEvent ccMouseEventPoll()
 
 	while(canReadINotify()){
 		if(read(MICE_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0){
-			if(strncmp(ne.name, "event", 5) != 0){
+			if(strncmp(ne.name, "mouse", 5) != 0){
 				continue;
 			}
 
@@ -151,11 +151,10 @@ ccError ccMouseInitialize()
 
 	d = opendir("/dev/input");
 	while((dir = readdir(d)) != NULL){
-		if(strncmp(dir->d_name, "event", 5) != 0){
-			if(createMouse(dir->d_name, _mice->amount) != CC_ERROR_NONE){
-				goto error;
+		if(strncmp(dir->d_name, "mouse", 5) == 0){
+			if(!createMouse(dir->d_name, _mice->amount) != CC_ERROR_NONE){
+				_mice->amount++;
 			}
-			_mice->amount++;
 		}
 	}
 
