@@ -32,7 +32,7 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	return CC_ERROR_NONE;
 }
 
-ccError ccGLFreeContext()
+ccError ccGLFreeContext(void)
 {
 	if(!WINDOW_DATA->XContext){
 		return CC_ERROR_GLCONTEXT;
@@ -42,7 +42,7 @@ ccError ccGLFreeContext()
 	return CC_ERROR_NONE;
 }
 
-ccError ccGLSwapBuffers()
+ccError ccGLSwapBuffers(void)
 {
 	if(!WINDOW_DATA->XContext){
 		return CC_ERROR_GLCONTEXT;

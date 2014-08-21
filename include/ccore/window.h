@@ -61,25 +61,25 @@ typedef struct {
 ccWindow *_window;
 
 // Getters
-ccEvent ccWindowGetEvent();
-ccRect ccWindowGetRect();
-ccPoint ccWindowGetMouse();
-ccDisplay *ccWindowGetDisplay();
-bool ccWindowExists();
+ccEvent ccWindowGetEvent(void);
+ccRect ccWindowGetRect(void);
+ccPoint ccWindowGetMouse(void);
+ccDisplay *ccWindowGetDisplay(void);
+bool ccWindowExists(void);
 
 // Window functions
 ccError ccWindowCreate(ccRect rect, const char *title, int flags);
-ccError ccWindowFree();
-bool ccWindowPollEvent(); // Poll an event from the events that currently need to be processed in the window
+ccError ccWindowFree(void);
+bool ccWindowPollEvent(void); // Poll an event from the events that currently need to be processed in the window
 ccError ccWindowResizeMove(ccRect rect);
-ccError ccWindowCenter();
+ccError ccWindowCenter(void);
 
-ccError ccWindowSetWindowed();
-ccError ccWindowSetMaximized();
+ccError ccWindowSetWindowed(void);
+ccError ccWindowSetMaximized(void);
 ccError ccWindowSetFullscreen(int displayCount, ...);
 
 // Usually for internal use only, finds the display the window currently is in
-void ccWindowUpdateDisplay();
+void ccWindowUpdateDisplay(void);
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,6 @@
 #include "win_gamepad.h"
 
-ccError ccGamepadInitialize()
+ccError ccGamepadInitialize(void)
 {
 	ccAssert(_window != NULL);
 
@@ -17,7 +17,7 @@ ccError ccGamepadInitialize()
 	return RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE)) == TRUE?CC_ERROR_NONE:CC_ERROR_NOGAMEPAD;
 }
 
-void ccGamepadFree()
+void ccGamepadFree(void)
 {
 	ccAssert(_gamepads);
 
@@ -62,7 +62,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	for(i = 0; i < ccGamepadCount(); i++) {
 		if(_gamepads->gamepad[i].id == (int)raw->header.hDevice) {
 			currentGamepad = &_gamepads->gamepad[i];
-			event.gamepadEvent.gamepadId = i;
+			event.gamepadEvent.id = i;
 			break;
 		}
 	}
@@ -77,7 +77,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 			_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
 		}
 		currentGamepad = &_gamepads->gamepad[ccGamepadCount() - 1];
-		event.gamepadEvent.gamepadId = ccGamepadCount() - 1;
+		event.gamepadEvent.id = ccGamepadCount() - 1;
 
 		// Initialize current gamepad
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPADS_DATA->preparsedDataSize);
@@ -149,8 +149,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
 		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].NotRange.Usage, &newInt, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
-		newInt -= GAMEPAD_DATA->axisNegativeComponent[i];
-		newInt *= GAMEPAD_DATA->axisFactor[i];
+		newInt = (int)((newInt - GAMEPAD_DATA->axisNegativeComponent[i]) * GAMEPAD_DATA->axisFactor[i]);
 		if(newInt < GAMEPAD_AXIS_MIN) {
 			newInt = GAMEPAD_AXIS_MIN;
 		}

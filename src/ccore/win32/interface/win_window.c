@@ -17,7 +17,7 @@ void _ccEventStackPush(ccEvent event)
 	WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos] = event;
 }
 
-static void updateWindowDisplay()
+static void updateWindowDisplay(void)
 {
 	RECT winRect;
 	GetWindowRect(WINDOW_DATA->winHandle, &winRect);
@@ -28,7 +28,7 @@ static void updateWindowDisplay()
 	ccWindowUpdateDisplay();
 }
 
-static void updateWindowResolution()
+static void updateWindowResolution(void)
 {
 	RECT winRect;
 	ccEvent resizeEvent;
@@ -47,7 +47,7 @@ static void updateWindowResolution()
 	_ccEventStackPush(resizeEvent);
 }
 
-static bool initializeRawInput()
+static bool initializeRawInput(void)
 {
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsagePage = 1;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsage = 6;
@@ -62,7 +62,7 @@ static bool initializeRawInput()
 	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
 }
 
-static void freeRawInput()
+static void freeRawInput(void)
 {
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;
@@ -213,7 +213,7 @@ static void regHinstance(HINSTANCE instanceHandle)
 	RegisterClassEx(&winClass);
 }
 
-bool ccWindowPollEvent()
+bool ccWindowPollEvent(void)
 {
 	ccAssert(_window != NULL);
 	
@@ -289,7 +289,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	return CC_ERROR_NONE;
 }
 
-ccError ccWindowFree()
+ccError ccWindowFree(void)
 {
 	ccAssert(_window != NULL);
 
@@ -309,7 +309,7 @@ ccError ccWindowFree()
 	return CC_ERROR_NONE;
 }
 
-ccError ccWindowSetWindowed()
+ccError ccWindowSetWindowed(void)
 {
 	ccAssert(_window != NULL);
 
@@ -320,7 +320,7 @@ ccError ccWindowSetWindowed()
 	return CC_ERROR_NONE;
 }
 
-ccError ccWindowSetMaximized()
+ccError ccWindowSetMaximized(void)
 {
 	ccAssert(_window != NULL);
 
@@ -390,7 +390,7 @@ ccError ccWindowResizeMove(ccRect rect)
 	return _ccWindowResizeMove(rect, true);
 }
 
-ccError ccWindowCenter()
+ccError ccWindowCenter(void)
 {
 	RECT windowRect;
 

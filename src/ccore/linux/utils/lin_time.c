@@ -5,7 +5,7 @@ void ccTimeDelay(int ms)
 	usleep(ms * _TO_MICROSECONDS);
 }
 
-uint64_t ccTimeNanoseconds()
+uint64_t ccTimeNanoseconds(void)
 {
 	struct timespec time;
 	clock_gettime(CLOCK_REALTIME, &time);

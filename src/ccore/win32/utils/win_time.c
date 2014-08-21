@@ -1,6 +1,6 @@
 #include "win_time.h"
 
-static calculateConversionFactor()
+static calculateConversionFactor(void)
 {
 	LARGE_INTEGER ticksPerSecond;
 	QueryPerformanceFrequency(&ticksPerSecond);
@@ -12,7 +12,7 @@ void ccTimeDelay(int ms)
 	Sleep(ms);
 }
 
-uint64_t ccTimeNanoseconds()
+uint64_t ccTimeNanoseconds(void)
 {
 	LARGE_INTEGER time;
 

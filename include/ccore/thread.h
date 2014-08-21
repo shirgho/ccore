@@ -34,6 +34,8 @@ extern "C"
 
 typedef void* ccThread;
 
+#define ccThreadReturn() return 0;
+
 #ifdef WIN32
 #include <windows.h>
 #define ccThreadFunction(name) DWORD WINAPI name(LPVOID lpParam)

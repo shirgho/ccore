@@ -36,7 +36,6 @@
 #include <ccore/thread.h>
 #include <ccore/print.h>
 #include <ccore/gamepad.h>
-#include <ccore/mouse.h>
 
 #include "tga.h"
 
@@ -117,7 +116,6 @@ int main(int argc, char** argv)
 
 	// Prepare gamepad capturing
 	ccPrintf("Connecting gamepads: %s\n", ccErrorString(ccGamepadInitialize()));
-	ccPrintf("Connecting mice: %s\n", ccErrorString(ccMouseInitialize()));
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
@@ -287,6 +285,8 @@ ccThreadFunction(counter)
 		ccTimeDelay(1);
 	}
 	ccPrintf("\nPassed integer: %d\n", *(int*)ccThreadData);
+
+	ccThreadReturn();
 }
 
 // All code below this point is not CCORE related

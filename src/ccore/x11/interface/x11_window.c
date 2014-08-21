@@ -102,7 +102,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	return CC_ERROR_NONE;
 }
 
-ccError ccWindowFree()
+ccError ccWindowFree(void)
 {
 	ccAssert(_window != NULL);	
 
@@ -116,7 +116,7 @@ ccError ccWindowFree()
 	return CC_ERROR_NONE;
 }
 
-bool ccWindowPollEvent()
+bool ccWindowPollEvent(void)
 {
 	XEvent event;
 	XWindowAttributes _windowAttributes;
@@ -223,7 +223,7 @@ bool ccWindowPollEvent()
 	return true;
 }
 
-ccError ccWindowSetWindowed()
+ccError ccWindowSetWindowed(void)
 {
 	ccAssert(_window);
 
@@ -235,7 +235,7 @@ ccError ccWindowSetWindowed()
 	return CC_ERROR_NONE;
 }
 
-ccError ccWindowSetMaximized()
+ccError ccWindowSetMaximized(void)
 {
 	ccAssert(_window);
 
@@ -320,7 +320,7 @@ ccError ccWindowResizeMove(ccRect rect)
 	return CC_ERROR_NONE;
 }
 
-ccError ccWindowCenter()
+ccError ccWindowCenter(void)
 {
 	ccDisplayData *currentResolution;
 	ccRect newRect;
