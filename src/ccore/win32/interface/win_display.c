@@ -1,6 +1,6 @@
 #include "win_display.h"
 
-ccError ccDisplayInitialize()
+ccError ccDisplayInitialize(void)
 {
 	DISPLAY_DEVICE device;
 	DISPLAY_DEVICE display;
@@ -97,7 +97,7 @@ ccError ccDisplayInitialize()
 	return CC_ERROR_NONE;
 }
 
-ccError ccDisplayFree() {
+ccError ccDisplayFree(void) {
 	int i;
 
 	ccAssert(_displays != NULL);

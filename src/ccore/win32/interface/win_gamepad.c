@@ -1,6 +1,6 @@
 #include "win_gamepad.h"
 
-ccError ccGamepadInitialize()
+ccError ccGamepadInitialize(void)
 {
 	ccAssert(_window != NULL);
 
@@ -17,7 +17,7 @@ ccError ccGamepadInitialize()
 	return RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE)) == TRUE?CC_ERROR_NONE:CC_ERROR_NOGAMEPAD;
 }
 
-void ccGamepadFree()
+void ccGamepadFree(void)
 {
 	ccAssert(_gamepads);
 

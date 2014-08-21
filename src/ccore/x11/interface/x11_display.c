@@ -118,7 +118,7 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 	return CC_ERROR_NONE;
 }
 
-ccError ccDisplayInitialize()
+ccError ccDisplayInitialize(void)
 {
 	char displayName[64];
 	DIR *dir;
@@ -151,7 +151,7 @@ ccError ccDisplayInitialize()
 	return CC_ERROR_NONE;
 }
 
-ccError ccDisplayFree()
+ccError ccDisplayFree(void)
 {
 	int i,j;
 	

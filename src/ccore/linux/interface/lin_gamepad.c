@@ -51,7 +51,7 @@ static ccError createGamepad(char *locName, int i)
 	return CC_ERROR_NONE;
 }
 
-static bool canReadINotify()
+static bool canReadINotify(void)
 {
 	fd_set set;
 	struct timeval timeout;
@@ -65,7 +65,7 @@ static bool canReadINotify()
 		FD_ISSET(GAMEPADS_DATA()->fd, &set);
 }
 
-ccGamepadEvent ccGamepadEventPoll()
+ccGamepadEvent ccGamepadEventPoll(void)
 {
 	struct js_event js;
 	struct inotify_event ne;
@@ -153,7 +153,7 @@ ccGamepadEvent ccGamepadEventPoll()
 	return event;
 }
 
-ccError ccGamepadInitialize()
+ccError ccGamepadInitialize(void)
 {
 	DIR *d;
 	struct dirent *dir;
@@ -207,7 +207,7 @@ error:
 	return CC_ERROR_GAMEPADDATA;
 }
 
-void ccGamepadFree()
+void ccGamepadFree(void)
 {
 	int i;
 

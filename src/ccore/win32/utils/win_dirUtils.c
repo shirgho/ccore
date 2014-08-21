@@ -6,7 +6,7 @@ static char *userDir = NULL;
 static char *dataDir;
 static char *tempDir;
 
-static void scanDirs()
+static void scanDirs(void)
 {
 	HMODULE hModule = GetModuleHandleW(NULL);
 	char path[MAX_PATH];
@@ -30,19 +30,19 @@ static void scanDirs()
 	ccStrReplaceChar(tempDir, '\\', '/');
 }
 
-char *ccGetDirUserDir()
+char *ccGetDirUserDir(void)
 {
 	if(userDir == NULL) scanDirs();
 	return userDir;
 }
 
-char *ccGetDirDataDir()
+char *ccGetDirDataDir(void)
 {
 	if(userDir == NULL) scanDirs();
 	return dataDir;
 }
 
-char *ccGetDirTempDir()
+char *ccGetDirTempDir(void)
 {
 	if(userDir == NULL) scanDirs();
 	return tempDir;
