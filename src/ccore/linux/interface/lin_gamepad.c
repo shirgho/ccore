@@ -19,17 +19,17 @@ static ccError createGamepad(char *locName, int i)
 	char buf[64];
 	int fd;
 
+	fd = openGamepadDescriptor(locName);
+	if(fd < 0){
+		return CC_ERROR_GAMEPADDATA;
+	}
+
 	if(i == 0){
 		ccMalloc(_gamepads->gamepad, sizeof(ccGamepad));
 	}else{
 		ccRealloc(_gamepads->gamepad, (i + 1) * sizeof(ccGamepad));
 	}
 	ccMalloc((_gamepads->gamepad + i)->data, sizeof(ccGamepad_x11));
-
-	fd = openGamepadDescriptor(locName);
-	if(fd < 0){
-		return CC_ERROR_GAMEPADDATA;
-	}
 
 	// Clear gamepad buffer
 	while(read(fd, buf, 64) > 0);
