@@ -23,7 +23,7 @@ void ccGamepadFree(void)
 
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = NULL;
-
+	
 	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE));
 
 	if(ccGamepadCount() != 0) {
@@ -34,12 +34,12 @@ void ccGamepadFree(void)
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->axisFactor);
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->axisNegativeComponent);
 			free(_gamepads->gamepad[i].data);
-
 			free(_gamepads->gamepad[i].button);
 			free(_gamepads->gamepad[i].axis);
 		}
 		free(_gamepads->gamepad);
-		free(((ccGamepads_win*)_gamepads->data)->preparsedData);
+
+		free(GAMEPADS_DATA->preparsedData);
 	}
 
 	free(_gamepads->data);
@@ -80,9 +80,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		event.gamepadEvent.id = ccGamepadCount() - 1;
 
 		// Initialize current gamepad
-		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPADS_DATA->preparsedDataSize);
-		GAMEPADS_DATA->preparsedData = malloc(GAMEPADS_DATA->preparsedDataSize);
-		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPADS_DATA->preparsedData, &GAMEPADS_DATA->preparsedDataSize);
+		if(GAMEPADS_DATA->preparsedDataSize == 0) {
+			GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPADS_DATA->preparsedDataSize);
+			GAMEPADS_DATA->preparsedData = malloc(GAMEPADS_DATA->preparsedDataSize); // TODO: is it necessary to cache preparsed data for each gamepad device? needs testing.
+			GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPADS_DATA->preparsedData, &GAMEPADS_DATA->preparsedDataSize);
+		}
 
 		currentGamepad->id = (int)raw->header.hDevice;
 		currentGamepad->data = malloc(sizeof(ccGamepad_win));

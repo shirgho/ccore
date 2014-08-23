@@ -26,6 +26,12 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
+#ifdef _WIN32
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+
 #include <time.h>
 
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
@@ -273,6 +279,12 @@ int main(int argc, char** argv)
 	ccDisplayFree();
 	ccGLFreeContext();
 	ccWindowFree();
+
+	free(squareAlpha);
+
+#ifdef WIN32
+	_CrtDumpMemoryLeaks();
+#endif
 	
 	return 1;
 }
