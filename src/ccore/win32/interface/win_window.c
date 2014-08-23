@@ -166,7 +166,7 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		updateWindowResolution();
 		break;
 	case WM_MOVE:
-		updateWindowDisplay(_window);
+		updateWindowDisplay();
 		break;
 	case WM_MOUSEMOVE:
 		_window->mouse.x = (unsigned short)lParam & 0x0000FFFF;
