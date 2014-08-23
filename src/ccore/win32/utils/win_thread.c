@@ -1,6 +1,6 @@
 #include "win_thread.h"
 
-ccError ccThreadCreate(ccThread *thread, const void *function)
+ccError ccThreadCreate(ccThread *thread, void *function)
 {
 	ccMalloc(*thread, sizeof(ccThread_win));
 	((ccThread_win*)*thread)->function = (LPTHREAD_START_ROUTINE)function;

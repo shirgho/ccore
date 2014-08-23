@@ -1,6 +1,6 @@
 #include "win_time.h"
 
-static calculateConversionFactor(void)
+static void calculateConversionFactor(void)
 {
 	LARGE_INTEGER ticksPerSecond;
 	QueryPerformanceFrequency(&ticksPerSecond);
