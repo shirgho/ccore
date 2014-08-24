@@ -19,8 +19,8 @@ ccError ccGamepadInitialize(void)
 
 void ccGamepadFree(void)
 {
-	ccAssert(_gamepads);
-
+	ccAssert(_gamepads != NULL);
+	
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = NULL;
 	
@@ -53,7 +53,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	int i, j;
 
 	int newInt;
-
+	
 	// Find the current gamepad or create it
 	ccGamepad *currentGamepad = NULL;
 
@@ -86,6 +86,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 			GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPADS_DATA->preparsedData, &GAMEPADS_DATA->preparsedDataSize);
 		}
 
+		currentGamepad->name = "Gamepad";
 		currentGamepad->id = (int)raw->header.hDevice;
 		currentGamepad->data = malloc(sizeof(ccGamepad_win));
 		HidP_GetCaps(GAMEPADS_DATA->preparsedData, &GAMEPAD_DATA->caps);

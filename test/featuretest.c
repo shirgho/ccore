@@ -23,13 +23,7 @@
 
 // When building release under visual studio, disable the terminal
 #if !defined _DEBUG && defined _WIN32 && defined _MSC_VER
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-#endif
-
-#ifdef _WIN32
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
+//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
 #include <time.h>
@@ -97,6 +91,8 @@ int main(int argc, char** argv)
 	bool quit = false;
 	char *imageFileName;
 
+	squareAlpha = NULL;
+
 	// Demonstrate threading
 	/*
 	   ccThread thread;
@@ -118,9 +114,9 @@ int main(int argc, char** argv)
 	ccDisplayInitialize();
 
 	// Create a centered window that cannot be resized
-	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_ALWAYSONTOP)));
+	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE)));
 	ccWindowCenter();
-
+	
 	// Prepare gamepad capturing
 	ccPrintf("Connecting gamepads: %s\n", ccErrorString(ccGamepadInitialize()));
 
@@ -273,20 +269,16 @@ int main(int argc, char** argv)
 		// Swap the buffers
 		ccGLSwapBuffers();
 	}
-
+	
 	// Free memory before terminating
-	ccGamepadFree();
+	//ccGamepadFree();
 	ccDisplayFree();
-	ccGLFreeContext();
+	//ccGLFreeContext();
 	ccWindowFree();
 
 	free(squareAlpha);
-
-#ifdef WIN32
-	_CrtDumpMemoryLeaks();
-#endif
 	
-	return 1;
+	return 0;
 }
 
 // A thread procedure is implemented here
