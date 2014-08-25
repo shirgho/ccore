@@ -53,7 +53,7 @@ typedef struct {
 	ccPoint mouse;
 	ccEvent event;
 	ccDisplay *display;
-	bool supportsRawInput;
+	bool supportsRawInput, useRawInput;
 
 	void *data;
 } ccWindow;
@@ -62,6 +62,7 @@ typedef struct {
 ccWindow *_window;
 
 #define ccSupportsRawInput() _window->supportsRawInput
+#define ccUseRawInput(x) _window->useRawInput = x
 
 // Getters
 ccEvent ccWindowGetEvent(void);

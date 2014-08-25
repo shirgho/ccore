@@ -96,6 +96,31 @@ void initRawSupport()
 	free(mask.mask);
 }
 
+ccPoint getRawMouseMovement(XIRawEvent *event)
+{
+	ccPoint delta;
+	double *rawValuator, *valuator;
+	int i;
+
+	delta.x = delta.y = 0;
+	rawValuator = event->raw_values;
+	valuator = event->valuators.values;
+
+	for(i = 0; i < event->valuators.mask_len * 8; i++){
+		if(XIMaskIsSet(event->valuators.mask, i)){
+			if(i == 0){
+				delta.x += *valuator - *rawValuator;
+			}else if(i == 1){
+				delta.y += *valuator - *rawValuator;
+			}
+			valuator++;
+			rawValuator++;
+		}
+	}
+
+	return delta;
+}
+
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Window root;
@@ -189,11 +214,55 @@ bool ccWindowPollEvent(void)
 		return false;
 	}
 
-	if(_window->supportsRawInput){
+	XNextEvent(WINDOW_DATA->XDisplay, &event);
+
+	if(_window->supportsRawInput && _window->useRawInput){
 		cookie = &event.xcookie;
+
+		if(XGetEventData(WINDOW_DATA->XDisplay, cookie) && 
+				cookie->type == GenericEvent &&
+				cookie->extension == WINDOW_DATA->XInputOpcode){
+			switch(cookie->evtype){
+				case XI_RawMotion:
+					_window->event.type = CC_EVENT_MOUSE_MOVE;
+					_window->event.mouseVector = getRawMouseMovement(cookie->data);
+					break;
+				case XI_Enter:
+					// TODO add CC_EVENT_MOUSE_FOCUS enum
+					_window->event.type = CC_EVENT_FOCUS_GAINED;
+					ccPrintf("Device %d: XI_Enter\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_Leave:
+					_window->event.type = CC_EVENT_FOCUS_LOST;
+					ccPrintf("Device %d: XI_Leave\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_ButtonPress:
+					_window->event.type = CC_EVENT_MOUSE_DOWN;
+					_window->event.mouseButton = event.xbutton.button;
+					ccPrintf("Device %d: XI_ButtonPress\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_ButtonRelease:
+					_window->event.type = CC_EVENT_MOUSE_UP;
+					_window->event.mouseButton = event.xbutton.button;
+					ccPrintf("Device %d: XI_ButtonRelease\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_KeyPress:
+					_window->event.type = CC_EVENT_KEY_DOWN;
+					ccPrintf("Device %d: XI_KeyPress\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+				case XI_KeyRelease:
+					_window->event.type = CC_EVENT_KEY_UP;
+					ccPrintf("Device %d: XI_KeyRelease\n", ((XIDeviceEvent*)cookie->data)->deviceid);
+					break;
+			}
+		}
+		XFreeEventData(WINDOW_DATA->XDisplay, cookie);
 	}
 
-	XNextEvent(WINDOW_DATA->XDisplay, &event);
+	if(_window->event.type != CC_EVENT_SKIP){
+		return true;
+	}
+
 	switch(event.type){
 		case ButtonPress:
 			if(event.xbutton.button <= 3){
@@ -267,39 +336,6 @@ bool ccWindowPollEvent(void)
 		case FocusOut:
 			_window->event.type = CC_EVENT_FOCUS_LOST;
 			break;
-	}
-
-	if(_window->supportsRawInput){
-		if(cookie->type == GenericEvent &&
-				cookie->extension == WINDOW_DATA->XInputOpcode && 
-				XGetEventData(WINDOW_DATA->XDisplay, cookie)){
-			switch(cookie->evtype){
-				case XI_RawMotion:
-					break;
-				case XI_Enter:
-					// TODO add CC_EVENT_MOUSE_FOCUS enum
-					_window->event.type = CC_EVENT_FOCUS_GAINED;
-					ccPrintf("Device %d: XI_Enter\n", ((XIDeviceEvent*)cookie->data)->deviceid);
-					break;
-				case XI_Leave:
-					_window->event.type = CC_EVENT_FOCUS_LOST;
-					ccPrintf("Device %d: XI_Leave\n", ((XIDeviceEvent*)cookie->data)->deviceid);
-					break;
-				case XI_ButtonPress:
-					ccPrintf("Device %d: XI_ButtonPress\n", ((XIDeviceEvent*)cookie->data)->deviceid);
-					break;
-				case XI_ButtonRelease:
-					ccPrintf("Device %d: XI_ButtonRelease\n", ((XIDeviceEvent*)cookie->data)->deviceid);
-					break;
-				case XI_KeyPress:
-					ccPrintf("Device %d: XI_KeyPress\n", ((XIDeviceEvent*)cookie->data)->deviceid);
-					break;
-				case XI_KeyRelease:
-					ccPrintf("Device %d: XI_KeyRelease\n", ((XIDeviceEvent*)cookie->data)->deviceid);
-					break;
-			}
-		}
-		XFreeEventData(WINDOW_DATA->XDisplay, cookie);
 	}
 
 	return true;
