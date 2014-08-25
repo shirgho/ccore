@@ -8,6 +8,7 @@ ccError ccGamepadInitialize(void)
 	ccMalloc(_gamepads->data, sizeof(ccGamepads_win));
 	GAMEPADS_DATA->preparsedDataSize = 0;
 	_gamepads->amount = 0;
+	_gamepads->gamepad = NULL;
 	
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = 4;
@@ -70,12 +71,8 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		USHORT capsLength;
 
 		_gamepads->amount++;
-		if(ccGamepadCount() == 1) {
-			_gamepads->gamepad = malloc(sizeof(ccGamepad));
-		}
-		else{
-			_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
-		}
+		_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
+
 		currentGamepad = &_gamepads->gamepad[ccGamepadCount() - 1];
 		event.gamepadEvent.id = ccGamepadCount() - 1;
 

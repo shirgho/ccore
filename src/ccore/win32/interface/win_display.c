@@ -15,8 +15,7 @@ ccError ccDisplayInitialize(void)
 	ccAssert(_displays == NULL);
 
 	ccMalloc(_displays, sizeof(ccDisplays));
-
-	if(_displays == NULL) return CC_ERROR_OUT_OF_MEMORY;
+	_displays->display = NULL;
 
 	dm.dmSize = sizeof(dm);
 	device.cb = sizeof(DISPLAY_DEVICE);
@@ -29,12 +28,7 @@ ccError ccDisplayInitialize(void)
 		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
 			_displays->amount++;
 
-			if(_displays->amount == 1) {
-				ccMalloc(_displays->display, sizeof(ccDisplay));
-			}
-			else{
-				ccRealloc(_displays->display, sizeof(ccDisplay)*_displays->amount);
-			}
+			ccRealloc(_displays->display, sizeof(ccDisplay)*_displays->amount);
 
 			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
 

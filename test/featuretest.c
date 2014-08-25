@@ -274,7 +274,7 @@ int main(int argc, char** argv)
 	//ccGLFreeContext();
 	ccWindowFree();
 
-	free(squareAlpha);
+	//free(squareAlpha);
 	
 	return 0;
 }
@@ -452,8 +452,6 @@ void crossSquares()
 	int index = mouseToIndex();
 	int iStart = index - (index % hsquares);
 	int iEnd = iStart + hsquares;
-
-	if(iEnd > squareCount) iEnd = squareCount;
 
 	for(i = iStart; i < iEnd; i++) {
 		squareAlpha[i] = 1.0f;

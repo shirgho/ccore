@@ -70,7 +70,7 @@ typedef struct {
 } ccGamepad;
 
 typedef struct {
-	ccGamepad* gamepad;
+	ccGamepad *gamepad;
 	int amount;
 
 	void *data;
