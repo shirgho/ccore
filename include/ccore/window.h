@@ -43,7 +43,8 @@ extern "C"
 typedef enum {
 	CC_WINDOW_FLAG_NORESIZE = 1, // Note: this cannot be ensured in linux, the WM ultimately decides whether this is allowed
 	CC_WINDOW_FLAG_ALWAYSONTOP = 2,
-	CC_WINDOW_FLAG_NOBUTTONS = 4
+	CC_WINDOW_FLAG_NOBUTTONS = 4,
+	CC_WINDOW_FLAG_PREFERRAW = 8
 } ccWindowFlag;
 
 // The window struct
@@ -53,7 +54,7 @@ typedef struct {
 	ccPoint mouse;
 	ccEvent event;
 	ccDisplay *display;
-	bool supportsRawInput, useRawInput;
+	bool supportsRawInput;
 
 	void *data;
 } ccWindow;
@@ -62,7 +63,6 @@ typedef struct {
 ccWindow *_window;
 
 #define ccSupportsRawInput() _window->supportsRawInput
-#define ccUseRawInput(x) _window->useRawInput = x
 
 // Getters
 ccEvent ccWindowGetEvent(void);

@@ -112,13 +112,9 @@ int main(int argc, char** argv)
 	ccDisplayInitialize();
 
 	// Create a centered window that cannot be resized
-	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE)));
+	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_PREFERRAW)));
 	ccWindowCenter();
 
-	if(ccSupportsRawInput()){
-		ccUseRawInput(true);
-	}
-	
 	// Prepare gamepad capturing
 	ccPrintf("Connecting gamepads: %s\n", ccErrorString(ccGamepadInitialize()));
 

@@ -165,10 +165,9 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
-	_window->supportsRawInput = checkRawSupport();
-
-	if(_window->supportsRawInput){
+	if(flags & CC_WINDOW_FLAG_PREFERRAW){
 		initRawSupport();
+		_window->supportsRawInput = checkRawSupport();
 	}
 
 	_window->mouse.x = _window->mouse.y = 0;
@@ -216,7 +215,7 @@ bool ccWindowPollEvent(void)
 
 	XNextEvent(WINDOW_DATA->XDisplay, &event);
 
-	if(_window->supportsRawInput && _window->useRawInput){
+	if(_window->supportsRawInput){
 		cookie = &event.xcookie;
 
 		if(XGetEventData(WINDOW_DATA->XDisplay, cookie) && 
