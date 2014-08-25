@@ -237,6 +237,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	//initialize struct
 	ccMalloc(_window, sizeof(ccWindow));
 
+	_window->supportsRawInput = true;
 	_window->rect = rect;
 	ccMalloc(_window->data, sizeof(ccWindow_win));
 
