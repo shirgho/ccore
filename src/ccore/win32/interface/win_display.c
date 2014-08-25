@@ -47,6 +47,7 @@ ccError ccDisplayInitialize(void)
 			currentDisplay->y = dm.dmPosition.y;
 
 			currentDisplay->amount = 0;
+			currentDisplay->resolution = NULL;
 
 			initialBuffer.bitDepth = dm.dmBitsPerPel;
 			initialBuffer.refreshRate = dm.dmDisplayFrequency;
@@ -64,12 +65,7 @@ ccError ccDisplayInitialize(void)
 
 				if(ccDisplayResolutionExists(currentDisplay, &buffer)) continue;
 
-				if(currentDisplay->amount == 0) {
-					ccMalloc(currentDisplay->resolution, sizeof(ccDisplayData));
-				}
-				else{
-					ccRealloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
-				}
+				ccRealloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
 				
 				if(ccDisplayResolutionEqual(&buffer, &initialBuffer)) {
 					currentDisplay->current = currentDisplay->amount;

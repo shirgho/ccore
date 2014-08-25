@@ -3,16 +3,10 @@
 void _ccEventStackPush(ccEvent event)
 {
 	WINDOW_DATA->eventStackPos++;
-
-	if(WINDOW_DATA->eventStackSize == 0) {
-		WINDOW_DATA->eventStack = malloc(sizeof(ccEvent));
+	
+	if(WINDOW_DATA->eventStackPos >= WINDOW_DATA->eventStackSize) {
 		WINDOW_DATA->eventStackSize++;
-	}
-	else{
-		if(WINDOW_DATA->eventStackPos >= WINDOW_DATA->eventStackSize) {
-			WINDOW_DATA->eventStackSize++;
-			WINDOW_DATA->eventStack = realloc(WINDOW_DATA->eventStack, sizeof(ccEvent)*WINDOW_DATA->eventStackSize);
-		}
+		WINDOW_DATA->eventStack = realloc(WINDOW_DATA->eventStack, sizeof(ccEvent)*WINDOW_DATA->eventStackSize);
 	}
 	WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos] = event;
 }
@@ -248,6 +242,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 
 	WINDOW_DATA->eventStackSize = 0;
 	WINDOW_DATA->eventStackPos = -1;
+	WINDOW_DATA->eventStack = NULL;
 	WINDOW_DATA->lpbSize = 0;
 	
 	//apply flags
