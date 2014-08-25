@@ -269,9 +269,9 @@ int main(int argc, char** argv)
 	}
 	
 	// Free memory before terminating
-	//ccGamepadFree();
+	ccGamepadFree();
 	ccDisplayFree();
-	//ccGLFreeContext();
+	ccGLFreeContext();
 	ccWindowFree();
 
 	//free(squareAlpha);

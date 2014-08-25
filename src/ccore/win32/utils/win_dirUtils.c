@@ -25,7 +25,7 @@ static void scanDirs(void)
 	//Temp directory
 	GetTempPath(MAX_PATH, path);
 
-	tempDir = malloc(strlen(path));
+	tempDir = malloc(MAX_PATH * sizeof(char));
 	strcpy(tempDir, path);
 	ccStrReplaceChar(tempDir, '\\', '/');
 }

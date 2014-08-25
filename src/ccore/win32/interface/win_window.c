@@ -281,7 +281,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 		if(GetWindowRect(WINDOW_DATA->winHandle, &rect) == FALSE) return CC_ERROR_WINDOWCREATION;
 		if(SetWindowPos(WINDOW_DATA->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) return CC_ERROR_WINDOWCREATION;
 	}
-
+	
 	return CC_ERROR_NONE;
 }
 
