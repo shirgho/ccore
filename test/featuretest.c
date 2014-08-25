@@ -82,7 +82,7 @@ GLuint commandsTexture;
 bool logoScreen = true;
 
 int squareCount;
-float *squareAlpha;
+float *squareAlpha = NULL;
 int hsquares, vsquares;
 
 int main(int argc, char** argv)
@@ -90,8 +90,6 @@ int main(int argc, char** argv)
 	// This variable tells the message loop when to quit
 	bool quit = false;
 	char *imageFileName;
-
-	squareAlpha = NULL;
 
 	// Demonstrate threading
 	/*
@@ -454,6 +452,8 @@ void crossSquares()
 	int index = mouseToIndex();
 	int iStart = index - (index % hsquares);
 	int iEnd = iStart + hsquares;
+
+	if(iEnd > squareCount) iEnd = squareCount;
 
 	for(i = iStart; i < iEnd; i++) {
 		squareAlpha[i] = 1.0f;
