@@ -17,13 +17,13 @@ typedef struct {
 	HIDP_CAPS caps;
 	PHIDP_BUTTON_CAPS buttonCaps;
 	PHIDP_VALUE_CAPS valueCaps;
+	PHIDP_PREPARSED_DATA preparsedData;
+	int preparsedDataSize;
 	int *axisNegativeComponent;
 	double *axisFactor;
 } ccGamepad_win;
 
 typedef struct {
-	int preparsedDataSize;
-	PHIDP_PREPARSED_DATA preparsedData;
 	USAGE usage[GAMEPAD_MAXBUTTONS];
 } ccGamepads_win;
 

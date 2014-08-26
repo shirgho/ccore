@@ -6,7 +6,6 @@ ccError ccGamepadInitialize(void)
 
 	ccMalloc(_gamepads, sizeof(ccGamepads));
 	ccMalloc(_gamepads->data, sizeof(ccGamepads_win));
-	GAMEPADS_DATA->preparsedDataSize = 0;
 	_gamepads->amount = 0;
 	_gamepads->gamepad = NULL;
 	
@@ -34,13 +33,12 @@ void ccGamepadFree(void)
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->valueCaps);
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->axisFactor);
 			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->axisNegativeComponent);
+			free(((ccGamepad_win*)_gamepads->gamepad[i].data)->preparsedData);
 			free(_gamepads->gamepad[i].data);
 			free(_gamepads->gamepad[i].button);
 			free(_gamepads->gamepad[i].axis);
 		}
 		free(_gamepads->gamepad);
-
-		free(GAMEPADS_DATA->preparsedData);
 	}
 
 	free(_gamepads->data);
@@ -77,24 +75,23 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		event.gamepadEvent.id = ccGamepadCount() - 1;
 
 		// Initialize current gamepad
-		if(GAMEPADS_DATA->preparsedDataSize == 0) {
-			GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPADS_DATA->preparsedDataSize);
-			GAMEPADS_DATA->preparsedData = malloc(GAMEPADS_DATA->preparsedDataSize); // TODO: is it necessary to cache preparsed data for each gamepad device? needs testing.
-			GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPADS_DATA->preparsedData, &GAMEPADS_DATA->preparsedDataSize);
-		}
+		currentGamepad->data = malloc(sizeof(ccGamepad_win));
+
+		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPAD_DATA->preparsedDataSize);
+		GAMEPAD_DATA->preparsedData = malloc(GAMEPAD_DATA->preparsedDataSize); // TODO: is it necessary to cache preparsed data for each gamepad device? needs testing.
+		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPAD_DATA->preparsedData, &GAMEPAD_DATA->preparsedDataSize);
 
 		currentGamepad->name = "Gamepad";
 		currentGamepad->id = (int)raw->header.hDevice;
-		currentGamepad->data = malloc(sizeof(ccGamepad_win));
-		HidP_GetCaps(GAMEPADS_DATA->preparsedData, &GAMEPAD_DATA->caps);
+		HidP_GetCaps(GAMEPAD_DATA->preparsedData, &GAMEPAD_DATA->caps);
 
 		GAMEPAD_DATA->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* GAMEPAD_DATA->caps.NumberInputButtonCaps);
 		GAMEPAD_DATA->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* GAMEPAD_DATA->caps.NumberInputValueCaps);
 
 		capsLength = GAMEPAD_DATA->caps.NumberInputButtonCaps;
-		HidP_GetButtonCaps(HidP_Input, GAMEPAD_DATA->buttonCaps, &capsLength, GAMEPADS_DATA->preparsedData);
+		HidP_GetButtonCaps(HidP_Input, GAMEPAD_DATA->buttonCaps, &capsLength, GAMEPAD_DATA->preparsedData);
 		capsLength = GAMEPAD_DATA->caps.NumberInputValueCaps;
-		HidP_GetValueCaps(HidP_Input, GAMEPAD_DATA->valueCaps, &capsLength, GAMEPADS_DATA->preparsedData);
+		HidP_GetValueCaps(HidP_Input, GAMEPAD_DATA->valueCaps, &capsLength, GAMEPAD_DATA->preparsedData);
 
 		currentGamepad->buttonAmount = GAMEPAD_DATA->buttonCaps->Range.UsageMax - GAMEPAD_DATA->buttonCaps->Range.UsageMin + 1;
 		currentGamepad->axisAmount = GAMEPAD_DATA->caps.NumberInputValueCaps;
@@ -115,7 +112,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	
 	// Get buttons
 	usageLength = currentGamepad->buttonAmount;
-	HidP_GetUsages(HidP_Input, GAMEPAD_DATA->buttonCaps->UsagePage, 0, GAMEPADS_DATA->usage, &usageLength, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+	HidP_GetUsages(HidP_Input, GAMEPAD_DATA->buttonCaps->UsagePage, 0, GAMEPADS_DATA->usage, &usageLength, GAMEPAD_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 	
 	for(i = 0; i < (int)usageLength; i++)
 	{
@@ -149,7 +146,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
-		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].NotRange.Usage, &newInt, GAMEPADS_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->valueCaps[i].NotRange.Usage, &newInt, GAMEPAD_DATA->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 		newInt = (int)((newInt - GAMEPAD_DATA->axisNegativeComponent[i]) * GAMEPAD_DATA->axisFactor[i]);
 		if(newInt < GAMEPAD_AXIS_MIN) {
 			newInt = GAMEPAD_AXIS_MIN;
