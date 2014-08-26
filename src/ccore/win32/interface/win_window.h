@@ -30,6 +30,7 @@ typedef struct {
 	ccEvent *eventStack;
 	int eventStackSize;
 	int eventStackPos;
+	int eventStackIndex;
 } ccWindow_win;
 
 void _ccEventStackPush(ccEvent event);
