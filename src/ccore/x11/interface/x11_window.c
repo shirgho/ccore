@@ -125,6 +125,16 @@ ccPoint getRawMouseMovement(XIRawEvent *event)
 	return delta;
 }
 
+unsigned int getRawKeyboardCode(XIRawEvent *event)
+{
+	KeySym sym;
+	int symsPerCode;
+
+	sym = XGetKeyboardMapping(WINDOW_DATA->XDisplay, event->detail, 1, &symsPerCode)[0];
+
+	return XKeysymToString(sym)[0];
+}
+
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Window root;
@@ -247,30 +257,22 @@ bool ccWindowPollEvent(void)
 					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					_window->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
+				case XI_RawKeyPress:
+					_window->event.type = CC_EVENT_KEY_DOWN;
+					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
+					_window->event.keyCode = getRawKeyboardCode(cookie->data);
+					break;
+				case XI_RawKeyRelease:
+					_window->event.type = CC_EVENT_KEY_UP;
+					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
+					_window->event.keyCode = getRawKeyboardCode(cookie->data);
+					break;
 				case XI_Enter:
 					_window->event.type = CC_EVENT_FOCUS_GAINED;
 					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					break;
 				case XI_Leave:
 					_window->event.type = CC_EVENT_FOCUS_LOST;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
-					break;
-				case XI_ButtonPress:
-					_window->event.type = CC_EVENT_MOUSE_DOWN;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
-					_window->event.mouseButton = event.xbutton.button;
-					break;
-				case XI_ButtonRelease:
-					_window->event.type = CC_EVENT_MOUSE_UP;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
-					_window->event.mouseButton = event.xbutton.button;
-					break;
-				case XI_KeyPress:
-					_window->event.type = CC_EVENT_KEY_DOWN;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
-					break;
-				case XI_KeyRelease:
-					_window->event.type = CC_EVENT_KEY_UP;
 					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					break;
 			}
@@ -292,6 +294,11 @@ bool ccWindowPollEvent(void)
 			_window->event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
+			if(!_window->supportsRawInput){
+				_window->event.type = CC_EVENT_MOUSE_MOVE;
+				_window->event.mouseVector.x = _window->mouse.x - event.xmotion.x;
+				_window->event.mouseVector.y = _window->mouse.y - event.xmotion.y;
+			}
 			if(_window->mouse.x != event.xmotion.x ||
 					_window->mouse.y != event.xmotion.y){
 				_window->event.type = CC_EVENT_MOUSE_MOVE;

@@ -266,8 +266,12 @@ int main(int argc, char** argv)
 
 		// Swap the buffers
 		ccGLSwapBuffers();
+
 	}
-	
+
+	// Revert all resolutions
+	ccDisplayRevertModes();
+
 	// Free memory before terminating
 	ccGamepadFree();
 	ccDisplayFree();
@@ -275,7 +279,7 @@ int main(int argc, char** argv)
 	ccWindowFree();
 
 	//free(squareAlpha);
-	
+
 	return 0;
 }
 
