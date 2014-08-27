@@ -210,6 +210,8 @@ static void regHinstance(HINSTANCE instanceHandle)
 bool ccWindowPollEvent(void)
 {
 	ccAssert(_window != NULL);
+
+	if(WINDOW_DATA->queryXinput) _queryXinput();
 	
 	if(WINDOW_DATA->eventStackPos != -1) {
 
@@ -250,6 +252,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->eventStackPos = -1;
 	WINDOW_DATA->eventStackIndex = 0;
 	WINDOW_DATA->eventStack = NULL;
+	WINDOW_DATA->queryXinput = false;
 	WINDOW_DATA->lpbSize = 0;
 	
 	//apply flags

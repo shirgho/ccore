@@ -26,6 +26,7 @@ typedef struct {
 	LPBYTE lpb;
 	UINT lpbSize;
 	UINT dwSize;
+	bool queryXinput;
 
 	ccEvent *eventStack;
 	int eventStackSize;

@@ -62,7 +62,7 @@ typedef struct {
 	bool *button;
 	int *axis;
 
-	int axisAmount, buttonAmount, id;
+	int axisAmount, buttonAmount;
 
 	bool plugged;
 	bool supportsVibration;

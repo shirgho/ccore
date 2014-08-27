@@ -9,6 +9,8 @@ ccError ccGamepadInitialize(void)
 	_gamepads->amount = 0;
 	_gamepads->gamepad = NULL;
 	
+	WINDOW_DATA->queryXinput = true;
+
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = 4;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = 0;
@@ -21,6 +23,8 @@ void ccGamepadFree(void)
 {
 	ccAssert(_gamepads != NULL);
 	
+	WINDOW_DATA->queryXinput = false;
+
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = NULL;
 	
@@ -43,6 +47,21 @@ void ccGamepadFree(void)
 
 	free(_gamepads->data);
 	free(_gamepads);
+}
+
+void _queryXinput()
+{
+	int i;
+
+	for(i = 0; i < XUSER_MAX_COUNT; i++) {
+		XINPUT_STATE state;
+		DWORD result;
+
+		ZeroMemory(&state, sizeof(XINPUT_STATE));
+		result = XInputGetState(i, &state);
+
+		if(result == ERROR_SUCCESS) printf("connected %d\n", i);
+	}
 }
 
 void _generateGamepadEvents(RAWINPUT *raw)
@@ -82,6 +101,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPAD_DATA->preparsedData, &GAMEPAD_DATA->preparsedDataSize);
 
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
+		currentGamepad->plugged = true; //TODO: use this properly
 		currentGamepad->supportsVibration = false;
 		currentGamepad->id = (int)raw->header.hDevice;
 		HidP_GetCaps(GAMEPAD_DATA->preparsedData, &GAMEPAD_DATA->caps);
