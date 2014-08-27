@@ -72,26 +72,41 @@ void _queryXinput()
 		result = XInputGetState(i, &state);
 
 		if(result == ERROR_SUCCESS) {
-			if(GAMEPADS_DATA->xInputConnected[i] == -1) {
-				// Allocate memory for new gamepad
-				_gamepads->amount++;
-				_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
+			// Handle creating or reconnecting
+			if(GAMEPADS_DATA->xInputConnected[i] == -1 || ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged == false) {
+				if(GAMEPADS_DATA->xInputConnected[i] == -1) {
+					// Allocate memory for newly connected gamepad
+					_gamepads->amount++;
+					_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
 
-				GAMEPADS_DATA->xInputConnected[i] = ccGamepadCount() - 1;
-				currentGamepad = &_gamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
-				currentGamepad->data = malloc(sizeof(ccGamepad_win));
+					GAMEPADS_DATA->xInputConnected[i] = ccGamepadCount() - 1;
+					currentGamepad = &_gamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
+					currentGamepad->data = malloc(sizeof(ccGamepad_win));
 
-				// Create connect event
-				event.gamepadEvent.id = ccGamepadCount() - 1;
-				event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
-				_ccEventStackPush(event);
+					// Create connect event
+					event.gamepadEvent.id = ccGamepadCount() - 1;
+					event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
+					_ccEventStackPush(event);
 
-				// Fill new gamepad data
-				GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
+					// Fill new gamepad data
+					GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
+
+					currentGamepad->name = "X360 gamepad";
+					currentGamepad->plugged = true;
+				}
+				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged == false) {
+					// Reconnect a previously disconnected gamepad
+					ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged = true;
+					event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
+					event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
+					_ccEventStackPush(event);
+				}
 			}
+
+			// Update gamepad
 		}
 		else {
-			if(GAMEPADS_DATA->xInputConnected[i] != -1) {
+			if(GAMEPADS_DATA->xInputConnected[i] != -1 && ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged != false) {
 				ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged = false;
 				event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
 				event.gamepadEvent.type = CC_GAMEPAD_DISCONNECT;
