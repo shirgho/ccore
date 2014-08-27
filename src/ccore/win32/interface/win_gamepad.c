@@ -60,7 +60,7 @@ void _queryXinput()
 		ZeroMemory(&state, sizeof(XINPUT_STATE));
 		result = XInputGetState(i, &state);
 
-		if(result == ERROR_SUCCESS) printf("connected %d\n", i);
+		//if(result == ERROR_SUCCESS) printf("connected %d\n", i);
 	}
 }
 
@@ -78,7 +78,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	event.type = CC_EVENT_GAMEPAD;
 
 	for(i = 0; i < ccGamepadCount(); i++) {
-		if(_gamepads->gamepad[i].id == (int)raw->header.hDevice) {
+		if(((ccGamepad_win*)(_gamepads->gamepad[i].data))->handle == raw->header.hDevice) {
 			currentGamepad = &_gamepads->gamepad[i];
 			event.gamepadEvent.id = i;
 			break;
@@ -103,7 +103,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
 		currentGamepad->supportsVibration = false;
-		currentGamepad->id = (int)raw->header.hDevice;
+		GAMEPAD_DATA->handle = raw->header.hDevice;
 		HidP_GetCaps(GAMEPAD_DATA->preparsedData, &GAMEPAD_DATA->caps);
 
 		GAMEPAD_DATA->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* GAMEPAD_DATA->caps.NumberInputButtonCaps);

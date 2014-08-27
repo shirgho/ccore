@@ -20,6 +20,7 @@ typedef struct {
 	PHIDP_BUTTON_CAPS buttonCaps;
 	PHIDP_VALUE_CAPS valueCaps;
 	PHIDP_PREPARSED_DATA preparsedData;
+	HANDLE handle;
 	int preparsedDataSize;
 	int *axisNegativeComponent;
 	double *axisFactor;
