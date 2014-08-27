@@ -1,5 +1,23 @@
 #include "win_gamepad.h"
 
+static int _gamepadXinputButtons[] =
+{
+	XINPUT_GAMEPAD_A,
+	XINPUT_GAMEPAD_B,
+	XINPUT_GAMEPAD_Y,
+	XINPUT_GAMEPAD_X,
+	XINPUT_GAMEPAD_DPAD_LEFT,
+	XINPUT_GAMEPAD_DPAD_UP,
+	XINPUT_GAMEPAD_DPAD_RIGHT,
+	XINPUT_GAMEPAD_DPAD_DOWN,
+	XINPUT_GAMEPAD_LEFT_THUMB,
+	XINPUT_GAMEPAD_RIGHT_THUMB,
+	XINPUT_GAMEPAD_LEFT_SHOULDER,
+	XINPUT_GAMEPAD_RIGHT_SHOULDER,
+	XINPUT_GAMEPAD_BACK,
+	XINPUT_GAMEPAD_START
+};
+
 ccError ccGamepadInitialize(void)
 {
 	int i;
@@ -44,6 +62,9 @@ void ccGamepadFree(void)
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw.axisFactor);
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw.axisNegativeComponent);
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw.preparsedData);
+			}
+			else{
+
 			}
 			free(_gamepads->gamepad[i].data);
 			free(_gamepads->gamepad[i].button);
@@ -93,6 +114,11 @@ void _queryXinput()
 
 					currentGamepad->name = "X360 gamepad";
 					currentGamepad->plugged = true;
+					currentGamepad->supportsVibration = true;
+					currentGamepad->buttonAmount = GAMEPAD_XINPUT_BUTTONCOUNT;
+					currentGamepad->axisAmount = GAMEPAD_XINPUT_AXISCOUNT;
+					currentGamepad->button = calloc(GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
+					currentGamepad->axis = malloc(GAMEPAD_XINPUT_AXISCOUNT * sizeof(int));
 				}
 				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged == false) {
 					// Reconnect a previously disconnected gamepad
@@ -103,7 +129,20 @@ void _queryXinput()
 				}
 			}
 
+			currentGamepad = &_gamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
+
 			// Update gamepad
+			event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
+
+			for(i = 0; i < GAMEPAD_XINPUT_BUTTONCOUNT; i++) {
+				if(currentGamepad->button[i] == false && state.Gamepad.wButtons & _gamepadXinputButtons[i]) {
+					currentGamepad->button[i] = true;
+
+					event.gamepadEvent.type = CC_GAMEPAD_BUTTON_DOWN;
+					event.gamepadEvent.buttonId = i;
+					_ccEventStackPush(event);
+				}
+			}
 		}
 		else {
 			if(GAMEPADS_DATA->xInputConnected[i] != -1 && ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged != false) {

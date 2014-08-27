@@ -12,6 +12,9 @@
 
 #define GAMEPAD_MAXBUTTONS 128
 
+#define GAMEPAD_XINPUT_BUTTONCOUNT 14
+#define GAMEPAD_XINPUT_AXISCOUNT 6
+
 void _generateGamepadEvents(RAWINPUT *raw);
 void _queryXinput();
 
