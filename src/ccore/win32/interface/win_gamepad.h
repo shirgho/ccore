@@ -15,6 +15,11 @@
 void _generateGamepadEvents(RAWINPUT *raw);
 void _queryXinput();
 
+typedef enum {
+	CC_GAMEPAD_INPUT_RAW,
+	CC_GAMEPAD_INPUT_XINPUT
+} ccGamepadInputType;
+
 typedef struct {
 	HIDP_CAPS caps;
 	PHIDP_BUTTON_CAPS buttonCaps;
@@ -24,6 +29,18 @@ typedef struct {
 	int preparsedDataSize;
 	int *axisNegativeComponent;
 	double *axisFactor;
+} ccGamepad_win_raw;
+
+typedef struct {
+	int i;
+} ccGamepad_win_xinput;
+
+typedef struct {
+	union {
+		ccGamepad_win_raw raw;
+		ccGamepad_win_xinput xinput;
+	};
+	ccGamepadInputType inputType;
 } ccGamepad_win;
 
 typedef struct {
