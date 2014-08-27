@@ -29,7 +29,7 @@ static ccError createGamepad(char *locName, int i)
 	}else{
 		ccRealloc(_gamepads->gamepad, (i + 1) * sizeof(ccGamepad));
 	}
-	ccMalloc((_gamepads->gamepad + i)->data, sizeof(ccGamepad_x11));
+	ccMalloc((_gamepads->gamepad + i)->data, sizeof(ccGamepad_lin));
 
 	// Clear gamepad buffer
 	while(read(fd, buf, 64) > 0);
@@ -174,7 +174,7 @@ ccError ccGamepadInitialize(void)
 
 	if(_gamepads == NULL){
 		ccMalloc(_gamepads, sizeof(ccGamepads));
-		ccMalloc(_gamepads->data, sizeof(ccGamepads_x11));
+		ccMalloc(_gamepads->data, sizeof(ccGamepads_lin));
 	}
 	_gamepads->amount = 0;
 

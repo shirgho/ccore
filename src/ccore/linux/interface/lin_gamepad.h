@@ -15,13 +15,13 @@
 
 typedef struct {
 	int id, fd;
-} ccGamepad_x11;
+} ccGamepad_lin;
 
 typedef struct {
 	int fd, watch;
-} ccGamepads_x11;
+} ccGamepads_lin;
 
-#define GAMEPAD_DATA(gamepad) ((ccGamepad_x11*)(gamepad)->data)
-#define GAMEPADS_DATA() ((ccGamepads_x11*)(_gamepads)->data)
+#define GAMEPAD_DATA(gamepad) ((ccGamepad_lin*)(gamepad)->data)
+#define GAMEPADS_DATA() ((ccGamepads_lin*)(_gamepads)->data)
 
 ccGamepadEvent ccGamepadEventPoll(void);
