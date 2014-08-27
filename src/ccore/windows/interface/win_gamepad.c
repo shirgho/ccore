@@ -156,10 +156,10 @@ void _queryXinput()
 			for(i = 0; i < GAMEPAD_XINPUT_AXISCOUNT; i++) {
 				switch(i) {
 				case GAMEPAD_XINPUT_ILEFTTRIGGER:
-					axisValue = (state.Gamepad.bLeftTrigger - 128) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
+					axisValue = (state.Gamepad.bLeftTrigger + CHAR_MIN) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
 					break;
 				case GAMEPAD_XINPUT_IRIGHTTRIGGER:
-					axisValue = (state.Gamepad.bRightTrigger - 128) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
+					axisValue = (state.Gamepad.bRightTrigger + CHAR_MIN) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
 					break;
 				case GAMEPAD_XINPUT_ITHUMBLX:
 					axisValue = state.Gamepad.sThumbLX;
@@ -173,6 +173,13 @@ void _queryXinput()
 				case GAMEPAD_XINPUT_ITHUMBRY:
 					axisValue = state.Gamepad.sThumbRY;
 					break;
+				}
+
+				if(axisValue > GAMEPAD_AXIS_MAX) {
+					axisValue = GAMEPAD_AXIS_MAX;
+				}
+				else if(axisValue < GAMEPAD_AXIS_MIN) {
+					axisValue = GAMEPAD_AXIS_MIN;
 				}
 
 				if(currentGamepad->axis[i] != axisValue) {

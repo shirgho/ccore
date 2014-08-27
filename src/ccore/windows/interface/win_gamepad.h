@@ -22,7 +22,7 @@
 #define GAMEPAD_XINPUT_ITHUMBRX 4
 #define GAMEPAD_XINPUT_ITHUMBRY 5
 
-#define GAMEPAD_XINPUT_TRIGGER_FACTOR (SHRT_MAX / 128)
+#define GAMEPAD_XINPUT_TRIGGER_FACTOR (SHRT_MAX / CHAR_MAX)
 
 void _generateGamepadEvents(RAWINPUT *raw);
 void _queryXinput();
