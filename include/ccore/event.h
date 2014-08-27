@@ -90,7 +90,7 @@ extern "C"
 #ifdef X11
 #include <X11/keysym.h>
 #define KEYDEF(x11,win) x11
-#elif defined WIN32
+#elif defined WINDOWS
 #include <Windows.h>
 #define KEYDEF(x11,win) win
 #endif
