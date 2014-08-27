@@ -218,19 +218,19 @@ void ccGamepadFree(void)
 	inotify_rm_watch(GAMEPADS_DATA()->fd, GAMEPADS_DATA()->watch);
 	close(GAMEPADS_DATA()->fd);
 
-	for(i = 0; i < _gamepads->amount; i++){
-		if(_gamepads->gamepad[i].plugged){
-			close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
-		}
-
-		free(_gamepads->gamepad[i].name);
-		free(_gamepads->gamepad[i].data);
-	}
 	if(_gamepads->amount != 0){
+		for(i = 0; i < _gamepads->amount; i++){
+			if(_gamepads->gamepad[i].plugged){
+				close(GAMEPAD_DATA(_gamepads->gamepad + i)->fd);
+			}
+
+			free(_gamepads->gamepad[i].name);
+			free(_gamepads->gamepad[i].data);
+			free(_gamepads->gamepad[i].button);
+			free(_gamepads->gamepad[i].axis);
+		}
 		free(_gamepads->gamepad);
 	}
 	free(_gamepads->data);
 	free(_gamepads);
-
-	_gamepads->amount = 0;
 }

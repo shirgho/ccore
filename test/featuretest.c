@@ -197,6 +197,9 @@ int main(int argc, char** argv)
 							// Revert all resolutions
 							ccDisplayRevertModes();
 							break;
+						default:
+							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
+							break;
 					}
 
 					if(!logoScreen) {
@@ -268,9 +271,6 @@ int main(int argc, char** argv)
 		ccGLSwapBuffers();
 
 	}
-
-	// Revert all resolutions
-	ccDisplayRevertModes();
 
 	// Free memory before terminating
 	ccGamepadFree();

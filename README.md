@@ -1,8 +1,15 @@
 ccore
 =====
 
-A development library for games which makes it easier to use low level system functionality while maintaining cross-platform useabillity.
-It is currently developed for Win32 (Windows 2000 and higher) and Linux with X11. We are planning on adding a Mac version later.
+is a simple abstraction layer between different Operating Systems. It's focused on Game Development, and only tries to abstract the components of a Operating System which are required to develop a game, and to stay as close as possible to those components. It is possible to statically build an application using ccore with a filesize of ~1MB.
+
+###Features###
+The core features of ccore include support for the following:
+- OpenGL
+- Multithreading
+- Fullscreen on multiple displays
+- Raw input (mouse, keyboard & gamepads) for high-performance games
+- Multiple gamepads
 
 How to compile
 ==============
