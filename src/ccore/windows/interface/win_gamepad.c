@@ -142,6 +142,13 @@ void _queryXinput()
 					event.gamepadEvent.buttonId = i;
 					_ccEventStackPush(event);
 				}
+				else if(currentGamepad->button[i] == true && !(state.Gamepad.wButtons & _gamepadXinputButtons[i])) {
+					currentGamepad->button[i] = false;
+
+					event.gamepadEvent.type = CC_GAMEPAD_BUTTON_UP;
+					event.gamepadEvent.buttonId = i;
+					_ccEventStackPush(event);
+				}
 			}
 		}
 		else {
