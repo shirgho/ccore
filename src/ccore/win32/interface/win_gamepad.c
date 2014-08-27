@@ -78,10 +78,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		currentGamepad->data = malloc(sizeof(ccGamepad_win));
 
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPAD_DATA->preparsedDataSize);
-		GAMEPAD_DATA->preparsedData = malloc(GAMEPAD_DATA->preparsedDataSize); // TODO: is it necessary to cache preparsed data for each gamepad device? needs testing.
+		GAMEPAD_DATA->preparsedData = malloc(GAMEPAD_DATA->preparsedDataSize);
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPAD_DATA->preparsedData, &GAMEPAD_DATA->preparsedDataSize);
 
-		currentGamepad->name = "Gamepad";
+		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
+		currentGamepad->supportsVibration = false;
 		currentGamepad->id = (int)raw->header.hDevice;
 		HidP_GetCaps(GAMEPAD_DATA->preparsedData, &GAMEPAD_DATA->caps);
 

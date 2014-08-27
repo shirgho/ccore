@@ -37,9 +37,8 @@
 // Includes libraries automatically when using visual studio:
 #ifdef _MSC_VER
 #pragma comment(lib, "opengl32")
-#pragma comment(lib, "glu32")
 #pragma comment(lib, "hid.lib")
-
+#pragma comment(lib, "XInput.lib")
 #endif
 #else
 #error "OS not supported!"

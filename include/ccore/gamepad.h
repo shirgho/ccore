@@ -65,6 +65,7 @@ typedef struct {
 	int axisAmount, buttonAmount, id;
 
 	bool plugged;
+	bool supportsVibration;
 
 	void *data;
 } ccGamepad;

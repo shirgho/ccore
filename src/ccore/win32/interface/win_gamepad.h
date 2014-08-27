@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <hidsdi.h>
+#include <Xinput.h>
 
 #include <ccore/gamepad.h>
 
