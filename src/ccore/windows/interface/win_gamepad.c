@@ -156,10 +156,10 @@ void _queryXinput()
 			for(i = 0; i < GAMEPAD_XINPUT_AXISCOUNT; i++) {
 				switch(i) {
 				case GAMEPAD_XINPUT_ILEFTTRIGGER:
-					axisValue = state.Gamepad.bLeftTrigger;
+					axisValue = (state.Gamepad.bLeftTrigger - 128) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
 					break;
 				case GAMEPAD_XINPUT_IRIGHTTRIGGER:
-					axisValue = state.Gamepad.bRightTrigger;
+					axisValue = (state.Gamepad.bRightTrigger - 128) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
 					break;
 				case GAMEPAD_XINPUT_ITHUMBLX:
 					axisValue = state.Gamepad.sThumbLX;
