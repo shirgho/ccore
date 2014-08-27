@@ -93,6 +93,8 @@ void _queryXinput()
 		result = XInputGetState(i, &state);
 
 		if(result == ERROR_SUCCESS) {
+			int axisValue;
+
 			// Handle creating or reconnecting
 			if(GAMEPADS_DATA->xInputConnected[i] == -1 || ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged == false) {
 				if(GAMEPADS_DATA->xInputConnected[i] == -1) {
@@ -147,6 +149,37 @@ void _queryXinput()
 
 					event.gamepadEvent.type = CC_GAMEPAD_BUTTON_UP;
 					event.gamepadEvent.buttonId = i;
+					_ccEventStackPush(event);
+				}
+			}
+
+			for(i = 0; i < GAMEPAD_XINPUT_AXISCOUNT; i++) {
+				switch(i) {
+				case GAMEPAD_XINPUT_ILEFTTRIGGER:
+					axisValue = state.Gamepad.bLeftTrigger;
+					break;
+				case GAMEPAD_XINPUT_IRIGHTTRIGGER:
+					axisValue = state.Gamepad.bRightTrigger;
+					break;
+				case GAMEPAD_XINPUT_ITHUMBLX:
+					axisValue = state.Gamepad.sThumbLX;
+					break;
+				case GAMEPAD_XINPUT_ITHUMBLY:
+					axisValue = state.Gamepad.sThumbLY;
+					break;
+				case GAMEPAD_XINPUT_ITHUMBRX:
+					axisValue = state.Gamepad.sThumbRX;
+					break;
+				case GAMEPAD_XINPUT_ITHUMBRY:
+					axisValue = state.Gamepad.sThumbRY;
+					break;
+				}
+
+				if(currentGamepad->axis[i] != axisValue) {
+					currentGamepad->axis[i] = axisValue;
+
+					event.gamepadEvent.type = CC_GAMEPAD_AXIS_MOVE;
+					event.gamepadEvent.axisId = i;
 					_ccEventStackPush(event);
 				}
 			}
