@@ -2,6 +2,7 @@
 
 ccError ccGamepadInitialize(void)
 {
+	int i;
 	ccAssert(_window != NULL);
 
 	ccMalloc(_gamepads, sizeof(ccGamepads));
@@ -10,6 +11,10 @@ ccError ccGamepadInitialize(void)
 	_gamepads->gamepad = NULL;
 	
 	WINDOW_DATA->queryXinput = true;
+
+	for(i = 0; i < XUSER_MAX_COUNT; i++) {
+		GAMEPADS_DATA->xInputConnected[i] = -1;
+	}
 
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = 4;
@@ -54,15 +59,45 @@ void ccGamepadFree(void)
 void _queryXinput()
 {
 	int i;
+	ccGamepad *currentGamepad;
 
 	for(i = 0; i < XUSER_MAX_COUNT; i++) {
 		XINPUT_STATE state;
 		DWORD result;
+		ccEvent event;
+
+		event.type = CC_EVENT_GAMEPAD;
 
 		ZeroMemory(&state, sizeof(XINPUT_STATE));
 		result = XInputGetState(i, &state);
 
-		//if(result == ERROR_SUCCESS) printf("connected %d\n", i);
+		if(result == ERROR_SUCCESS) {
+			if(GAMEPADS_DATA->xInputConnected[i] == -1) {
+				// Allocate memory for new gamepad
+				_gamepads->amount++;
+				_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
+
+				GAMEPADS_DATA->xInputConnected[i] = ccGamepadCount() - 1;
+				currentGamepad = &_gamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
+				currentGamepad->data = malloc(sizeof(ccGamepad_win));
+
+				// Create connect event
+				event.gamepadEvent.id = ccGamepadCount() - 1;
+				event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
+				_ccEventStackPush(event);
+
+				// Fill new gamepad data
+				GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
+			}
+		}
+		else {
+			if(GAMEPADS_DATA->xInputConnected[i] != -1) {
+				ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged = false;
+				event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
+				event.gamepadEvent.type = CC_GAMEPAD_DISCONNECT;
+				_ccEventStackPush(event);
+			}
+		}
 	}
 }
 
@@ -80,7 +115,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	event.type = CC_EVENT_GAMEPAD;
 
 	for(i = 0; i < ccGamepadCount(); i++) {
-		if(((ccGamepad_win*)(_gamepads->gamepad[i].data))->raw.handle == raw->header.hDevice) {
+		if(((ccGamepad_win*)(_gamepads->gamepad[i].data))->inputType == CC_GAMEPAD_INPUT_RAW && ((ccGamepad_win*)(_gamepads->gamepad[i].data))->raw.handle == raw->header.hDevice) {
 			currentGamepad = &_gamepads->gamepad[i];
 			event.gamepadEvent.id = i;
 			break;

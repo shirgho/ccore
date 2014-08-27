@@ -45,6 +45,7 @@ typedef struct {
 
 typedef struct {
 	USAGE usage[GAMEPAD_MAXBUTTONS];
+	int xInputConnected[XUSER_MAX_COUNT];
 } ccGamepads_win;
 
 #define GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
