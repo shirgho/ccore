@@ -77,7 +77,7 @@ void ccGamepadFree(void)
 
 void _queryXinput()
 {
-	int i;
+	int i, j;
 	ccGamepad *currentGamepad;
 
 	for(i = 0; i < XUSER_MAX_COUNT; i++) {
@@ -89,7 +89,6 @@ void _queryXinput()
 
 		ZeroMemory(&state, sizeof(XINPUT_STATE));
 		result = XInputGetState(i, &state);
-
 		if(result == ERROR_SUCCESS) {
 			int axisValue;
 
@@ -134,25 +133,25 @@ void _queryXinput()
 			// Update gamepad
 			event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
 
-			for(i = 0; i < GAMEPAD_XINPUT_BUTTONCOUNT; i++) {
-				if(currentGamepad->button[i] == false && state.Gamepad.wButtons & _gamepadXinputButtons[i]) {
-					currentGamepad->button[i] = true;
+			for(j = 0; j < GAMEPAD_XINPUT_BUTTONCOUNT; j++) {
+				if(currentGamepad->button[j] == false && state.Gamepad.wButtons & _gamepadXinputButtons[j]) {
+					currentGamepad->button[j] = true;
 
 					event.gamepadEvent.type = CC_GAMEPAD_BUTTON_DOWN;
-					event.gamepadEvent.buttonId = i;
+					event.gamepadEvent.buttonId = j;
 					_ccEventStackPush(event);
 				}
-				else if(currentGamepad->button[i] == true && !(state.Gamepad.wButtons & _gamepadXinputButtons[i])) {
-					currentGamepad->button[i] = false;
+				else if(currentGamepad->button[j] == true && !(state.Gamepad.wButtons & _gamepadXinputButtons[j])) {
+					currentGamepad->button[j] = false;
 
 					event.gamepadEvent.type = CC_GAMEPAD_BUTTON_UP;
-					event.gamepadEvent.buttonId = i;
+					event.gamepadEvent.buttonId = j;
 					_ccEventStackPush(event);
 				}
 			}
 
-			for(i = 0; i < GAMEPAD_XINPUT_AXISCOUNT; i++) {
-				switch(i) {
+			for(j = 0; j < GAMEPAD_XINPUT_AXISCOUNT; j++) {
+				switch(j) {
 				case GAMEPAD_XINPUT_ILEFTTRIGGER:
 					axisValue = (state.Gamepad.bLeftTrigger + CHAR_MIN) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
 					break;
@@ -180,11 +179,11 @@ void _queryXinput()
 					axisValue = GAMEPAD_AXIS_MIN;
 				}
 
-				if(currentGamepad->axis[i] != axisValue) {
-					currentGamepad->axis[i] = axisValue;
+				if(currentGamepad->axis[j] != axisValue) {
+					currentGamepad->axis[j] = axisValue;
 
 					event.gamepadEvent.type = CC_GAMEPAD_AXIS_MOVE;
-					event.gamepadEvent.axisId = i;
+					event.gamepadEvent.axisId = j;
 					_ccEventStackPush(event);
 				}
 			}
