@@ -83,7 +83,7 @@ typedef struct {
 ccGamepads *_gamepads;
 
 #define ccGamepadCount() _gamepads->amount
-#define ccGamepadGet(index) &_gamepads->gamepad[index]
+#define ccGamepadGet(index) (&_gamepads->gamepad[index])
 
 ccError ccGamepadInitialize(void); // Initializes gamepad input
 ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force);
