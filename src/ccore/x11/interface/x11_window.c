@@ -57,6 +57,8 @@ bool checkRawSupport()
 {
 	int event, error, mayor, minor;
 
+	return false;
+
 	if(!XQueryExtension(WINDOW_DATA->XDisplay, "XInputExtension", &WINDOW_DATA->XInputOpcode, &event, &error)){
 		return false;
 	}
@@ -175,8 +177,10 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	if(flags & CC_WINDOW_FLAG_PREFERRAW){
-		initRawSupport();
 		_window->supportsRawInput = checkRawSupport();
+		if(_window->supportsRawInput){
+			initRawSupport();
+		}
 	}
 
 	_window->mouse.x = _window->mouse.y = 0;
