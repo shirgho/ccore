@@ -22,6 +22,8 @@
 #define GAMEPAD_XINPUT_ITHUMBRX 4
 #define GAMEPAD_XINPUT_ITHUMBRY 5
 
+#define GAMEPAD_XINPUT_HAPTICAMOUNT 2
+
 #define GAMEPAD_XINPUT_TRIGGER_FACTOR (SHRT_MAX / CHAR_MAX)
 
 void _generateGamepadEvents(RAWINPUT *raw);
@@ -44,7 +46,10 @@ typedef struct {
 } ccGamepad_win_raw;
 
 typedef struct {
-	ccGamepad_win_raw *raw;
+	union {
+		ccGamepad_win_raw *raw;
+		int xinputIndex;
+	};
 	ccGamepadInputType inputType;
 } ccGamepad_win;
 

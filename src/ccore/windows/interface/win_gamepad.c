@@ -20,7 +20,26 @@ static int _gamepadXinputButtons[] =
 
 ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force)
 {
+	XINPUT_VIBRATION vibration;
+
+	ccAssert(gamepad != NULL);
+
 	if(hapticIndex >= gamepad->hapticAmount) return CC_ERROR_NOHAPTIC;
+
+	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+
+	if(((ccGamepad_win*)gamepad->data)->inputType == CC_GAMEPAD_INPUT_XINPUT) {
+		switch(hapticIndex) {
+		case 0:
+			vibration.wLeftMotorSpeed = (WORD)force;
+			break;
+		case 1:
+			vibration.wRightMotorSpeed = (WORD)force;
+			break;
+		}
+
+		if(XInputSetState(((ccGamepad_win*)gamepad->data)->xinputIndex, &vibration) != ERROR_SUCCESS) return CC_ERROR_NOHAPTIC;
+	}
 
 	return CC_ERROR_NONE;
 }
@@ -117,10 +136,11 @@ void _queryXinput()
 
 					// Fill new gamepad data
 					GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
+					GAMEPAD_DATA->xinputIndex = i;
 
 					currentGamepad->name = "X360 gamepad";
 					currentGamepad->plugged = true;
-					currentGamepad->hapticAmount = 0;
+					currentGamepad->hapticAmount = GAMEPAD_XINPUT_HAPTICAMOUNT;
 					currentGamepad->buttonAmount = GAMEPAD_XINPUT_BUTTONCOUNT;
 					currentGamepad->axisAmount = GAMEPAD_XINPUT_AXISCOUNT;
 					currentGamepad->button = calloc(GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
@@ -129,6 +149,7 @@ void _queryXinput()
 				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
 					// Reconnect a previously disconnected gamepad
 					ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged = true;
+
 					event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
 					event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
 					_ccEventStackPush(event);
