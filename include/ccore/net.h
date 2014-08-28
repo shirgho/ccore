@@ -30,8 +30,35 @@
 extern "C"
 #endif
 
+#ifdef X11
+#define CC_NET_ERROR_SOCKET_INVALID -1
+#define CC_NET_ERROR_SOCKET_ERROR -1
+#define CC_NET_ERROR_SOCKET_WOULDBLOCK EWOULDBLOCK
+
+typedef ccSocket int
+
+#define _close close
+#define _ioctl ioctl
+#define _errno errno
+
+#elif defined WINDOWS
+#define CC_NET_ERROR_SOCKET_INVALID INVALID_SOCKET
+#define CC_NET_ERROR_SOCKET_ERROR SOCKET_ERROR
+#define CC_NET_ERROR_SOCKET_WOULDBLOCK WSAEWOULDBLOCK
+
+#define _close closesocket
+#define _ioctl ioctlsocket
+#define _errno WSAGetLastError()
+
+typedef ccSocket SOCKET
+#endif
+
 ccError ccNetInitialize();
 ccError ccNetFree();
+#define ccNetClose(x) _close(x)
+#define ccNetIoctl(x, y, z) _ioctl(x, y, z)
+
+#define ccNetLastError() _errno
 
 #ifdef __cplusplus
 }
