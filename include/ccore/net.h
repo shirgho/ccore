@@ -24,3 +24,15 @@
 #pragma once
 
 #include "core.h"
+#include "error.h"
+
+#ifdef __cplusplus
+extern "C"
+#endif
+
+ccError ccNetInitialize();
+ccError ccNetFree();
+
+#ifdef __cplusplus
+}
+#endif

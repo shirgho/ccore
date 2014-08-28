@@ -49,6 +49,9 @@ typedef enum {
 	// Thread related
 	CC_ERROR_THREAD, // CCORE couldn't start a thread
 
+	// Networking related
+	CC_ERROR_NET,
+
 	// Gamepad related
 	CC_ERROR_NOGAMEPAD, // No gamepads could be found
 	CC_ERROR_GAMEPADDATA, // The gamepad couldn not be read
