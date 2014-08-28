@@ -244,36 +244,29 @@ bool ccWindowPollEvent(void)
 			switch(cookie->evtype){
 				case XI_RawMotion:
 					_window->event.type = CC_EVENT_MOUSE_MOVE;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					_window->event.mouseVector = getRawMouseMovement(cookie->data);
 					break;
 				case XI_RawButtonPress:
 					_window->event.type = CC_EVENT_MOUSE_DOWN;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					_window->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawButtonRelease:
 					_window->event.type = CC_EVENT_MOUSE_UP;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					_window->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawKeyPress:
 					_window->event.type = CC_EVENT_KEY_DOWN;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					_window->event.keyCode = getRawKeyboardCode(cookie->data);
 					break;
 				case XI_RawKeyRelease:
 					_window->event.type = CC_EVENT_KEY_UP;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					_window->event.keyCode = getRawKeyboardCode(cookie->data);
 					break;
 				case XI_Enter:
 					_window->event.type = CC_EVENT_FOCUS_GAINED;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					break;
 				case XI_Leave:
 					_window->event.type = CC_EVENT_FOCUS_LOST;
-					_window->event.deviceId = ((XIDeviceEvent*)cookie->data)->deviceid;
 					break;
 			}
 			break;
