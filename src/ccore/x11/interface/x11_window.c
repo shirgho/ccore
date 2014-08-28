@@ -125,14 +125,9 @@ ccPoint getRawMouseMovement(XIRawEvent *event)
 	return delta;
 }
 
-unsigned int getRawKeyboardCode(XIRawEvent *event)
+inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 {
-	KeySym sym;
-	int symsPerCode;
-
-	sym = XGetKeyboardMapping(WINDOW_DATA->XDisplay, event->detail, 1, &symsPerCode)[0];
-
-	return XKeysymToString(sym)[0];
+	return XGetKeyboardMapping(WINDOW_DATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
