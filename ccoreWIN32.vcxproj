@@ -30,8 +30,8 @@
     <ClCompile Include="src\ccore\windows\interface\win_gamepad.c" />
     <ClCompile Include="src\ccore\windows\interface\win_opengl.c" />
     <ClCompile Include="src\ccore\windows\interface\win_window.c" />
-    <ClCompile Include="src\ccore\windows\net\win_net.c" />
     <ClCompile Include="src\ccore\windows\utils\win_dirUtils.c" />
+    <ClCompile Include="src\ccore\windows\utils\win_net.c" />
     <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
     <ClCompile Include="src\ccore\windows\utils\win_time.c" />
     <ClCompile Include="test\featuretest.c" />
@@ -60,8 +60,8 @@
     <ClInclude Include="src\ccore\windows\interface\win_gamepad.h" />
     <ClInclude Include="src\ccore\windows\interface\win_opengl.h" />
     <ClInclude Include="src\ccore\windows\interface\win_window.h" />
-    <ClInclude Include="src\ccore\windows\net\win_net.h" />
     <ClInclude Include="src\ccore\windows\utils\win_dirUtils.h" />
+    <ClInclude Include="src\ccore\windows\utils\win_net.h" />
     <ClInclude Include="src\ccore\windows\utils\win_thread.h" />
     <ClInclude Include="src\ccore\windows\utils\win_time.h" />
     <ClInclude Include="test\tga.h" />

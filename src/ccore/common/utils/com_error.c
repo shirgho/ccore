@@ -51,6 +51,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_MOUSEDATA:
 			return "The mouse could not be read";
 			break;
+		case CC_ERROR_NOHAPTIC:
+			return "This haptic motor is not accessible";
+			break;
 		default:
 			return "Error message not defined";
 			break;
