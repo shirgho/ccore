@@ -28,6 +28,7 @@
 
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 
 #ifdef X11
@@ -50,7 +51,7 @@ typedef int ccSocket
 #define _ioctl ioctlsocket
 #define _errno WSAGetLastError()
 
-typedef SOCKET ccSocket
+	typedef SOCKET ccSocket;
 #endif
 
 ccError ccNetInitialize();
