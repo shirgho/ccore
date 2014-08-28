@@ -35,11 +35,14 @@ static ccError createGamepad(char *locName, int i)
 	while(read(fd, buf, 64) > 0);
 
 	_gamepads->gamepad[i].plugged = true;
-	_gamepads->gamepad[i].axisAmount = _gamepads->gamepad[i].buttonAmount = 0;
+	_gamepads->gamepad[i].axisAmount = 
+		_gamepads->gamepad[i].buttonAmount = 
+		_gamepads->gamepad[i].hapticAmount = 0;
 	ccMalloc(_gamepads->gamepad[i].name, 80);
 
 	ioctl(fd, JSIOCGAXES, &_gamepads->gamepad[i].axisAmount);
 	ioctl(fd, JSIOCGBUTTONS, &_gamepads->gamepad[i].buttonAmount);
+	ioctl(fd, EVIOCGEFFECTS, &_gamepads->gamepad[i].hapticAmount);
 	ioctl(fd, JSIOCGNAME(80), _gamepads->gamepad[i].name);
 
 	ccCalloc(_gamepads->gamepad[i].axis, _gamepads->gamepad[i].axisAmount, sizeof(int));
@@ -205,6 +208,12 @@ error:
 	close(fd);
 	close(watch);
 	return CC_ERROR_GAMEPADDATA;
+}
+
+ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force)
+{
+
+	return CC_ERROR_NONE;
 }
 
 void ccGamepadFree(void)

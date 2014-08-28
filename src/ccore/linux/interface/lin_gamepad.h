@@ -7,6 +7,7 @@
 #include <time.h>
 #include <sys/ioctl.h>
 #include <sys/inotify.h>
+#include <linux/input.h>
 #include <linux/joystick.h>
 
 #include <ccore/gamepad.h>
