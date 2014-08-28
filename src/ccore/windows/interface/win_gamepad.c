@@ -18,6 +18,13 @@ static int _gamepadXinputButtons[] =
 	XINPUT_GAMEPAD_START
 };
 
+ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force)
+{
+	
+
+	return CC_ERROR_NONE;
+}
+
 ccError ccGamepadInitialize(void)
 {
 	int i;
@@ -93,7 +100,7 @@ void _queryXinput()
 			int axisValue;
 
 			// Handle creating or reconnecting
-			if(GAMEPADS_DATA->xInputConnected[i] == -1 || ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged == false) {
+			if(GAMEPADS_DATA->xInputConnected[i] == -1 || ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
 				if(GAMEPADS_DATA->xInputConnected[i] == -1) {
 					// Allocate memory for newly connected gamepad
 					_gamepads->amount++;
@@ -120,9 +127,9 @@ void _queryXinput()
 					currentGamepad->button = calloc(GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
 					currentGamepad->axis = malloc(GAMEPAD_XINPUT_AXISCOUNT * sizeof(int));
 				}
-				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged == false) {
+				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
 					// Reconnect a previously disconnected gamepad
-					ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged = true;
+					ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged = true;
 					event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
 					event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
 					_ccEventStackPush(event);
@@ -190,8 +197,8 @@ void _queryXinput()
 			}
 		}
 		else {
-			if(GAMEPADS_DATA->xInputConnected[i] != -1 && ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged != false) {
-				ccGamepadGet(GAMEPADS_DATA->xInputConnected[i]).plugged = false;
+			if(GAMEPADS_DATA->xInputConnected[i] != -1 && ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged != false) {
+				ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged = false;
 				event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
 				event.gamepadEvent.type = CC_GAMEPAD_DISCONNECT;
 				_ccEventStackPush(event);
