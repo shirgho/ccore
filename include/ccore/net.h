@@ -36,7 +36,7 @@ extern "C"
 #define CC_NET_ERROR_SOCKET_ERROR -1
 #define CC_NET_ERROR_SOCKET_WOULDBLOCK EWOULDBLOCK
 
-typedef int ccSocket
+typedef int ccSocket;
 
 #define _close close
 #define _ioctl ioctl
@@ -51,7 +51,7 @@ typedef int ccSocket
 #define _ioctl ioctlsocket
 #define _errno WSAGetLastError()
 
-	typedef SOCKET ccSocket;
+typedef SOCKET ccSocket;
 #endif
 
 ccError ccNetInitialize();
