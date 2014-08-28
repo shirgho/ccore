@@ -32,6 +32,8 @@ extern "C"
 #endif
 
 #ifdef X11
+#include <errno.h>
+
 #define CC_NET_ERROR_SOCKET_INVALID -1
 #define CC_NET_ERROR_SOCKET_ERROR -1
 #define CC_NET_ERROR_SOCKET_WOULDBLOCK EWOULDBLOCK

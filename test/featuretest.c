@@ -27,6 +27,11 @@
 #endif
 
 #include <time.h>
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <sys/sendfile.h>
+#include <netinet/in.h>
+#include <unistd.h>
 
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
@@ -79,6 +84,7 @@ void mouseTrail();
 
 // This defines a threadable function
 ccThreadFunction(counter);
+void ccNetworkSend(char *string);
 
 // Custom ceil
 int cceil(float n);
@@ -208,6 +214,9 @@ int main(int argc, char** argv)
 							// Revert all resolutions
 							ccDisplayRevertModes();
 							break;
+						case CC_KEY_S:
+							ccNetworkSend("Test");
+							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
 							break;
@@ -331,6 +340,52 @@ ccThreadFunction(counter)
 	ccPrintf("\nPassed integer: %d\n", *(int*)ccThreadData);
 
 	ccThreadReturn();
+}
+
+// A network sending procedure is implemented here
+
+void ccNetworkSend(char *string)
+{
+	ccSocket listenSock, sendSock;
+	struct sockaddr_in serv, client;
+	unsigned int len;
+
+	// Create TCP connection
+	listenSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if(listenSock == CC_NET_ERROR_SOCKET_INVALID){
+		ccPrintf("Creating socket (socket) failed with code %d\n", ccNetLastError());
+		return;
+	}
+
+	serv.sin_family = AF_INET;
+	// Open on port 1337
+	serv.sin_port = htons(1337);
+	serv.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	if(setsockopt(listenSock, SOL_SOCKET, SO_REUSEADDR, (int[]){1}, sizeof(int)) == CC_NET_ERROR_SOCKET_ERROR){
+		ccPrintf("Creating socket (setsockopt) failed with code %d\n", ccNetLastError());
+		return;
+	}
+
+	if(bind(listenSock, (struct sockaddr*)&serv, sizeof(struct sockaddr)) == CC_NET_ERROR_SOCKET_ERROR){
+		ccPrintf("Creating socket (bind) failed with code %d\n", ccNetLastError());
+		return;
+	}
+
+	if(listen(listenSock, 1) == CC_NET_ERROR_SOCKET_ERROR){
+		ccPrintf("Creating socket (listen) failed with code %d\n", ccNetLastError());
+		return;
+	}
+
+	sendSock = accept(listenSock, (struct sockaddr*)&client, &len);
+	if(sendSock == CC_NET_ERROR_SOCKET_INVALID){
+		ccPrintf("Creating socket (accept) failed with code %d\n", ccNetLastError());
+		return;
+	}
+
+	if(write(sendSock, string, strlen(string)) != strlen(string)){
+		ccPrintf("Writing to socket failed with code %d\n", ccNetLastError());
+	}
 }
 
 // All code below this point is not CCORE related
