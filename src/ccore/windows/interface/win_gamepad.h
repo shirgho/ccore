@@ -44,14 +44,7 @@ typedef struct {
 } ccGamepad_win_raw;
 
 typedef struct {
-	int i;
-} ccGamepad_win_xinput;
-
-typedef struct {
-	union {
-		ccGamepad_win_raw raw;
-		ccGamepad_win_xinput xinput;
-	};
+	ccGamepad_win_raw *raw;
 	ccGamepadInputType inputType;
 } ccGamepad_win;
 

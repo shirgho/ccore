@@ -180,7 +180,7 @@ extern "C"
 #define CC_KEY_RIGHT KEYDEF(XK_Right, VK_RIGHT)
 #define CC_KEY_DOWN KEYDEF(XK_Down, VK_DOWN)
 
-	char ccKeyToChar(int key);
+char ccKeyToChar(int key);
 
 #ifdef __cplusplus
 }

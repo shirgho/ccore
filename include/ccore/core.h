@@ -38,7 +38,7 @@
 #ifdef _MSC_VER
 #pragma comment(lib, "opengl32")
 #pragma comment(lib, "hid.lib")
-#pragma comment(lib, "XInput.lib")
+#pragma comment(lib, "XInput9_1_0.lib")
 #endif
 
 #else
