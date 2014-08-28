@@ -59,6 +59,13 @@
 #define RES_HEIGHT 600
 #define SQUARE_SIZE 50
 
+#ifdef WINDOWS
+// Check for leaks
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+
 // These functions will be implemented later in this file
 void initialize();
 void setProjection();
@@ -283,7 +290,12 @@ int main(int argc, char** argv)
 	ccGLFreeContext();
 	ccWindowFree();
 
-	//free(squareAlpha);
+	free(squareAlpha);
+
+#ifdef WINDOWS
+	// Check for leaks
+	_CrtDumpMemoryLeaks();
+#endif
 
 	return 0;
 }
