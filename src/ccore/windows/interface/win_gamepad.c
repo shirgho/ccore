@@ -113,7 +113,8 @@ void _queryXinput()
 
 					currentGamepad->name = "X360 gamepad";
 					currentGamepad->plugged = true;
-					currentGamepad->supportsVibration = true;
+					currentGamepad->supportsHaptic = true;
+					currentGamepad->hapticAmount = 0;
 					currentGamepad->buttonAmount = GAMEPAD_XINPUT_BUTTONCOUNT;
 					currentGamepad->axisAmount = GAMEPAD_XINPUT_AXISCOUNT;
 					currentGamepad->button = calloc(GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
@@ -240,7 +241,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
-		currentGamepad->supportsVibration = false;
+		currentGamepad->supportsHaptic = false;
 		GAMEPAD_DATA->raw->handle = raw->header.hDevice;
 		HidP_GetCaps(GAMEPAD_DATA->raw->preparsedData, &GAMEPAD_DATA->raw->caps);
 

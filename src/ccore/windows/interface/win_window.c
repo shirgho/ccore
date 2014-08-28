@@ -147,9 +147,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 {
 	_window->event.type = CC_EVENT_SKIP;
 	switch(message) {
-	case WM_DEVICECHANGE:
-		//TODO: use this for replugging raw input gamepads
-		break;
 	case WM_INPUT:
 		processRid((HRAWINPUT)lParam);
 		break;
@@ -213,8 +210,8 @@ bool ccWindowPollEvent(void)
 
 	ccAssert(_window != NULL);
 	
-	if(canPollXinput) {
-		canPollXinput = false;
+	if(canPollInput) {
+		canPollInput = false;
 		if(WINDOW_DATA->queryXinput) _queryXinput();
 	}
 
