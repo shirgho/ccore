@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 	ccNetInitialize();
 
 	// Create a centered window that cannot be resized
-	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_PREFERRAW)));
+	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE)));
 	ccWindowCenter();
 
 	// Prepare gamepad capturing

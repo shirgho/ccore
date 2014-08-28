@@ -53,7 +53,7 @@ static void setResizable(bool resizable)
 	XFree(sizeHints);
 }
 
-bool checkRawSupport()
+static bool checkRawSupport()
 {
 	int event, error, mayor, minor;
 
@@ -72,7 +72,7 @@ bool checkRawSupport()
 	return true;
 }
 
-void initRawSupport()
+static void initRawSupport()
 {
 	XIEventMask mask;
 
@@ -102,7 +102,7 @@ void initRawSupport()
 	free(mask.mask);
 }
 
-ccPoint getRawMouseMovement(XIRawEvent *event)
+static ccPoint getRawMouseMovement(XIRawEvent *event)
 {
 	ccPoint delta;
 	double *rawValuator, *valuator;
@@ -127,7 +127,7 @@ ccPoint getRawMouseMovement(XIRawEvent *event)
 	return delta;
 }
 
-inline unsigned int getRawKeyboardCode(XIRawEvent *event)
+static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 {
 	return XGetKeyboardMapping(WINDOW_DATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
@@ -176,7 +176,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
-	if(flags & CC_WINDOW_FLAG_PREFERRAW){
+	if(flags & CC_WINDOW_FLAG_NORAWINPUT != 0){
 		_window->supportsRawInput = checkRawSupport();
 		if(_window->supportsRawInput){
 			initRawSupport();
