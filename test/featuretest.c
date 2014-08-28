@@ -253,7 +253,6 @@ int main(int argc, char** argv)
 					if(!logoScreen) {
 						mouseTrail();
 					}
-					ccPrintf("Mouse vector: %d, %d\n", ccWindowGetEvent().mouseVector.x, ccWindowGetEvent().mouseVector.y);
 					break;
 				case CC_EVENT_GAMEPAD:
 					if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_AXIS_MOVE){
