@@ -18,6 +18,13 @@ static int _gamepadXinputButtons[] =
 	XINPUT_GAMEPAD_START
 };
 
+ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force)
+{
+	
+
+	return CC_ERROR_NONE;
+}
+
 ccError ccGamepadInitialize(void)
 {
 	int i;

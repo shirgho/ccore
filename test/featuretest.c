@@ -252,11 +252,15 @@ int main(int argc, char** argv)
 					break;
 				case CC_EVENT_GAMEPAD:
 					if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_AXIS_MOVE){
-						ccPrintf("Gamepad %d axis %d moved %d\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.axisId, ccGamepadGet(ccWindowGetEvent().gamepadEvent.id).axis[ccWindowGetEvent().gamepadEvent.axisId]);
+						ccPrintf("Gamepad %d axis %d moved %d\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.axisId, ccGamepadGet(ccWindowGetEvent().gamepadEvent.id)->axis[ccWindowGetEvent().gamepadEvent.axisId]);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_DOWN){
 						ccPrintf("Gamepad %d button %d down\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.buttonId);
+						if(ccWindowGetEvent().gamepadEvent.buttonId == 0)
+							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, 32000);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_UP){
 						ccPrintf("Gamepad %d button %d up\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.buttonId);
+						if(ccWindowGetEvent().gamepadEvent.buttonId == 0)
+							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, 32000);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_CONNECT){
 						ccPrintf("Gamepad %d connected\n",  ccWindowGetEvent().gamepadEvent.id);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_DISCONNECT){
