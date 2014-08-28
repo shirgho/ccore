@@ -52,6 +52,5 @@ ccError ccGLFreeContext(void)
 ccError ccGLSwapBuffers(void)
 {
 	ccAssert(_window != NULL);
-
 	return SwapBuffers(WINDOW_DATA->hdc) == TRUE?CC_ERROR_NONE:CC_ERROR_CANTSWAP;
 }

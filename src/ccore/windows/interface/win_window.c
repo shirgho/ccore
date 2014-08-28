@@ -209,10 +209,15 @@ static void regHinstance(HINSTANCE instanceHandle)
 
 bool ccWindowPollEvent(void)
 {
-	ccAssert(_window != NULL);
+	static bool canPollXinput = true;
 
-	if(WINDOW_DATA->queryXinput) _queryXinput();
+	ccAssert(_window != NULL);
 	
+	if(canPollXinput) {
+		canPollXinput = false;
+		if(WINDOW_DATA->queryXinput) _queryXinput();
+	}
+
 	if(WINDOW_DATA->eventStackPos != -1) {
 
 		_window->event = WINDOW_DATA->eventStack[WINDOW_DATA->eventStackIndex];
@@ -231,6 +236,7 @@ bool ccWindowPollEvent(void)
 		return true;
 	}
 
+	canPollXinput = true;
 	return false;
 }
 
