@@ -36,6 +36,7 @@
 #include <ccore/thread.h>
 #include <ccore/print.h>
 #include <ccore/gamepad.h>
+#include <ccore/net.h>
 
 #include "tga.h"
 
@@ -110,6 +111,9 @@ int main(int argc, char** argv)
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
+
+	// Initializing networking is required to use sockets
+	ccNetInitialize();
 
 	// Create a centered window that cannot be resized
 	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_PREFERRAW)));
@@ -275,6 +279,7 @@ int main(int argc, char** argv)
 	// Free memory before terminating
 	ccGamepadFree();
 	ccDisplayFree();
+	ccNetFree();
 	ccGLFreeContext();
 	ccWindowFree();
 
