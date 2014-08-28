@@ -68,7 +68,6 @@ typedef struct {
 	int axisAmount, buttonAmount, hapticAmount;
 
 	bool plugged;
-	bool supportsHaptic;
 
 	void *data;
 } ccGamepad;
