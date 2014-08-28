@@ -263,10 +263,22 @@ int main(int argc, char** argv)
 							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_HAPTIC_FORCE_MAX);
 							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_HAPTIC_FORCE_MAX);
 						}
+						else if(ccWindowGetEvent().gamepadEvent.buttonId == 10) {
+							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_HAPTIC_FORCE_MAX);
+						}
+						else if(ccWindowGetEvent().gamepadEvent.buttonId == 11) {
+							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_HAPTIC_FORCE_MAX);
+						}
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_UP){
 						ccPrintf("Gamepad %d button %d up\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.buttonId);
 						if(ccWindowGetEvent().gamepadEvent.buttonId == 0) {
 							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_HAPTIC_FORCE_MIN);
+							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_HAPTIC_FORCE_MIN);
+						}
+						else if(ccWindowGetEvent().gamepadEvent.buttonId == 10) {
+							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_HAPTIC_FORCE_MIN);
+						}
+						else if(ccWindowGetEvent().gamepadEvent.buttonId == 11) {
 							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_HAPTIC_FORCE_MIN);
 						}
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_CONNECT){
