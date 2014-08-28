@@ -209,7 +209,7 @@ static void regHinstance(HINSTANCE instanceHandle)
 
 bool ccWindowPollEvent(void)
 {
-	static bool canPollXinput = true;
+	static bool canPollInput = true;
 
 	ccAssert(_window != NULL);
 	
@@ -236,7 +236,7 @@ bool ccWindowPollEvent(void)
 		return true;
 	}
 
-	canPollXinput = true;
+	canPollInput = true;
 	return false;
 }
 
