@@ -85,8 +85,8 @@ static void processRid(HRAWINPUT rawInput)
 		
 		if(buttonFlags == 0) {
 			_window->event.type = CC_EVENT_MOUSE_MOVE;
-			_window->event.mouseVector.x = raw->data.mouse.lLastX;
-			_window->event.mouseVector.y = raw->data.mouse.lLastY;
+			_window->event.mouseDelta.x = raw->data.mouse.lLastX;
+			_window->event.mouseDelta.y = raw->data.mouse.lLastY;
 		}
 		else if(buttonFlags & RI_MOUSE_WHEEL) {
 			_window->event.type = CC_EVENT_MOUSE_SCROLL;

@@ -243,7 +243,7 @@ bool ccWindowPollEvent(void)
 			switch(cookie->evtype){
 				case XI_RawMotion:
 					_window->event.type = CC_EVENT_MOUSE_MOVE;
-					_window->event.mouseVector = getRawMouseMovement(cookie->data);
+					_window->event.mouseDelta = getRawMouseMovement(cookie->data);
 					break;
 				case XI_RawButtonPress:
 					_window->event.type = CC_EVENT_MOUSE_DOWN;
@@ -288,8 +288,8 @@ bool ccWindowPollEvent(void)
 		case MotionNotify:
 			if(!_window->supportsRawInput){
 				_window->event.type = CC_EVENT_MOUSE_MOVE;
-				_window->event.mouseVector.x = _window->mouse.x - event.xmotion.x;
-				_window->event.mouseVector.y = _window->mouse.y - event.xmotion.y;
+				_window->event.mouseDelta.x = _window->mouse.x - event.xmotion.x;
+				_window->event.mouseDelta.y = _window->mouse.y - event.xmotion.y;
 			}
 			if(_window->mouse.x != event.xmotion.x ||
 					_window->mouse.y != event.xmotion.y){

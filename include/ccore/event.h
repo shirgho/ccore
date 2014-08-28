@@ -76,7 +76,7 @@ extern "C"
 		// The union contains different data types for different events
 		union {
 			ccMouseButtonType mouseButton;
-			ccPoint mouseVector;
+			ccPoint mouseDelta;
 			unsigned int keyCode;
 			float scrollDelta;
 			ccGamepadEvent gamepadEvent;
