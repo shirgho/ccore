@@ -284,9 +284,9 @@ int main(int argc, char** argv)
 							ccGamepadHapticSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_HAPTIC_FORCE_MIN);
 						}
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_CONNECT){
-						ccPrintf("Gamepad %d connected\n",  ccWindowGetEvent().gamepadEvent.id);
+						ccPrintf("Gamepad %d \"%s\" connected\n",  ccWindowGetEvent().gamepadEvent.id, ccGamepadGet(ccWindowGetEvent().gamepadEvent.id)->name);
 					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_DISCONNECT){
-						ccPrintf("Gamepad %d disconnected\n",  ccWindowGetEvent().gamepadEvent.id);
+						ccPrintf("Gamepad %d \"%s\" disconnected\n", ccWindowGetEvent().gamepadEvent.id, ccGamepadGet(ccWindowGetEvent().gamepadEvent.id)->name);
 					}
 					break;
 				default:
