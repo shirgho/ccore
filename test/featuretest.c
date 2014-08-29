@@ -208,7 +208,7 @@ int main(int argc, char** argv)
 							ccDisplayRevertModes();
 							break;
 						case CC_KEY_S:
-							ccNetworkSend("Test");
+							//ccNetworkSend("Test");
 							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
@@ -304,7 +304,7 @@ int main(int argc, char** argv)
 		ccGLSwapBuffers();
 
 	}
-
+	
 	// Free memory before terminating
 	ccGamepadFree();
 	ccDisplayFree();
@@ -336,7 +336,7 @@ ccThreadFunction(counter)
 }
 
 // A network sending procedure is implemented here
-
+/*
 void ccNetworkSend(char *string)
 {
 	ccSocket listenSock, sendSock;
@@ -380,7 +380,7 @@ void ccNetworkSend(char *string)
 		ccPrintf("Writing to socket failed with code %d\n", ccNetLastError());
 	}
 }
-
+*/
 // All code below this point is not CCORE related
 
 void initialize()

@@ -9,6 +9,7 @@
 #include <ccore/assert.h>
 #include <ccore/gamepad.h>
 
+#include "../utils/win_dirUtils.h"
 #include "win_gamepad.h"
 
 #define NRAWINPUTDEVICES 3

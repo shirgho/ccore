@@ -72,7 +72,7 @@ static void processRid(HRAWINPUT rawInput)
 	GetRawInputData(rawInput, RID_INPUT, NULL, &WINDOW_DATA->dwSize, sizeof(RAWINPUTHEADER));
 
 	if(WINDOW_DATA->dwSize > WINDOW_DATA->lpbSize) {
-		WINDOW_DATA->lpb = WINDOW_DATA->lpbSize == 0?malloc(WINDOW_DATA->dwSize):realloc(WINDOW_DATA->lpb, WINDOW_DATA->dwSize);
+		WINDOW_DATA->lpb = realloc(WINDOW_DATA->lpb, WINDOW_DATA->dwSize);
 		WINDOW_DATA->lpbSize = WINDOW_DATA->dwSize;
 	}
 
@@ -257,6 +257,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->eventStack = NULL;
 	WINDOW_DATA->queryXinput = false;
 	WINDOW_DATA->lpbSize = 0;
+	WINDOW_DATA->lpb = NULL;
 	
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
@@ -302,6 +303,8 @@ ccError ccWindowFree(void)
 	ccAssert(_window != NULL);
 
 	freeRawInput();
+
+	_ccFreeDirs(); // Clean allocated directories in dirUtils
 
 	if(WINDOW_DATA->lpbSize != 0) free(WINDOW_DATA->lpb);
 

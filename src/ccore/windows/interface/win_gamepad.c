@@ -283,12 +283,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		capsLength = GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
 		HidP_GetValueCaps(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
 
-		// Get rumble outputs
-		printf("Output value caps: %d\n", GAMEPAD_DATA->raw->caps.NumberOutputValueCaps);
-
 		currentGamepad->buttonAmount = GAMEPAD_DATA->raw->buttonCaps->Range.UsageMax - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin + 1;
 		currentGamepad->axisAmount = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
 		currentGamepad->outputAmount = GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
+
+		printf("output count %d\n", currentGamepad->outputAmount);
 		
 		currentGamepad->button = calloc(currentGamepad->buttonAmount, sizeof(bool));
 		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);
@@ -297,9 +296,6 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		GAMEPAD_DATA->raw->axisFactor = malloc(sizeof(double)* currentGamepad->axisAmount);
 		GAMEPAD_DATA->raw->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
 		
-		//HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->raw->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[i].NotRange.Usage, &newInt, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
-		printf("status %d\n", HidP_SetUsageValue(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps[0].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[0].NotRange.Usage, LONG_MAX, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid));
-
 		for(i = 0; i < currentGamepad->axisAmount; i++) {
 			GAMEPAD_DATA->raw->axisFactor[i] = (double)(GAMEPAD_AXIS_MAX - GAMEPAD_AXIS_MIN) / (GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin);
 			GAMEPAD_DATA->raw->axisNegativeComponent[i] = ((GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin) >> 1) - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin;
@@ -340,8 +336,13 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	pressed:;
 	}
 
-	// Get axes
-	usageLength = currentGamepad->axisAmount;
+	// Try to send output
+	/*
+	if(HidP_SetUsageValue(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps[0].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[0].NotRange.Usage,
+		SHRT_MAX, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid) == HIDP_STATUS_SUCCESS) {
+		abort();
+	}
+	*/
 
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
