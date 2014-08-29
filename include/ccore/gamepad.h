@@ -37,8 +37,8 @@ extern "C"
 #define GAMEPAD_AXIS_MIN SHRT_MIN
 #define GAMEPAD_AXIS_MAX SHRT_MAX
 
-#define GAMEPAD_HAPTIC_FORCE_MIN 0
-#define GAMEPAD_HAPTIC_FORCE_MAX USHRT_MAX
+#define GAMEPAD_OUTPUT_VALUE_MIN 0
+#define GAMEPAD_OUTPUT_VALUE_MAX USHRT_MAX
 
 typedef enum {
 	CC_GAMEPAD_UNHANDLED = 0,
@@ -64,9 +64,9 @@ typedef struct {
 	char *name;
 	bool *button;
 	int *axis;
-	int *haptic;
+	int *output;
 
-	int axisAmount, buttonAmount, hapticAmount;
+	int axisAmount, buttonAmount, outputAmount;
 
 	bool plugged;
 
@@ -86,7 +86,7 @@ ccGamepads *_gamepads;
 #define ccGamepadGet(index) (&_gamepads->gamepad[index])
 
 ccError ccGamepadInitialize(void); // Initializes gamepad input
-ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force);
+ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 void ccGamepadFree(void); // Stops gamepad input
 
 #ifdef __cplusplus

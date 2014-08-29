@@ -18,22 +18,22 @@ static int _gamepadXinputButtons[] =
 	XINPUT_GAMEPAD_START
 };
 
-ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force)
+ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 {
 	int i;
 	XINPUT_VIBRATION vibration;
 
 	ccAssert(gamepad != NULL);
 
-	if(hapticIndex >= gamepad->hapticAmount) return CC_ERROR_NOHAPTIC;
+	if(hapticIndex >= gamepad->outputAmount) return CC_ERROR_NOHAPTIC;
 
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
 
 	if(((ccGamepad_win*)gamepad->data)->inputType == CC_GAMEPAD_INPUT_XINPUT) {
-		(ccGamepad_win*)gamepad->haptic[hapticIndex] = force;
+		(ccGamepad_win*)gamepad->output[hapticIndex] = force;
 
-		vibration.wLeftMotorSpeed = (WORD)(ccGamepad_win*)gamepad->haptic[0];
-		vibration.wRightMotorSpeed = (WORD)(ccGamepad_win*)gamepad->haptic[1];
+		vibration.wLeftMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[0];
+		vibration.wRightMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[1];
 
 		if(XInputSetState(((ccGamepad_win*)gamepad->data)->xinputIndex, &vibration) != ERROR_SUCCESS) return CC_ERROR_NOHAPTIC;
 	}
@@ -90,8 +90,8 @@ void ccGamepadFree(void)
 			free(_gamepads->gamepad[i].data);
 			free(_gamepads->gamepad[i].button);
 			free(_gamepads->gamepad[i].axis);
-			if(_gamepads->gamepad[i].hapticAmount != 0)
-				free(_gamepads->gamepad[i].haptic);
+			if(_gamepads->gamepad[i].outputAmount != 0)
+				free(_gamepads->gamepad[i].output);
 		}
 		free(_gamepads->gamepad);
 	}
@@ -137,14 +137,14 @@ void _queryXinput()
 					GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
 					GAMEPAD_DATA->xinputIndex = i;
 
-					currentGamepad->name = "X360 gamepad";
+					currentGamepad->name = "Xbox gamepad";
 					currentGamepad->plugged = true;
-					currentGamepad->hapticAmount = GAMEPAD_XINPUT_HAPTICAMOUNT;
+					currentGamepad->outputAmount = GAMEPAD_XINPUT_HAPTICAMOUNT;
 					currentGamepad->buttonAmount = GAMEPAD_XINPUT_BUTTONCOUNT;
 					currentGamepad->axisAmount = GAMEPAD_XINPUT_AXISCOUNT;
 					currentGamepad->button = calloc(GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
 					currentGamepad->axis = malloc(GAMEPAD_XINPUT_AXISCOUNT * sizeof(int));
-					currentGamepad->haptic = calloc(GAMEPAD_XINPUT_HAPTICAMOUNT, sizeof(int));
+					currentGamepad->output = calloc(GAMEPAD_XINPUT_HAPTICAMOUNT, sizeof(int));
 				}
 				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
 					// Reconnect a previously disconnected gamepad
@@ -268,7 +268,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
-		currentGamepad->hapticAmount = 0;
+		currentGamepad->outputAmount = 0; //TODO: maybe it's not
 		GAMEPAD_DATA->raw->handle = raw->header.hDevice;
 		HidP_GetCaps(GAMEPAD_DATA->raw->preparsedData, &GAMEPAD_DATA->raw->caps);
 
@@ -279,6 +279,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		HidP_GetButtonCaps(HidP_Input, GAMEPAD_DATA->raw->buttonCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
 		capsLength = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
 		HidP_GetValueCaps(HidP_Input, GAMEPAD_DATA->raw->valueCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
+
+		// Get rumble outputs
+		printf("Output value caps: %d\n", GAMEPAD_DATA->raw->caps.NumberOutputValueCaps);
+
+		
 
 		currentGamepad->buttonAmount = GAMEPAD_DATA->raw->buttonCaps->Range.UsageMax - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin + 1;
 		currentGamepad->axisAmount = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
