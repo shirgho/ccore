@@ -45,6 +45,7 @@ typedef int ccSocket;
 #define _errno errno
 
 #elif defined WINDOWS
+#include <winsock.h>
 #define CC_NET_ERROR_SOCKET_INVALID INVALID_SOCKET
 #define CC_NET_ERROR_SOCKET_ERROR SOCKET_ERROR
 #define CC_NET_ERROR_SOCKET_WOULDBLOCK WSAEWOULDBLOCK

@@ -93,6 +93,7 @@ void ccGamepadFree(void)
 			free(_gamepads->gamepad[i].data);
 			free(_gamepads->gamepad[i].button);
 			free(_gamepads->gamepad[i].axis);
+			free(_gamepads->gamepad[i].haptic);
 		}
 		free(_gamepads->gamepad);
 	}
@@ -145,6 +146,7 @@ void _queryXinput()
 					currentGamepad->axisAmount = GAMEPAD_XINPUT_AXISCOUNT;
 					currentGamepad->button = calloc(GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
 					currentGamepad->axis = malloc(GAMEPAD_XINPUT_AXISCOUNT * sizeof(int));
+					currentGamepad->haptic = calloc(GAMEPAD_XINPUT_HAPTICAMOUNT, sizeof(int));
 				}
 				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
 					// Reconnect a previously disconnected gamepad

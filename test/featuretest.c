@@ -26,13 +26,6 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
-#include <time.h>
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <sys/sendfile.h>
-#include <netinet/in.h>
-#include <unistd.h>
-
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/time.h>

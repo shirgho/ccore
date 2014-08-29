@@ -64,6 +64,7 @@ typedef struct {
 	char *name;
 	bool *button;
 	int *axis;
+	int *haptic;
 
 	int axisAmount, buttonAmount, hapticAmount;
 

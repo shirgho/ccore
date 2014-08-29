@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 #include <Windows.h>
-#include <Dbt.h>
 
 #include <ccore/window.h>
 
