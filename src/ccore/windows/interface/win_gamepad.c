@@ -20,6 +20,7 @@ static int _gamepadXinputButtons[] =
 
 ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force)
 {
+	int i;
 	XINPUT_VIBRATION vibration;
 
 	ccAssert(gamepad != NULL);
@@ -29,14 +30,10 @@ ccError ccGamepadHapticSet(ccGamepad *gamepad, int hapticIndex, int force)
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
 
 	if(((ccGamepad_win*)gamepad->data)->inputType == CC_GAMEPAD_INPUT_XINPUT) {
-		switch(hapticIndex) {
-		case 0:
-			vibration.wLeftMotorSpeed = (WORD)force;
-			break;
-		case 1:
-			vibration.wRightMotorSpeed = (WORD)force;
-			break;
-		}
+		(ccGamepad_win*)gamepad->haptic[hapticIndex] = force;
+
+		vibration.wLeftMotorSpeed = (WORD)(ccGamepad_win*)gamepad->haptic[0];
+		vibration.wRightMotorSpeed = (WORD)(ccGamepad_win*)gamepad->haptic[1];
 
 		if(XInputSetState(((ccGamepad_win*)gamepad->data)->xinputIndex, &vibration) != ERROR_SUCCESS) return CC_ERROR_NOHAPTIC;
 	}
@@ -93,7 +90,8 @@ void ccGamepadFree(void)
 			free(_gamepads->gamepad[i].data);
 			free(_gamepads->gamepad[i].button);
 			free(_gamepads->gamepad[i].axis);
-			free(_gamepads->gamepad[i].haptic);
+			if(_gamepads->gamepad[i].hapticAmount != 0)
+				free(_gamepads->gamepad[i].haptic);
 		}
 		free(_gamepads->gamepad);
 	}
