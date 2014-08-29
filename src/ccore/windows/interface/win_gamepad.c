@@ -82,6 +82,7 @@ void ccGamepadFree(void)
 			if(((ccGamepad_win*)_gamepads->gamepad[i].data)->inputType == CC_GAMEPAD_INPUT_RAW) {
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->buttonCaps);
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->valueCaps);
+				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->outputValueCaps);
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->axisFactor);
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->axisNegativeComponent);
 				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->preparsedData);
@@ -268,30 +269,36 @@ void _generateGamepadEvents(RAWINPUT *raw)
 
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
-		currentGamepad->outputAmount = 0; //TODO: maybe it's not
 		GAMEPAD_DATA->raw->handle = raw->header.hDevice;
 		HidP_GetCaps(GAMEPAD_DATA->raw->preparsedData, &GAMEPAD_DATA->raw->caps);
 
 		GAMEPAD_DATA->raw->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* GAMEPAD_DATA->raw->caps.NumberInputButtonCaps);
 		GAMEPAD_DATA->raw->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* GAMEPAD_DATA->raw->caps.NumberInputValueCaps);
+		GAMEPAD_DATA->raw->outputValueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* GAMEPAD_DATA->raw->caps.NumberOutputValueCaps);
 
 		capsLength = GAMEPAD_DATA->raw->caps.NumberInputButtonCaps;
 		HidP_GetButtonCaps(HidP_Input, GAMEPAD_DATA->raw->buttonCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
 		capsLength = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
 		HidP_GetValueCaps(HidP_Input, GAMEPAD_DATA->raw->valueCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
+		capsLength = GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
+		HidP_GetValueCaps(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
 
 		// Get rumble outputs
 		printf("Output value caps: %d\n", GAMEPAD_DATA->raw->caps.NumberOutputValueCaps);
 
-		
-
 		currentGamepad->buttonAmount = GAMEPAD_DATA->raw->buttonCaps->Range.UsageMax - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin + 1;
 		currentGamepad->axisAmount = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
+		currentGamepad->outputAmount = GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
 		
 		currentGamepad->button = calloc(currentGamepad->buttonAmount, sizeof(bool));
 		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);
+		currentGamepad->output = calloc(currentGamepad->outputAmount, sizeof(int));
+
 		GAMEPAD_DATA->raw->axisFactor = malloc(sizeof(double)* currentGamepad->axisAmount);
 		GAMEPAD_DATA->raw->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
+		
+		//HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->raw->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[i].NotRange.Usage, &newInt, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+		printf("status %d\n", HidP_SetUsageValue(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps[0].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[0].NotRange.Usage, LONG_MAX, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid));
 
 		for(i = 0; i < currentGamepad->axisAmount; i++) {
 			GAMEPAD_DATA->raw->axisFactor[i] = (double)(GAMEPAD_AXIS_MAX - GAMEPAD_AXIS_MIN) / (GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin);
