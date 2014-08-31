@@ -1,5 +1,7 @@
 #include "lin_dirUtils.h"
 
+static char *dataDir = NULL;
+
 char *ccGetDirUserDir(void)
 {
 	return CC_USER_LOCATION;
@@ -8,17 +10,18 @@ char *ccGetDirUserDir(void)
 char *ccGetDirDataDir(void)
 {
 #ifndef CC_DATA_LOCATION
-	char *buf;
 	int len;
 
-	buf = malloc(PATH_MAX);
-	len = readlink("/proc/self/exe", buf, PATH_MAX);
-	if(len > 0){
-		buf[len] = '\0';
-		buf = dirname(buf);
-		strcat(buf, "/");
+	if(dataDir == NULL){
+		dataDir = malloc(PATH_MAX);
+		len = readlink("/proc/self/exe", dataDir, PATH_MAX);
+		if(len > 0){
+			dataDir[len] = '\0';
+			dataDir = dirname(dataDir);
+			strcat(dataDir, "/");
+		}
 	}
-	return buf;
+	return dataDir;
 #else
 	return CC_DATA_LOCATION;
 #endif
