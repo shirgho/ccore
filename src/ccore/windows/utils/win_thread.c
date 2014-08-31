@@ -1,25 +1,32 @@
 #include "win_thread.h"
 
-ccError ccThreadCreate(ccThread *thread, void *function)
+ccReturn ccThreadCreate(ccThread *thread, void *function)
 {
 	ccMalloc(*thread, sizeof(ccThread_win));
 	((ccThread_win*)*thread)->function = (LPTHREAD_START_ROUTINE)function;
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccThreadStart(ccThread thread, void *data)
+ccReturn ccThreadStart(ccThread thread, void *data)
 {
 	_THREAD->threadHandle = CreateThread(NULL, 0, _THREAD->function, (LPVOID)data, 0, NULL);
 	if(_THREAD->threadHandle == NULL) {
 		free(thread);
-		return CC_ERROR_THREAD;
+		ccErrorPush(CC_ERROR_THREAD);
+		return CC_FAIL;
 	}
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccThreadJoin(ccThread thread)
+ccReturn ccThreadJoin(ccThread thread)
 {
-	return WaitForSingleObject(_THREAD->threadHandle, INFINITE) == WAIT_OBJECT_0?CC_ERROR_NONE:CC_ERROR_THREAD;
+	if(WaitForSingleObject(_THREAD->threadHandle, INFINITE) == WAIT_OBJECT_0) {
+		return CC_SUCCESS;
+	}
+	else{
+		ccErrorPush(CC_ERROR_THREAD);
+		return CC_FAIL;
+	}
 }
 
 bool ccThreadFinished(ccThread thread)

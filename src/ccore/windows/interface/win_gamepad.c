@@ -18,13 +18,16 @@ static int _gamepadXinputButtons[] =
 	XINPUT_GAMEPAD_START
 };
 
-ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
+ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 {
 	XINPUT_VIBRATION vibration;
 
 	ccAssert(gamepad != NULL);
 
-	if(hapticIndex >= gamepad->outputAmount) return CC_ERROR_NOHAPTIC;
+	if(hapticIndex >= gamepad->outputAmount) {
+		ccErrorPush(CC_ERROR_NOHAPTIC);
+		return CC_FAIL;
+	}
 
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
 
@@ -34,13 +37,16 @@ ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 		vibration.wLeftMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[0];
 		vibration.wRightMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[1];
 
-		if(XInputSetState(((ccGamepad_win*)gamepad->data)->xinputIndex, &vibration) != ERROR_SUCCESS) return CC_ERROR_NOHAPTIC;
+		if(XInputSetState(((ccGamepad_win*)gamepad->data)->xinputIndex, &vibration) != ERROR_SUCCESS) {
+			ccErrorPush(CC_ERROR_NOHAPTIC);
+			return CC_FAIL;
+		}
 	}
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccGamepadInitialize(void)
+ccReturn ccGamepadInitialize(void)
 {
 	int i;
 	ccAssert(_ccWindow != NULL);
@@ -61,7 +67,13 @@ ccError ccGamepadInitialize(void)
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = WINDOW_DATA->winHandle;
 
-	return RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE)) == TRUE?CC_ERROR_NONE:CC_ERROR_NOGAMEPAD;
+	if(RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE)) == TRUE) {
+		return CC_SUCCESS;
+	}
+	else{
+		ccErrorPush(CC_ERROR_NOGAMEPAD);
+		return CC_FAIL;
+	}
 }
 
 void ccGamepadFree(void)

@@ -33,10 +33,10 @@ extern "C"
 #define true 1
 #define false 0
 
-typedef char bool;
-
 #define CC_SUCCESS 0
 #define CC_FAIL -1
+
+typedef char bool;
 
 typedef int ccReturn;
 

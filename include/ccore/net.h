@@ -25,6 +25,7 @@
 
 #include "core.h"
 #include "error.h"
+#include "types.h"
 
 #ifdef __cplusplus
 extern "C"

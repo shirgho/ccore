@@ -1,6 +1,6 @@
 #include "win_display.h"
 
-ccError ccDisplayInitialize(void)
+ccReturn ccDisplayInitialize(void)
 {
 	DISPLAY_DEVICE device;
 	DISPLAY_DEVICE display;
@@ -84,10 +84,10 @@ ccError ccDisplayInitialize(void)
 		deviceCount++;
 	}
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccDisplayFree(void) {
+ccReturn ccDisplayFree(void) {
 	int i;
 
 	ccAssert(_ccDisplays != NULL);
@@ -103,10 +103,10 @@ ccError ccDisplayFree(void) {
 	
 	_ccDisplays = NULL;
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
+ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 {
 	DEVMODE devMode;
 	ccDisplayData displayData;
@@ -115,7 +115,7 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	ccAssert(resolutionIndex < display->amount);
 
 	if(resolutionIndex == CC_DEFAULT_RESOLUTION) resolutionIndex = display->initial;
-	if(resolutionIndex == display->current) return CC_ERROR_NONE;
+	if(resolutionIndex == display->current) return CC_SUCCESS;
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
@@ -130,10 +130,11 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
 
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
-		return CC_ERROR_RESOLUTION_CHANGE;
+		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		return CC_FAIL;
 	}
 
 	display->current = resolutionIndex;
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
