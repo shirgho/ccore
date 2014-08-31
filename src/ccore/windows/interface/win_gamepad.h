@@ -8,7 +8,7 @@
 
 #include <ccore/assert.h>
 
-#include "win_ccWindow.h"
+#include "win_window.h"
 
 #define GAMEPAD_MAXBUTTONS 128
 

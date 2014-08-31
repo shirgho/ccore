@@ -4,4 +4,4 @@
 
 #include <ccore/window.h>
 
-#include "x11_ccWindow.h"
+#include "x11_window.h"

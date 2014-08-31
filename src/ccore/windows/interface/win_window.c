@@ -1,4 +1,4 @@
-#include "win_ccWindow.h"
+#include "win_window.h"
 
 void _ccEventStackPush(ccEvent event)
 {
