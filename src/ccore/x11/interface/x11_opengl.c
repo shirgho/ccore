@@ -51,3 +51,8 @@ ccReturn ccGLSwapBuffers(void)
 
 	return CC_SUCCESS;
 }
+
+bool ccGLHasContext(void)
+{
+	return WINDOW_DATA->XContext != NULL;
+}
