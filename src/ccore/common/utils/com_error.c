@@ -40,24 +40,16 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_NONE:
 			return "No errors";
 			break;
+
+			// Display related
 		case CC_ERROR_NODISPLAY:
 			return "Could not open display";
 			break;
-		case CC_ERROR_GLVERSION:
-			return "The current OpenGL version is not supported";
+		case CC_ERROR_RESOLUTION_CHANGE:
+			return "Could not change display resolution";
 			break;
-		case CC_ERROR_GLCONTEXT:
-			return "The openGL context could not be created";
-			break;
-		case CC_ERROR_GLEWINIT:
-			return "GLEW could not be initialized";
-			break;
-		case CC_ERROR_OUT_OF_MEMORY:
-			return "Out of memory";
-			break;
-		case CC_ERROR_CANTSWAP:
-			return "Failed to swap the buffers";
-			break;
+
+			// Window related
 		case CC_ERROR_WINDOWCREATION:
 			return "Can't create the window";
 			break;
@@ -67,26 +59,50 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_WINDOW_MODE:
 			return "Couldn't change the window mode";
 			break;
-		case CC_ERROR_RESOLUTION_CHANGE:
-			return "Could not change display resolution";
+
+			// OpenGL related
+		case CC_ERROR_GLVERSION:
+			return "The current OpenGL version is not supported";
 			break;
+		case CC_ERROR_GLCONTEXT:
+			return "The openGL context could not be created";
+			break;
+		case CC_ERROR_GLEWINIT:
+			return "GLEW could not be initialized";
+			break;
+		case CC_ERROR_CANTSWAP:
+			return "Failed to swap the buffers";
+			break;
+
+			// Thread related
 		case CC_ERROR_THREAD:
 			return "A thread could not be started";
 			break;
+
+			// Networking related
+
+			// Gamepad related
 		case CC_ERROR_NOGAMEPAD:
 			return "No gamepad could be found";
 			break;
 		case CC_ERROR_GAMEPADDATA:
 			return "The gamepad could not be read";
 			break;
+		case CC_ERROR_NOHAPTIC:
+			return "This haptic motor is not accessible";
+			break;
+
+			// Mouse related
 		case CC_ERROR_NOMOUSE:
 			return "No mouse could be found";
 			break;
 		case CC_ERROR_MOUSEDATA:
 			return "The mouse could not be read";
 			break;
-		case CC_ERROR_NOHAPTIC:
-			return "This haptic motor is not accessible";
+
+			// Memory related
+		case CC_ERROR_OUT_OF_MEMORY:
+			return "Out of memory";
 			break;
 		default:
 			return "Error message not defined";
