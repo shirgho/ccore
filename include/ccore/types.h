@@ -35,6 +35,11 @@ extern "C"
 
 typedef char bool;
 
+#define CC_SUCCESS 0
+#define CC_FAIL -1
+
+typedef int ccReturn;
+
 typedef struct {
 	int x, y;
 } ccPoint;

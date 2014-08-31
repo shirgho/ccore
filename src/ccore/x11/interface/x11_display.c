@@ -118,12 +118,13 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 	return CC_ERROR_NONE;
 }
 
-ccError ccDisplayInitialize(void)
+ccReturn ccDisplayInitialize(void)
 {
 	char displayName[64];
 	DIR *dir;
 	struct dirent *direntry;
 	Display *display;
+	ccError error;
 
 	ccAssert(_ccDisplays == NULL);
 
@@ -141,20 +142,23 @@ ccError ccDisplayInitialize(void)
 		ccPrintf("X: Found root display %s\n", displayName);
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
-			ccError error = ccXFindDisplaysXinerama(display, displayName);
-			if(error != CC_ERROR_NONE) return error;
+			error = ccXFindDisplaysXinerama(display, displayName);
+			if(error != CC_ERROR_NONE){
+				ccErrorPush(error);
+				return CC_FAIL;
+			}
 			ccPrintf("X: %d displays found\n", _ccDisplays->amount);
 			XCloseDisplay(display);
 		}
 	}
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccDisplayFree(void)
+ccReturn ccDisplayFree(void)
 {
 	int i,j;
-	
+
 	ccAssert(_ccDisplays != NULL);
 
 	for(i = 0; i < _ccDisplays->amount; i++){
@@ -173,10 +177,10 @@ ccError ccDisplayFree(void)
 
 	_ccDisplays = NULL;
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
+ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 {
 	int minX, minY, maxX, maxY;
 	ccDisplayData *displayData;
@@ -196,44 +200,51 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	resources = XRRGetScreenResources(XDisplay, root);
 	if(!resources){
 		ccPrintf("X: Couldn't get screen resources");
-		return CC_ERROR_RESOLUTION_CHANGE;
+		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		return CC_FAIL;
 	}
 	outputInfo = XRRGetOutputInfo(XDisplay, resources, DISPLAY_DATA(display)->XOutput);
 	if(!outputInfo || outputInfo->connection == RR_Disconnected){
 		ccPrintf("X: Couldn't get output info");
 		XRRFreeScreenResources(resources);
-		return CC_ERROR_RESOLUTION_CHANGE;
+		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		return CC_FAIL;
 	}
 	crtcInfo = XRRGetCrtcInfo(XDisplay, resources, outputInfo->crtc);
 	if(!crtcInfo){
 		ccPrintf("X: Couldn't get crtc info");
 		XRRFreeScreenResources(resources);
 		XRRFreeOutputInfo(outputInfo);
-		return CC_ERROR_RESOLUTION_CHANGE;
+		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		return CC_FAIL;
 	}
 
 	if(resolutionIndex != CC_DEFAULT_RESOLUTION){
 		displayData = display->resolution + resolutionIndex;
 		if(display->resolution->width == displayData->width && display->resolution->height == displayData->height){
-			return CC_ERROR_NONE;
+			return CC_SUCCESS;
 		}
 
 		if(display->resolution->width <= 0 || display->resolution->height <= 0){
 			ccPrintf("Error: Resolution supplied not valid\n");
-			return CC_ERROR_RESOLUTION_CHANGE;
+			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			return CC_FAIL;
 		}
 
 		if(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY)){
 			ccPrintf("X: Unable to get screen size range\n");
-			return CC_ERROR_RESOLUTION_CHANGE;
+			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			return CC_FAIL;
 		}
 
 		if(displayData->width < minX || displayData->height < minY){
 			ccPrintf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
-			return CC_ERROR_RESOLUTION_CHANGE;
+			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			return CC_FAIL;
 		} else if(displayData->width > maxX || displayData->height > maxY){
 			ccPrintf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
-			return CC_ERROR_RESOLUTION_CHANGE;
+			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			return CC_FAIL;
 		}
 
 		ccPrintf("X: Setting display %d to %dx%d\n", DISPLAY_DATA(display)->XScreen, displayData->width, displayData->height);
@@ -251,5 +262,5 @@ ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	XUngrabServer(XDisplay);
 	XCloseDisplay(XDisplay);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }

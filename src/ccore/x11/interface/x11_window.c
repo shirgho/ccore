@@ -132,7 +132,7 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 	return XGetKeyboardMapping(WINDOW_DATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
-ccError ccWindowCreate(ccRect rect, const char *title, int flags)
+ccStatus ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Window root;
 	Atom delete;
@@ -147,7 +147,8 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	WINDOW_DATA->XDisplay = XOpenDisplay(NULL);
 	if(WINDOW_DATA->XDisplay == NULL){
-		return CC_ERROR_WINDOWCREATION;
+		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		return CC_FAIL;
 	}
 
 	root = DefaultRootWindow(WINDOW_DATA->XDisplay);
@@ -176,7 +177,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 		setWindowState("_NET_WM_STATE_ABOVE", true);
 	}
 
-	if(flags & CC_WINDOW_FLAG_NORAWINPUT != 0){
+	if((flags & CC_WINDOW_FLAG_NORAWINPUT) != 0){
 		_ccWindow->supportsRawInput = checkRawSupport();
 		if(_ccWindow->supportsRawInput){
 			initRawSupport();
@@ -185,10 +186,10 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccWindowFree(void)
+ccStatus ccWindowFree(void)
 {
 	ccAssert(_ccWindow != NULL);	
 
@@ -199,7 +200,7 @@ ccError ccWindowFree(void)
 	free(_ccWindow);
 	_ccWindow = NULL;
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
 bool ccWindowPollEvent(void)
@@ -351,31 +352,31 @@ bool ccWindowPollEvent(void)
 	return true;
 }
 
-ccError ccWindowSetWindowed(void)
+ccStatus ccWindowSetWindowed(void)
 {
-	ccAssert(_ccWindow);
+	ccAssert(_ccWindow != NULL);
 
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", false);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", false);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccWindowSetMaximized(void)
+ccStatus ccWindowSetMaximized(void)
 {
-	ccAssert(_ccWindow);
+	ccAssert(_ccWindow != NULL);
 
 	ccWindowSetWindowed();
 
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", true);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccWindowSetFullscreen(int displayCount, ...)
+ccStatus ccWindowSetFullscreen(int displayCount, ...)
 {
 	XEvent event;
 	Atom atom;
@@ -383,7 +384,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	int i;
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 
-	ccAssert(_ccWindow);
+	ccAssert(_ccWindow != NULL);
 
 	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
 		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _ccWindow->display;
@@ -430,12 +431,12 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccWindowResizeMove(ccRect rect)
+ccStatus ccWindowResizeMove(ccRect rect)
 {
-	ccAssert(_ccWindow);
+	ccAssert(_ccWindow != NULL);
 
 	setResizable(true);
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
@@ -445,10 +446,10 @@ ccError ccWindowResizeMove(ccRect rect)
 		setResizable(false);
 	}
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccWindowCenter(void)
+ccStatus ccWindowCenter(void)
 {
 	ccDisplayData *currentResolution;
 	ccRect newRect;
@@ -464,5 +465,5 @@ ccError ccWindowCenter(void)
 
 	ccWindowResizeMove(newRect);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
