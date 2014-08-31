@@ -27,6 +27,7 @@
 
 #include "window.h"
 #include "error.h"
+#include "types.h"
 
 // Load all extensions using GLEW
 #define GLEW_STATIC

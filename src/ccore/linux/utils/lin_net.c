@@ -1,11 +1,11 @@
 #include "lin_net.h"
 
-ccError ccNetInitialize(void)
+ccReturn ccNetInitialize(void)
 {
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-ccError ccNetFree(void)
+ccReturn ccNetFree(void)
 {
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }

@@ -1,24 +1,32 @@
 #include "lin_thread.h"
 
-ccError ccThreadCreate(ccThread *thread, void *function)
+ccReturn ccThreadCreate(ccThread *thread, void *function)
 {
 	ccMalloc(*thread, sizeof(ccThread_lin));
 	((ccThread_lin*)*thread)->function = function;
-	return CC_ERROR_NONE;
+
+	return CC_SUCCESS;
 }
 
-ccError ccThreadStart(ccThread thread, void *data)
+ccReturn ccThreadStart(ccThread thread, void *data)
 {
 	if(pthread_create(&_THREAD->id, NULL, _THREAD->function, data) != 0) {
 		free(thread);
-		return CC_ERROR_THREAD;
+		ccErrorPush(CC_ERROR_THREAD);
+		return CC_FAIL;
 	}
-	return CC_ERROR_NONE;
+
+	return CC_SUCCESS;
 }
 
-ccError ccThreadJoin(ccThread thread)
+ccReturn ccThreadJoin(ccThread thread)
 {
-	return pthread_join(_THREAD->id, NULL) == 0 ? CC_ERROR_NONE : CC_ERROR_THREAD;
+	if(pthread_join(_THREAD->id, NULL) == 0){
+		return CC_SUCCESS;  
+	}else{
+		ccErrorPush(CC_ERROR_THREAD);
+		return CC_FAIL;
+	}
 }
 
 bool ccThreadFinished(ccThread thread)
