@@ -76,14 +76,14 @@ ccDisplay *ccDisplayGet(int index);
 ccDisplay *ccDisplayGetDefault(void);
 
 // Resolution
-ccError ccDisplaySetResolution(ccDisplay *display, int resolutionIndex);
+ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex);
 bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 bool ccDisplayResolutionEqual(ccDisplayData *resolutionA, ccDisplayData *resolutionB);
 
 // Display
-ccError ccDisplayInitialize(void); // Get all displays currently connected and active
-ccError ccDisplayFree(void);
-ccError ccDisplayRevertModes(void);
+ccReturn ccDisplayInitialize(void); // Get all displays currently connected and active
+ccReturn ccDisplayFree(void);
+ccReturn ccDisplayRevertModes(void);
 ccRect ccDisplayGetRect(ccDisplay *display);
 
 #ifdef __cplusplus

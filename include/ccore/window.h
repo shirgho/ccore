@@ -72,15 +72,15 @@ ccDisplay *ccWindowGetDisplay(void);
 bool ccWindowExists(void);
 
 // Window functions
-ccError ccWindowCreate(ccRect rect, const char *title, int flags);
-ccError ccWindowFree(void);
+ccReturn ccWindowCreate(ccRect rect, const char *title, int flags);
+ccReturn ccWindowFree(void);
 bool ccWindowPollEvent(void); // Poll an event from the events that currently need to be processed in the window
-ccError ccWindowResizeMove(ccRect rect);
-ccError ccWindowCenter(void);
+ccReturn ccWindowResizeMove(ccRect rect);
+ccReturn ccWindowCenter(void);
 
-ccError ccWindowSetWindowed(void);
-ccError ccWindowSetMaximized(void);
-ccError ccWindowSetFullscreen(int displayCount, ...);
+ccReturn ccWindowSetWindowed(void);
+ccReturn ccWindowSetMaximized(void);
+ccReturn ccWindowSetFullscreen(int displayCount, ...);
 
 // Usually for internal use only, finds the display the window currently is in
 void ccWindowUpdateDisplay(void);

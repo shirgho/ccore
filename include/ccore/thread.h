@@ -45,9 +45,9 @@ typedef void* ccThread;
 #define ccThreadData arg
 #endif
 
-ccError ccThreadCreate(ccThread *thread, void *function);
-ccError ccThreadStart(ccThread thread, void *data);
-ccError ccThreadJoin(ccThread thread);
+ccReturn ccThreadCreate(ccThread *thread, void *function);
+ccReturn ccThreadStart(ccThread thread, void *data);
+ccReturn ccThreadJoin(ccThread thread);
 bool ccThreadFinished(ccThread thread);
 
 #ifdef __cplusplus

@@ -85,8 +85,8 @@ ccGamepads *_ccGamepads;
 #define ccGamepadCount() _ccGamepads->amount
 #define ccGamepadGet(index) (&_ccGamepads->gamepad[index])
 
-ccError ccGamepadInitialize(void); // Initializes gamepad input
-ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
+ccReturn ccGamepadInitialize(void); // Initializes gamepad input
+ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 void ccGamepadFree(void); // Stops gamepad input
 
 #ifdef __cplusplus

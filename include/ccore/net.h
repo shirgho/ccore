@@ -57,8 +57,8 @@ typedef int ccSocket;
 typedef SOCKET ccSocket;
 #endif
 
-ccError ccNetInitialize();
-ccError ccNetFree();
+ccReturn ccNetInitialize();
+ccReturn ccNetFree();
 #define ccNetClose(x) _close(x)
 #define ccNetIoctl(x, y, z) _ioctl(x, y, z)
 
