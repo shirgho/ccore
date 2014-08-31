@@ -41,6 +41,7 @@ extern "C"
 ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor); // Bind the openGl context to window
 ccReturn ccGLFreeContext(void); // Free context
 ccReturn ccGLSwapBuffers(void); // Swap the buffers
+bool ccGLHasContext(void);
 
 #ifdef __cplusplus
 }
