@@ -20,7 +20,6 @@ static int _gamepadXinputButtons[] =
 
 ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 {
-	int i;
 	XINPUT_VIBRATION vibration;
 
 	ccAssert(gamepad != NULL);
