@@ -28,3 +28,8 @@ char *ccGetDirTempDir(void)
 {
 	return CC_TEMP_LOCATION;
 }
+
+void _ccDirUtilsFree(void)
+{
+
+}

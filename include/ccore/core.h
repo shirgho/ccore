@@ -45,3 +45,5 @@
 #else
 #error "OS not supported!"
 #endif
+
+void ccFreeAll(void); // Free all memory in use by ccore

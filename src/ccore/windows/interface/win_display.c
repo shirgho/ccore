@@ -101,6 +101,7 @@ ccError ccDisplayFree(void) {
 	free(_displays->display);
 	free(_displays);
 	
+	_displays = NULL;
 
 	return CC_ERROR_NONE;
 }

@@ -6,5 +6,3 @@
 #include <ccore/dirUtils.h>
 
 #include <ccore/charUtils.h>
-
-void _ccFreeDirs(void);

@@ -304,8 +304,6 @@ ccError ccWindowFree(void)
 
 	freeRawInput();
 
-	_ccFreeDirs(); // Clean allocated directories in dirUtils
-
 	if(WINDOW_DATA->lpbSize != 0) free(WINDOW_DATA->lpb);
 
 	ReleaseDC(WINDOW_DATA->winHandle, WINDOW_DATA->hdc);

@@ -81,8 +81,17 @@ typedef enum {
 	x = realloc(x, size); \
 	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
 	}\
-	
+
+#define CC_SUCCESS 0
+#define CC_FAIL -1
+
+typedef int ccReturn;
+
 const char *ccErrorString(ccError error);
+void ccErrorPush(ccError error);
+ccError ccErrorPop(void);
+
+void _ccErrorFree(void);
 
 #ifdef __cplusplus
 }

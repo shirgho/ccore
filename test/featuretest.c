@@ -306,11 +306,7 @@ int main(int argc, char** argv)
 	}
 	
 	// Free memory before terminating
-	ccGamepadFree();
-	ccDisplayFree();
-	ccNetFree();
-	ccGLFreeContext();
-	ccWindowFree();
+	ccFreeAll();
 
 	free(squareAlpha);
 
@@ -335,7 +331,7 @@ ccThreadFunction(counter)
 	ccThreadReturn();
 }
 
-// A network sending procedure is implemented here
+// A network sending procedure is implemented here << what the fuck does a linux implementation do outside of a linux folder this is exasperating
 /*
 void ccNetworkSend(char *string)
 {

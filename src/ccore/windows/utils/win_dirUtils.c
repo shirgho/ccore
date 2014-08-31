@@ -48,7 +48,7 @@ char *ccGetDirTempDir(void)
 	return tempDir;
 }
 
-void _ccFreeDirs(void)
+void _ccDirUtilsFree(void)
 {
 	if(userDir == NULL) return;
 	free(dataDir);
