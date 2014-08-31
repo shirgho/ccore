@@ -11,7 +11,7 @@ static int attrList[] =
 	None
 };
 
-ccStatus ccGLBindContext(int glVersionMajor, int glVersionMinor)
+ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 
@@ -34,7 +34,7 @@ ccStatus ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	return CC_SUCCESS;
 }
 
-ccStatus ccGLFreeContext(void)
+ccReturn ccGLFreeContext(void)
 {
 	ccAssert(WINDOW_DATA->XContext != NULL);
 
@@ -43,7 +43,7 @@ ccStatus ccGLFreeContext(void)
 	return CC_SUCCESS;
 }
 
-ccStatus ccGLSwapBuffers(void)
+ccReturn ccGLSwapBuffers(void)
 {
 	ccAssert(WINDOW_DATA->XContext != NULL);
 
