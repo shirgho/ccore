@@ -242,4 +242,6 @@ void ccGamepadFree(void)
 	}
 	free(_gamepads->data);
 	free(_gamepads);
+
+	_gamepads = NULL;
 }
