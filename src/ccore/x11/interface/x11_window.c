@@ -132,7 +132,7 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 	return XGetKeyboardMapping(WINDOW_DATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
-ccStatus ccWindowCreate(ccRect rect, const char *title, int flags)
+ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Window root;
 	Atom delete;
@@ -189,7 +189,7 @@ ccStatus ccWindowCreate(ccRect rect, const char *title, int flags)
 	return CC_SUCCESS;
 }
 
-ccStatus ccWindowFree(void)
+ccReturn ccWindowFree(void)
 {
 	ccAssert(_ccWindow != NULL);	
 
@@ -352,7 +352,7 @@ bool ccWindowPollEvent(void)
 	return true;
 }
 
-ccStatus ccWindowSetWindowed(void)
+ccReturn ccWindowSetWindowed(void)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -364,7 +364,7 @@ ccStatus ccWindowSetWindowed(void)
 	return CC_SUCCESS;
 }
 
-ccStatus ccWindowSetMaximized(void)
+ccReturn ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -376,7 +376,7 @@ ccStatus ccWindowSetMaximized(void)
 	return CC_SUCCESS;
 }
 
-ccStatus ccWindowSetFullscreen(int displayCount, ...)
+ccReturn ccWindowSetFullscreen(int displayCount, ...)
 {
 	XEvent event;
 	Atom atom;
@@ -434,7 +434,7 @@ ccStatus ccWindowSetFullscreen(int displayCount, ...)
 	return CC_SUCCESS;
 }
 
-ccStatus ccWindowResizeMove(ccRect rect)
+ccReturn ccWindowResizeMove(ccRect rect)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -449,7 +449,7 @@ ccStatus ccWindowResizeMove(ccRect rect)
 	return CC_SUCCESS;
 }
 
-ccStatus ccWindowCenter(void)
+ccReturn ccWindowCenter(void)
 {
 	ccDisplayData *currentResolution;
 	ccRect newRect;

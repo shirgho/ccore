@@ -156,7 +156,7 @@ ccGamepadEvent ccGamepadEventPoll(void)
 	return event;
 }
 
-ccError ccGamepadInitialize(void)
+ccReturn ccGamepadInitialize(void)
 {
 	DIR *d;
 	struct dirent *dir;
@@ -196,9 +196,9 @@ ccError ccGamepadInitialize(void)
 
 	closedir(d);
 	if(_ccGamepads->amount == 0){
-		return CC_ERROR_NOGAMEPAD;
+		ccErrorPush(CC_ERROR_NOGAMEPAD);
 	}else{
-		return CC_ERROR_NONE;
+		return CC_SUCCESS;
 	}
 
 error:
@@ -207,13 +207,14 @@ error:
 	closedir(d);
 	close(fd);
 	close(watch);
-	return CC_ERROR_GAMEPADDATA;
+	ccErrorPush(CC_ERROR_GAMEPADDATA);
+	return CC_FAIL;
 }
 
-ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
+ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
 void ccGamepadFree(void)
