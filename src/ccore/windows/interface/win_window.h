@@ -37,4 +37,4 @@ typedef struct {
 
 void _ccEventStackPush(ccEvent event);
 
-#define WINDOW_DATA ((ccWindow_win*)_window->data)
+#define WINDOW_DATA ((ccWindow_win*)_ccWindow->data)

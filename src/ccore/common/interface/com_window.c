@@ -2,35 +2,35 @@
 
 ccEvent ccWindowGetEvent(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
-	return _window->event;
+	return _ccWindow->event;
 }
 
 ccRect ccWindowGetRect(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
-	return _window->rect;
+	return _ccWindow->rect;
 }
 
 ccPoint ccWindowGetMouse(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
-	return _window->mouse;
+	return _ccWindow->mouse;
 }
 
 ccDisplay *ccWindowGetDisplay(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
-	return _window->display;
+	return _ccWindow->display;
 }
 
 bool ccWindowExists(void)
 {
-	return _window != NULL;
+	return _ccWindow != NULL;
 }
 
 void ccWindowUpdateDisplay(void)
@@ -39,15 +39,15 @@ void ccWindowUpdateDisplay(void)
 	int area, largestArea;
 	ccRect displayRect;
 
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	largestArea = 0;
 	for(i = 0; i < ccDisplayGetAmount(); i++) {
 		displayRect = ccDisplayGetRect(ccDisplayGet(i));
-		area = ccRectIntersectionArea(&displayRect, &_window->rect);
+		area = ccRectIntersectionArea(&displayRect, &_ccWindow->rect);
 		if(area > largestArea) {
 			largestArea = area;
-			_window->display = ccDisplayGet(i);
+			_ccWindow->display = ccDisplayGet(i);
 		}
 	}
 }

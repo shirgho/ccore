@@ -1,4 +1,4 @@
-#include "x11_window.h"
+#include "x11_ccWindow.h"
 
 static ccError setWindowState(const char *type, bool value)
 {	
@@ -26,7 +26,7 @@ static void setResizable(bool resizable)
 	XSizeHints *sizeHints;
 	long flags;
 
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	sizeHints = XAllocSizeHints();
 	flags = 0;
@@ -44,8 +44,8 @@ static void setResizable(bool resizable)
 		sizeHints->flags &= ~(PMinSize | PMaxSize);
 	}else{
 		sizeHints->flags |= PMinSize | PMaxSize;
-		sizeHints->min_width = sizeHints->max_width = _window->rect.width;
-		sizeHints->min_height = sizeHints->max_height = _window->rect.height;
+		sizeHints->min_width = sizeHints->max_width = _ccWindow->rect.width;
+		sizeHints->min_height = sizeHints->max_height = _ccWindow->rect.height;
 	}
 
 	XSetWMNormalHints(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, sizeHints);
@@ -137,12 +137,12 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	Window root;
 	Atom delete;
 
-	ccAssert(_window == NULL);
+	ccAssert(_ccWindow == NULL);
 
-	ccMalloc(_window, sizeof(ccWindow));
+	ccMalloc(_ccWindow, sizeof(ccWindow));
 
-	_window->rect = rect;
-	ccMalloc(_window->data, sizeof(ccWindow_x11));
+	_ccWindow->rect = rect;
+	ccMalloc(_ccWindow->data, sizeof(ccWindow_x11));
 	WINDOW_DATA->windowFlags = flags;
 
 	WINDOW_DATA->XDisplay = XOpenDisplay(NULL);
@@ -177,27 +177,27 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	if(flags & CC_WINDOW_FLAG_NORAWINPUT != 0){
-		_window->supportsRawInput = checkRawSupport();
-		if(_window->supportsRawInput){
+		_ccWindow->supportsRawInput = checkRawSupport();
+		if(_ccWindow->supportsRawInput){
 			initRawSupport();
 		}
 	}
 
-	_window->mouse.x = _window->mouse.y = 0;
+	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 
 	return CC_ERROR_NONE;
 }
 
 ccError ccWindowFree(void)
 {
-	ccAssert(_window != NULL);	
+	ccAssert(_ccWindow != NULL);	
 
 	XUnmapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XCloseDisplay(WINDOW_DATA->XDisplay);
 
-	free(_window->data);
-	free(_window);
-	_window = NULL;
+	free(_ccWindow->data);
+	free(_ccWindow);
+	_ccWindow = NULL;
 
 	return CC_ERROR_NONE;
 }
@@ -205,20 +205,20 @@ ccError ccWindowFree(void)
 bool ccWindowPollEvent(void)
 {
 	XEvent event;
-	XWindowAttributes _windowAttributes;
+	XWindowAttributes _ccWindowAttributes;
 	XGenericEventCookie *cookie;
 	ccGamepadEvent gamepadEvent;
 
-	if(!_window){
+	if(!_ccWindow){
 		return false;
 	}
 
-	_window->event.type = CC_EVENT_SKIP;
+	_ccWindow->event.type = CC_EVENT_SKIP;
 
 	gamepadEvent = ccGamepadEventPoll();
 	if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){
-		_window->event.type = CC_EVENT_GAMEPAD;
-		_window->event.gamepadEvent = gamepadEvent;
+		_ccWindow->event.type = CC_EVENT_GAMEPAD;
+		_ccWindow->event.gamepadEvent = gamepadEvent;
 		return true;
 	}
 
@@ -229,7 +229,7 @@ bool ccWindowPollEvent(void)
 	XNextEvent(WINDOW_DATA->XDisplay, &event);
 	switch(event.type){
 		case GenericEvent:
-			if(!_window->supportsRawInput){
+			if(!_ccWindow->supportsRawInput){
 				return false;
 			}
 
@@ -242,85 +242,85 @@ bool ccWindowPollEvent(void)
 
 			switch(cookie->evtype){
 				case XI_RawMotion:
-					_window->event.type = CC_EVENT_MOUSE_MOVE;
-					_window->event.mouseDelta = getRawMouseMovement(cookie->data);
+					_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
+					_ccWindow->event.mouseDelta = getRawMouseMovement(cookie->data);
 					break;
 				case XI_RawButtonPress:
-					_window->event.type = CC_EVENT_MOUSE_DOWN;
-					_window->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
+					_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
+					_ccWindow->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawButtonRelease:
-					_window->event.type = CC_EVENT_MOUSE_UP;
-					_window->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
+					_ccWindow->event.type = CC_EVENT_MOUSE_UP;
+					_ccWindow->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawKeyPress:
-					_window->event.type = CC_EVENT_KEY_DOWN;
-					_window->event.keyCode = getRawKeyboardCode(cookie->data);
+					_ccWindow->event.type = CC_EVENT_KEY_DOWN;
+					_ccWindow->event.keyCode = getRawKeyboardCode(cookie->data);
 					break;
 				case XI_RawKeyRelease:
-					_window->event.type = CC_EVENT_KEY_UP;
-					_window->event.keyCode = getRawKeyboardCode(cookie->data);
+					_ccWindow->event.type = CC_EVENT_KEY_UP;
+					_ccWindow->event.keyCode = getRawKeyboardCode(cookie->data);
 					break;
 				case XI_Enter:
-					_window->event.type = CC_EVENT_FOCUS_GAINED;
+					_ccWindow->event.type = CC_EVENT_FOCUS_GAINED;
 					break;
 				case XI_Leave:
-					_window->event.type = CC_EVENT_FOCUS_LOST;
+					_ccWindow->event.type = CC_EVENT_FOCUS_LOST;
 					break;
 			}
 			break;
 		case ButtonPress:
 			if(event.xbutton.button <= 3){
-				_window->event.type = CC_EVENT_MOUSE_DOWN;
-				_window->event.mouseButton = event.xbutton.button;
+				_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
+				_ccWindow->event.mouseButton = event.xbutton.button;
 			}else if(event.xbutton.button == 4){
-				_window->event.type = CC_EVENT_MOUSE_SCROLL;
-				_window->event.scrollDelta = 1;
+				_ccWindow->event.type = CC_EVENT_MOUSE_SCROLL;
+				_ccWindow->event.scrollDelta = 1;
 			}else if(event.xbutton.button == 5){
-				_window->event.type = CC_EVENT_MOUSE_SCROLL;
-				_window->event.scrollDelta = -1;
+				_ccWindow->event.type = CC_EVENT_MOUSE_SCROLL;
+				_ccWindow->event.scrollDelta = -1;
 			}
 			break;
 		case ButtonRelease:
-			_window->event.type = CC_EVENT_MOUSE_UP;
-			_window->event.mouseButton = event.xbutton.button;
+			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
+			_ccWindow->event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
-			if(!_window->supportsRawInput){
-				_window->event.type = CC_EVENT_MOUSE_MOVE;
-				_window->event.mouseDelta.x = _window->mouse.x - event.xmotion.x;
-				_window->event.mouseDelta.y = _window->mouse.y - event.xmotion.y;
+			if(!_ccWindow->supportsRawInput){
+				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
+				_ccWindow->event.mouseDelta.x = _ccWindow->mouse.x - event.xmotion.x;
+				_ccWindow->event.mouseDelta.y = _ccWindow->mouse.y - event.xmotion.y;
 			}
-			if(_window->mouse.x != event.xmotion.x ||
-					_window->mouse.y != event.xmotion.y){
-				_window->event.type = CC_EVENT_MOUSE_MOVE;
-				_window->mouse.x = event.xmotion.x;
-				_window->mouse.y = event.xmotion.y;
+			if(_ccWindow->mouse.x != event.xmotion.x ||
+					_ccWindow->mouse.y != event.xmotion.y){
+				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
+				_ccWindow->mouse.x = event.xmotion.x;
+				_ccWindow->mouse.y = event.xmotion.y;
 			}
 			break;
 		case KeymapNotify:
 			XRefreshKeyboardMapping(&event.xmapping);
 			break;
 		case KeyPress:
-			_window->event.type = CC_EVENT_KEY_DOWN;
-			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
+			_ccWindow->event.type = CC_EVENT_KEY_DOWN;
+			_ccWindow->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case KeyRelease:
-			_window->event.type = CC_EVENT_KEY_UP;
-			_window->event.keyCode = XLookupKeysym(&event.xkey, 0);
+			_ccWindow->event.type = CC_EVENT_KEY_UP;
+			_ccWindow->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case ConfigureNotify:
-			if(_window->rect.width != event.xconfigure.width ||
-					_window->rect.height != event.xconfigure.height){
-				_window->event.type = CC_EVENT_WINDOW_RESIZE;
-				_window->rect.width = event.xconfigure.width;
-				_window->rect.height = event.xconfigure.height;
-				_window->aspect = _window->rect.height / _window->rect.width;
+			if(_ccWindow->rect.width != event.xconfigure.width ||
+					_ccWindow->rect.height != event.xconfigure.height){
+				_ccWindow->event.type = CC_EVENT_WINDOW_RESIZE;
+				_ccWindow->rect.width = event.xconfigure.width;
+				_ccWindow->rect.height = event.xconfigure.height;
+				_ccWindow->aspect = _ccWindow->rect.height / _ccWindow->rect.width;
 
-				XGetWindowAttributes(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &_windowAttributes);
+				XGetWindowAttributes(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &_ccWindowAttributes);
 
-				_window->rect.x = _windowAttributes.x;
-				_window->rect.y = _windowAttributes.y;
+				_ccWindow->rect.x = _ccWindowAttributes.x;
+				_ccWindow->rect.y = _ccWindowAttributes.y;
 
 				ccWindowUpdateDisplay();
 
@@ -329,22 +329,22 @@ bool ccWindowPollEvent(void)
 				}
 			}
 
-			if(_window->rect.x != event.xconfigure.x ||
-					_window->rect.y != event.xconfigure.y) {
-				_window->rect.x = event.xconfigure.x;
-				_window->rect.y = event.xconfigure.y;
+			if(_ccWindow->rect.x != event.xconfigure.x ||
+					_ccWindow->rect.y != event.xconfigure.y) {
+				_ccWindow->rect.x = event.xconfigure.x;
+				_ccWindow->rect.y = event.xconfigure.y;
 
 				ccWindowUpdateDisplay();
 			}
 			break;
 		case ClientMessage:
-			_window->event.type = CC_EVENT_WINDOW_QUIT;
+			_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
 			break;
 		case FocusIn:
-			_window->event.type = CC_EVENT_FOCUS_GAINED;
+			_ccWindow->event.type = CC_EVENT_FOCUS_GAINED;
 			break;
 		case FocusOut:
-			_window->event.type = CC_EVENT_FOCUS_LOST;
+			_ccWindow->event.type = CC_EVENT_FOCUS_LOST;
 			break;
 	}
 
@@ -353,7 +353,7 @@ bool ccWindowPollEvent(void)
 
 ccError ccWindowSetWindowed(void)
 {
-	ccAssert(_window);
+	ccAssert(_ccWindow);
 
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
@@ -365,7 +365,7 @@ ccError ccWindowSetWindowed(void)
 
 ccError ccWindowSetMaximized(void)
 {
-	ccAssert(_window);
+	ccAssert(_ccWindow);
 
 	ccWindowSetWindowed();
 
@@ -383,10 +383,10 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	int i;
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 
-	ccAssert(_window);
+	ccAssert(_ccWindow);
 
 	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
-		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _window->display;
+		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _ccWindow->display;
 	}else{
 		va_start(displays, displayCount);
 
@@ -435,12 +435,12 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 ccError ccWindowResizeMove(ccRect rect)
 {
-	ccAssert(_window);
+	ccAssert(_ccWindow);
 
 	setResizable(true);
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
 
-	_window->rect = rect;
+	_ccWindow->rect = rect;
 	if(WINDOW_DATA->windowFlags & CC_WINDOW_FLAG_NORESIZE){
 		setResizable(false);
 	}
@@ -453,14 +453,14 @@ ccError ccWindowCenter(void)
 	ccDisplayData *currentResolution;
 	ccRect newRect;
 
-	ccAssert(_window->display != NULL);
+	ccAssert(_ccWindow->display != NULL);
 
-	currentResolution = ccDisplayGetResolutionCurrent(_window->display);
+	currentResolution = ccDisplayGetResolutionCurrent(_ccWindow->display);
 
-	newRect.x = (currentResolution->width - _window->rect.width) >> 1;
-	newRect.y = (currentResolution->height - _window->rect.height) >> 1;
-	newRect.width = _window->rect.width;
-	newRect.height = _window->rect.height;
+	newRect.x = (currentResolution->width - _ccWindow->rect.width) >> 1;
+	newRect.y = (currentResolution->height - _ccWindow->rect.height) >> 1;
+	newRect.width = _ccWindow->rect.width;
+	newRect.height = _ccWindow->rect.height;
 
 	ccWindowResizeMove(newRect);
 

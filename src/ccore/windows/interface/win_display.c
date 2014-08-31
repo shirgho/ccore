@@ -12,27 +12,27 @@ ccError ccDisplayInitialize(void)
 	int displayCount;
 	int i;
 
-	ccAssert(_displays == NULL);
+	ccAssert(_ccDisplays == NULL);
 
-	ccMalloc(_displays, sizeof(ccDisplays));
-	_displays->display = NULL;
+	ccMalloc(_ccDisplays, sizeof(ccDisplays));
+	_ccDisplays->display = NULL;
 
 	dm.dmSize = sizeof(dm);
 	device.cb = sizeof(DISPLAY_DEVICE);
 	display.cb = sizeof(DISPLAY_DEVICE);
-	_displays->amount = 0;
+	_ccDisplays->amount = 0;
 
 	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
 		displayCount = 0;
 
 		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
-			_displays->amount++;
+			_ccDisplays->amount++;
 
-			ccRealloc(_displays->display, sizeof(ccDisplay)*_displays->amount);
+			ccRealloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
 
 			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
 
-			currentDisplay = &_displays->display[_displays->amount - 1];
+			currentDisplay = &_ccDisplays->display[_ccDisplays->amount - 1];
 
 			ccMalloc(currentDisplay->gpuName, CC_MAXDEVICESTRINGSIZE);
 			ccMalloc(currentDisplay->monitorName, CC_MAXDEVICESTRINGSIZE);
@@ -76,7 +76,7 @@ ccError ccDisplayInitialize(void)
 				currentDisplay->amount++;
 			}
 
-			if(currentDisplay->x == 0 && currentDisplay->y == 0) _displays->primary = _displays->amount - 1;
+			if(currentDisplay->x == 0 && currentDisplay->y == 0) _ccDisplays->primary = _ccDisplays->amount - 1;
 
 			displayCount++;
 
@@ -90,18 +90,18 @@ ccError ccDisplayInitialize(void)
 ccError ccDisplayFree(void) {
 	int i;
 
-	ccAssert(_displays != NULL);
+	ccAssert(_ccDisplays != NULL);
 
-	for(i = 0; i < _displays->amount; i++) {
-		free(_displays->display[i].gpuName);
-		free(_displays->display[i].monitorName);
-		free(_displays->display[i].deviceName);
-		free(_displays->display[i].resolution);
+	for(i = 0; i < _ccDisplays->amount; i++) {
+		free(_ccDisplays->display[i].gpuName);
+		free(_ccDisplays->display[i].monitorName);
+		free(_ccDisplays->display[i].deviceName);
+		free(_ccDisplays->display[i].resolution);
 	}
-	free(_displays->display);
-	free(_displays);
+	free(_ccDisplays->display);
+	free(_ccDisplays);
 	
-	_displays = NULL;
+	_ccDisplays = NULL;
 
 	return CC_ERROR_NONE;
 }

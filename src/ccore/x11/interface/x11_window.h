@@ -39,4 +39,4 @@ typedef struct {
 	int XInputOpcode;
 } ccWindow_x11;
 
-#define WINDOW_DATA ((ccWindow_x11*)_window->data)
+#define WINDOW_DATA ((ccWindow_x11*)_ccWindow->data)

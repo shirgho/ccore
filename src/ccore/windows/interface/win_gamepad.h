@@ -8,7 +8,7 @@
 
 #include <ccore/assert.h>
 
-#include "win_window.h"
+#include "win_ccWindow.h"
 
 #define GAMEPAD_MAXBUTTONS 128
 
@@ -61,4 +61,4 @@ typedef struct {
 } ccGamepads_win;
 
 #define GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
-#define GAMEPADS_DATA ((ccGamepads_win*)_gamepads->data)
+#define GAMEPADS_DATA ((ccGamepads_win*)_ccGamepads->data)

@@ -7309,10 +7309,10 @@ typedef void (GLAPIENTRY * PFNGLVIEWPORTINDEXEDFVPROC) (GLuint index, const GLfl
 
 #endif /* GL_ARB_viewport_array */
 
-/* --------------------------- GL_ARB_window_pos --------------------------- */
+/* --------------------------- GL_ARB_ccWindow_pos --------------------------- */
 
-#ifndef GL_ARB_window_pos
-#define GL_ARB_window_pos 1
+#ifndef GL_ARB_ccWindow_pos
+#define GL_ARB_ccWindow_pos 1
 
 typedef void (GLAPIENTRY * PFNGLWINDOWPOS2DARBPROC) (GLdouble x, GLdouble y);
 typedef void (GLAPIENTRY * PFNGLWINDOWPOS2DVARBPROC) (const GLdouble* p);
@@ -7348,9 +7348,9 @@ typedef void (GLAPIENTRY * PFNGLWINDOWPOS3SVARBPROC) (const GLshort* p);
 #define glWindowPos3sARB GLEW_GET_FUN(__glewWindowPos3sARB)
 #define glWindowPos3svARB GLEW_GET_FUN(__glewWindowPos3svARB)
 
-#define GLEW_ARB_window_pos GLEW_GET_VAR(__GLEW_ARB_window_pos)
+#define GLEW_ARB_ccWindow_pos GLEW_GET_VAR(__GLEW_ARB_ccWindow_pos)
 
-#endif /* GL_ARB_window_pos */
+#endif /* GL_ARB_ccWindow_pos */
 
 /* ------------------------- GL_ATIX_point_sprites ------------------------- */
 
@@ -11223,10 +11223,10 @@ typedef void (GLAPIENTRY * PFNGLRESIZEBUFFERSMESAPROC) (void);
 
 #endif /* GL_MESA_resize_buffers */
 
-/* --------------------------- GL_MESA_window_pos -------------------------- */
+/* --------------------------- GL_MESA_ccWindow_pos -------------------------- */
 
-#ifndef GL_MESA_window_pos
-#define GL_MESA_window_pos 1
+#ifndef GL_MESA_ccWindow_pos
+#define GL_MESA_ccWindow_pos 1
 
 typedef void (GLAPIENTRY * PFNGLWINDOWPOS2DMESAPROC) (GLdouble x, GLdouble y);
 typedef void (GLAPIENTRY * PFNGLWINDOWPOS2DVMESAPROC) (const GLdouble* p);
@@ -11278,9 +11278,9 @@ typedef void (GLAPIENTRY * PFNGLWINDOWPOS4SVMESAPROC) (const GLshort* p);
 #define glWindowPos4sMESA GLEW_GET_FUN(__glewWindowPos4sMESA)
 #define glWindowPos4svMESA GLEW_GET_FUN(__glewWindowPos4svMESA)
 
-#define GLEW_MESA_window_pos GLEW_GET_VAR(__GLEW_MESA_window_pos)
+#define GLEW_MESA_ccWindow_pos GLEW_GET_VAR(__GLEW_MESA_ccWindow_pos)
 
-#endif /* GL_MESA_window_pos */
+#endif /* GL_MESA_ccWindow_pos */
 
 /* ------------------------- GL_MESA_ycbcr_texture ------------------------- */
 
@@ -17679,7 +17679,7 @@ GLEW_VAR_EXPORT GLboolean __GLEW_ARB_vertex_shader;
 GLEW_VAR_EXPORT GLboolean __GLEW_ARB_vertex_type_10f_11f_11f_rev;
 GLEW_VAR_EXPORT GLboolean __GLEW_ARB_vertex_type_2_10_10_10_rev;
 GLEW_VAR_EXPORT GLboolean __GLEW_ARB_viewport_array;
-GLEW_VAR_EXPORT GLboolean __GLEW_ARB_window_pos;
+GLEW_VAR_EXPORT GLboolean __GLEW_ARB_ccWindow_pos;
 GLEW_VAR_EXPORT GLboolean __GLEW_ATIX_point_sprites;
 GLEW_VAR_EXPORT GLboolean __GLEW_ATIX_texture_env_combine3;
 GLEW_VAR_EXPORT GLboolean __GLEW_ATIX_texture_env_route;
@@ -17824,7 +17824,7 @@ GLEW_VAR_EXPORT GLboolean __GLEW_KTX_buffer_region;
 GLEW_VAR_EXPORT GLboolean __GLEW_MESAX_texture_stack;
 GLEW_VAR_EXPORT GLboolean __GLEW_MESA_pack_invert;
 GLEW_VAR_EXPORT GLboolean __GLEW_MESA_resize_buffers;
-GLEW_VAR_EXPORT GLboolean __GLEW_MESA_window_pos;
+GLEW_VAR_EXPORT GLboolean __GLEW_MESA_ccWindow_pos;
 GLEW_VAR_EXPORT GLboolean __GLEW_MESA_ycbcr_texture;
 GLEW_VAR_EXPORT GLboolean __GLEW_NVX_conditional_render;
 GLEW_VAR_EXPORT GLboolean __GLEW_NVX_gpu_memory_info;

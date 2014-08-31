@@ -15,7 +15,7 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	visual = glXChooseVisual(WINDOW_DATA->XDisplay, WINDOW_DATA->XScreen, attrList);
 	if(!visual){

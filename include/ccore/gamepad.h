@@ -80,10 +80,10 @@ typedef struct {
 	void *data;
 } ccGamepads;
 
-ccGamepads *_gamepads;
+ccGamepads *_ccGamepads;
 
-#define ccGamepadCount() _gamepads->amount
-#define ccGamepadGet(index) (&_gamepads->gamepad[index])
+#define ccGamepadCount() _ccGamepads->amount
+#define ccGamepadGet(index) (&_ccGamepads->gamepad[index])
 
 ccError ccGamepadInitialize(void); // Initializes gamepad input
 ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);

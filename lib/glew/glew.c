@@ -2919,7 +2919,7 @@ GLboolean __GLEW_ARB_vertex_shader = GL_FALSE;
 GLboolean __GLEW_ARB_vertex_type_10f_11f_11f_rev = GL_FALSE;
 GLboolean __GLEW_ARB_vertex_type_2_10_10_10_rev = GL_FALSE;
 GLboolean __GLEW_ARB_viewport_array = GL_FALSE;
-GLboolean __GLEW_ARB_window_pos = GL_FALSE;
+GLboolean __GLEW_ARB_ccWindow_pos = GL_FALSE;
 GLboolean __GLEW_ATIX_point_sprites = GL_FALSE;
 GLboolean __GLEW_ATIX_texture_env_combine3 = GL_FALSE;
 GLboolean __GLEW_ATIX_texture_env_route = GL_FALSE;
@@ -3064,7 +3064,7 @@ GLboolean __GLEW_KTX_buffer_region = GL_FALSE;
 GLboolean __GLEW_MESAX_texture_stack = GL_FALSE;
 GLboolean __GLEW_MESA_pack_invert = GL_FALSE;
 GLboolean __GLEW_MESA_resize_buffers = GL_FALSE;
-GLboolean __GLEW_MESA_window_pos = GL_FALSE;
+GLboolean __GLEW_MESA_ccWindow_pos = GL_FALSE;
 GLboolean __GLEW_MESA_ycbcr_texture = GL_FALSE;
 GLboolean __GLEW_NVX_conditional_render = GL_FALSE;
 GLboolean __GLEW_NVX_gpu_memory_info = GL_FALSE;
@@ -5900,9 +5900,9 @@ static GLboolean _glewInit_GL_ARB_viewport_array (GLEW_CONTEXT_ARG_DEF_INIT)
 
 #endif /* GL_ARB_viewport_array */
 
-#ifdef GL_ARB_window_pos
+#ifdef GL_ARB_ccWindow_pos
 
-static GLboolean _glewInit_GL_ARB_window_pos (GLEW_CONTEXT_ARG_DEF_INIT)
+static GLboolean _glewInit_GL_ARB_ccWindow_pos (GLEW_CONTEXT_ARG_DEF_INIT)
 {
   GLboolean r = GL_FALSE;
 
@@ -5926,7 +5926,7 @@ static GLboolean _glewInit_GL_ARB_window_pos (GLEW_CONTEXT_ARG_DEF_INIT)
   return r;
 }
 
-#endif /* GL_ARB_window_pos */
+#endif /* GL_ARB_ccWindow_pos */
 
 #ifdef GL_ATIX_point_sprites
 
@@ -7734,9 +7734,9 @@ static GLboolean _glewInit_GL_MESA_resize_buffers (GLEW_CONTEXT_ARG_DEF_INIT)
 
 #endif /* GL_MESA_resize_buffers */
 
-#ifdef GL_MESA_window_pos
+#ifdef GL_MESA_ccWindow_pos
 
-static GLboolean _glewInit_GL_MESA_window_pos (GLEW_CONTEXT_ARG_DEF_INIT)
+static GLboolean _glewInit_GL_MESA_ccWindow_pos (GLEW_CONTEXT_ARG_DEF_INIT)
 {
   GLboolean r = GL_FALSE;
 
@@ -7768,7 +7768,7 @@ static GLboolean _glewInit_GL_MESA_window_pos (GLEW_CONTEXT_ARG_DEF_INIT)
   return r;
 }
 
-#endif /* GL_MESA_window_pos */
+#endif /* GL_MESA_ccWindow_pos */
 
 #ifdef GL_MESA_ycbcr_texture
 
@@ -10267,10 +10267,10 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   CONST_CAST(GLEW_ARB_viewport_array) = _glewSearchExtension("GL_ARB_viewport_array", extStart, extEnd);
   if (glewExperimental || GLEW_ARB_viewport_array) CONST_CAST(GLEW_ARB_viewport_array) = !_glewInit_GL_ARB_viewport_array(GLEW_CONTEXT_ARG_VAR_INIT);
 #endif /* GL_ARB_viewport_array */
-#ifdef GL_ARB_window_pos
-  CONST_CAST(GLEW_ARB_window_pos) = _glewSearchExtension("GL_ARB_window_pos", extStart, extEnd);
-  if (glewExperimental || GLEW_ARB_window_pos) CONST_CAST(GLEW_ARB_window_pos) = !_glewInit_GL_ARB_window_pos(GLEW_CONTEXT_ARG_VAR_INIT);
-#endif /* GL_ARB_window_pos */
+#ifdef GL_ARB_ccWindow_pos
+  CONST_CAST(GLEW_ARB_ccWindow_pos) = _glewSearchExtension("GL_ARB_ccWindow_pos", extStart, extEnd);
+  if (glewExperimental || GLEW_ARB_ccWindow_pos) CONST_CAST(GLEW_ARB_ccWindow_pos) = !_glewInit_GL_ARB_ccWindow_pos(GLEW_CONTEXT_ARG_VAR_INIT);
+#endif /* GL_ARB_ccWindow_pos */
 #ifdef GL_ATIX_point_sprites
   CONST_CAST(GLEW_ATIX_point_sprites) = _glewSearchExtension("GL_ATIX_point_sprites", extStart, extEnd);
 #endif /* GL_ATIX_point_sprites */
@@ -10779,10 +10779,10 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   CONST_CAST(GLEW_MESA_resize_buffers) = _glewSearchExtension("GL_MESA_resize_buffers", extStart, extEnd);
   if (glewExperimental || GLEW_MESA_resize_buffers) CONST_CAST(GLEW_MESA_resize_buffers) = !_glewInit_GL_MESA_resize_buffers(GLEW_CONTEXT_ARG_VAR_INIT);
 #endif /* GL_MESA_resize_buffers */
-#ifdef GL_MESA_window_pos
-  CONST_CAST(GLEW_MESA_window_pos) = _glewSearchExtension("GL_MESA_window_pos", extStart, extEnd);
-  if (glewExperimental || GLEW_MESA_window_pos) CONST_CAST(GLEW_MESA_window_pos) = !_glewInit_GL_MESA_window_pos(GLEW_CONTEXT_ARG_VAR_INIT);
-#endif /* GL_MESA_window_pos */
+#ifdef GL_MESA_ccWindow_pos
+  CONST_CAST(GLEW_MESA_ccWindow_pos) = _glewSearchExtension("GL_MESA_ccWindow_pos", extStart, extEnd);
+  if (glewExperimental || GLEW_MESA_ccWindow_pos) CONST_CAST(GLEW_MESA_ccWindow_pos) = !_glewInit_GL_MESA_ccWindow_pos(GLEW_CONTEXT_ARG_VAR_INIT);
+#endif /* GL_MESA_ccWindow_pos */
 #ifdef GL_MESA_ycbcr_texture
   CONST_CAST(GLEW_MESA_ycbcr_texture) = _glewSearchExtension("GL_MESA_ycbcr_texture", extStart, extEnd);
 #endif /* GL_MESA_ycbcr_texture */
@@ -15005,10 +15005,10 @@ GLboolean GLEWAPIENTRY glewIsSupported (const char* name)
           continue;
         }
 #endif
-#ifdef GL_ARB_window_pos
+#ifdef GL_ARB_ccWindow_pos
         if (_glewStrSame3(&pos, &len, (const GLubyte*)"window_pos", 10))
         {
-          ret = GLEW_ARB_window_pos;
+          ret = GLEW_ARB_ccWindow_pos;
           continue;
         }
 #endif
@@ -16056,10 +16056,10 @@ GLboolean GLEWAPIENTRY glewIsSupported (const char* name)
           continue;
         }
 #endif
-#ifdef GL_MESA_window_pos
+#ifdef GL_MESA_ccWindow_pos
         if (_glewStrSame3(&pos, &len, (const GLubyte*)"window_pos", 10))
         {
-          ret = GLEW_MESA_window_pos;
+          ret = GLEW_MESA_ccWindow_pos;
           continue;
         }
 #endif

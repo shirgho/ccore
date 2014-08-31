@@ -18,7 +18,7 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 	}
 
 	currentResolution.bitDepth = -1;
-	_displays->primary = 0;
+	_ccDisplays->primary = 0;
 
 	root = RootWindow(display, 0);
 	resources = XRRGetScreenResources(display, root);
@@ -31,13 +31,13 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 			continue;
 		}
 
-		_displays->amount++;
-		if(_displays->amount == 1){
-			ccMalloc(_displays->display, sizeof(ccDisplay));
+		_ccDisplays->amount++;
+		if(_ccDisplays->amount == 1){
+			ccMalloc(_ccDisplays->display, sizeof(ccDisplay));
 		}else{
-			ccRealloc(_displays->display, sizeof(ccDisplay) * _displays->amount);
+			ccRealloc(_ccDisplays->display, sizeof(ccDisplay) * _ccDisplays->amount);
 		}
-		currentDisplay = _displays->display + _displays->amount - 1;
+		currentDisplay = _ccDisplays->display + _ccDisplays->amount - 1;
 
 		ccMalloc(currentDisplay->data, sizeof(ccDisplay_x11));
 
@@ -125,10 +125,10 @@ ccError ccDisplayInitialize(void)
 	struct dirent *direntry;
 	Display *display;
 
-	ccAssert(_displays == NULL);
+	ccAssert(_ccDisplays == NULL);
 
-	ccMalloc(_displays, sizeof(ccDisplays));
-	_displays->amount = 0;
+	ccMalloc(_ccDisplays, sizeof(ccDisplays));
+	_ccDisplays->amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
 	ccAssert(dir != NULL);
@@ -143,7 +143,7 @@ ccError ccDisplayInitialize(void)
 		if(display != NULL){
 			ccError error = ccXFindDisplaysXinerama(display, displayName);
 			if(error != CC_ERROR_NONE) return error;
-			ccPrintf("X: %d displays found\n", _displays->amount);
+			ccPrintf("X: %d displays found\n", _ccDisplays->amount);
 			XCloseDisplay(display);
 		}
 	}
@@ -155,23 +155,23 @@ ccError ccDisplayFree(void)
 {
 	int i,j;
 	
-	ccAssert(_displays != NULL);
+	ccAssert(_ccDisplays != NULL);
 
-	for(i = 0; i < _displays->amount; i++){
-		free(_displays->display[i].data);
-		free(_displays->display[i].monitorName);
-		free(_displays->display[i].deviceName);
+	for(i = 0; i < _ccDisplays->amount; i++){
+		free(_ccDisplays->display[i].data);
+		free(_ccDisplays->display[i].monitorName);
+		free(_ccDisplays->display[i].deviceName);
 
-		for(j = 0; j < _displays->display[i].amount; j++) {
-			free(_displays->display[i].resolution[j].data);
+		for(j = 0; j < _ccDisplays->display[i].amount; j++) {
+			free(_ccDisplays->display[i].resolution[j].data);
 		}
 
-		free(_displays->display[i].resolution);
+		free(_ccDisplays->display[i].resolution);
 	}
-	free(_displays->display);
-	free(_displays);
+	free(_ccDisplays->display);
+	free(_ccDisplays);
 
-	_displays = NULL;
+	_ccDisplays = NULL;
 
 	return CC_ERROR_NONE;
 }

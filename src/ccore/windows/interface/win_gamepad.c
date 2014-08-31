@@ -44,12 +44,12 @@ ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 ccError ccGamepadInitialize(void)
 {
 	int i;
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
-	ccMalloc(_gamepads, sizeof(ccGamepads));
-	ccMalloc(_gamepads->data, sizeof(ccGamepads_win));
-	_gamepads->amount = 0;
-	_gamepads->gamepad = NULL;
+	ccMalloc(_ccGamepads, sizeof(ccGamepads));
+	ccMalloc(_ccGamepads->data, sizeof(ccGamepads_win));
+	_ccGamepads->amount = 0;
+	_ccGamepads->gamepad = NULL;
 	
 	WINDOW_DATA->queryXinput = true;
 
@@ -67,7 +67,7 @@ ccError ccGamepadInitialize(void)
 
 void ccGamepadFree(void)
 {
-	ccAssert(_gamepads != NULL);
+	ccAssert(_ccGamepads != NULL);
 	
 	WINDOW_DATA->queryXinput = false;
 
@@ -79,28 +79,28 @@ void ccGamepadFree(void)
 	if(ccGamepadCount() != 0) {
 		int i;
 		for(i = 0; i < ccGamepadCount(); i++) {
-			if(((ccGamepad_win*)_gamepads->gamepad[i].data)->inputType == CC_GAMEPAD_INPUT_RAW) {
-				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->buttonCaps);
-				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->valueCaps);
-				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->outputValueCaps);
-				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->axisFactor);
-				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->axisNegativeComponent);
-				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw->preparsedData);
-				free(((ccGamepad_win*)_gamepads->gamepad[i].data)->raw);
+			if(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->inputType == CC_GAMEPAD_INPUT_RAW) {
+				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->buttonCaps);
+				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->valueCaps);
+				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->outputValueCaps);
+				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->axisFactor);
+				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->axisNegativeComponent);
+				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->preparsedData);
+				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw);
 			}
-			free(_gamepads->gamepad[i].data);
-			free(_gamepads->gamepad[i].button);
-			free(_gamepads->gamepad[i].axis);
-			if(_gamepads->gamepad[i].outputAmount != 0)
-				free(_gamepads->gamepad[i].output);
+			free(_ccGamepads->gamepad[i].data);
+			free(_ccGamepads->gamepad[i].button);
+			free(_ccGamepads->gamepad[i].axis);
+			if(_ccGamepads->gamepad[i].outputAmount != 0)
+				free(_ccGamepads->gamepad[i].output);
 		}
-		free(_gamepads->gamepad);
+		free(_ccGamepads->gamepad);
 	}
 
-	free(_gamepads->data);
-	free(_gamepads);
+	free(_ccGamepads->data);
+	free(_ccGamepads);
 
-	_gamepads = NULL;
+	_ccGamepads = NULL;
 }
 
 void _queryXinput()
@@ -124,11 +124,11 @@ void _queryXinput()
 			if(GAMEPADS_DATA->xInputConnected[i] == -1 || ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
 				if(GAMEPADS_DATA->xInputConnected[i] == -1) {
 					// Allocate memory for newly connected gamepad
-					_gamepads->amount++;
-					_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
+					_ccGamepads->amount++;
+					_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
 
 					GAMEPADS_DATA->xInputConnected[i] = ccGamepadCount() - 1;
-					currentGamepad = &_gamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
+					currentGamepad = &_ccGamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
 					currentGamepad->data = malloc(sizeof(ccGamepad_win));
 
 					// Create connect event
@@ -159,7 +159,7 @@ void _queryXinput()
 				}
 			}
 
-			currentGamepad = &_gamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
+			currentGamepad = &_ccGamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
 
 			// Update gamepad
 			event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
@@ -244,8 +244,8 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	event.type = CC_EVENT_GAMEPAD;
 
 	for(i = 0; i < ccGamepadCount(); i++) {
-		if(((ccGamepad_win*)(_gamepads->gamepad[i].data))->inputType == CC_GAMEPAD_INPUT_RAW && ((ccGamepad_win*)(_gamepads->gamepad[i].data))->raw->handle == raw->header.hDevice) {
-			currentGamepad = &_gamepads->gamepad[i];
+		if(((ccGamepad_win*)(_ccGamepads->gamepad[i].data))->inputType == CC_GAMEPAD_INPUT_RAW && ((ccGamepad_win*)(_ccGamepads->gamepad[i].data))->raw->handle == raw->header.hDevice) {
+			currentGamepad = &_ccGamepads->gamepad[i];
 			event.gamepadEvent.id = i;
 			break;
 		}
@@ -253,10 +253,10 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	if(currentGamepad == NULL) {
 		USHORT capsLength;
 
-		_gamepads->amount++;
-		_gamepads->gamepad = realloc(_gamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
+		_ccGamepads->amount++;
+		_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
 
-		currentGamepad = &_gamepads->gamepad[ccGamepadCount() - 1];
+		currentGamepad = &_ccGamepads->gamepad[ccGamepadCount() - 1];
 		event.gamepadEvent.id = ccGamepadCount() - 1;
 
 		// Initialize current gamepad

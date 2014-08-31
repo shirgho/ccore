@@ -1,4 +1,4 @@
-#include "win_window.h"
+#include "win_ccWindow.h"
 
 void _ccEventStackPush(ccEvent event)
 {
@@ -16,8 +16,8 @@ static void updateWindowDisplay(void)
 	RECT winRect;
 	GetWindowRect(WINDOW_DATA->winHandle, &winRect);
 
-	_window->rect.x = winRect.left;
-	_window->rect.y = winRect.top;
+	_ccWindow->rect.x = winRect.left;
+	_ccWindow->rect.y = winRect.top;
 
 	ccWindowUpdateDisplay();
 }
@@ -29,13 +29,13 @@ static void updateWindowResolution(void)
 	
 	GetClientRect(WINDOW_DATA->winHandle, &winRect);
 
-	if(winRect.right - winRect.left == _window->rect.width && winRect.bottom - winRect.top == _window->rect.height) {
+	if(winRect.right - winRect.left == _ccWindow->rect.width && winRect.bottom - winRect.top == _ccWindow->rect.height) {
 		return;
 	}
 
-	_window->rect.width = winRect.right - winRect.left;
-	_window->rect.height = winRect.bottom - winRect.top;
-	_window->aspect = (float)_window->rect.width / _window->rect.height;
+	_ccWindow->rect.width = winRect.right - winRect.left;
+	_ccWindow->rect.height = winRect.bottom - winRect.top;
+	_ccWindow->aspect = (float)_ccWindow->rect.width / _ccWindow->rect.height;
 
 	resizeEvent.type = CC_EVENT_WINDOW_RESIZE;
 	_ccEventStackPush(resizeEvent);
@@ -84,37 +84,37 @@ static void processRid(HRAWINPUT rawInput)
 		USHORT buttonFlags = raw->data.mouse.usButtonFlags;
 		
 		if(buttonFlags == 0) {
-			_window->event.type = CC_EVENT_MOUSE_MOVE;
-			_window->event.mouseDelta.x = raw->data.mouse.lLastX;
-			_window->event.mouseDelta.y = raw->data.mouse.lLastY;
+			_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
+			_ccWindow->event.mouseDelta.x = raw->data.mouse.lLastX;
+			_ccWindow->event.mouseDelta.y = raw->data.mouse.lLastY;
 		}
 		else if(buttonFlags & RI_MOUSE_WHEEL) {
-			_window->event.type = CC_EVENT_MOUSE_SCROLL;
-			_window->event.scrollDelta = (float)((short)raw->data.mouse.usButtonData) / WHEEL_DELTA;
+			_ccWindow->event.type = CC_EVENT_MOUSE_SCROLL;
+			_ccWindow->event.scrollDelta = (float)((short)raw->data.mouse.usButtonData) / WHEEL_DELTA;
 		}
 		else if(buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) {
-			_window->event.type = CC_EVENT_MOUSE_DOWN;
-			_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+			_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 		}
 		else if(buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) {
-			_window->event.type = CC_EVENT_MOUSE_UP;
-			_window->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 		}
 		else if(buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) {
-			_window->event.type = CC_EVENT_MOUSE_DOWN;
-			_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+			_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 		}
 		else if(buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP) {
-			_window->event.type = CC_EVENT_MOUSE_UP;
-			_window->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 		}
 		else if(buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) {
-			_window->event.type = CC_EVENT_MOUSE_DOWN;
-			_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
+			_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
 		}
 		else if(buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) {
-			_window->event.type = CC_EVENT_MOUSE_UP;
-			_window->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
+			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
 		}
 	}
 	else if(raw->header.dwType == RIM_TYPEKEYBOARD)
@@ -134,8 +134,8 @@ static void processRid(HRAWINPUT rawInput)
 		}
 
 		//fill event with data
-		_window->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
-		_window->event.keyCode = vkCode;
+		_ccWindow->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
+		_ccWindow->event.keyCode = vkCode;
 	}
 	else if(raw->header.dwType == RIM_TYPEHID)
 	{
@@ -145,13 +145,13 @@ static void processRid(HRAWINPUT rawInput)
 
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	_window->event.type = CC_EVENT_SKIP;
+	_ccWindow->event.type = CC_EVENT_SKIP;
 	switch(message) {
 	case WM_INPUT:
 		processRid((HRAWINPUT)lParam);
 		break;
 	case WM_CLOSE:
-		_window->event.type = CC_EVENT_WINDOW_QUIT;
+		_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
 	case WM_SIZE:
 		updateWindowResolution();
@@ -160,8 +160,8 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		updateWindowDisplay();
 		break;
 	case WM_MOUSEMOVE:
-		_window->mouse.x = (unsigned short)lParam & 0x0000FFFF;
-		_window->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
+		_ccWindow->mouse.x = (unsigned short)lParam & 0x0000FFFF;
+		_ccWindow->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
 		break;
 	case WM_SETFOCUS:
 	{
@@ -208,7 +208,7 @@ bool ccWindowPollEvent(void)
 {
 	static bool canPollInput = true;
 
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 	
 	if(canPollInput) {
 		canPollInput = false;
@@ -217,7 +217,7 @@ bool ccWindowPollEvent(void)
 
 	if(WINDOW_DATA->eventStackPos != -1) {
 
-		_window->event = WINDOW_DATA->eventStack[WINDOW_DATA->eventStackIndex];
+		_ccWindow->event = WINDOW_DATA->eventStack[WINDOW_DATA->eventStackIndex];
 
 		WINDOW_DATA->eventStackIndex++;
 		WINDOW_DATA->eventStackPos--;
@@ -242,14 +242,14 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	HMODULE moduleHandle = GetModuleHandle(NULL);
 	RECT windowRect;
 
-	ccAssert(_window == NULL);
+	ccAssert(_ccWindow == NULL);
 
 	//initialize struct
-	ccMalloc(_window, sizeof(ccWindow));
+	ccMalloc(_ccWindow, sizeof(ccWindow));
 
-	_window->supportsRawInput = true;
-	_window->rect = rect;
-	ccMalloc(_window->data, sizeof(ccWindow_win));
+	_ccWindow->supportsRawInput = true;
+	_ccWindow->rect = rect;
+	ccMalloc(_ccWindow->data, sizeof(ccWindow_win));
 
 	WINDOW_DATA->eventStackSize = 0;
 	WINDOW_DATA->eventStackPos = -1;
@@ -300,7 +300,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 
 ccError ccWindowFree(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	freeRawInput();
 
@@ -310,28 +310,28 @@ ccError ccWindowFree(void)
 	if(DestroyWindow(WINDOW_DATA->winHandle) == FALSE) return CC_ERROR_WINDOWDESTRUCTION;
 	if(WINDOW_DATA->eventStackSize != 0) free(WINDOW_DATA->eventStack);
 
-	free(_window->data);
-	free(_window);
+	free(_ccWindow->data);
+	free(_ccWindow);
 
-	_window = NULL;
+	_ccWindow = NULL;
 
 	return CC_ERROR_NONE;
 }
 
 ccError ccWindowSetWindowed(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION);
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
-	ccWindowResizeMove(ccDisplayGetRect(_window->display));
+	ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display));
 
 	return CC_ERROR_NONE;
 }
 
 ccError ccWindowSetMaximized(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION);
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_MAXIMIZE) == FALSE) return CC_ERROR_WINDOW_MODE;
@@ -341,7 +341,7 @@ ccError ccWindowSetMaximized(void)
 
 ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	if(addBorder) {
 		RECT windowRect;
@@ -362,13 +362,13 @@ ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
 {
-	ccAssert(_window);
+	ccAssert(_ccWindow);
 
 	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME));
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) return CC_ERROR_WINDOW_MODE;
 
 	if(displayCount == 0) {
-		return _ccWindowResizeMove(ccDisplayGetRect(_window->display), false);
+		return _ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display), false);
 	}
 	else{
 		va_list displays;
@@ -403,12 +403,12 @@ ccError ccWindowCenter(void)
 {
 	RECT windowRect;
 
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	if(GetWindowRect(WINDOW_DATA->winHandle, &windowRect) == FALSE) return CC_ERROR_WINDOW_MODE;
 	return _ccWindowResizeMove(
-		(ccRect){_window->display->x + ((ccDisplayGetResolutionCurrent(_window->display)->width - (windowRect.right - windowRect.left)) >> 1),
-				 _window->display->y + ((ccDisplayGetResolutionCurrent(_window->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
+		(ccRect){_ccWindow->display->x + ((ccDisplayGetResolutionCurrent(_ccWindow->display)->width - (windowRect.right - windowRect.left)) >> 1),
+				 _ccWindow->display->y + ((ccDisplayGetResolutionCurrent(_ccWindow->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
 				 windowRect.right - windowRect.left,
 				 windowRect.bottom - windowRect.top
 	}, false);

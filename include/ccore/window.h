@@ -60,9 +60,9 @@ typedef struct {
 } ccWindow;
 
 // Only access through getters
-ccWindow *_window;
+ccWindow *_ccWindow;
 
-#define ccSupportsRawInput() _window->supportsRawInput
+#define ccSupportsRawInput() _ccWindow->supportsRawInput
 
 // Getters
 ccEvent ccWindowGetEvent(void);

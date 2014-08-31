@@ -33,10 +33,10 @@ ccError ccDisplayRevertModes(void)
 	int i;
 	ccError output;
 
-	ccAssert(_displays != NULL);
+	ccAssert(_ccDisplays != NULL);
 
-	for(i = 0; i < _displays->amount; i++){
-		output = ccDisplaySetResolution(_displays->display + i, CC_DEFAULT_RESOLUTION);
+	for(i = 0; i < _ccDisplays->amount; i++){
+		output = ccDisplaySetResolution(_ccDisplays->display + i, CC_DEFAULT_RESOLUTION);
 		if(output != CC_ERROR_NONE){
 			return output;
 		}
@@ -47,23 +47,23 @@ ccError ccDisplayRevertModes(void)
 
 ccDisplay *ccDisplayGetDefault(void)
 {
-	ccAssert(_displays != NULL);
-	ccAssert(_displays->display != NULL);
+	ccAssert(_ccDisplays != NULL);
+	ccAssert(_ccDisplays->display != NULL);
 
-	return _displays->display + _displays->primary;
+	return _ccDisplays->display + _ccDisplays->primary;
 }
 
 ccDisplay *ccDisplayGet(int index)
 {
-	ccAssert(_displays != NULL);
-	ccAssert(index >= 0 && index < _displays->amount);
+	ccAssert(_ccDisplays != NULL);
+	ccAssert(index >= 0 && index < _ccDisplays->amount);
 
-	return _displays->display + index;
+	return _ccDisplays->display + index;
 }
 
 int ccDisplayGetAmount(void)
 {
-	ccAssert(_displays != NULL);
+	ccAssert(_ccDisplays != NULL);
 
-	return _displays->amount;
+	return _ccDisplays->amount;
 }

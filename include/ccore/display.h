@@ -64,7 +64,7 @@ typedef struct {
 } ccDisplays;
 
 // Only access through getters
-ccDisplays *_displays;
+ccDisplays *_ccDisplays;
 
 #define ccDisplayGetResolutionCurrent(display) (&display->resolution[display->current])
 #define ccDisplayGetResolution(display, index) (&display->resolution[index])

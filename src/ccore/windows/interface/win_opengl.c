@@ -42,7 +42,7 @@ ccError ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 ccError ccGLFreeContext(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 
 	wglDeleteContext(WINDOW_DATA->renderContext);
 
@@ -51,6 +51,6 @@ ccError ccGLFreeContext(void)
 
 ccError ccGLSwapBuffers(void)
 {
-	ccAssert(_window != NULL);
+	ccAssert(_ccWindow != NULL);
 	return SwapBuffers(WINDOW_DATA->hdc) == TRUE?CC_ERROR_NONE:CC_ERROR_CANTSWAP;
 }
