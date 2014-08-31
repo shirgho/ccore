@@ -54,6 +54,7 @@ ccReturn ccGLFreeContext(void)
 	ccAssert(_ccWindow != NULL);
 
 	wglDeleteContext(WINDOW_DATA->renderContext);
+	WINDOW_DATA->renderContext = NULL;
 
 	return CC_SUCCESS;
 }
@@ -68,4 +69,9 @@ ccReturn ccGLSwapBuffers(void)
 		ccErrorPush(CC_ERROR_CANTSWAP);
 		return CC_FAIL;
 	}
+}
+
+bool ccGLHasContext(void)
+{
+	return WINDOW_DATA->renderContext != NULL;
 }
