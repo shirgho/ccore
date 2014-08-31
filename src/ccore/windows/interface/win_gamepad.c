@@ -32,7 +32,7 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
 
 	if(((ccGamepad_win*)gamepad->data)->inputType == CC_GAMEPAD_INPUT_XINPUT) {
-		(ccGamepad_win*)gamepad->output[hapticIndex] = force;
+		gamepad->output[hapticIndex] = force;
 
 		vibration.wLeftMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[0];
 		vibration.wRightMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[1];
