@@ -10,10 +10,10 @@ ccReturn ccNetFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccNetSocket(ccSocket sock, int family, int type, int protocol)
+ccReturn ccNetSocket(ccSocket *sock, int family, int type, int protocol)
 {
-	sock = socket(family, type, protocol);
-	CC_RETURN_ON_ERROR(sock);
+	*sock = socket(family, type, protocol);
+	CC_RETURN_ON_ERROR(*sock);
 }
 
 ccReturn ccNetSocketpair(ccSocket sock[2], int family, int type, int protocol)
@@ -116,12 +116,10 @@ ccReturn ccNetListen(ccSocket sock, int n)
 	CC_RETURN_ON_ERROR(err);
 }
 
-ccReturn ccNetAccept(ccSocket sock, ccSockaddr *addr, ccSocklen_t *addr_len)
+ccReturn ccNetAccept(ccSocket sock, ccSocket *sockReceived, ccSockaddr *addr, ccSocklen_t *addr_len)
 {
-	int err;
-	
-	err = accept(sock, addr, addr_len);
-	CC_RETURN_ON_ERROR(err);
+	*sockReceived = accept(sock, addr, addr_len);
+	CC_RETURN_ON_ERROR(*sockReceived);
 }
 
 ccReturn ccNetShutdown(ccSocket sock, int how)
@@ -130,4 +128,10 @@ ccReturn ccNetShutdown(ccSocket sock, int how)
 	
 	err = shutdown(sock, how);
 	CC_RETURN_ON_ERROR(err);
+}
+
+ccReturn ccNetWrite(ccSocket sock, ssize_t *bytesWritten, const void *buf, size_t count)
+{
+	*bytesWritten = write(sock, buf, count);
+	CC_RETURN_ON_ERROR(*bytesWritten);
 }

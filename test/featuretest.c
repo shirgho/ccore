@@ -208,7 +208,7 @@ int main(int argc, char** argv)
 							ccDisplayRevertModes();
 							break;
 						case CC_KEY_S:
-							//ccNetworkSend("Test");
+							ccNetworkSend("Test");
 							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
@@ -332,51 +332,28 @@ ccThreadFunction(counter)
 }
 
 // A network sending procedure is implemented here << what the fuck does a linux implementation do outside of a linux folder this is exasperating
-/*
 void ccNetworkSend(char *string)
 {
 	ccSocket listenSock, sendSock;
-	struct sockaddr_in serv, client;
-	unsigned int len;
+	ccSockaddr_in serv, client;
+	ssize_t len;
+	ccSocklen_t socklen;
 
 	// Create TCP connection
-	listenSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if(listenSock == CC_NET_ERROR_SOCKET_INVALID){
-		ccPrintf("Creating socket (socket) failed with code %d\n", ccNetLastError());
-		return;
-	}
+	ccNetSocket(&listenSock, AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	serv.sin_family = AF_INET;
 	// Open on port 1337
-	serv.sin_port = htons(1337);
-	serv.sin_addr.s_addr = htonl(INADDR_ANY);
+	serv.sin_port = ccHtons(1337);
+	serv.sin_addr.s_addr = ccHtonl(INADDR_ANY);
 
-	if(setsockopt(listenSock, SOL_SOCKET, SO_REUSEADDR, (int[]){1}, sizeof(int)) == CC_NET_ERROR_SOCKET_ERROR){
-		ccPrintf("Creating socket (setsockopt) failed with code %d\n", ccNetLastError());
-		return;
-	}
-
-	if(bind(listenSock, (struct sockaddr*)&serv, sizeof(struct sockaddr)) == CC_NET_ERROR_SOCKET_ERROR){
-		ccPrintf("Creating socket (bind) failed with code %d\n", ccNetLastError());
-		return;
-	}
-
-	if(listen(listenSock, 1) == CC_NET_ERROR_SOCKET_ERROR){
-		ccPrintf("Creating socket (listen) failed with code %d\n", ccNetLastError());
-		return;
-	}
-
-	sendSock = accept(listenSock, (struct sockaddr*)&client, &len);
-	if(sendSock == CC_NET_ERROR_SOCKET_INVALID){
-		ccPrintf("Creating socket (accept) failed with code %d\n", ccNetLastError());
-		return;
-	}
-
-	if(write(sendSock, string, strlen(string)) != strlen(string)){
-		ccPrintf("Writing to socket failed with code %d\n", ccNetLastError());
-	}
+	ccNetSetsockopt(listenSock, SOL_SOCKET, SO_REUSEADDR, (int[]){1}, sizeof(int)); 
+	ccNetBind(listenSock, (ccSockaddr*)&serv, sizeof(ccSockaddr));
+	ccNetListen(listenSock, 1);
+	ccNetAccept(listenSock, &sendSock, (ccSockaddr*)&client, &socklen);
+	ccNetWrite(sendSock, &len, string, strlen(string));
 }
-*/
+
 // All code below this point is not CCORE related
 
 void initialize()

@@ -48,7 +48,7 @@ typedef struct msghdr ccMsghdr;
 ccReturn ccNetInitialize();
 ccReturn ccNetFree();
 
-ccReturn ccNetSocket(ccSocket sock, int family, int type, int protocol);
+ccReturn ccNetSocket(ccSocket *sock, int family, int type, int protocol);
 ccReturn ccNetSocketpair(ccSocket sock[2], int family, int type, int protocol);
 ccReturn ccNetBind(ccSocket sock, const ccSockaddr *addr, ccSocklen_t len);
 ccReturn ccNetGetsockname(ccSocket sock, ccSockaddr *addr, ccSocklen_t *len);
@@ -60,11 +60,13 @@ ccReturn ccNetSendto(ccSocket sock, ssize_t *bytesSend, const void *buf, size_t 
 ccReturn ccNetRecvfrom(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t n, int flags, ccSockaddr *addr, ccSocklen_t *len);
 ccReturn ccNetSendmsg(ccSocket sock, ssize_t *bytesSend, const ccMsghdr *message, int flags);
 ccReturn ccNetRecvmsg(ccSocket sock, ssize_t *bytesReceived, ccMsghdr *message, int flags);
-ccReturn ccNetGetSockopt(ccSocket sock, int level, int optname, void *optval, ccSocklen_t *optlen);
-ccReturn ccNetSetSockopt(ccSocket sock, int level, int optname, const void *optval, ccSocklen_t optlen);
+ccReturn ccNetGetsockopt(ccSocket sock, int level, int optname, void *optval, ccSocklen_t *optlen);
+ccReturn ccNetSetsockopt(ccSocket sock, int level, int optname, const void *optval, ccSocklen_t optlen);
 ccReturn ccNetListen(ccSocket sock, int n);
-ccReturn ccNetAccept(ccSocket sock, ccSockaddr *addr, ccSocklen_t *addr_len);
+ccReturn ccNetAccept(ccSocket sock, ccSocket *sockReceived, ccSockaddr *addr, ccSocklen_t *addr_len);
 ccReturn ccNetShutdown(ccSocket sock, int how);
+
+ccReturn ccNetWrite(ccSocket sock, ssize_t *bytesWritten, const void *buf, size_t count);
 
 #define ccHtonl(x) htonl(x)
 #define ccHtons(x) htons(x)
