@@ -32,38 +32,44 @@ extern "C"
 {
 #endif
 
-#ifdef X11
-#include <errno.h>
-
-#define CC_NET_ERROR_SOCKET_INVALID -1
-#define CC_NET_ERROR_SOCKET_ERROR -1
-#define CC_NET_ERROR_SOCKET_WOULDBLOCK EWOULDBLOCK
+#ifdef LINUX
+#include <arpa/inet.h>
 
 typedef int ccSocket;
-
-#define _close close
-#define _ioctl ioctl
-#define _errno errno
-
 #elif defined WINDOWS
-#include <winsock.h>
-#define CC_NET_ERROR_SOCKET_INVALID INVALID_SOCKET
-#define CC_NET_ERROR_SOCKET_ERROR SOCKET_ERROR
-#define CC_NET_ERROR_SOCKET_WOULDBLOCK WSAEWOULDBLOCK
-
-#define _close closesocket
-#define _ioctl ioctlsocket
-#define _errno WSAGetLastError()
-
 typedef SOCKET ccSocket;
 #endif
 
+typedef struct sockaddr ccSockaddr;
+typedef struct sockaddr_in ccSockaddr_in;
+typedef socklen_t ccSocklen_t;
+typedef struct msghdr ccMsghdr;
+
 ccReturn ccNetInitialize();
 ccReturn ccNetFree();
-#define ccNetClose(x) _close(x)
-#define ccNetIoctl(x, y, z) _ioctl(x, y, z)
 
-#define ccNetLastError() _errno
+ccReturn ccNetSocket(ccSocket sock, int family, int type, int protocol);
+ccReturn ccNetSocketpair(ccSocket sock[2], int family, int type, int protocol);
+ccReturn ccNetBind(ccSocket sock, const ccSockaddr *addr, ccSocklen_t len);
+ccReturn ccNetGetsockname(ccSocket sock, ccSockaddr *addr, ccSocklen_t *len);
+ccReturn ccNetConnect(ccSocket sock, const ccSockaddr *addr, ccSocklen_t len);
+ccReturn ccNetGetpeername(ccSocket sock, ccSockaddr *addr, ccSocklen_t *len);
+ccReturn ccNetSend(ccSocket sock, ssize_t *bytesSend, const void *buf, size_t n, int flags);
+ccReturn ccNetRecv(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t n, int flags);
+ccReturn ccNetSendto(ccSocket sock, ssize_t *bytesSend, const void *buf, size_t n, int flags, const ccSockaddr *addr, ccSocklen_t len);
+ccReturn ccNetRecvfrom(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t n, int flags, ccSockaddr *addr, ccSocklen_t *len);
+ccReturn ccNetSendmsg(ccSocket sock, ssize_t *bytesSend, const ccMsghdr *message, int flags);
+ccReturn ccNetRecvmsg(ccSocket sock, ssize_t *bytesReceived, ccMsghdr *message, int flags);
+ccReturn ccNetGetSockopt(ccSocket sock, int level, int optname, void *optval, ccSocklen_t *optlen);
+ccReturn ccNetSetSockopt(ccSocket sock, int level, int optname, const void *optval, ccSocklen_t optlen);
+ccReturn ccNetListen(ccSocket sock, int n);
+ccReturn ccNetAccept(ccSocket sock, ccSockaddr *addr, ccSocklen_t *addr_len);
+ccReturn ccNetShutdown(ccSocket sock, int how);
+
+#define ccHtonl(x) htonl(x)
+#define ccHtons(x) htons(x)
+#define ccNtonl(x) ntonl(x)
+#define ccNtons(x) ntons(x)
 
 #ifdef __cplusplus
 }
