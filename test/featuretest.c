@@ -91,6 +91,9 @@ int squareCount;
 float *squareAlpha = NULL;
 int hsquares, vsquares;
 
+int threadVal;
+ccMutex mutex;
+
 int main(int argc, char** argv)
 {
 	// This variable tells the message loop when to quit
@@ -98,20 +101,29 @@ int main(int argc, char** argv)
 	char *imageFileName;
 
 	// Demonstrate threading
-	ccThread thread;
-	ccMutex mutex;
+#define THREAD_COUNT 8
+
+	ccThread thread[THREAD_COUNT];
 	int threadData = 42;
 
-	ccThreadCreate(&thread, &counter);
-	ccThreadStart(thread, &threadData);
+	threadVal = 0;
+	mutex = ccThreadMutexCreate();
+	if(mutex == NULL) printf("%s\n", ccErrorString(ccErrorPop()));
 
-	ccPrintf("Waiting for thread");
+	ccPrintf("Waiting for %d threads", THREAD_COUNT);
 
-	while(!ccThreadFinished(thread)) {
-	ccPrintf(".");
-	ccTimeDelay(1);
+	for(int i = 0; i < THREAD_COUNT; i++) {
+		ccThreadCreate(&thread[i], &counter);
+		ccThreadStart(thread[i], &threadData);
 	}
-	ccPrintf("Thread finished!\n");
+
+	for(int i = 0; i < THREAD_COUNT; i++) {
+		ccThreadJoin(thread[i]);
+	}
+
+	ccThreadMutexFree(mutex);
+
+	ccPrintf("Threads finished!");
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -315,38 +327,19 @@ int main(int argc, char** argv)
 ccThreadFunction(counter)
 {
 	int count;
-	for(count = 0;count<=500;count++) {
-		ccTimeDelay(1);
-	}
+
 	ccPrintf("\nPassed integer: %d\n", *(int*)ccThreadData);
+
+	for(count = 0;count<20;count++) {
+		ccThreadMutexJoin(mutex);
+		threadVal++;
+		printf("thread counter: %d\n", threadVal);
+		ccThreadMutexRelease(mutex);
+		ccTimeDelay(10);
+	}
 
 	ccThreadReturn();
 }
-
-// A network sending procedure is implemented here << what the fuck does a linux implementation do outside of a linux folder this is exasperating
-/*
-void ccNetworkSend(char *string)
-{
-	ccSocket listenSock, sendSock;
-	ccSockaddr_in serv, client;
-	intptr_t len;
-	ccSocklen_t socklen;
-
-	// Create TCP connection
-	ccNetSocket(&listenSock, AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-	serv.sin_family = AF_INET;
-	// Open on port 1337
-	serv.sin_port = ccNetHtons(1337);
-	serv.sin_addr.s_addr = ccNetHtonl(INADDR_ANY);
-
-	ccNetSetsockopt(listenSock, SOL_SOCKET, SO_REUSEADDR, (int[]){1}, sizeof(int)); 
-	ccNetBind(listenSock, (ccSockaddr*)&serv, sizeof(ccSockaddr));
-	ccNetListen(listenSock, 1);
-	ccNetAccept(listenSock, &sendSock, (ccSockaddr*)&client, &socklen);
-	ccNetWrite(sendSock, &len, string, strlen(string));
-}
-*/
 
 // All code below this point is not CCORE related
 

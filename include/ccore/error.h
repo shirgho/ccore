@@ -51,6 +51,7 @@ typedef enum {
 	// Thread related
 	CC_ERROR_THREAD, // CCORE couldn't start a thread
 	CC_ERROR_MUTEX_CREATION, // A mutex object couldn't be created
+	CC_ERROR_MUTEX, // Error working with a mutex
 
 	// Networking related
 	CC_ERROR_NET,

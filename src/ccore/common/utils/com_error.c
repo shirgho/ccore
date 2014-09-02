@@ -81,6 +81,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_MUTEX_CREATION:
 			return "A mutex object couldn't be created";
 			break;
+		case CC_ERROR_MUTEX:
+			return "Error working with a mutex";
+			break;
 
 			// Networking related
 

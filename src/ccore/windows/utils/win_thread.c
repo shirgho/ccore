@@ -52,8 +52,10 @@ ccMutex ccThreadMutexCreate(void)
 
 ccReturn ccThreadMutexJoin(ccMutex mutex)
 {
-	WaitForSingleObject(mutex, INFINITE);
-	ReleaseMutex(mutex);
+	if(WaitForSingleObject(mutex, INFINITE) != WAIT_OBJECT_0) {
+		ccErrorPush(CC_ERROR_MUTEX);
+		return CC_FAIL;
+	}
 
 	return CC_SUCCESS;
 }
@@ -61,10 +63,16 @@ ccReturn ccThreadMutexJoin(ccMutex mutex)
 bool ccThreadMutexFinished(ccMutex mutex)
 {
 	if(WaitForSingleObject(mutex, 0) == WAIT_OBJECT_0) {
-		ReleaseMutex(mutex);
 		return true;
 	}
 	return false;
+}
+
+ccReturn ccThreadMutexRelease(ccMutex mutex)
+{
+	ReleaseMutex(mutex);
+	
+	return CC_SUCCESS;
 }
 
 ccReturn ccThreadMutexFree(ccMutex mutex)
