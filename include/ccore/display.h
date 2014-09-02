@@ -70,7 +70,13 @@ ccDisplays *_ccDisplays;
 #define ccDisplayGetResolution(display, index) (&display->resolution[index])
 #define ccDisplayGetResolutionAmount(display) display->amount
 
+// Display
+ccReturn ccDisplayInitialize(void); // Get all displays currently connected and active
+ccReturn ccDisplayFree(void);
+ccReturn ccDisplayRevertModes(void);
+
 // Getters
+ccRect ccDisplayGetRect(ccDisplay *display);
 int ccDisplayGetAmount(void);
 ccDisplay *ccDisplayGet(int index);
 ccDisplay *ccDisplayGetDefault(void);
@@ -79,12 +85,6 @@ ccDisplay *ccDisplayGetDefault(void);
 ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex);
 bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 bool ccDisplayResolutionEqual(ccDisplayData *resolutionA, ccDisplayData *resolutionB);
-
-// Display
-ccReturn ccDisplayInitialize(void); // Get all displays currently connected and active
-ccReturn ccDisplayFree(void);
-ccReturn ccDisplayRevertModes(void);
-ccRect ccDisplayGetRect(ccDisplay *display);
 
 #ifdef __cplusplus
 }
