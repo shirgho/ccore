@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <unistd.h>
 
 #include <ccore/net.h>

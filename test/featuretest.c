@@ -344,8 +344,8 @@ void ccNetworkSend(char *string)
 
 	serv.sin_family = AF_INET;
 	// Open on port 1337
-	serv.sin_port = ccHtons(1337);
-	serv.sin_addr.s_addr = ccHtonl(INADDR_ANY);
+	serv.sin_port = ccNetHtons(1337);
+	serv.sin_addr.s_addr = ccNetHtonl(INADDR_ANY);
 
 	ccNetSetsockopt(listenSock, SOL_SOCKET, SO_REUSEADDR, (int[]){1}, sizeof(int)); 
 	ccNetBind(listenSock, (ccSockaddr*)&serv, sizeof(ccSockaddr));
