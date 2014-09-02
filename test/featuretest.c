@@ -332,11 +332,12 @@ ccThreadFunction(counter)
 }
 
 // A network sending procedure is implemented here << what the fuck does a linux implementation do outside of a linux folder this is exasperating
+/*
 void ccNetworkSend(char *string)
 {
 	ccSocket listenSock, sendSock;
 	ccSockaddr_in serv, client;
-	ssize_t len;
+	intptr_t len;
 	ccSocklen_t socklen;
 
 	// Create TCP connection
@@ -353,6 +354,7 @@ void ccNetworkSend(char *string)
 	ccNetAccept(listenSock, &sendSock, (ccSockaddr*)&client, &socklen);
 	ccNetWrite(sendSock, &len, string, strlen(string));
 }
+*/
 
 // All code below this point is not CCORE related
 

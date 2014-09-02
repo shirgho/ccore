@@ -80,18 +80,6 @@ ccReturn ccNetRecvfrom(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t 
 	CC_RETURN_ON_ERROR(*bytesReceived);
 }
 
-ccReturn ccNetSendmsg(ccSocket sock, ssize_t *bytesSend, const ccMsghdr *message, int flags)
-{
-	*bytesSend = sendmsg(sock, message, flags);
-	CC_RETURN_ON_ERROR(*bytesSend);
-}
-
-ccReturn ccNetRecvmsg(ccSocket sock, ssize_t *bytesReceived, ccMsghdr *message, int flags)
-{
-	*bytesReceived = recvmsg(sock, message, flags);
-	CC_RETURN_ON_ERROR(*bytesReceived);
-}
-
 ccReturn ccNetGetsockopt(ccSocket sock, int level, int optname, void *optval, ccSocklen_t *optlen)
 {
 	int err;
@@ -138,40 +126,10 @@ ccReturn ccNetSelect(ccSocket sock, ccFd_set *readfds, ccFd_set *writefds, ccFd_
 	CC_RETURN_ON_ERROR(err);
 }
 
-ccReturn ccNetWrite(ccSocket sock, ssize_t *bytesWritten, const void *buf, size_t count)
-{
-	*bytesWritten = write(sock, buf, count);
-	CC_RETURN_ON_ERROR(*bytesWritten);
-}
-
 ccReturn ccNetGethostname(char *name, size_t len)
 {
 	int err;
 
 	err = gethostname(name, len);
-	CC_RETURN_ON_ERROR(err);
-}
-
-ccReturn ccNetSethostname(const char *name, size_t len)
-{
-	int err;
-
-	err = sethostname(name, len);
-	CC_RETURN_ON_ERROR(err);
-}
-
-ccReturn ccNetGetaddrinfo(const char *name, const char *service, const ccAddrinfo *req, ccAddrinfo **pai)
-{
-	int err;
-	
-	err = getaddrinfo(name, service, req, pai);
-	CC_RETURN_ON_ERROR(err);
-}
-
-ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, ccSocklen_t hostlen, char *serv, ccSocklen_t servlen, int flags)
-{
-	int err;
-	
-	err = getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
 	CC_RETURN_ON_ERROR(err);
 }

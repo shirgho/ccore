@@ -256,6 +256,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->eventStackIndex = 0;
 	WINDOW_DATA->eventStack = NULL;
 	WINDOW_DATA->queryXinput = false;
+	WINDOW_DATA->renderContext = NULL;
 	WINDOW_DATA->lpbSize = 0;
 	WINDOW_DATA->lpb = NULL;
 	
