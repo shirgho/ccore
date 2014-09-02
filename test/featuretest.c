@@ -91,6 +91,9 @@ int squareCount;
 float *squareAlpha = NULL;
 int hsquares, vsquares;
 
+// Threading variables and constants
+#define THREAD_COUNT 8
+#define THREAD_ITERATIONS 20
 int threadVal;
 ccMutex mutex;
 
@@ -101,7 +104,6 @@ int main(int argc, char** argv)
 	char *imageFileName;
 
 	// Demonstrate threading
-#define THREAD_COUNT 8
 
 	ccThread thread[THREAD_COUNT];
 	int threadData = 42;
@@ -110,7 +112,7 @@ int main(int argc, char** argv)
 	mutex = ccThreadMutexCreate();
 	if(mutex == NULL) printf("%s\n", ccErrorString(ccErrorPop()));
 
-	ccPrintf("Waiting for %d threads", THREAD_COUNT);
+	ccPrintf("Waiting for %d threads counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
 	for(int i = 0; i < THREAD_COUNT; i++) {
 		ccThreadCreate(&thread[i], &counter);
@@ -330,7 +332,7 @@ ccThreadFunction(counter)
 
 	ccPrintf("\nPassed integer: %d\n", *(int*)ccThreadData);
 
-	for(count = 0;count<20;count++) {
+	for(count = 0; count<THREAD_ITERATIONS; count++) {
 		ccThreadMutexJoin(mutex);
 		threadVal++;
 		printf("thread counter: %d\n", threadVal);
