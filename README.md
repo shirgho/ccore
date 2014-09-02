@@ -44,7 +44,7 @@ When building in Visual Studio, all libraries are automatically linked. Otherwis
 
 ### TODO ###
 **Major:**
-- Android, Mac & BSD support
+- Mac & BSD support
 
 **Extensions:**
 - Sound
