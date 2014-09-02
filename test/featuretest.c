@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 
 	ccThreadMutexFree(mutex);
 
-	ccPrintf("Threads finished!");
+	ccPrintf("%d threads finished counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();

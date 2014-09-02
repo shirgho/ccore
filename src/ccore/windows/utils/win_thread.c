@@ -21,7 +21,11 @@ ccReturn ccThreadStart(ccThread thread, void *data)
 ccReturn ccThreadJoin(ccThread thread)
 {
 	if(WaitForSingleObject(_THREAD->threadHandle, INFINITE) == WAIT_OBJECT_0) {
-		CloseHandle(_THREAD->threadHandle);
+		if(CloseHandle(_THREAD->threadHandle) == 0) {
+			ccErrorPush(CC_ERROR_THREAD);
+			free(thread);
+			return CC_FAIL;
+		}
 		free(thread);
 		return CC_SUCCESS;
 	}
@@ -34,7 +38,9 @@ ccReturn ccThreadJoin(ccThread thread)
 bool ccThreadFinished(ccThread thread)
 {
 	if(WaitForSingleObject(_THREAD->threadHandle, 0) == WAIT_OBJECT_0) {
-		CloseHandle(_THREAD->threadHandle);
+		if(CloseHandle(_THREAD->threadHandle) == 0) {
+			ccErrorPush(CC_ERROR_THREAD);
+		}
 		free(thread);
 		return true;
 	}
@@ -70,14 +76,20 @@ bool ccThreadMutexFinished(ccMutex mutex)
 
 ccReturn ccThreadMutexRelease(ccMutex mutex)
 {
-	ReleaseMutex(mutex);
+	if(ReleaseMutex(mutex) == 0) {
+		ccErrorPush(CC_ERROR_MUTEX);
+		return CC_FAIL;
+	}
 	
 	return CC_SUCCESS;
 }
 
 ccReturn ccThreadMutexFree(ccMutex mutex)
 {
-	CloseHandle(mutex);
+	if(CloseHandle(mutex) == 0) {
+		ccErrorPush(CC_ERROR_MUTEX);
+		return CC_FAIL;
+	}
 
 	return CC_SUCCESS;
 }

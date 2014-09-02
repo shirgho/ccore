@@ -69,7 +69,7 @@ typedef enum {
 	CC_ERROR_OUT_OF_MEMORY
 } ccError;
 
-// The following macro's can be used inside functions that return ccError to catch allocation failures
+// The following macro's can be used inside functions that return ccResult to catch allocation failures
 
 #define ccMalloc(x, size) { \
 	x = malloc(size); \
