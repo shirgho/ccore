@@ -73,18 +73,27 @@ typedef enum {
 
 #define ccMalloc(x, size) { \
 	x = malloc(size); \
-	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
-	}\
+	if(x == NULL) { \
+		ccErrorPush(CC_ERROR_OUT_OF_MEMORY); \
+		return CC_FAIL; \
+		} \
+	} \
 
 #define ccCalloc(x, amount, size) { \
 	x = calloc(amount, size); \
-	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
-	}\
+	if(x == NULL) { \
+		ccErrorPush(CC_ERROR_OUT_OF_MEMORY); \
+		return CC_FAIL; \
+		} \
+	} \
 
 #define ccRealloc(x, size) { \
 	x = realloc(x, size); \
-	if(x == NULL) return CC_ERROR_OUT_OF_MEMORY; \
-	}\
+	if(x == NULL) { \
+		ccErrorPush(CC_ERROR_OUT_OF_MEMORY); \
+		return CC_FAIL; \
+		} \
+	} \
 
 const char *ccErrorString(ccError error);
 void ccErrorPush(ccError error);

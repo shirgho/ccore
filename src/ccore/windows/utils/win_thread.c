@@ -44,6 +44,7 @@ bool ccThreadFinished(ccThread thread)
 		free(thread);
 		return true;
 	}
+
 	return false;
 }
 
@@ -71,6 +72,7 @@ bool ccThreadMutexFinished(ccMutex mutex)
 	if(WaitForSingleObject(mutex, 0) == WAIT_OBJECT_0) {
 		return true;
 	}
+
 	return false;
 }
 
