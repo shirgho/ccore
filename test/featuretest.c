@@ -99,6 +99,7 @@ int main(int argc, char** argv)
 
 	// Demonstrate threading
 	ccThread thread;
+	ccMutex mutex;
 	int threadData = 42;
 
 	ccThreadCreate(&thread, &counter);

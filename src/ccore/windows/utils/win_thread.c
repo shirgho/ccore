@@ -50,9 +50,26 @@ ccMutex ccThreadMutexCreate(void)
 	return m;
 }
 
-ccReturn ccThreadMutexJoin(ccMutex mutex) //TODO timeout?
+ccReturn ccThreadMutexJoin(ccMutex mutex)
 {
 	WaitForSingleObject(mutex, INFINITE);
+	ReleaseMutex(mutex);
+
+	return CC_SUCCESS;
+}
+
+bool ccThreadMutexFinished(ccMutex mutex)
+{
+	if(WaitForSingleObject(mutex, 0) == WAIT_OBJECT_0) {
+		ReleaseMutex(mutex);
+		return true;
+	}
+	return false;
+}
+
+ccReturn ccThreadMutexFree(ccMutex mutex)
+{
+	CloseHandle(mutex);
 
 	return CC_SUCCESS;
 }

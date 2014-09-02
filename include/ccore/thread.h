@@ -65,6 +65,8 @@ bool ccThreadFinished(ccThread thread);
 
 ccMutex ccThreadMutexCreate(void);
 ccReturn ccThreadMutexJoin(ccMutex mutex);
+bool ccThreadMutexFinished(ccMutex mutex);
+ccReturn ccThreadMutexFree(ccMutex mutex);
 
 #ifdef __cplusplus
 }
