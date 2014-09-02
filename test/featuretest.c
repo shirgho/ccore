@@ -99,27 +99,27 @@ ccMutex mutex;
 
 int main(int argc, char** argv)
 {
-	// This variable tells the message loop when to quit
-	bool quit = false;
+	int i;
 	char *imageFileName;
 
-	// Demonstrate threading
+	// This variable tells the message loop when to quit
+	bool quit = false;
 
+	// Demonstrate threading
 	ccThread thread[THREAD_COUNT];
 	int threadData = 42;
 
 	threadVal = 0;
 	mutex = ccThreadMutexCreate();
-	if(mutex == NULL) printf("%s\n", ccErrorString(ccErrorPop()));
 
 	ccPrintf("Waiting for %d threads counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
-	for(int i = 0; i < THREAD_COUNT; i++) {
+	for(i = 0; i < THREAD_COUNT; i++) {
 		ccThreadCreate(&thread[i], &counter);
 		ccThreadStart(thread[i], &threadData);
 	}
 
-	for(int i = 0; i < THREAD_COUNT; i++) {
+	for(i = 0; i < THREAD_COUNT; i++) {
 		ccThreadJoin(thread[i]);
 	}
 

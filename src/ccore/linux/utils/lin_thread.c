@@ -29,7 +29,7 @@ ccReturn ccThreadJoin(ccThread thread)
 	}
 }
 
-bool ccThreadFinished(ccThread thread)
+bool ccThreadFinished(ccThread thread)s
 {
 	if(pthread_kill(_THREAD->id, 0) == 0){
 		return false;
@@ -37,4 +37,9 @@ bool ccThreadFinished(ccThread thread)
 		free(thread);
 		return true;
 	}
+}
+
+ccMutex ccThreadMutexCreate(void)
+{
+
 }
