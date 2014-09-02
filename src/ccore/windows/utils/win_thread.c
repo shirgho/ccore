@@ -48,13 +48,15 @@ bool ccThreadFinished(ccThread thread)
 	return false;
 }
 
-ccMutex ccThreadMutexCreate(void)
+ccReturn ccThreadMutexCreate(ccMutex *mutex)
 {
-	ccMutex m = CreateMutex(NULL, FALSE, NULL);
-	if(m == NULL) {
+	*mutex = CreateMutex(NULL, FALSE, NULL);
+	if(*mutex == NULL) {
 		ccErrorPush(CC_ERROR_MUTEX_CREATION);
+		return CC_FAIL;
 	}
-	return m;
+	
+	return CC_SUCCESS;
 }
 
 ccReturn ccThreadMutexJoin(ccMutex mutex)

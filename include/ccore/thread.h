@@ -63,7 +63,7 @@ ccReturn ccThreadStart(ccThread thread, void *data);
 ccReturn ccThreadJoin(ccThread thread);
 bool ccThreadFinished(ccThread thread);
 
-ccMutex ccThreadMutexCreate(void);
+ccReturn ccThreadMutexCreate(ccMutex *mutex);
 ccReturn ccThreadMutexJoin(ccMutex mutex);
 bool ccThreadMutexFinished(ccMutex mutex);
 ccReturn ccThreadMutexRelease(ccMutex mutex);

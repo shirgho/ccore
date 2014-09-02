@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 	int threadData = 42;
 
 	threadVal = 0;
-	mutex = ccThreadMutexCreate();
+	ccThreadMutexCreate(&mutex);
 
 	ccPrintf("Waiting for %d threads counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
