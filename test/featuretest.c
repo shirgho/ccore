@@ -101,8 +101,8 @@ int main(int argc, char** argv)
 	ccThread thread;
 	int threadData = 42;
 
-	ccPrintf("Creating thread:\t%s\n", ccErrorString(ccThreadCreate(&thread, &counter)));
-	ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, &threadData)));
+	ccThreadCreate(&thread, &counter);
+	ccThreadStart(thread, &threadData);
 
 	ccPrintf("Waiting for thread");
 
@@ -116,14 +116,14 @@ int main(int argc, char** argv)
 	ccDisplayInitialize();
 
 	// Create a centered window that cannot be resized
-	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE)));
+	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
 	ccWindowCenter();
 
 	// Prepare gamepad capturing
-	ccPrintf("Connecting gamepads: %s\n", ccErrorString(ccGamepadInitialize()));
+	ccGamepadInitialize();
 
 	// Prepare window for rendering with openGL 3.2 or higher
-	ccPrintf("GL Context status: %s\n", ccErrorString(ccGLBindContext(3, 2)));
+	ccGLBindContext(3, 2);
 
 	// This function initializes openGL in this example
 	initialize();
