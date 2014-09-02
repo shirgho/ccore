@@ -299,8 +299,6 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		currentGamepad->buttonAmount = GAMEPAD_DATA->raw->buttonCaps->Range.UsageMax - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin + 1;
 		currentGamepad->axisAmount = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
 		currentGamepad->outputAmount = GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
-
-		printf("output count %d\n", currentGamepad->outputAmount);
 		
 		currentGamepad->button = calloc(currentGamepad->buttonAmount, sizeof(bool));
 		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);

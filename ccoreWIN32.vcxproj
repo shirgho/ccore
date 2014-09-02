@@ -57,7 +57,6 @@
     <ClInclude Include="lib\glew\GL\glew.h" />
     <ClInclude Include="lib\glew\GL\glxew.h" />
     <ClInclude Include="lib\glew\GL\wglew.h" />
-    <ClInclude Include="src\ccore\common\utils\com_core.h" />
     <ClInclude Include="src\ccore\windows\interface\win_display.h" />
     <ClInclude Include="src\ccore\windows\interface\win_gamepad.h" />
     <ClInclude Include="src\ccore\windows\interface\win_opengl.h" />

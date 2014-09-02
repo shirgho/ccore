@@ -23,8 +23,6 @@
 
 #pragma once
 
-// This header usually doesn't need to be included, since it is included in every other ccore header
-
 #ifdef __linux__
 
 #define X11

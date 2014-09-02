@@ -21,6 +21,8 @@ ccReturn ccThreadStart(ccThread thread, void *data)
 ccReturn ccThreadJoin(ccThread thread)
 {
 	if(WaitForSingleObject(_THREAD->threadHandle, INFINITE) == WAIT_OBJECT_0) {
+		CloseHandle(_THREAD->threadHandle);
+		free(thread);
 		return CC_SUCCESS;
 	}
 	else{
@@ -37,4 +39,20 @@ bool ccThreadFinished(ccThread thread)
 		return true;
 	}
 	return false;
+}
+
+ccMutex ccThreadMutexCreate(void)
+{
+	ccMutex m = CreateMutex(NULL, FALSE, NULL);
+	if(m == NULL) {
+		ccErrorPush(CC_ERROR_MUTEX_CREATION);
+	}
+	return m;
+}
+
+ccReturn ccThreadMutexJoin(ccMutex mutex) //TODO timeout?
+{
+	WaitForSingleObject(mutex, INFINITE);
+
+	return CC_SUCCESS;
 }

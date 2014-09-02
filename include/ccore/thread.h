@@ -34,21 +34,37 @@ extern "C"
 
 typedef void* ccThread;
 
-#define ccThreadReturn() return 0;
-
 #ifdef WINDOWS
+
 #include <windows.h>
+
 #define ccThreadFunction(name) DWORD WINAPI name(LPVOID lpParam)
 #define ccThreadData ((void*)lpParam)
+
+#define ccThreadReturn() return 0;
+
+typedef HANDLE ccMutex;
+
 #elif defined X11
+
+#include <pthread.h>
+
 #define ccThreadFunction(name) void* name(void *arg)
 #define ccThreadData arg
+
+#define ccThreadReturn() return 0;
+
+typedef pthread_mutex_t ccMutex;
+
 #endif
 
 ccReturn ccThreadCreate(ccThread *thread, void *function);
 ccReturn ccThreadStart(ccThread thread, void *data);
 ccReturn ccThreadJoin(ccThread thread);
 bool ccThreadFinished(ccThread thread);
+
+ccMutex ccThreadMutexCreate(void);
+ccReturn ccThreadMutexJoin(ccMutex mutex);
 
 #ifdef __cplusplus
 }

@@ -98,21 +98,19 @@ int main(int argc, char** argv)
 	char *imageFileName;
 
 	// Demonstrate threading
-	/*
-	   ccThread thread;
-	   int threadData = 42;
+	ccThread thread;
+	int threadData = 42;
 
-	   ccPrintf("Creating thread:\t%s\n", ccErrorString(ccThreadCreate(&thread, &counter)));
-	   ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, &threadData)));
+	ccPrintf("Creating thread:\t%s\n", ccErrorString(ccThreadCreate(&thread, &counter)));
+	ccPrintf("Starting thread:\t%s\n", ccErrorString(ccThreadStart(thread, &threadData)));
 
-	   ccPrintf("Waiting for thread");
+	ccPrintf("Waiting for thread");
 
-	   while(!ccThreadFinished(thread)) {
-	   ccPrintf(".");
-	   ccTimeDelay(1);
-	   }
-	   ccPrintf("Thread finished!\n");
-	   */
+	while(!ccThreadFinished(thread)) {
+	ccPrintf(".");
+	ccTimeDelay(1);
+	}
+	ccPrintf("Thread finished!\n");
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();

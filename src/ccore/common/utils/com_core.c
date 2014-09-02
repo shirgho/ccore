@@ -1,4 +1,11 @@
-#include "com_core.h"
+#include <ccore/core.h>
+
+#include <ccore/gamepad.h>
+#include <ccore/display.h>
+#include <ccore/net.h>
+#include <ccore/window.h>
+#include <ccore/opengl.h>
+#include <ccore/dirUtils.h>
 
 void ccFreeAll(void)
 {

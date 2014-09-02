@@ -78,6 +78,9 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_THREAD:
 			return "A thread could not be started";
 			break;
+		case CC_ERROR_MUTEX_CREATION:
+			return "A mutex object couldn't be created";
+			break;
 
 			// Networking related
 
