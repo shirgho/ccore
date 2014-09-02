@@ -7,7 +7,7 @@ void ccFreeAll(void)
 
 	if(_ccGamepads != NULL) ccGamepadFree();
 	if(_ccDisplays != NULL) ccDisplayFree();
-	ccNetFree(); // TODO: check if this exists
+	//ccNetFree(); // TODO: check if this exists
 	if(_ccWindow != NULL) {
 		if(ccGLHasContext()) ccGLFreeContext();
 		ccWindowFree();

@@ -77,7 +77,6 @@ void mouseTrail();
 
 // This defines a threadable function
 ccThreadFunction(counter);
-void ccNetworkSend(char *string);
 
 // Custom ceil
 int cceil(float n);
@@ -117,9 +116,6 @@ int main(int argc, char** argv)
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
-
-	// Initializing networking is required to use sockets
-	ccNetInitialize();
 
 	// Create a centered window that cannot be resized
 	ccPrintf("Creating window: %s\n", ccErrorString(ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE)));
@@ -206,9 +202,6 @@ int main(int argc, char** argv)
 						case CC_KEY_N:
 							// Revert all resolutions
 							ccDisplayRevertModes();
-							break;
-						case CC_KEY_S:
-							ccNetworkSend("Test");
 							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
