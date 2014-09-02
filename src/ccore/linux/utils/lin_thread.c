@@ -29,7 +29,7 @@ ccReturn ccThreadJoin(ccThread thread)
 	}
 }
 
-bool ccThreadFinished(ccThread thread)s
+bool ccThreadFinished(ccThread thread)
 {
 	if(pthread_kill(_THREAD->id, 0) == 0){
 		return false;
@@ -39,7 +39,55 @@ bool ccThreadFinished(ccThread thread)s
 	}
 }
 
-ccMutex ccThreadMutexCreate(void)
+ccReturn ccThreadMutexCreate(ccMutex *mutex)
 {
+	if(pthread_mutex_init(mutex, NULL) != 0) {
+		ccErrorPush(CC_ERROR_MUTEX_CREATION);
+		return CC_FAIL;
+	}
 
+	return CC_SUCCESS;
+}
+
+ccReturn ccThreadMutexJoin(ccMutex mutex)
+{
+	if(pthread_mutex_lock(&mutex) != 0) {
+		ccErrorPush(CC_ERROR_MUTEX);
+		return CC_FAIL;
+	}
+
+	return CC_SUCCESS;
+}
+
+bool ccThreadMutexFinished(ccMutex mutex)
+{
+	int result = pthread_mutex_trylock(&mutex);
+
+	if(result == 0) {
+		return true;
+	}
+	else{
+		if(result == EBUSY) ccErrorPush(CC_ERROR_MUTEX);
+		return false;
+	}
+}
+
+ccReturn ccThreadMutexRelease(ccMutex mutex)
+{
+	if(pthread_mutex_unlock(&mutex) != 0) {
+		ccErrorPush(CC_ERROR_MUTEX);
+		return CC_FAIL;
+	}
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccThreadMutexFree(ccMutex mutex)
+{
+	if(pthread_mutex_destroy(&mutex) != 0) {
+		ccErrorPush(CC_ERROR_MUTEX);
+		return CC_FAIL;
+	}
+
+	return CC_SUCCESS;
 }
