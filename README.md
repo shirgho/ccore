@@ -6,10 +6,11 @@ is a simple abstraction layer between different Operating Systems. It's focused 
 ###Features###
 The core features of ccore include support for the following:
 - OpenGL
-- Multithreading
 - Fullscreen on multiple displays
-- Raw input (mouse, keyboard & gamepads) for high-performance games
-- Multiple gamepads
+- Raw input (mouse, keyboard & gamepads) for fast responses
+- Multiple gamepads with hotplugging
+- POSIX threading
+- POSIX sockets
 
 How to compile
 ==============
@@ -36,9 +37,8 @@ Run <code>scons && bin/featuretest</code>, and check if all the features work.
 
 ### TODO ###
 **Major:**
-- Mac & BSD support
+- Android, Mac & BSD support
 
 **Extensions:**
-- Networking
 - Sound
 - Game Icon
