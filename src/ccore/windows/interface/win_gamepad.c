@@ -76,7 +76,7 @@ ccReturn ccGamepadInitialize(void)
 	}
 }
 
-void ccGamepadFree(void)
+ccReturn ccGamepadFree(void)
 {
 	ccAssert(_ccGamepads != NULL);
 	
@@ -112,6 +112,8 @@ void ccGamepadFree(void)
 	free(_ccGamepads);
 
 	_ccGamepads = NULL;
+
+	return CC_SUCCESS;
 }
 
 void _queryXinput()

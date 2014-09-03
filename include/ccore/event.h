@@ -78,7 +78,7 @@ typedef struct {
 		ccMouseButtonType mouseButton;
 		ccPoint mouseDelta;
 		unsigned int keyCode;
-		float scrollDelta;
+		double scrollDelta;
 		ccGamepadEvent gamepadEvent;
 	};
 } ccEvent;
