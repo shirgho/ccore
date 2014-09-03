@@ -1,6 +1,6 @@
 #include <ccore/event.h>
 
-char ccKeyToChar(int key)
+char ccEventKeyToChar(int key)
 {
 	if(key >= CC_KEY_0 && key <= CC_KEY_9){
 		return '0' + (key - CC_KEY_0);
