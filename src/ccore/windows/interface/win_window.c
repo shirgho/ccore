@@ -392,7 +392,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 		return CC_FAIL;
 	}
 
-	if(displayCount == 0) {
+	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
 		return _ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display), false);
 	}
 	else{

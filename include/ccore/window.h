@@ -62,14 +62,7 @@ typedef struct {
 // Only access through getters
 ccWindow *_ccWindow;
 
-#define ccSupportsRawInput() _ccWindow->supportsRawInput
-
-// Getters
-ccEvent ccWindowGetEvent(void);
-ccRect ccWindowGetRect(void);
-ccPoint ccWindowGetMouse(void);
-ccDisplay *ccWindowGetDisplay(void);
-bool ccWindowExists(void);
+#define ccWindowSupportsRawInput() _ccWindow->supportsRawInput
 
 // Window functions
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags);
@@ -81,6 +74,13 @@ ccReturn ccWindowCenter(void);
 ccReturn ccWindowSetWindowed(void);
 ccReturn ccWindowSetMaximized(void);
 ccReturn ccWindowSetFullscreen(int displayCount, ...);
+
+// Getters
+ccEvent ccWindowGetEvent(void);
+ccRect ccWindowGetRect(void);
+ccPoint ccWindowGetMouse(void);
+ccDisplay *ccWindowGetDisplay(void);
+bool ccWindowExists(void);
 
 // Usually for internal use only, finds the display the window currently is in
 void ccWindowUpdateDisplay(void);
