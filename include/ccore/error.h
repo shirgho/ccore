@@ -54,7 +54,7 @@ typedef enum {
 	CC_ERROR_MUTEX, // Error working with a mutex
 
 	// Networking related
-	CC_ERROR_NET,
+	CC_ERROR_NET, //TODO: not implemented in wiki
 
 	// Gamepad related
 	CC_ERROR_NOGAMEPAD, // No gamepads could be found
