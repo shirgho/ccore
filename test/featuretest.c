@@ -26,6 +26,7 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
+#include <ccore/net.h> // Net needs to be included first, or else windows is going to cry when winsock.h is included before winsock2.h
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/time.h>
@@ -34,7 +35,6 @@
 #include <ccore/thread.h>
 #include <ccore/print.h>
 #include <ccore/gamepad.h>
-#include <ccore/net.h>
 
 #include "tga.h"
 
@@ -65,6 +65,8 @@
 #endif
 
 // These functions will be implemented later in this file
+void ccNetworkSend(char *string);
+
 void initialize();
 void setProjection();
 void timestep();
@@ -126,6 +128,9 @@ int main(int argc, char** argv)
 	ccThreadMutexFree(mutex);
 
 	ccPrintf("%d threads finished counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
+
+	// Networking capabilities must be initialized
+	ccNetInitialize();
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -215,6 +220,9 @@ int main(int argc, char** argv)
 						case CC_KEY_N:
 							// Revert all resolutions
 							ccDisplayRevertModes();
+							break;
+						case CC_KEY_S:
+							ccNetworkSend("Test");
 							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
@@ -341,6 +349,25 @@ ccThreadFunction(counter)
 	}
 
 	ccThreadReturn();
+}
+
+void ccNetworkSend(char *string)
+{
+	ccSocket listenSock, sendSock;
+	ccSockaddr_in serv, client;
+	ssize_t len;
+	ccSocklen_t socklen;
+	// Create TCP connection
+	ccNetSocket(&listenSock, AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	serv.sin_family = AF_INET;
+	// Open on port 1337
+	serv.sin_port = ccNetHtons(1337);
+	serv.sin_addr.s_addr = ccNetHtonl(INADDR_ANY);
+	ccNetSetsockopt(listenSock, SOL_SOCKET, SO_REUSEADDR, (int[]){ 1 }, sizeof(int));
+	ccNetBind(listenSock, (ccSockaddr*)&serv, sizeof(ccSockaddr));
+	ccNetListen(listenSock, 1);
+	ccNetAccept(listenSock, &sendSock, (ccSockaddr*)&client, &socklen);
+	ccNetSend(sendSock, &len, string, strlen(string), 0);
 }
 
 // All code below this point is not CCORE related

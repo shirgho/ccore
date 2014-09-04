@@ -6,11 +6,13 @@
 #include <ccore/window.h>
 #include <ccore/opengl.h>
 #include <ccore/dirUtils.h>
+#include <ccore/net.h>
 
 void ccFreeAll(void)
 {
 	_ccErrorFree();
 	_ccDirUtilsFree();
+	ccNetFree();
 
 	if(_ccGamepads != NULL) ccGamepadFree();
 	if(_ccDisplays != NULL) ccDisplayFree();

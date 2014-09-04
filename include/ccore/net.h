@@ -38,16 +38,22 @@ extern "C"
 #include <netdb.h>
 #include <fcntl.h>
 
-typedef int ccSocket;
+typedef int					ccSocket;
+typedef socklen_t 			ccSocklen_t;
 #elif defined WINDOWS
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdio.h>
 
-typedef SOCKET ccSocket;
+#pragma comment(lib, "Ws2_32.lib")
+
+typedef SOCKET				ccSocket;
+typedef int					ccSocklen_t;
+typedef SSIZE_T				ssize_t;
 #endif
 
 typedef struct sockaddr 	ccSockaddr;
 typedef struct sockaddr_in 	ccSockaddr_in;
-typedef socklen_t 			ccSocklen_t;
 typedef struct addrinfo		ccAddrinfo;
 typedef struct msghdr 		ccMsghdr;
 typedef fd_set 				ccFd_set;
@@ -60,7 +66,6 @@ ccReturn ccNetInitialize();
 ccReturn ccNetFree();
 
 ccReturn ccNetSocket(ccSocket *sock, int family, int type, int protocol);
-ccReturn ccNetSocketpair(ccSocket sock[2], int family, int type, int protocol);
 ccReturn ccNetBind(ccSocket sock, const ccSockaddr *addr, ccSocklen_t len);
 ccReturn ccNetGetsockname(ccSocket sock, ccSockaddr *addr, ccSocklen_t *len);
 ccReturn ccNetConnect(ccSocket sock, const ccSockaddr *addr, ccSocklen_t len);
@@ -69,8 +74,6 @@ ccReturn ccNetSend(ccSocket sock, ssize_t *bytesSend, const void *buf, size_t n,
 ccReturn ccNetRecv(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t n, int flags);
 ccReturn ccNetSendto(ccSocket sock, ssize_t *bytesSend, const void *buf, size_t n, int flags, const ccSockaddr *addr, ccSocklen_t len);
 ccReturn ccNetRecvfrom(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t n, int flags, ccSockaddr *addr, ccSocklen_t *len);
-ccReturn ccNetSendmsg(ccSocket sock, ssize_t *bytesSend, const ccMsghdr *message, int flags);
-ccReturn ccNetRecvmsg(ccSocket sock, ssize_t *bytesReceived, ccMsghdr *message, int flags);
 ccReturn ccNetGetsockopt(ccSocket sock, int level, int optname, void *optval, ccSocklen_t *optlen);
 ccReturn ccNetSetsockopt(ccSocket sock, int level, int optname, const void *optval, ccSocklen_t optlen);
 ccReturn ccNetListen(ccSocket sock, int n);
@@ -78,9 +81,7 @@ ccReturn ccNetAccept(ccSocket sock, ccSocket *sockReceived, ccSockaddr *addr, cc
 ccReturn ccNetShutdown(ccSocket sock, int how);
 
 ccReturn ccNetSelect(ccSocket sock, ccFd_set *readfds, ccFd_set *writefds, ccFd_set *exceptfds, struct timeval *timeout);
-ccReturn ccNetWrite(ccSocket sock, ssize_t *bytesWritten, const void *buf, size_t count);
 ccReturn ccNetGethostname(char *name, size_t len);
-ccReturn ccNetSethostname(const char *name, size_t len);
 
 ccReturn ccNetGetaddrinfo(const char *name, const char *service, const ccAddrinfo *req, ccAddrinfo **pai);
 ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, ccSocklen_t hostlen, char *serv, ccSocklen_t servlen, int flags);
