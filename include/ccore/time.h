@@ -26,6 +26,7 @@
 #include <stdint.h>
 
 #include "core.h"
+#include "types.h"
 
 #define _TO_SECONDS 1000000000LL
 #define _TO_MILLISECONDS 1000000LL
@@ -40,7 +41,7 @@ extern "C"
 {
 #endif
 
-void ccTimeDelay(int ms);
+ccReturn ccTimeDelay(int ms);
 uint64_t ccTimeNanoseconds(void);
 
 #ifdef __cplusplus

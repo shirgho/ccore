@@ -65,10 +65,9 @@ typedef struct {
 	bool *button;
 	int *axis;
 	int *output;
+	bool plugged;
 
 	int axisAmount, buttonAmount, outputAmount;
-
-	bool plugged;
 
 	void *data;
 } ccGamepad;

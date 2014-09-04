@@ -1,8 +1,9 @@
 #include "lin_time.h"
 
-void ccTimeDelay(int ms)
+ccReturn ccTimeDelay(int ms)
 {
 	usleep(ms * _TO_MICROSECONDS);
+	return CC_SUCCESS;
 }
 
 uint64_t ccTimeNanoseconds(void)
