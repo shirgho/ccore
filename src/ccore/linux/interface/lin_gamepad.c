@@ -217,12 +217,12 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 	return CC_SUCCESS;
 }
 
-void ccGamepadFree(void)
+ccReturn ccGamepadFree(void)
 {
 	int i;
 
 	if(_ccGamepads == NULL){
-		return;
+		return CC_SUCCESS;
 	}
 
 	inotify_rm_watch(GAMEPADS_DATA()->fd, GAMEPADS_DATA()->watch);
@@ -245,4 +245,6 @@ void ccGamepadFree(void)
 	free(_ccGamepads);
 
 	_ccGamepads = NULL;
+
+	return CC_SUCCESS;
 }
