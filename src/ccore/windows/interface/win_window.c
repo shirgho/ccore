@@ -45,16 +45,16 @@ static void updateWindowResolution(void)
 static bool initializeRawInput(void)
 {
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsagePage = 1;
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsage = 6;
+	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsage = HID_USAGE_GENERIC_KEYBOARD;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_NOLEGACY;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = WINDOW_DATA->winHandle;
 
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsagePage = 1;
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsage = 2;
+	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsage = HID_USAGE_GENERIC_MOUSE;
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].hwndTarget = WINDOW_DATA->winHandle;
 
-	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
+	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
 }
 
 static void freeRawInput(void)
@@ -70,6 +70,8 @@ static void freeRawInput(void)
 
 static void processRid(HRAWINPUT rawInput)
 {
+	RAWINPUT* raw;
+
 	GetRawInputData(rawInput, RID_INPUT, NULL, &WINDOW_DATA->dwSize, sizeof(RAWINPUTHEADER));
 
 	if(WINDOW_DATA->dwSize > WINDOW_DATA->lpbSize) {
@@ -79,7 +81,7 @@ static void processRid(HRAWINPUT rawInput)
 
 	GetRawInputData(rawInput, RID_INPUT, WINDOW_DATA->lpb, &WINDOW_DATA->dwSize, sizeof(RAWINPUTHEADER));
 
-	RAWINPUT* raw = (RAWINPUT*)WINDOW_DATA->lpb;
+	raw = (RAWINPUT*)WINDOW_DATA->lpb;
 
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
 		USHORT buttonFlags = raw->data.mouse.usButtonFlags;

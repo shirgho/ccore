@@ -63,11 +63,11 @@ ccReturn ccGamepadInitialize(void)
 	}
 
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = 4;
+	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = HID_USAGE_GENERIC_JOYSTICK;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = 0;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = WINDOW_DATA->winHandle;
 
-	if(RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE)) == TRUE) {
+	if(RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE)) == TRUE) {
 		return CC_SUCCESS;
 	}
 	else{
@@ -85,7 +85,7 @@ ccReturn ccGamepadFree(void)
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = NULL;
 	
-	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], 1, sizeof(RAWINPUTDEVICE));
+	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
 
 	if(ccGamepadCount() != 0) {
 		int i;
