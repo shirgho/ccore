@@ -262,7 +262,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
-	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~WS_MAXIMIZEBOX;
 	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS)WINDOW_DATA->style &= ~WS_SYSMENU;
 
 	windowRect.left = rect.x;
