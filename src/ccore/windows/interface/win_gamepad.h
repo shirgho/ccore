@@ -1,5 +1,8 @@
 #pragma once
 
+#pragma comment(lib, "hid.lib")
+#pragma comment(lib, "XInput9_1_0.lib")
+
 #include <Windows.h>
 #include <hidsdi.h>
 #include <Xinput.h>

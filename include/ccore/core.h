@@ -32,13 +32,6 @@
 
 #define WINDOWS
 
-// Includes libraries automatically when using visual studio:
-#ifdef _MSC_VER
-#pragma comment(lib, "opengl32")
-#pragma comment(lib, "hid.lib")
-#pragma comment(lib, "XInput9_1_0.lib") // Xinput9.1.0 can only be used on windows 7 or higher
-#endif
-
 #else
 #error "OS not supported!"
 #endif
