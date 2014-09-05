@@ -20,7 +20,7 @@ static ccError createGamepad(char *locName, int i)
 	int fd;
 
 	fd = openGamepadDescriptor(locName);
-	if(fd < 0){
+	if(fd < 0 && errno != EACCES){
 		return CC_ERROR_GAMEPADDATA;
 	}
 
@@ -98,7 +98,7 @@ ccGamepadEvent ccGamepadEventPoll(void)
 				}
 
 				event.type = CC_GAMEPAD_DISCONNECT;
-			}else if(ne.mask & IN_CREATE){
+			}else if(ne.mask & IN_ATTRIB){
 				if(event.id != -1){
 					_ccGamepads->gamepad[event.id].plugged = true;
 					GAMEPAD_DATA(_ccGamepads + event.id)->fd = openGamepadDescriptor(ne.name);
@@ -170,7 +170,7 @@ ccReturn ccGamepadInitialize(void)
 		goto error;
 	}
 
-	watch = inotify_add_watch(fd, "/dev/input", IN_CREATE | IN_DELETE);
+	watch = inotify_add_watch(fd, "/dev/input", IN_DELETE | IN_ATTRIB);
 	if(watch < 0){
 		goto error;
 	}
