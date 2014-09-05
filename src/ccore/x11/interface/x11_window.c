@@ -316,7 +316,6 @@ bool ccWindowPollEvent(void)
 				_ccWindow->event.type = CC_EVENT_WINDOW_RESIZE;
 				_ccWindow->rect.width = event.xconfigure.width;
 				_ccWindow->rect.height = event.xconfigure.height;
-				_ccWindow->aspect = _ccWindow->rect.height / _ccWindow->rect.width;
 
 				XGetWindowAttributes(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &_ccWindowAttributes);
 

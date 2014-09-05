@@ -37,7 +37,6 @@ static void updateWindowResolution(void)
 
 	_ccWindow->rect.width = winRect.right - winRect.left;
 	_ccWindow->rect.height = winRect.bottom - winRect.top;
-	_ccWindow->aspect = (float)_ccWindow->rect.width / _ccWindow->rect.height;
 
 	resizeEvent.type = CC_EVENT_WINDOW_RESIZE;
 	_ccEventStackPush(resizeEvent);

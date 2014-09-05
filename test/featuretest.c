@@ -65,7 +65,7 @@
 #endif
 
 // These functions will be implemented later in this file
-//void ccNetworkSend(char *string);
+void ccNetworkSend(char *string);
 
 void initialize();
 void setProjection();
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 	ccPrintf("%d threads finished counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
 	// Networking capabilities must be initialized
-	//ccNetInitialize();
+	ccNetInitialize();
 
 	// Displays must be detected before creating the window and using display functions
 	ccDisplayInitialize();
@@ -307,7 +307,7 @@ int main(int argc, char** argv)
 					break;
 			}
 		}
-		printf("%d\t%d\n", _ccWindow->rect.x, _ccWindow->rect.y);
+		
 		// Process logic
 		timestep();
 
