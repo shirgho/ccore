@@ -307,7 +307,7 @@ int main(int argc, char** argv)
 					break;
 			}
 		}
-
+		printf("%d\t%d\n", _ccWindow->rect.x, _ccWindow->rect.y);
 		// Process logic
 		timestep();
 

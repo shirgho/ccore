@@ -14,7 +14,9 @@ void _ccEventStackPush(ccEvent event)
 static void updateWindowDisplay(void)
 {
 	RECT winRect;
-	GetWindowRect(WINDOW_DATA->winHandle, &winRect);
+	GetClientRect(WINDOW_DATA->winHandle, &winRect);
+	ClientToScreen(WINDOW_DATA->winHandle, (LPPOINT)&winRect.left);
+	ClientToScreen(WINDOW_DATA->winHandle, (LPPOINT)&winRect.right);
 
 	_ccWindow->rect.x = winRect.left;
 	_ccWindow->rect.y = winRect.top;
