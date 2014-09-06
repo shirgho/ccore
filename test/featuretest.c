@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 							ccDisplayRevertModes();
 							break;
 						case CC_KEY_S:
-							//ccNetworkSend("Test");
+							ccNetworkSend("Test");
 							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
@@ -350,7 +350,7 @@ ccThreadFunction(counter)
 
 	ccThreadReturn();
 }
-/*
+
 void ccNetworkSend(char *string)
 {
 	ccSocket listenSock, sendSock;
@@ -369,7 +369,7 @@ void ccNetworkSend(char *string)
 	ccNetAccept(listenSock, &sendSock, (ccSockaddr*)&client, &socklen);
 	ccNetSend(sendSock, &len, string, strlen(string), 0);
 }
-*/
+
 // All code below this point is not CCORE related
 
 void initialize()
