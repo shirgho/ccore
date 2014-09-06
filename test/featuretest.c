@@ -26,7 +26,7 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
-//#include <ccore/net.h> // Net needs to be included first, or else windows is going to cry when winsock.h is included before winsock2.h
+#include <ccore/net.h> // Net needs to be included first, or else windows is going to cry when winsock.h is included before winsock2.h
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/time.h>
@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 							ccDisplayRevertModes();
 							break;
 						case CC_KEY_S:
-							//ccNetworkSend("Test");
+							ccNetworkSend("Test");
 							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
@@ -350,7 +350,7 @@ ccThreadFunction(counter)
 
 	ccThreadReturn();
 }
-/*
+
 void ccNetworkSend(char *string)
 {
 	ccSocket listenSock, sendSock;
@@ -369,7 +369,7 @@ void ccNetworkSend(char *string)
 	ccNetAccept(listenSock, &sendSock, (ccSockaddr*)&client, &socklen);
 	ccNetSend(sendSock, &len, string, strlen(string), 0);
 }
-*/
+
 // All code below this point is not CCORE related
 
 void initialize()

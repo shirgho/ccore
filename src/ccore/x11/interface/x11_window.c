@@ -132,6 +132,20 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 	return XGetKeyboardMapping(WINDOW_DATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
+static void findDisplayForWindow()
+{
+	int i;
+	ccDisplay *display;
+
+	for(i = 0; i < ccDisplayGetAmount(); i++){
+		display = _ccDisplays->display + i;
+		if(WINDOW_DATA->XScreen == DISPLAY_DATA(display)->XScreen){
+			_ccWindow->display = display;
+			break;
+		}
+	}
+}
+
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Window root;
@@ -170,7 +184,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	delete = XInternAtom(WINDOW_DATA->XDisplay, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, &delete, 1);
 
-	ccWindowUpdateDisplay();
+	findDisplayForWindow();
+	// ccWindowUpdateDisplay(); This doesn't work
 
 	// Activate always on top if applicable
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
