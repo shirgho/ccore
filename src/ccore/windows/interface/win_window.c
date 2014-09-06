@@ -8,6 +8,7 @@ void _ccEventStackPush(ccEvent event)
 		WINDOW_DATA->eventStackSize++;
 		WINDOW_DATA->eventStack = realloc(WINDOW_DATA->eventStack, sizeof(ccEvent)*WINDOW_DATA->eventStackSize);
 	}
+	
 	WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos] = event;
 }
 

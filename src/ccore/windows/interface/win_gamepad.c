@@ -19,19 +19,18 @@ static int _gamepadXinputButtons[] =
 };
 
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
-{
-	XINPUT_VIBRATION vibration;
-
+{	
 	ccAssert(gamepad != NULL);
-
+	
 	if(hapticIndex >= gamepad->outputAmount) {
 		ccErrorPush(CC_ERROR_NOHAPTIC);
 		return CC_FAIL;
 	}
-
-	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
-
+	
 	if(((ccGamepad_win*)gamepad->data)->inputType == CC_GAMEPAD_INPUT_XINPUT) {
+		XINPUT_VIBRATION vibration;
+		ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+
 		gamepad->output[hapticIndex] = force;
 
 		vibration.wLeftMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[0];
@@ -53,6 +52,7 @@ ccReturn ccGamepadInitialize(void)
 
 	ccMalloc(_ccGamepads, sizeof(ccGamepads));
 	ccMalloc(_ccGamepads->data, sizeof(ccGamepads_win));
+
 	_ccGamepads->amount = 0;
 	_ccGamepads->gamepad = NULL;
 	
@@ -93,7 +93,7 @@ ccReturn ccGamepadFree(void)
 			if(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->inputType == CC_GAMEPAD_INPUT_RAW) {
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->buttonCaps);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->valueCaps);
-				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->outputValueCaps);
+				if(_ccGamepads->gamepad[i].outputAmount != 0) free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->outputValueCaps);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->axisFactor);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->axisNegativeComponent);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->preparsedData);
@@ -299,12 +299,13 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		HidP_GetValueCaps(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
 
 		currentGamepad->buttonAmount = GAMEPAD_DATA->raw->buttonCaps->Range.UsageMax - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin + 1;
+		if(currentGamepad->buttonAmount > GAMEPAD_MAXBUTTONS) currentGamepad->buttonAmount = GAMEPAD_MAXBUTTONS;
 		currentGamepad->axisAmount = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
 		currentGamepad->outputAmount = GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
 		
 		currentGamepad->button = calloc(currentGamepad->buttonAmount, sizeof(bool));
 		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);
-		currentGamepad->output = calloc(currentGamepad->outputAmount, sizeof(int));
+		if(currentGamepad->outputAmount != 0) currentGamepad->output = calloc(currentGamepad->outputAmount, sizeof(int));
 
 		GAMEPAD_DATA->raw->axisFactor = malloc(sizeof(double)* currentGamepad->axisAmount);
 		GAMEPAD_DATA->raw->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
@@ -325,6 +326,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	for(i = 0; i < (int)usageLength; i++)
 	{
 		int index = GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin;
+
 		if(currentGamepad->button[index] == false) {
 			currentGamepad->button[index] = true;
 			
@@ -350,13 +352,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	}
 
 	// Try to send output
-	/*
-	if(HidP_SetUsageValue(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps[0].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[0].NotRange.Usage,
-		SHRT_MAX, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid) == HIDP_STATUS_SUCCESS) {
-		abort();
-	}
-	*/
-
+	//if(HidP_SetUsageValue(HidP_Output, GAMEPAD_DATA->raw->outputValueCaps[0].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[0].NotRange.Usage,
+	//	SHRT_MAX, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid) == HIDP_STATUS_SUCCESS) {
+	//	abort();
+	//}
+	
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
 		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->raw->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[i].NotRange.Usage, &newInt, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);

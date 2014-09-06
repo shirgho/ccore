@@ -8,7 +8,7 @@ void ccErrorPush(ccError error)
 {
 	if(ccErrorStackSize <= ccErrorStackIndex) {
 		ccErrorStackSize++;
-		ccErrorStack = realloc(ccErrorStack, ccErrorStackSize);
+		ccErrorStack = realloc(ccErrorStack, sizeof(ccError)* ccErrorStackSize);
 	}
 	ccErrorStack[ccErrorStackIndex] = error;
 	ccErrorStackIndex++;

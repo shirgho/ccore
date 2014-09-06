@@ -26,7 +26,7 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
-//#include <ccore/net.h> // Net needs to be included first, or else windows is going to cry when winsock.h is included before winsock2.h
+#include <ccore/net.h> // Net needs to be included first, or else windows is going to cry when winsock.h is included before winsock2.h
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/time.h>
