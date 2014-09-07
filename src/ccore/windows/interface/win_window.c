@@ -263,10 +263,11 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->renderContext = NULL;
 	WINDOW_DATA->lpbSize = 0;
 	WINDOW_DATA->lpb = NULL;
+	WINDOW_DATA->flags = flags;
 	
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
-	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~WS_MAXIMIZEBOX;
+	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
 	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS)WINDOW_DATA->style &= ~WS_SYSMENU;
 
 	windowRect.left = rect.x;
@@ -350,16 +351,18 @@ ccReturn ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow != NULL);
 
-	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION);
+	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZEBOX);
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_MAXIMIZE) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
 
+	if(WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZE &~WS_MAXIMIZEBOX);
+
 	return CC_SUCCESS;
 }
 
-ccReturn _ccWindowResizeMove(ccRect rect, bool addBorder)
+static ccReturn _ccWindowResizeMove(ccRect rect, bool addBorder)
 {
 	ccAssert(_ccWindow != NULL);
 
