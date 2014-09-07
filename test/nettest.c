@@ -25,5 +25,8 @@
 
 int main(int argc, char** argv)
 {
+	ccNetInitialize();
+
+	ccNetFree();
 	return 0;
 }

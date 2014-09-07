@@ -8,7 +8,7 @@ libpaths=['/usr/lib', '/usr/local/lib', '.']
 
 opts=Variables('custom.py', ARGUMENTS)
 opts.Add('target', 'Compile Target (debug/release/install)', 'debug', allowed_values=('debug', 'release', 'install'))
-opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'no'))
+opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'all', 'net', 'feature', 'no'))
 opts.Update(env)
 
 if(env['target']=='debug'):
@@ -23,10 +23,12 @@ if(env['target']=='install'):
     env.Alias('install', ['/usr'])
 else:
     staticLibrary=env.Library(target='lib/ccore', source=sources, LIBS=libs, LIBPATH=libpaths)
-    if(env['test']=='yes'):
+    if(env['test']=='yes' or env['test']=='all' or env['test']=='feature'):
         env.Program(target='bin/featuretest', source=['test/featuretest.c', 'test/tga.c'], LIBS=[staticLibrary, libs], LIBPATH=libpaths)
-        env.Program(target='bin/nettest', source='test/nettest.c', LIBS=[staticLibrary], LIBPATH=libpaths)
         Command("bin/commands.tga", "test/commands.tga", Copy("$TARGET", "$SOURCE"))
         Command("bin/logo.tga", "test/logo.tga", Copy("$TARGET", "$SOURCE"))
+
+    if(env['test']=='yes' or env['test']=='all' or env['test']=='net'):
+        env.Program(target='bin/nettest', source='test/nettest.c', LIBS=[staticLibrary], LIBPATH=libpaths)
 
 Help(opts.GenerateHelpText(env))
