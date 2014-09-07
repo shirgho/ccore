@@ -53,6 +53,7 @@ typedef SSIZE_T				ssize_t;
 #endif
 
 typedef struct sockaddr 	ccSockaddr;
+typedef struct sockaddr6 	ccSockaddr6;
 typedef struct sockaddr_in 	ccSockaddr_in;
 typedef struct addrinfo		ccAddrinfo;
 typedef struct msghdr 		ccMsghdr;
