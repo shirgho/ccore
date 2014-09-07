@@ -181,6 +181,13 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		_ccEventStackPush(event);
 	}
 		break;
+	case WM_SYSCOMMAND:
+	{
+		LONG style = GetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE);
+		if(((wParam & 0xFFF0) == SC_MOVE) && (style & WS_MAXIMIZE) && !(style & WS_MAXIMIZEBOX)) return 0;
+		return DefWindowProc(winHandle, message, wParam, lParam);
+	}
+		break;
 	default:
 		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
@@ -357,7 +364,7 @@ ccReturn ccWindowSetMaximized(void)
 		return CC_FAIL;
 	}
 
-	if(WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZE &~WS_MAXIMIZEBOX);
+	if(WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, GetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE) &~WS_MAXIMIZEBOX);
 
 	return CC_SUCCESS;
 }
