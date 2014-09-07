@@ -29,17 +29,36 @@
 
 int main(int argc, char** argv)
 {
-	ccAddrinfo hints, *servinfo;
+	ccAddrinfo hints, *servinfo, *cur;
+	char ip[INET6_ADDRSTRLEN], site[128] = "www.example.net";
+	void *addr;
+
+	if(argc == 2){
+		strcpy(site, argv[1]);
+	}
 
 	ccNetInitialize();
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
 
-	if(!ccNetGetaddrinfo("http://linux.die.net/include/arpa/inet.h", "80", &hints, &servinfo)){
-		ccPrintf(ccErrorString(ccErrorPop()));
+	if(ccNetGetaddrinfo(site, NULL, &hints, &servinfo)){
+		ccPrintf("ccNetGetaddrinfo error: %s\n", ccErrorString(ccErrorPop()));
+	}
+
+	ccPrintf("Retrieving IP's for \"%s\":\n", site);
+	for(cur = servinfo; cur != NULL; cur = cur->ai_next){
+		if(cur->ai_family == AF_INET){
+			ccPrintf("\tIP4: ");
+			addr = &((ccSockaddr_in*)cur->ai_addr)->sin_addr;
+		}else{
+			ccPrintf("\tIP6: ");
+			addr = &((ccSockaddr_in6*)cur->ai_addr)->sin6_addr;
+		}
+
+		ccNetInet_ntop(cur->ai_family, addr, ip, sizeof ip);
+		ccPrintf("%s\n", ip);
 	}
 
 	ccNetFreeaddrinfo(servinfo);

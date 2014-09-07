@@ -40,6 +40,15 @@ extern "C"
 
 typedef int					ccSocket;
 typedef socklen_t 			ccSocklen_t;
+
+#define ccNetInet_addr		inet_addr
+#define ccNetInet_lnaof		inet_lnaof
+#define ccNetInet_makeaddr	inet_makeaddr
+#define ccNetInet_netof		inet_netof
+#define ccNetInet_network	inet_network
+#define ccNetInet_ntoa		inet_ntoa
+#define ccNetInet_pton		inet_pton
+#define ccNetInet_ntop		inet_ntop
 #elif defined WINDOWS
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -55,6 +64,7 @@ typedef SSIZE_T				ssize_t;
 typedef struct sockaddr 	ccSockaddr;
 typedef struct sockaddr6 	ccSockaddr6;
 typedef struct sockaddr_in 	ccSockaddr_in;
+typedef struct sockaddr_in6	ccSockaddr_in6;
 typedef struct addrinfo		ccAddrinfo;
 typedef struct msghdr 		ccMsghdr;
 typedef fd_set 				ccFd_set;
