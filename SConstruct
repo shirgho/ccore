@@ -24,7 +24,8 @@ if(env['target']=='install'):
 else:
     staticLibrary=env.Library(target='lib/ccore', source=sources, LIBS=libs, LIBPATH=libpaths)
     if(env['test']=='yes'):
-        env.Program(target='bin/featuretest', source=Glob('test/*.c'), LIBS=[staticLibrary, libs], LIBPATH=libpaths)
+        env.Program(target='bin/featuretest', source=['test/featuretest.c', 'test/tga.c'], LIBS=[staticLibrary, libs], LIBPATH=libpaths)
+        env.Program(target='bin/nettest', source='test/nettest.c', LIBS=[staticLibrary], LIBPATH=libpaths)
         Command("bin/commands.tga", "test/commands.tga", Copy("$TARGET", "$SOURCE"))
         Command("bin/logo.tga", "test/logo.tga", Copy("$TARGET", "$SOURCE"))
 
