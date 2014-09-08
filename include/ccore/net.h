@@ -37,6 +37,7 @@ extern "C"
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 typedef int					ccSocket;
 typedef socklen_t 			ccSocklen_t;
@@ -49,6 +50,7 @@ typedef socklen_t 			ccSocklen_t;
 #define ccNetInet_ntoa		inet_ntoa
 #define ccNetInet_pton		inet_pton
 #define ccNetInet_ntop		inet_ntop
+
 #elif defined WINDOWS
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -104,6 +106,9 @@ ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, c
 #endif
 
 #define ccNetFcntl				fcntl
+
+#define ccNetRead				read
+#define ccNetWrite				write
 
 #define ccNetFreeaddrinfo		freeaddrinfo
 #define ccNetEndhostent 		endhostent

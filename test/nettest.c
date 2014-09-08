@@ -62,7 +62,10 @@ int main(int argc, char **argv)
 {
 	ccSocket socket;
 	ccSockaddr_in servaddr;
-	char site[128] = "www.example.net";
+	ccHostent *hostinfo;
+	char buf[256], site[128] = "www.example.net", *request = "GET /index.html HTTP/1.1\nHost: www.example.com\nAccept: text/plain\nConnection: close\n\n";
+	long hostaddr;
+	ssize_t send, received;
 
 	if(argc == 2){
 		strcpy(site, argv[1]);
@@ -72,14 +75,30 @@ int main(int argc, char **argv)
 
 	printIPs(site);
 
-	ccNetSocket(&socket, AF_INET, SOCK_STREAM, 0);
+	ccNetSocket(&socket, AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-	memset(&servaddr, 0, sizeof servaddr);
-	servaddr.sin_family = AF_INET;
+	hostinfo = ccNetGethostbyname(site);
+	memcpy(&hostaddr, hostinfo->h_addr, hostinfo->h_length);
+
+	servaddr.sin_addr.s_addr = hostaddr;
 	servaddr.sin_port = ccNetHtons(80);
-	ccNetInet_pton(AF_INET, site, &servaddr.sin_addr);
+	servaddr.sin_family = AF_INET;
 
 	ccNetConnect(socket, (ccSockaddr*)&servaddr, sizeof(servaddr));
+
+	ccNetSend(socket, &send, request, strlen(request), 0);
+	if(send != strlen(request)){
+		ccPrintf("Tried to send %d bytes, but only send %d\n", (int)strlen(request), (int)send);
+	}
+
+	ccPrintf("Receiving message from %s\n\n", site);
+	do{
+		ccNetRecv(socket, &received, buf, 256, 0);
+		ccPrintf(buf);
+	}while(received > 0);
+	ccPrintf("\n\n");
+
+	ccNetClose(socket);
 
 	ccNetFree();
 
