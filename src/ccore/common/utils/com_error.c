@@ -88,6 +88,9 @@ const char *ccErrorString(ccError error)
 			break;
 
 			// Networking related
+		case CC_ERROR_NET:
+			return "A network function failed";
+			break;
 
 			// Gamepad related
 		case CC_ERROR_NOGAMEPAD:
