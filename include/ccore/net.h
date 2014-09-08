@@ -42,15 +42,6 @@ extern "C"
 typedef int					ccSocket;
 typedef socklen_t 			ccSocklen_t;
 
-#define ccNetInet_addr		inet_addr
-#define ccNetInet_lnaof		inet_lnaof
-#define ccNetInet_makeaddr	inet_makeaddr
-#define ccNetInet_netof		inet_netof
-#define ccNetInet_network	inet_network
-#define ccNetInet_ntoa		inet_ntoa
-#define ccNetInet_pton		inet_pton
-#define ccNetInet_ntop		inet_ntop
-
 #elif defined WINDOWS
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -101,8 +92,26 @@ ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, c
 
 #ifdef LINUX
 #define ccNetClose 				close
+
+#define ccNetInet_addr			inet_addr
+#define ccNetInet_lnaof			inet_lnaof
+#define ccNetInet_makeaddr		inet_makeaddr
+#define ccNetInet_netof			inet_netof
+#define ccNetInet_network		inet_network
+#define ccNetInet_ntoa			inet_ntoa
+#define ccNetInet_pton			inet_pton
+#define ccNetInet_ntop			inet_ntop
 #elif defined WINDOWS
 #define ccNetClose 				closesocket
+
+#define ccNetInet_addr			InetAddr
+#define ccNetInet_lnaof			InetLnaof
+#define ccNetInet_makeaddr		InetMakeaddr
+#define ccNetInet_netof			InetNetof
+#define ccNetInet_network		InetNetwork
+#define ccNetInet_ntoa			InetNtoa
+#define ccNetInet_pton			InetPton
+#define ccNetInet_ntop			InetNtop
 #endif
 
 #define ccNetFcntl				fcntl
@@ -136,10 +145,10 @@ ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, c
 #define ccNetNtonl 				ntonl
 #define ccNetNtons 				ntons
 
-#define CC_NET_FD_CLR 	FD_CLR
-#define CC_NET_FD_ISSET FD_ISSET
-#define CC_NET_FD_SET 	FD_SET
-#define CC_NET_FD_ZERO 	FD_ZERO
+#define CC_NET_FD_CLR 			FD_CLR
+#define CC_NET_FD_ISSET			FD_ISSET
+#define CC_NET_FD_SET 			FD_SET
+#define CC_NET_FD_ZERO			FD_ZERO
 
 #ifdef __cplusplus
 }

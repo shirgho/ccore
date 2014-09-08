@@ -26,6 +26,7 @@
 #include <ccore/net.h>
 #include <ccore/error.h>
 #include <ccore/print.h>
+#include <ccore/time.h>
 
 void printIPs(char *site)
 {
@@ -101,6 +102,8 @@ int main(int argc, char **argv)
 	ccNetClose(socket);
 
 	ccNetFree();
+
+	ccTimeDelay(10000);
 
 	return 0;
 }
