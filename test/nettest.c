@@ -38,9 +38,7 @@ void printIPs(char *site)
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if(ccNetGetaddrinfo(site, NULL, &hints, &servinfo)){
-		ccPrintf("ccNetGetaddrinfo error: %s\n", ccErrorString(ccErrorPop()));
-	}
+	ccNetGetaddrinfo(site, NULL, &hints, &servinfo);
 
 	ccPrintf("Retrieving IP's for \"%s\":\n", site);
 	for(cur = servinfo; cur != NULL; cur = cur->ai_next){
@@ -63,9 +61,8 @@ int main(int argc, char **argv)
 {
 	ccSocket socket;
 	ccSockaddr_in servaddr;
-	ccHostent *hostinfo;
+	ccAddrinfo hints, *servinfo;
 	char buf[256], site[128] = "www.example.net", *request = "GET /index.html HTTP/1.1\nHost: www.example.com\nAccept: text/plain\nConnection: close\n\n";
-	long hostaddr;
 	ssize_t send, received;
 
 	if(argc == 2){
@@ -78,10 +75,13 @@ int main(int argc, char **argv)
 
 	ccNetSocket(&socket, AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-	hostinfo = ccNetGethostbyname(site);
-	memcpy(&hostaddr, hostinfo->h_addr, hostinfo->h_length);
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
 
-	servaddr.sin_addr.s_addr = hostaddr;
+	ccNetGetaddrinfo(site, NULL, &hints, &servinfo);
+
+	servaddr.sin_addr = ((ccSockaddr_in*)servinfo->ai_addr)->sin_addr;
 	servaddr.sin_port = ccNetHtons(80);
 	servaddr.sin_family = AF_INET;
 
@@ -102,6 +102,8 @@ int main(int argc, char **argv)
 	ccPrintf("\n\n");
 
 	ccNetClose(socket);
+
+	ccNetFreeaddrinfo(servinfo);
 
 	ccNetFree();
 

@@ -125,7 +125,6 @@ ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, c
 #define ccNetEndprotoent 		endprotoent
 #define ccNetEndservent 		endservent
 #define ccNetGethostbyaddr 		gethostbyaddr
-#define ccNetGethostbyname 		gethostbyname
 #define ccNetGethostent 		gethostent
 #define ccNetGetnetbyaddr		getnetbyaddr
 #define ccNetGetnetbyname		getnetbyname
