@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <stdlib.h>
+#include "error.h"
 
 #ifdef __cplusplus
 extern "C"

@@ -13,7 +13,7 @@ void ccErrorPush(ccError error)
 	ccErrorStack[ccErrorStackIndex] = error;
 	ccErrorStackIndex++;
 
-	printf("Pushed error: %s\n", ccErrorString(error));
+	ccPrintf("Pushed error: %s\n", ccErrorString(error));
 }
 
 ccError ccErrorPop(void)
