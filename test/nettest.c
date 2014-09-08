@@ -27,17 +27,11 @@
 #include <ccore/error.h>
 #include <ccore/print.h>
 
-int main(int argc, char** argv)
+void printIPs(char *site)
 {
 	ccAddrinfo hints, *servinfo, *cur;
-	char ip[INET6_ADDRSTRLEN], site[128] = "www.example.net";
+	char ip[INET6_ADDRSTRLEN];
 	void *addr;
-
-	if(argc == 2){
-		strcpy(site, argv[1]);
-	}
-
-	ccNetInitialize();
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -62,6 +56,19 @@ int main(int argc, char** argv)
 	}
 
 	ccNetFreeaddrinfo(servinfo);
+}
+
+int main(int argc, char **argv)
+{
+	char site[128] = "www.example.net";
+
+	if(argc == 2){
+		strcpy(site, argv[1]);
+	}
+
+	ccNetInitialize();
+
+	printIPs(site);
 
 	ccNetFree();
 
