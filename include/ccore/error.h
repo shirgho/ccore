@@ -23,7 +23,9 @@
 
 #pragma once
 
-#include "error.h"
+#include <stdlib.h>
+
+#include "print.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -96,7 +98,8 @@ typedef enum {
 	} \
 
 const char *ccErrorString(ccError error);
-void ccErrorPush(ccError error);
+void _ccErrorPush(ccError error, char *file, int line);
+#define ccErrorPush(error) _ccErrorPush(error, __FILE__, __LINE__)
 ccError ccErrorPop(void);
 
 void _ccErrorFree(void);
