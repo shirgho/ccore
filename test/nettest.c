@@ -60,6 +60,7 @@ void printIPs(char *site)
 
 int main(int argc, char **argv)
 {
+	ccSocket socket;
 	char site[128] = "www.example.net";
 
 	if(argc == 2){
@@ -69,6 +70,8 @@ int main(int argc, char **argv)
 	ccNetInitialize();
 
 	printIPs(site);
+
+	socket = ccNetSocket(AF_INET, SOCK_STREAM, 0);
 
 	ccNetFree();
 
