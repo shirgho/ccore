@@ -61,6 +61,7 @@ void printIPs(char *site)
 int main(int argc, char **argv)
 {
 	ccSocket socket;
+	ccSockaddr_in servaddr;
 	char site[128] = "www.example.net";
 
 	if(argc == 2){
@@ -71,7 +72,14 @@ int main(int argc, char **argv)
 
 	printIPs(site);
 
-	socket = ccNetSocket(AF_INET, SOCK_STREAM, 0);
+	ccNetSocket(&socket, AF_INET, SOCK_STREAM, 0);
+
+	memset(&servaddr, 0, sizeof servaddr);
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = ccNetHtons(80);
+	ccNetInet_pton(AF_INET, site, &servaddr.sin_addr);
+
+	ccNetConnect(socket, (ccSockaddr*)&servaddr, sizeof(servaddr));
 
 	ccNetFree();
 
