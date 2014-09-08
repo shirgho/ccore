@@ -92,9 +92,11 @@ int main(int argc, char **argv)
 		ccPrintf("Tried to send %d bytes, but only send %d\n", (int)strlen(request), (int)send);
 	}
 
+	buf[255] = 0;
+
 	ccPrintf("Receiving message from %s\n\n", site);
 	do{
-		ccNetRecv(socket, &received, buf, 256, 0);
+		ccNetRecv(socket, &received, buf, 255, 0);
 		ccPrintf(buf);
 	}while(received > 0);
 	ccPrintf("\n\n");
