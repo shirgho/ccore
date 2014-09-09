@@ -377,22 +377,30 @@ ccReturn ccWindowSetWindowed(void)
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
-	ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display));
-
-	return CC_SUCCESS;
+	
+	return ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display));
 }
 
 ccReturn ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow != NULL);
 
-	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZEBOX);
+	if(SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZEBOX) == 0) {
+		ccErrorPush(CC_ERROR_WINDOW_MODE);
+		return CC_FAIL;
+	}
+
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_MAXIMIZE) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
 
-	if(WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, GetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE) &~WS_MAXIMIZEBOX);
+	if(WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) {
+		if(SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, GetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE) &~WS_MAXIMIZEBOX) == 0) {
+			ccErrorPush(CC_ERROR_WINDOW_MODE);
+			return CC_FAIL;
+		}
+	}
 
 	return CC_SUCCESS;
 }
