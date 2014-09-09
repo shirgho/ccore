@@ -58,7 +58,7 @@ static bool initializeRawInput(void)
 	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
 }
 
-static void freeRawInput(void)
+static bool freeRawInput(void)
 {
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;
@@ -66,7 +66,7 @@ static void freeRawInput(void)
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].dwFlags = RIDEV_REMOVE;
 	WINDOW_DATA->rid[RAWINPUT_MOUSE].hwndTarget = NULL;
 
-	RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
+	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
 }
 
 static void processRid(HRAWINPUT rawInput)
@@ -342,11 +342,18 @@ ccReturn ccWindowFree(void)
 {
 	ccAssert(_ccWindow != NULL);
 
-	freeRawInput();
+	if(!freeRawInput()) {
+		ccErrorPush(CC_ERROR_WINDOWDESTRUCTION);
+		return CC_FAIL;
+	}
 
 	if(WINDOW_DATA->lpbSize != 0) free(WINDOW_DATA->lpb);
 
-	ReleaseDC(WINDOW_DATA->winHandle, WINDOW_DATA->hdc);
+	if(ReleaseDC(WINDOW_DATA->winHandle, WINDOW_DATA->hdc) == 0) {
+		ccErrorPush(CC_ERROR_WINDOWDESTRUCTION);
+		return CC_FAIL;
+	}
+
 	if(DestroyWindow(WINDOW_DATA->winHandle) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOWDESTRUCTION);
 		return CC_FAIL;
