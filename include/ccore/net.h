@@ -33,25 +33,87 @@ extern "C"
 #endif
 
 #ifdef LINUX
+
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <fcntl.h>
+#include <fcntl.h
 #include <unistd.h>
 
 typedef int					ccSocket;
 typedef socklen_t 			ccSocklen_t;
 
 #elif defined WINDOWS
+
+#pragma comment(lib, "Ws2_32.lib")
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <stdio.h>
 
-#pragma comment(lib, "Ws2_32.lib")
-
 typedef SOCKET				ccSocket;
 typedef int					ccSocklen_t;
 typedef SSIZE_T				ssize_t;
+
+#ifdef LINUX
+
+#define ccNetClose 				close
+#define ccNetInet_addr			inet_addr
+#define ccNetInet_lnaof			inet_lnaof
+#define ccNetInet_makeaddr		inet_makeaddr
+#define ccNetInet_netof			inet_netof
+#define ccNetInet_network		inet_network
+#define ccNetInet_ntoa			inet_ntoa
+#define ccNetInet_pton			inet_pton
+#define ccNetInet_ntop			inet_ntop
+
+#elif defined WINDOWS
+
+#define ccNetClose 				closesocket
+#define ccNetInet_addr			InetAddr
+#define ccNetInet_lnaof			InetLnaof
+#define ccNetInet_makeaddr		InetMakeaddr
+#define ccNetInet_netof			InetNetof
+#define ccNetInet_network		InetNetwork
+#define ccNetInet_ntoa			InetNtoa
+#define ccNetInet_pton			InetPton
+#define ccNetInet_ntop			InetNtop
+
+#endif
+
+#define ccNetFcntl				fcntl
+#define ccNetRead				read
+#define ccNetWrite				write
+#define ccNetFreeaddrinfo		freeaddrinfo
+#define ccNetEndhostent 		endhostent
+#define ccNetEndnetent 			endnetent
+#define ccNetEndprotoent 		endprotoent
+#define ccNetEndservent 		endservent
+#define ccNetGethostbyaddr 		gethostbyaddr
+#define ccNetGethostent 		gethostent
+#define ccNetGetnetbyaddr		getnetbyaddr
+#define ccNetGetnetbyname		getnetbyname
+#define ccNetGetprotobyname		getprotobyname
+#define ccNetGetprotobynumber	getprotobynumber
+#define ccNetGetprotoent		getprotoent
+#define ccNetGetservbyname		getservbyname
+#define ccNetGetservbyport		getservbyport
+#define ccNetGetservent			getservent
+#define ccNetSethostent			sethostent
+#define ccNetSetnetent			setnetent
+#define ccNetSetprotoent		setprotoent
+#define ccNetSetservent			setservent
+
+#define ccNetHtonl 				htonl
+#define ccNetHtons 				htons
+#define ccNetNtonl 				ntonl
+#define ccNetNtons 				ntons
+
+#define CC_NET_FD_CLR 			FD_CLR
+#define CC_NET_FD_ISSET			FD_ISSET
+#define CC_NET_FD_SET 			FD_SET
+#define CC_NET_FD_ZERO			FD_ZERO
+
 #endif
 
 typedef struct sockaddr 	ccSockaddr;
@@ -89,65 +151,6 @@ ccReturn ccNetGethostname(char *name, size_t len);
 
 ccReturn ccNetGetaddrinfo(const char *name, const char *service, const ccAddrinfo *req, ccAddrinfo **pai);
 ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, ccSocklen_t hostlen, char *serv, ccSocklen_t servlen, int flags);
-
-#ifdef LINUX
-#define ccNetClose 				close
-
-#define ccNetInet_addr			inet_addr
-#define ccNetInet_lnaof			inet_lnaof
-#define ccNetInet_makeaddr		inet_makeaddr
-#define ccNetInet_netof			inet_netof
-#define ccNetInet_network		inet_network
-#define ccNetInet_ntoa			inet_ntoa
-#define ccNetInet_pton			inet_pton
-#define ccNetInet_ntop			inet_ntop
-#elif defined WINDOWS
-#define ccNetClose 				closesocket
-
-#define ccNetInet_addr			InetAddr
-#define ccNetInet_lnaof			InetLnaof
-#define ccNetInet_makeaddr		InetMakeaddr
-#define ccNetInet_netof			InetNetof
-#define ccNetInet_network		InetNetwork
-#define ccNetInet_ntoa			InetNtoa
-#define ccNetInet_pton			InetPton
-#define ccNetInet_ntop			InetNtop
-#endif
-
-#define ccNetFcntl				fcntl
-
-#define ccNetRead				read
-#define ccNetWrite				write
-
-#define ccNetFreeaddrinfo		freeaddrinfo
-#define ccNetEndhostent 		endhostent
-#define ccNetEndnetent 			endnetent
-#define ccNetEndprotoent 		endprotoent
-#define ccNetEndservent 		endservent
-#define ccNetGethostbyaddr 		gethostbyaddr
-#define ccNetGethostent 		gethostent
-#define ccNetGetnetbyaddr		getnetbyaddr
-#define ccNetGetnetbyname		getnetbyname
-#define ccNetGetprotobyname		getprotobyname
-#define ccNetGetprotobynumber	getprotobynumber
-#define ccNetGetprotoent		getprotoent
-#define ccNetGetservbyname		getservbyname
-#define ccNetGetservbyport		getservbyport
-#define ccNetGetservent			getservent
-#define ccNetSethostent			sethostent
-#define ccNetSetnetent			setnetent
-#define ccNetSetprotoent		setprotoent
-#define ccNetSetservent			setservent
-
-#define ccNetHtonl 				htonl
-#define ccNetHtons 				htons
-#define ccNetNtonl 				ntonl
-#define ccNetNtons 				ntons
-
-#define CC_NET_FD_CLR 			FD_CLR
-#define CC_NET_FD_ISSET			FD_ISSET
-#define CC_NET_FD_SET 			FD_SET
-#define CC_NET_FD_ZERO			FD_ZERO
 
 #ifdef __cplusplus
 }

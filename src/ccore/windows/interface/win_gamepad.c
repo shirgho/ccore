@@ -281,7 +281,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPAD_DATA->raw->preparsedDataSize);
 		GAMEPAD_DATA->raw->preparsedData = malloc(GAMEPAD_DATA->raw->preparsedDataSize);
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPAD_DATA->raw->preparsedData, &GAMEPAD_DATA->raw->preparsedDataSize);
-
+		
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
 		GAMEPAD_DATA->raw->handle = raw->header.hDevice;
