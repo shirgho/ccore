@@ -283,8 +283,8 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
-	if((flags & CC_WINDOW_FLAG_NORESIZE) == CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
-	if((flags & CC_WINDOW_FLAG_NOBUTTONS) == CC_WINDOW_FLAG_NOBUTTONS)WINDOW_DATA->style &= ~WS_SYSMENU;
+	if(flags & CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
+	if(flags & CC_WINDOW_FLAG_NOBUTTONS) WINDOW_DATA->style &= ~WS_SYSMENU;
 
 	windowRect.left = rect.x;
 	windowRect.top = rect.y;
@@ -334,7 +334,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 			return CC_FAIL;
 		}
 	}
-	
+
 	return CC_SUCCESS;
 }
 

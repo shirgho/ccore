@@ -30,7 +30,6 @@
 #include "types.h"
 
 // Load all extensions using GLEW
-#define GLEW_STATIC
 #include "../../lib/glew/GL/glew.h"
 
 #ifdef __cplusplus

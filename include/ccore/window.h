@@ -41,7 +41,7 @@ extern "C"
 
 // A window can contain multiple flags to determine the layout and functionality
 typedef enum {
-	CC_WINDOW_FLAG_NORESIZE = 1, // Note: this cannot be ensured in linux, the WM ultimately decides whether this is allowed
+	CC_WINDOW_FLAG_NORESIZE = 1,
 	CC_WINDOW_FLAG_ALWAYSONTOP = 2,
 	CC_WINDOW_FLAG_NOBUTTONS = 4,
 	CC_WINDOW_FLAG_NORAWINPUT = 8

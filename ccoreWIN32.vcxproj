@@ -35,7 +35,7 @@
     <ClCompile Include="src\ccore\windows\utils\win_net.c" />
     <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
     <ClCompile Include="src\ccore\windows\utils\win_time.c" />
-    <ClCompile Include="test\nettest.c" />
+    <ClCompile Include="test\featuretest.c" />
     <ClCompile Include="test\tga.c" />
   </ItemGroup>
   <ItemGroup>
