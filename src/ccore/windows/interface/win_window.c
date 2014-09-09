@@ -411,16 +411,21 @@ static ccReturn _ccWindowResizeMove(ccRect rect, bool addBorder)
 
 	if(addBorder) {
 		RECT windowRect;
+
 		windowRect.left = rect.x;
 		windowRect.top = rect.y;
 		windowRect.right = rect.x + rect.width;
 		windowRect.bottom = rect.y + rect.height;
+
 		if(AdjustWindowRectEx(&windowRect, WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_MODE);
 			return CC_FAIL;
 		}
 
-		if(MoveWindow(WINDOW_DATA->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE) == FALSE) return CC_ERROR_WINDOW_MODE;
+		if(MoveWindow(WINDOW_DATA->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE) == FALSE) {
+			ccErrorPush(CC_ERROR_WINDOW_MODE);
+			return CC_FAIL;
+		}
 	}
 	else{
 		if(MoveWindow(WINDOW_DATA->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE) == FALSE) {
