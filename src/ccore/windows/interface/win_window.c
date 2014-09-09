@@ -195,7 +195,7 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 	return 0;
 }
 
-static void regHinstance(HINSTANCE instanceHandle)
+static bool regHinstance(HINSTANCE instanceHandle)
 {
 	WNDCLASSEX winClass;
 
@@ -212,7 +212,11 @@ static void regHinstance(HINSTANCE instanceHandle)
 	winClass.lpszClassName = "ccWindow";
 	winClass.hIconSm = NULL;
 
-	RegisterClassEx(&winClass);
+	if(RegisterClassEx(&winClass) == 0) {
+		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		return false;
+	}
+	return true;
 }
 
 bool ccWindowPollEvent(void)
@@ -255,10 +259,15 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 
 	ccAssert(_ccWindow == NULL);
 
+	if(moduleHandle == NULL) {
+		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		return CC_FAIL;
+	}
+
 	//initialize struct
 	ccMalloc(_ccWindow, sizeof(ccWindow));
 
-	_ccWindow->supportsRawInput = true;
+	_ccWindow->supportsRawInput = true; // Raw input is always supported on windows
 	_ccWindow->rect = rect;
 	ccMalloc(_ccWindow->data, sizeof(ccWindow_win));
 
@@ -286,7 +295,8 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 		return CC_FAIL;
 	}
 	
-	regHinstance(moduleHandle);
+	if(!regHinstance(moduleHandle)) return CC_FAIL;
+
 	WINDOW_DATA->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
 		"ccWindow",
@@ -301,17 +311,28 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 
 	WINDOW_DATA->style |= WS_VISIBLE;
 	
-	ShowWindow(WINDOW_DATA->winHandle, SW_SHOW);
+	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) != 0) {
+		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		return CC_FAIL;
+	}
 	
-	initializeRawInput();
+	if(!initializeRawInput()) {
+		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		return CC_FAIL;
+	}
 	
-	if((flags & CC_WINDOW_FLAG_ALWAYSONTOP) == CC_WINDOW_FLAG_ALWAYSONTOP) {
+	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
+
 		if(GetWindowRect(WINDOW_DATA->winHandle, &rect) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOWCREATION);
 			return CC_FAIL;
 		}
-		if(SetWindowPos(WINDOW_DATA->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) return CC_ERROR_WINDOWCREATION;
+
+		if(SetWindowPos(WINDOW_DATA->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) {
+			ccErrorPush(CC_ERROR_WINDOWCREATION);
+			return CC_FAIL;
+		}
 	}
 	
 	return CC_SUCCESS;
