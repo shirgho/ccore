@@ -24,13 +24,15 @@ ccReturn ccDisplayInitialize(void)
 
 	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
 		displayCount = 0;
-
 		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
 			_ccDisplays->amount++;
 
 			ccRealloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
 
-			EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm);
+			if(EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm) == 0) {
+				ccErrorPush(CC_ERROR_NODISPLAY);
+				return CC_FAIL;
+			}
 
 			currentDisplay = &_ccDisplays->display[_ccDisplays->amount - 1];
 
@@ -71,7 +73,11 @@ ccReturn ccDisplayInitialize(void)
 					currentDisplay->current = currentDisplay->amount;
 					currentDisplay->initial = currentDisplay->current;
 				}
-				memcpy(&currentDisplay->resolution[currentDisplay->amount], &buffer, sizeof(ccDisplayData));
+
+				currentDisplay->resolution[currentDisplay->amount].width = buffer.width;
+				currentDisplay->resolution[currentDisplay->amount].height = buffer.height;
+				currentDisplay->resolution[currentDisplay->amount].refreshRate = buffer.refreshRate;
+				currentDisplay->resolution[currentDisplay->amount].bitDepth = buffer.bitDepth;
 
 				currentDisplay->amount++;
 			}
@@ -119,7 +125,11 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
-	EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode);
+	
+	if(EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode) == 0) {
+		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		return CC_FAIL;
+	}
 
 	displayData = display->resolution[resolutionIndex];
 
@@ -127,6 +137,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	devMode.dmPelsHeight = displayData.height;
 	devMode.dmBitsPerPel = displayData.bitDepth;
 	devMode.dmDisplayFrequency = displayData.refreshRate;
+
 	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
 
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
