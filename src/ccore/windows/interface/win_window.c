@@ -441,7 +441,11 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 {
 	ccAssert(_ccWindow);
 
-	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME));
+	if(SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME)) == 0) {
+		ccErrorPush(CC_ERROR_WINDOW_MODE);
+		return CC_FAIL;
+	}
+
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
