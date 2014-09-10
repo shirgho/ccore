@@ -7,21 +7,19 @@ static int openGamepadDescriptor(char *locName)
 
 	snprintf(dirName, 30, "/dev/input/%s", locName);
 	fd = open(dirName, O_RDONLY | O_NONBLOCK, 0);
-	if(fd < 0){
-		perror(dirName);
-	}
 
 	return fd;
 }
 
-static ccError createGamepad(char *locName, int i)
+static ccReturn createGamepad(char *locName, int i)
 {
 	char buf[64];
 	int fd;
 
 	fd = openGamepadDescriptor(locName);
 	if(fd < 0 && errno != EACCES){
-		return CC_ERROR_GAMEPAD_DATA;
+		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
+		return CC_FAIL;
 	}
 
 	if(i == 0){
@@ -51,7 +49,7 @@ static ccError createGamepad(char *locName, int i)
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->fd = fd;
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->id = atoi(locName + 2);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
 static bool canReadINotify(void)
@@ -167,11 +165,13 @@ ccReturn ccGamepadInitialize(void)
 	// Attach notifications to check if a device connects/disconnects
 	fd = inotify_init();
 	if(fd < 0){
+		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 		goto error;
 	}
 
 	watch = inotify_add_watch(fd, "/dev/input", IN_DELETE | IN_ATTRIB);
 	if(watch < 0){
+		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 		goto error;
 	}
 
@@ -187,7 +187,7 @@ ccReturn ccGamepadInitialize(void)
 	d = opendir("/dev/input");
 	while((dir = readdir(d)) != NULL){
 		if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
-			if(createGamepad(dir->d_name, _ccGamepads->amount) != CC_ERROR_NONE){
+			if(createGamepad(dir->d_name, _ccGamepads->amount) == CC_FAIL){
 				goto error;
 			}
 			_ccGamepads->amount++;
@@ -207,14 +207,14 @@ error:
 	closedir(d);
 	close(fd);
 	close(watch);
-	ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 	return CC_FAIL;
 }
 
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
-
-	return CC_SUCCESS;
+	//TODO implement haptic support
+	
+	return CC_FAIL;
 }
 
 ccReturn ccGamepadFree(void)
