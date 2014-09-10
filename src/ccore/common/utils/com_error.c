@@ -69,7 +69,7 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_GL_CONTEXT:
 			return "The openGL context could not be created";
 			break;
-		case CC_ERROR_GLEWINIT:
+		case CC_ERROR_GL_GLEWINIT:
 			return "GLEW could not be initialized";
 			break;
 		case CC_ERROR_GL_BUFFERSWAP:

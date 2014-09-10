@@ -42,7 +42,7 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 	//Fetch extentions after context creation
 	if(glewInit() != GLEW_OK) {
-		ccErrorPush(CC_ERROR_GLEWINIT);
+		ccErrorPush(CC_ERROR_GL_GLEWINIT);
 		return CC_FAIL;
 	}
 
