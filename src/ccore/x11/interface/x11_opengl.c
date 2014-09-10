@@ -15,7 +15,10 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 
-	ccAssert(_ccWindow != NULL);
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
 
 	visual = glXChooseVisual(WINDOW_DATA->XDisplay, WINDOW_DATA->XScreen, attrList);
 	if(!visual){
@@ -36,7 +39,10 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 ccReturn ccGLFreeContext(void)
 {
-	ccAssert(WINDOW_DATA->XContext != NULL);
+	if(WINDOW_DATA->XContext == NULL){
+		ccErrorPush(CC_ERROR_GL_CONTEXT);
+		return CC_FAIL;
+	}
 
 	glXDestroyContext(WINDOW_DATA->XDisplay, WINDOW_DATA->XContext);
 	
@@ -45,7 +51,10 @@ ccReturn ccGLFreeContext(void)
 
 ccReturn ccGLSwapBuffers(void)
 {
-	ccAssert(WINDOW_DATA->XContext != NULL);
+	if(WINDOW_DATA->XContext == NULL){
+		ccErrorPush(CC_ERROR_GL_CONTEXT);
+		return CC_FAIL;
+	}
 
 	glXSwapBuffers(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 
