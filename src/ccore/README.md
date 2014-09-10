@@ -1,4 +1,4 @@
-- common: The files that must always be compiled, including common headers (for now)
+- common: The files that must always be compiled, including common headers
 - linux: The files specific to GNU/Linux
 - win32: The files specific to Microsoft Windows
 - x11: The files specific to the X Window System
