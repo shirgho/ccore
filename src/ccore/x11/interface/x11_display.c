@@ -22,6 +22,9 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	root = RootWindow(display, 0);
 	resources = XRRGetScreenResources(display, root);
+	if(resources->noutput <= 0){
+		return CC_ERROR_NODISPLAY;
+	}
 
 	for(i = 0; i < resources->noutput; i++){
 		outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
@@ -126,13 +129,19 @@ ccReturn ccDisplayInitialize(void)
 	Display *display;
 	ccError error;
 
-	ccAssert(_ccDisplays == NULL);
+	if(_ccDisplays != NULL){
+		ccErrorPush(CC_ERROR_NODISPLAY);
+		return CC_FAIL;
+	}
 
 	ccMalloc(_ccDisplays, sizeof(ccDisplays));
 	_ccDisplays->amount = 0;
 
 	dir = opendir("/tmp/.X11-unix");
-	ccAssert(dir != NULL);
+	if(dir == NULL){
+		ccErrorPush(CC_ERROR_NODISPLAY);
+		return CC_FAIL;
+	}
 
 	while((direntry = readdir(dir)) != NULL){
 		if(direntry->d_name[0] != 'X'){
@@ -190,7 +199,11 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	XRROutputInfo *outputInfo;
 	XRRCrtcInfo *crtcInfo;
 
-	ccAssert(display != NULL);
+	if(display == NULL){
+		ccErrorPush(CC_ERROR_NODISPLAY);
+		return CC_FAIL;
+	}
+
 	ccAssert(resolutionIndex < display->amount);
 
 	XDisplay = XOpenDisplay(display->deviceName);
