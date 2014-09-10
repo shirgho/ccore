@@ -1,6 +1,6 @@
 #include "x11_display.h"
 
-static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
+static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int i, j, k, displayNameLength, eventBase, errorBase;
 	bool foundCrtc;
@@ -14,7 +14,8 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
 		ccPrintf("Xinerama not supported or active\n");
-		return CC_ERROR_NODISPLAY;
+		ccErrorPush(CC_ERROR_NODISPLAY);
+		return CC_FAIL;
 	}
 
 	currentResolution.bitDepth = -1;
@@ -23,7 +24,8 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 	root = RootWindow(display, 0);
 	resources = XRRGetScreenResources(display, root);
 	if(resources->noutput <= 0){
-		return CC_ERROR_NODISPLAY;
+		ccErrorPush(CC_ERROR_NODISPLAY);
+		return CC_FAIL;
 	}
 
 	for(i = 0; i < resources->noutput; i++){
@@ -118,7 +120,7 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	XRRFreeScreenResources(resources);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
 ccReturn ccDisplayInitialize(void)
@@ -127,7 +129,6 @@ ccReturn ccDisplayInitialize(void)
 	DIR *dir;
 	struct dirent *direntry;
 	Display *display;
-	ccError error;
 
 	if(_ccDisplays != NULL){
 		ccErrorPush(CC_ERROR_NODISPLAY);
@@ -151,9 +152,7 @@ ccReturn ccDisplayInitialize(void)
 		ccPrintf("X: Found root display %s\n", displayName);
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
-			error = ccXFindDisplaysXinerama(display, displayName);
-			if(error != CC_ERROR_NONE){
-				ccErrorPush(error);
+			if(ccXFindDisplaysXinerama(display, displayName)){
 				return CC_FAIL;
 			}
 			ccPrintf("X: %d displays found\n", _ccDisplays->amount);
@@ -168,7 +167,10 @@ ccReturn ccDisplayFree(void)
 {
 	int i,j;
 
-	ccAssert(_ccDisplays != NULL);
+	if(_ccDisplays == NULL){
+		ccErrorPush(CC_ERROR_NODISPLAY);
+		return CC_FAIL;
+	}
 
 	for(i = 0; i < _ccDisplays->amount; i++){
 		free(_ccDisplays->display[i].data);
@@ -204,7 +206,10 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 		return CC_FAIL;
 	}
 
-	ccAssert(resolutionIndex < display->amount);
+	if(resolutionIndex < display->amount || resolutionIndex < 0){
+		ccErrorPush(CC_ERROR_INVALID_ARGUMENT);
+		return CC_FAIL;
+	}
 
 	XDisplay = XOpenDisplay(display->deviceName);
 	root = RootWindow(XDisplay, DISPLAY_DATA(display)->XScreen);
@@ -216,6 +221,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
 		return CC_FAIL;
 	}
+
 	outputInfo = XRRGetOutputInfo(XDisplay, resources, DISPLAY_DATA(display)->XOutput);
 	if(!outputInfo || outputInfo->connection == RR_Disconnected){
 		ccPrintf("X: Couldn't get output info");
@@ -223,6 +229,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
 		return CC_FAIL;
 	}
+
 	crtcInfo = XRRGetCrtcInfo(XDisplay, resources, outputInfo->crtc);
 	if(!crtcInfo){
 		ccPrintf("X: Couldn't get crtc info");
