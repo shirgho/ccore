@@ -1,6 +1,6 @@
 #include "x11_window.h"
 
-static ccError setWindowState(const char *type, bool value)
+static ccReturn setWindowState(const char *type, bool value)
 {	
 	XEvent event;
 	Atom wmState, newWmState;
@@ -18,10 +18,10 @@ static ccError setWindowState(const char *type, bool value)
 
 	XSendEvent(WINDOW_DATA->XDisplay, DefaultRootWindow(WINDOW_DATA->XDisplay), false, SubstructureNotifyMask, &event);
 
-	return CC_ERROR_NONE;
+	return CC_SUCCESS;
 }
 
-static void setResizable(bool resizable)
+static ccReturn setResizable(bool resizable)
 {
 	XSizeHints *sizeHints;
 	long flags;
@@ -33,7 +33,7 @@ static void setResizable(bool resizable)
 
 	if(WINDOW_DATA->resizable == resizable){
 		XFree(sizeHints);
-		return;
+		return CC_SUCCESS;
 	}
 
 	WINDOW_DATA->resizable = resizable;
@@ -51,34 +51,34 @@ static void setResizable(bool resizable)
 	XSetWMNormalHints(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, sizeHints);
 
 	XFree(sizeHints);
+
+	return CC_SUCCESS;
 }
 
-static bool checkRawSupport()
+static ccReturn checkRawSupport()
 {
 	int event, error, mayor, minor;
 
-	return false;
-
 	if(!XQueryExtension(WINDOW_DATA->XDisplay, "XInputExtension", &WINDOW_DATA->XInputOpcode, &event, &error)){
-		return false;
+		return CC_FAIL;
 	}
 
 	mayor = 2;
 	minor = 0;
 	if(XIQueryVersion(WINDOW_DATA->XDisplay, &mayor, &minor) == BadRequest){
-		return false;
+		return CC_FAIL;
 	}
 
-	return true;
+	return CC_SUCCESS;
 }
 
-static void initRawSupport()
+static ccReturn initRawSupport()
 {
 	XIEventMask mask;
 
 	mask.deviceid = XIAllMasterDevices;
 	mask.mask_len = XIMaskLen(XI_RawMotion);
-	mask.mask = calloc(mask.mask_len, sizeof(char));
+	ccCalloc(mask.mask, mask.mask_len, sizeof(char));
 
 	XISetMask(mask.mask, XI_Enter);
 	XISetMask(mask.mask, XI_Leave);
@@ -100,6 +100,8 @@ static void initRawSupport()
 	XISelectEvents(WINDOW_DATA->XDisplay, DefaultRootWindow(WINDOW_DATA->XDisplay), &mask, 1);
 
 	free(mask.mask);
+
+	return CC_SUCCESS;
 }
 
 static ccPoint getRawMouseMovement(XIRawEvent *event)
@@ -137,7 +139,10 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	Window root;
 	Atom delete;
 
-	ccAssert(_ccWindow == NULL);
+	if(_ccWindow != NULL){
+		ccErrorPush(CC_ERROR_WINDOW_CREATE);
+		return CC_FAIL;
+	}
 
 	ccMalloc(_ccWindow, sizeof(ccWindow));
 
@@ -191,7 +196,10 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 ccReturn ccWindowFree(void)
 {
-	ccAssert(_ccWindow != NULL);	
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
 
 	XUnmapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XCloseDisplay(WINDOW_DATA->XDisplay);
@@ -210,7 +218,8 @@ bool ccWindowPollEvent(void)
 	XGenericEventCookie *cookie;
 	ccGamepadEvent gamepadEvent;
 
-	if(!_ccWindow){
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
 		return false;
 	}
 
@@ -352,8 +361,11 @@ bool ccWindowPollEvent(void)
 }
 
 ccReturn ccWindowSetWindowed(void)
-{
-	ccAssert(_ccWindow != NULL);
+{	
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
 
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
@@ -365,7 +377,10 @@ ccReturn ccWindowSetWindowed(void)
 
 ccReturn ccWindowSetMaximized(void)
 {
-	ccAssert(_ccWindow != NULL);
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
 
 	ccWindowSetWindowed();
 
@@ -383,7 +398,10 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	int i;
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 
-	ccAssert(_ccWindow != NULL);
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
 
 	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
 		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _ccWindow->display;
@@ -435,7 +453,10 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 
 ccReturn ccWindowResizeMove(ccRect rect)
 {
-	ccAssert(_ccWindow != NULL);
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
 
 	setResizable(true);
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
@@ -453,7 +474,14 @@ ccReturn ccWindowCenter(void)
 	ccDisplayData *currentResolution;
 	ccRect newRect;
 
-	ccAssert(_ccWindow->display != NULL);
+	if(_ccWindow == NULL || _ccWindow->display == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
+	if(_ccWindow->display == NULL){
+		ccErrorPush(CC_ERROR_DISPLAY_NONE);
+		return CC_FAIL;
+	}
 
 	currentResolution = ccDisplayGetResolutionCurrent(_ccWindow->display);
 
