@@ -77,7 +77,7 @@ const char *ccErrorString(ccError error)
 			break;
 
 			// Thread related
-		case CC_ERROR_THREAD:
+		case CC_ERROR_THREAD_CREATE:
 			return "A thread could not be started";
 			break;
 		case CC_ERROR_THREAD_MUTEXCREATE:
