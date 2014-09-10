@@ -23,7 +23,7 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 	ccAssert(gamepad != NULL);
 	
 	if(hapticIndex >= gamepad->outputAmount) {
-		ccErrorPush(CC_ERROR_NOHAPTIC);
+		ccErrorPush(CC_ERROR_GAMEPAD_HAPTICNONE);
 		return CC_FAIL;
 	}
 	
@@ -37,7 +37,7 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 		vibration.wRightMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[1];
 
 		if(XInputSetState(((ccGamepad_win*)gamepad->data)->xinputIndex, &vibration) != ERROR_SUCCESS) {
-			ccErrorPush(CC_ERROR_NOHAPTIC);
+			ccErrorPush(CC_ERROR_GAMEPAD_HAPTICNONE);
 			return CC_FAIL;
 		}
 	}
@@ -71,7 +71,7 @@ ccReturn ccGamepadInitialize(void)
 		return CC_SUCCESS;
 	}
 	else{
-		ccErrorPush(CC_ERROR_NOGAMEPAD);
+		ccErrorPush(CC_ERROR_GAMEPAD_NONE);
 		return CC_FAIL;
 	}
 }

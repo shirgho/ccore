@@ -52,7 +52,7 @@ ccReturn ccThreadMutexCreate(ccMutex *mutex)
 {
 	*mutex = CreateMutex(NULL, FALSE, NULL);
 	if(*mutex == NULL) {
-		ccErrorPush(CC_ERROR_MUTEX_CREATION);
+		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);
 		return CC_FAIL;
 	}
 	
@@ -62,7 +62,7 @@ ccReturn ccThreadMutexCreate(ccMutex *mutex)
 ccReturn ccThreadMutexJoin(ccMutex mutex)
 {
 	if(WaitForSingleObject(mutex, INFINITE) != WAIT_OBJECT_0) {
-		ccErrorPush(CC_ERROR_MUTEX);
+		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}
 
@@ -81,7 +81,7 @@ bool ccThreadMutexFinished(ccMutex mutex)
 ccReturn ccThreadMutexRelease(ccMutex mutex)
 {
 	if(ReleaseMutex(mutex) == 0) {
-		ccErrorPush(CC_ERROR_MUTEX);
+		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}
 	
@@ -91,7 +91,7 @@ ccReturn ccThreadMutexRelease(ccMutex mutex)
 ccReturn ccThreadMutexFree(ccMutex mutex)
 {
 	if(CloseHandle(mutex) == 0) {
-		ccErrorPush(CC_ERROR_MUTEX);
+		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}
 

@@ -19,7 +19,7 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 	visual = glXChooseVisual(WINDOW_DATA->XDisplay, WINDOW_DATA->XScreen, attrList);
 	if(!visual){
-		ccErrorPush(CC_ERROR_GLCONTEXT);
+		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 

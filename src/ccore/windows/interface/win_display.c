@@ -30,7 +30,7 @@ ccReturn ccDisplayInitialize(void)
 			ccRealloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
 
 			if(EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm) == 0) {
-				ccErrorPush(CC_ERROR_NODISPLAY);
+				ccErrorPush(CC_ERROR_DISPLAY_NONE);
 				return CC_FAIL;
 			}
 
@@ -127,7 +127,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	devMode.dmSize = sizeof(DEVMODE);
 	
 	if(EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode) == 0) {
-		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 		return CC_FAIL;
 	}
 
@@ -141,7 +141,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
 
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
-		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 		return CC_FAIL;
 	}
 

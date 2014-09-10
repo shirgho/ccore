@@ -147,7 +147,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	WINDOW_DATA->XDisplay = XOpenDisplay(NULL);
 	if(WINDOW_DATA->XDisplay == NULL){
-		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
 

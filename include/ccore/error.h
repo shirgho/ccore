@@ -39,39 +39,39 @@ typedef enum {
 	CC_ERROR_INVALID_ARGUMENT,
 
 	// Display related
-	CC_ERROR_NODISPLAY, // The window couldn't find a display to attach to
-	CC_ERROR_RESOLUTION_CHANGE, // Resolution change failed
+	CC_ERROR_DISPLAY_NONE, // The window couldn't find a display to attach to
+	CC_ERROR_DISPLAY_RESOLUTIONCHANGE, // Resolution change failed
 
 	// Window related
-	CC_ERROR_WINDOWCREATION, // The window can't be created
-	CC_ERROR_WINDOWDESTRUCTION, // The window can't be destroyed
+	CC_ERROR_WINDOW_CREATE, // The window can't be created
+	CC_ERROR_WINDOW_DESTROY, // The window can't be destroyed
 	CC_ERROR_WINDOW_MODE, // The window mode couldn't be changed (also moving & resolution)
 
 	// OpenGL related
-	CC_ERROR_GLVERSION, // The target OpenGL version is not supported
-	CC_ERROR_GLCONTEXT, // OpenGL context creation failed
+	CC_ERROR_GL_VERSION, // The target OpenGL version is not supported
+	CC_ERROR_GL_CONTEXT, // OpenGL context creation failed
 	CC_ERROR_GLEWINIT, // GLEW could not initialize
-	CC_ERROR_CANTSWAP, // The buffers couldn't swap
+	CC_ERROR_GL_BUFFERSWAP, // The buffers couldn't swap
 
 	// Thread related
 	CC_ERROR_THREAD, // CCORE couldn't start a thread
-	CC_ERROR_MUTEX_CREATION, // A mutex object couldn't be created
-	CC_ERROR_MUTEX, // Error working with a mutex
+	CC_ERROR_THREAD_MUTEXCREATE, // A mutex object couldn't be created
+	CC_ERROR_THREAD_MUTEX, // Error working with a mutex
 
 	// Networking related
 	CC_ERROR_NET, //TODO: not implemented in wiki
 
 	// Gamepad related
-	CC_ERROR_NOGAMEPAD, // No gamepads could be found
-	CC_ERROR_GAMEPADDATA, // The gamepad could not be read
-	CC_ERROR_NOHAPTIC, // This motor is not accessible
+	CC_ERROR_GAMEPAD_NONE, // No gamepads could be found
+	CC_ERROR_GAMEPAD_DATA, // The gamepad could not be read
+	CC_ERROR_GAMEPAD_HAPTICNONE, // This motor is not accessible
 
 	// Mouse related
-	CC_ERROR_NOMOUSE, // No mice could be found
-	CC_ERROR_MOUSEDATA, // The mice could not be read
+	CC_ERROR_MOUSE_NONE, // No mice could be found
+	CC_ERROR_MOUSE_DATA, // The mice could not be read
 
 	// Memory related
-	CC_ERROR_OUT_OF_MEMORY
+	CC_ERROR_MEMORY_OVERFLOW
 } ccError;
 
 // The following macro's can be used inside functions that return ccResult to catch allocation failures
@@ -79,7 +79,7 @@ typedef enum {
 #define ccMalloc(x, size) { \
 	x = malloc(size); \
 	if(x == NULL) { \
-		ccErrorPush(CC_ERROR_OUT_OF_MEMORY); \
+		ccErrorPush(CC_ERROR_MEMORY_OVERFLOW); \
 		return CC_FAIL; \
 		} \
 	} \
@@ -87,7 +87,7 @@ typedef enum {
 #define ccCalloc(x, amount, size) { \
 	x = calloc(amount, size); \
 	if(x == NULL) { \
-		ccErrorPush(CC_ERROR_OUT_OF_MEMORY); \
+		ccErrorPush(CC_ERROR_MEMORY_OVERFLOW); \
 		return CC_FAIL; \
 		} \
 	} \
@@ -95,7 +95,7 @@ typedef enum {
 #define ccRealloc(x, size) { \
 	x = realloc(x, size); \
 	if(x == NULL) { \
-		ccErrorPush(CC_ERROR_OUT_OF_MEMORY); \
+		ccErrorPush(CC_ERROR_MEMORY_OVERFLOW); \
 		return CC_FAIL; \
 		} \
 	} \

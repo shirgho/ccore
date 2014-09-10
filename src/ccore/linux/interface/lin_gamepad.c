@@ -21,7 +21,7 @@ static ccError createGamepad(char *locName, int i)
 
 	fd = openGamepadDescriptor(locName);
 	if(fd < 0 && errno != EACCES){
-		return CC_ERROR_GAMEPADDATA;
+		return CC_ERROR_GAMEPAD_DATA;
 	}
 
 	if(i == 0){
@@ -196,7 +196,7 @@ ccReturn ccGamepadInitialize(void)
 
 	closedir(d);
 	if(_ccGamepads->amount == 0){
-		ccErrorPush(CC_ERROR_NOGAMEPAD);
+		ccErrorPush(CC_ERROR_GAMEPAD_NONE);
 	}else{
 		return CC_SUCCESS;
 	}
@@ -207,7 +207,7 @@ error:
 	closedir(d);
 	close(fd);
 	close(watch);
-	ccErrorPush(CC_ERROR_GAMEPADDATA);
+	ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 	return CC_FAIL;
 }
 

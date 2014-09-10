@@ -25,7 +25,7 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 	WINDOW_DATA->renderContext = wglCreateContext(WINDOW_DATA->hdc);
 	if(WINDOW_DATA->renderContext == NULL) {
-		ccErrorPush(CC_ERROR_GLCONTEXT);
+		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
@@ -36,7 +36,7 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
 	glGetIntegerv(GL_MINOR_VERSION, &glVerMinor);
 	if(glVerMajor < glVersionMajor || (glVerMajor == glVersionMajor && glVerMinor < glVersionMinor)) {
-		ccErrorPush(CC_ERROR_GLVERSION);
+		ccErrorPush(CC_ERROR_GL_VERSION);
 		return CC_FAIL;
 	}
 
@@ -66,7 +66,7 @@ ccReturn ccGLSwapBuffers(void)
 		return CC_SUCCESS;
 	}
 	else{
-		ccErrorPush(CC_ERROR_CANTSWAP);
+		ccErrorPush(CC_ERROR_GL_BUFFERSWAP);
 		return CC_FAIL;
 	}
 }

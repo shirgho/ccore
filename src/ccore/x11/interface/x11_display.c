@@ -14,7 +14,7 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
 		ccPrintf("Xinerama not supported or active\n");
-		ccErrorPush(CC_ERROR_NODISPLAY);
+		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
 	}
 
@@ -24,7 +24,7 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 	root = RootWindow(display, 0);
 	resources = XRRGetScreenResources(display, root);
 	if(resources->noutput <= 0){
-		ccErrorPush(CC_ERROR_NODISPLAY);
+		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
 	}
 
@@ -131,7 +131,7 @@ ccReturn ccDisplayInitialize(void)
 	Display *display;
 
 	if(_ccDisplays != NULL){
-		ccErrorPush(CC_ERROR_NODISPLAY);
+		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
 	}
 
@@ -140,7 +140,7 @@ ccReturn ccDisplayInitialize(void)
 
 	dir = opendir("/tmp/.X11-unix");
 	if(dir == NULL){
-		ccErrorPush(CC_ERROR_NODISPLAY);
+		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
 	}
 
@@ -168,7 +168,7 @@ ccReturn ccDisplayFree(void)
 	int i,j;
 
 	if(_ccDisplays == NULL){
-		ccErrorPush(CC_ERROR_NODISPLAY);
+		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
 	}
 
@@ -202,7 +202,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	XRRCrtcInfo *crtcInfo;
 
 	if(display == NULL){
-		ccErrorPush(CC_ERROR_NODISPLAY);
+		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
 	}
 
@@ -218,7 +218,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	resources = XRRGetScreenResources(XDisplay, root);
 	if(!resources){
 		ccPrintf("X: Couldn't get screen resources");
-		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 		return CC_FAIL;
 	}
 
@@ -226,7 +226,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 	if(!outputInfo || outputInfo->connection == RR_Disconnected){
 		ccPrintf("X: Couldn't get output info");
 		XRRFreeScreenResources(resources);
-		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 		return CC_FAIL;
 	}
 
@@ -235,7 +235,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 		ccPrintf("X: Couldn't get crtc info");
 		XRRFreeScreenResources(resources);
 		XRRFreeOutputInfo(outputInfo);
-		ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+		ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 		return CC_FAIL;
 	}
 
@@ -247,23 +247,23 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 
 		if(display->resolution->width <= 0 || display->resolution->height <= 0){
 			ccPrintf("Error: Resolution supplied not valid\n");
-			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 			return CC_FAIL;
 		}
 
 		if(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY)){
 			ccPrintf("X: Unable to get screen size range\n");
-			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 			return CC_FAIL;
 		}
 
 		if(displayData->width < minX || displayData->height < minY){
 			ccPrintf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
-			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 			return CC_FAIL;
 		} else if(displayData->width > maxX || displayData->height > maxY){
 			ccPrintf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
-			ccErrorPush(CC_ERROR_RESOLUTION_CHANGE);
+			ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 			return CC_FAIL;
 		}
 

@@ -213,7 +213,7 @@ static bool regHinstance(HINSTANCE instanceHandle)
 	winClass.hIconSm = NULL;
 
 	if(RegisterClassEx(&winClass) == 0) {
-		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return false;
 	}
 	return true;
@@ -260,7 +260,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	ccAssert(_ccWindow == NULL);
 
 	if(moduleHandle == NULL) {
-		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
 
@@ -291,7 +291,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	windowRect.right = rect.x + rect.width;
 	windowRect.bottom = rect.y + rect.height;
 	if(AdjustWindowRectEx(&windowRect, WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
 	
@@ -312,12 +312,12 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->style |= WS_VISIBLE;
 	
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) != 0) {
-		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
 	
 	if(!initializeRawInput()) {
-		ccErrorPush(CC_ERROR_WINDOWCREATION);
+		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
 	
@@ -325,12 +325,12 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 		RECT rect;
 
 		if(GetWindowRect(WINDOW_DATA->winHandle, &rect) == FALSE) {
-			ccErrorPush(CC_ERROR_WINDOWCREATION);
+			ccErrorPush(CC_ERROR_WINDOW_CREATE);
 			return CC_FAIL;
 		}
 
 		if(SetWindowPos(WINDOW_DATA->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) {
-			ccErrorPush(CC_ERROR_WINDOWCREATION);
+			ccErrorPush(CC_ERROR_WINDOW_CREATE);
 			return CC_FAIL;
 		}
 	}
@@ -343,19 +343,19 @@ ccReturn ccWindowFree(void)
 	ccAssert(_ccWindow != NULL);
 
 	if(!freeRawInput()) {
-		ccErrorPush(CC_ERROR_WINDOWDESTRUCTION);
+		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
 	}
 
 	if(WINDOW_DATA->lpbSize != 0) free(WINDOW_DATA->lpb);
 
 	if(ReleaseDC(WINDOW_DATA->winHandle, WINDOW_DATA->hdc) == 0) {
-		ccErrorPush(CC_ERROR_WINDOWDESTRUCTION);
+		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
 	}
 
 	if(DestroyWindow(WINDOW_DATA->winHandle) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOWDESTRUCTION);
+		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
 	}
 	if(WINDOW_DATA->eventStackSize != 0) free(WINDOW_DATA->eventStack);
