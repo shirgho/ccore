@@ -7,7 +7,7 @@ Ccore is described in detail in [the ccore wiki.](../../wiki)
 
 ###Features###
 The features of ccore include support for the following:
-- Creating a window with an openGL contex (with glew built in to load extensions)
+- Creating a window with an openGL context (with glew built in to load extensions)
 - Managing multiple monitors, multi monitor fullscreen
 - Raw input with gamepad support
 - Threading
