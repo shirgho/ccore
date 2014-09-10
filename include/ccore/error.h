@@ -35,6 +35,9 @@ extern "C"
 typedef enum {
 	CC_ERROR_NONE = 0, // No errors
 
+	// Global
+	CC_ERROR_INVALID_ARGUMENT,
+
 	// Display related
 	CC_ERROR_NODISPLAY, // The window couldn't find a display to attach to
 	CC_ERROR_RESOLUTION_CHANGE, // Resolution change failed
