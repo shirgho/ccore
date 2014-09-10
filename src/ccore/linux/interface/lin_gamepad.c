@@ -17,9 +17,13 @@ static ccReturn createGamepad(char *locName, int i)
 	int fd;
 
 	fd = openGamepadDescriptor(locName);
-	if(fd < 0 && errno != EACCES){
-		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
-		return CC_FAIL;
+	if(fd < 0){
+		if(errno != EACCES){
+			ccErrorPush(CC_ERROR_GAMEPAD_DATA);
+			return CC_FAIL;
+		}else{
+			return CC_FAIL;
+		}
 	}
 
 	if(i == 0){
@@ -96,22 +100,30 @@ ccGamepadEvent ccGamepadEventPoll(void)
 				}
 
 				event.type = CC_GAMEPAD_DISCONNECT;
+				return event;
 			}else if(ne.mask & IN_ATTRIB){
+
 				if(event.id != -1){
+					if(_ccGamepads->gamepad[event.id].plugged){
+						continue;
+					}
 					_ccGamepads->gamepad[event.id].plugged = true;
 					GAMEPAD_DATA(_ccGamepads + event.id)->fd = openGamepadDescriptor(ne.name);
 					if(GAMEPAD_DATA(_ccGamepads + event.id)->fd < 0){
 						_ccGamepads->gamepad[event.id].plugged = false;
 						GAMEPAD_DATA(_ccGamepads + event.id)->fd = 0;
 					}
+					event.type = CC_GAMEPAD_CONNECT;
+					return event;
 				}else{
-					createGamepad(ne.name, _ccGamepads->amount);
-					_ccGamepads->amount++;
+					if(createGamepad(ne.name, _ccGamepads->amount) == CC_SUCCESS){
+						event.id = _ccGamepads->amount;
+						_ccGamepads->amount++;
+						event.type = CC_GAMEPAD_CONNECT;
+						return event;
+					}
 				}
-
-				event.type = CC_GAMEPAD_CONNECT;
 			}
-			return event;
 		}
 	}
 
@@ -213,7 +225,7 @@ error:
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
 	//TODO implement haptic support
-	
+
 	return CC_FAIL;
 }
 
