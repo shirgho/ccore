@@ -206,7 +206,7 @@ ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
 		return CC_FAIL;
 	}
 
-	if(resolutionIndex < display->amount || resolutionIndex < 0){
+	if(resolutionIndex > display->amount || resolutionIndex < 0){
 		ccErrorPush(CC_ERROR_INVALID_ARGUMENT);
 		return CC_FAIL;
 	}

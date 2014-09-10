@@ -312,6 +312,8 @@ int main(int argc, char** argv)
 		ccGLSwapBuffers();
 
 	}
+
+	ccDisplayRevertModes();
 	
 	// Free memory before terminating
 	ccFreeAll();

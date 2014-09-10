@@ -187,6 +187,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 		if(_ccWindow->supportsRawInput){
 			initRawSupport();
 		}
+	}else{
+		_ccWindow->supportsRawInput = false;
 	}
 
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
