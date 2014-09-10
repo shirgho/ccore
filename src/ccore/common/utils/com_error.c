@@ -43,6 +43,10 @@ const char *ccErrorString(ccError error)
 			return "No errors";
 			break;
 
+		case CC_ERROR_INVALID_ARGUMENT:
+			return "A wrong argument is supplied to the function";
+			break;
+
 			// Display related
 		case CC_ERROR_DISPLAY_NONE:
 			return "Could not open display";
@@ -52,6 +56,9 @@ const char *ccErrorString(ccError error)
 			break;
 
 			// Window related
+		case CC_ERROR_WINDOW_NONE:
+			return "A window was not initialized";
+			break;
 		case CC_ERROR_WINDOW_CREATE:
 			return "Can't create the window";
 			break;
