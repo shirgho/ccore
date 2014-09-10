@@ -40,22 +40,8 @@ extern "C"
 #include <fcntl.h>
 #include <unistd.h>
 
-typedef int					ccSocket;
-typedef socklen_t 			ccSocklen_t;
-
-#elif defined WINDOWS
-
-#pragma comment(lib, "Ws2_32.lib")
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdio.h>
-
-typedef SOCKET				ccSocket;
-typedef int					ccSocklen_t;
-typedef SSIZE_T				ssize_t;
-
-#ifdef LINUX
+typedef int						ccSocket;
+typedef socklen_t 				ccSocklen_t;
 
 #define ccNetClose 				close
 #define ccNetInet_addr			inet_addr
@@ -68,6 +54,16 @@ typedef SSIZE_T				ssize_t;
 #define ccNetInet_ntop			inet_ntop
 
 #elif defined WINDOWS
+
+#pragma comment(lib, "Ws2_32.lib")
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdio.h>
+
+typedef SOCKET					ccSocket;
+typedef int						ccSocklen_t;
+typedef SSIZE_T					ssize_t;
 
 #define ccNetClose 				closesocket
 #define ccNetInet_addr			InetAddr
@@ -114,19 +110,17 @@ typedef SSIZE_T				ssize_t;
 #define CC_NET_FD_SET 			FD_SET
 #define CC_NET_FD_ZERO			FD_ZERO
 
-#endif
-
-typedef struct sockaddr 	ccSockaddr;
-typedef struct sockaddr6 	ccSockaddr6;
-typedef struct sockaddr_in 	ccSockaddr_in;
-typedef struct sockaddr_in6	ccSockaddr_in6;
-typedef struct addrinfo		ccAddrinfo;
-typedef struct msghdr 		ccMsghdr;
-typedef fd_set 				ccFd_set;
-typedef struct hostent 		ccHostent;
-typedef struct netent 		ccNetent;
-typedef struct protoent 	ccProtoent;
-typedef struct servent 		ccServent;
+typedef struct sockaddr 		ccSockaddr;
+typedef struct sockaddr6 		ccSockaddr6;
+typedef struct sockaddr_in 		ccSockaddr_in;
+typedef struct sockaddr_in6		ccSockaddr_in6;
+typedef struct addrinfo			ccAddrinfo;
+typedef struct msghdr 			ccMsghdr;
+typedef fd_set 					ccFd_set;
+typedef struct hostent 			ccHostent;
+typedef struct netent 			ccNetent;
+typedef struct protoent 		ccProtoent;
+typedef struct servent 			ccServent;
 
 ccReturn ccNetInitialize();
 ccReturn ccNetFree();
