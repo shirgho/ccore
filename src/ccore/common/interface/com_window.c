@@ -24,6 +24,7 @@ ccPoint ccWindowGetMouse(void)
 ccDisplay *ccWindowGetDisplay(void)
 {
 	ccAssert(_ccWindow != NULL);
+	ccAssert(_ccWindow->display != NULL);
 
 	return _ccWindow->display;
 }

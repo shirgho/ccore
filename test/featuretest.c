@@ -218,6 +218,10 @@ int main(int argc, char** argv)
 							// Revert all resolutions
 							ccDisplayRevertModes();
 							break;
+						case CC_KEY_P:
+							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowGetDisplay()->monitorName, ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
+							ccPrintf("\tThe current resolution is: %dx%d\n", ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->width, ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->height);
+							break;
 						default:
 							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
 							break;

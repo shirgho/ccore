@@ -468,6 +468,8 @@ ccReturn ccWindowResizeMove(ccRect rect)
 		setResizable(false);
 	}
 
+	ccWindowUpdateDisplay();
+
 	return CC_SUCCESS;
 }
 
