@@ -12,7 +12,7 @@ ccReturn ccThreadStart(ccThread thread, void *data)
 	_THREAD->threadHandle = CreateThread(NULL, 0, _THREAD->function, (LPVOID)data, 0, NULL);
 	if(_THREAD->threadHandle == NULL) {
 		free(thread);
-		ccErrorPush(CC_ERROR_THREAD);
+		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
 	}
 	return CC_SUCCESS;
@@ -22,7 +22,7 @@ ccReturn ccThreadJoin(ccThread thread)
 {
 	if(WaitForSingleObject(_THREAD->threadHandle, INFINITE) == WAIT_OBJECT_0) {
 		if(CloseHandle(_THREAD->threadHandle) == 0) {
-			ccErrorPush(CC_ERROR_THREAD);
+			ccErrorPush(CC_ERROR_THREAD_CREATE);
 			free(thread);
 			return CC_FAIL;
 		}
@@ -30,7 +30,7 @@ ccReturn ccThreadJoin(ccThread thread)
 		return CC_SUCCESS;
 	}
 	else{
-		ccErrorPush(CC_ERROR_THREAD);
+		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
 	}
 }
@@ -39,7 +39,7 @@ bool ccThreadFinished(ccThread thread)
 {
 	if(WaitForSingleObject(_THREAD->threadHandle, 0) == WAIT_OBJECT_0) {
 		if(CloseHandle(_THREAD->threadHandle) == 0) {
-			ccErrorPush(CC_ERROR_THREAD);
+			ccErrorPush(CC_ERROR_THREAD_CREATE);
 		}
 		free(thread);
 		return true;

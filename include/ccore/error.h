@@ -54,7 +54,7 @@ typedef enum {
 	CC_ERROR_GL_BUFFERSWAP, // The buffers couldn't swap
 
 	// Thread related
-	CC_ERROR_THREAD, // CCORE couldn't start a thread
+	CC_ERROR_THREAD_CREATE, // CCORE couldn't start a thread
 	CC_ERROR_THREAD_MUTEXCREATE, // A mutex object couldn't be created
 	CC_ERROR_THREAD_MUTEX, // Error working with a mutex
 

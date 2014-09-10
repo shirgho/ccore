@@ -12,7 +12,7 @@ ccReturn ccThreadStart(ccThread thread, void *data)
 {
 	if(pthread_create(&_THREAD->id, NULL, _THREAD->function, data) != 0) {
 		free(thread);
-		ccErrorPush(CC_ERROR_THREAD);
+		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
 	}
 
@@ -24,7 +24,7 @@ ccReturn ccThreadJoin(ccThread thread)
 	if(pthread_join(_THREAD->id, NULL) == 0){
 		return CC_SUCCESS;  
 	}else{
-		ccErrorPush(CC_ERROR_THREAD);
+		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
 	}
 }
