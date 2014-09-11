@@ -198,10 +198,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 ccReturn ccWindowFree(void)
 {
-	if(_ccWindow == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
-	}
+	ccAssert(_ccWindow);
 
 	XUnmapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XCloseDisplay(WINDOW_DATA->XDisplay);
@@ -220,10 +217,7 @@ bool ccWindowPollEvent(void)
 	XGenericEventCookie *cookie;
 	ccGamepadEvent gamepadEvent;
 
-	if(_ccWindow == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return false;
-	}
+	ccAssert(_ccWindow);
 
 	_ccWindow->event.type = CC_EVENT_SKIP;
 
@@ -364,10 +358,7 @@ bool ccWindowPollEvent(void)
 
 ccReturn ccWindowSetWindowed(void)
 {	
-	if(_ccWindow == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
-	}
+	ccAssert(_ccWindow);
 
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
@@ -379,10 +370,7 @@ ccReturn ccWindowSetWindowed(void)
 
 ccReturn ccWindowSetMaximized(void)
 {
-	if(_ccWindow == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
-	}
+	ccAssert(_ccWindow);
 
 	ccWindowSetWindowed();
 
@@ -400,10 +388,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	int i;
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 
-	if(_ccWindow == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
-	}
+	ccAssert(_ccWindow);
 
 	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
 		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _ccWindow->display;
@@ -455,20 +440,14 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 
 ccReturn ccWindowBlink(void)
 {
-	if(_ccWindow == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
-	}
+	ccAssert(_ccWindow);
 
 	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
 }
 
 ccReturn ccWindowResizeMove(ccRect rect)
 {
-	if(_ccWindow == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
-	}
+	ccAssert(_ccWindow);
 
 	setResizable(true);
 	XMoveResizeWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, rect.x, rect.y, rect.width, rect.height);
@@ -488,10 +467,7 @@ ccReturn ccWindowCenter(void)
 	ccDisplayData *currentResolution;
 	ccRect newRect;
 
-	if(_ccWindow == NULL || _ccWindow->display == NULL){
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
-	}
+	ccAssert(_ccWindow);
 	if(_ccWindow->display == NULL){
 		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
