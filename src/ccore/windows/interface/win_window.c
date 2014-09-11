@@ -349,11 +349,6 @@ ccReturn ccWindowFree(void)
 
 	if(WINDOW_DATA->lpbSize != 0) free(WINDOW_DATA->lpb);
 
-	if(ReleaseDC(WINDOW_DATA->winHandle, WINDOW_DATA->hdc) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
-		return CC_FAIL;
-	}
-
 	if(DestroyWindow(WINDOW_DATA->winHandle) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
