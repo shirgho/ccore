@@ -231,6 +231,9 @@ int main(int argc, char** argv)
 						squareAlpha[ccWindowGetEvent().keyCode % squareCount] = 1.0f;
 					}
 					break;
+				case CC_EVENT_FOCUS_LOST:
+					ccWindowBlink();
+					break;
 				case CC_EVENT_MOUSE_UP:
 					if(logoScreen && ccWindowGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
 						// Proceed to the demo screen

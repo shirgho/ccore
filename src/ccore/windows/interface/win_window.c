@@ -501,3 +501,16 @@ ccReturn ccWindowCenter(void)
 				 windowRect.bottom - windowRect.top
 	}, false);
 }
+
+ccReturn ccWindowBlink(void)
+{
+	FLASHWINFO flash;
+	flash.cbSize = sizeof(FLASHWINFO);
+	flash.hwnd = WINDOW_DATA->winHandle;
+	flash.dwFlags = FLASHW_TIMERNOFG | FLASHW_ALL;
+	flash.uCount = 0;
+	flash.dwTimeout = 0;
+	FlashWindowEx(&flash);
+
+	return CC_SUCCESS;
+}

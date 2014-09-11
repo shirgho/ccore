@@ -74,6 +74,8 @@ ccReturn ccWindowSetWindowed(void);
 ccReturn ccWindowSetMaximized(void);
 ccReturn ccWindowSetFullscreen(int displayCount, ...);
 
+ccReturn ccWindowBlink(void);
+
 // Getters
 ccEvent ccWindowGetEvent(void);
 ccRect ccWindowGetRect(void);
