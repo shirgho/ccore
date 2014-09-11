@@ -453,6 +453,16 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	return CC_SUCCESS;
 }
 
+ccReturn ccWindowBlink(void)
+{
+	if(_ccWindow == NULL){
+		ccErrorPush(CC_ERROR_WINDOW_NONE);
+		return CC_FAIL;
+	}
+
+	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
+}
+
 ccReturn ccWindowResizeMove(ccRect rect)
 {
 	if(_ccWindow == NULL){
