@@ -1,13 +1,13 @@
 #include <ccore/string.h>
 
-void ccStrTrimToChar(char* str, char ch, bool includeChar)
+void ccStringTrimToChar(char* str, char ch, bool includeChar)
 {
 	int i;
 	for(i = strlen(str); str[i] != ch; i--);
 	str[i + includeChar] = 0;
 }
 
-void ccStrReplaceChar(char *str, char ch, char newCh)
+void ccStringReplaceChar(char *str, char ch, char newCh)
 {
 	int i;
 	for(i = strlen(str); i >= 0; i--)
@@ -16,7 +16,7 @@ void ccStrReplaceChar(char *str, char ch, char newCh)
 	}
 }
 
-char *ccStrConcatenate(int amount, ...)
+char *ccStringConcatenate(int amount, ...)
 {
 	va_list strings;
 	int i;

@@ -146,14 +146,14 @@ int main(int argc, char** argv)
 	initialize();
 
 	// Load textures using tga.c
-	imageFileName = ccStrConcatenate(2, ccFileGetDataDir(), "logo.tga");
+	imageFileName = ccStringConcatenate(2, ccFileGetDataDir(), "logo.tga");
 	logoTexture = loadTGATexture(imageFileName);
 	if(logoTexture == 0){
 		ccPrintf("Could't load TGA texture: %s\n", imageFileName);
 	}
 	free(imageFileName);
 
-	imageFileName = ccStrConcatenate(2, ccFileGetDataDir(), "commands.tga");
+	imageFileName = ccStringConcatenate(2, ccFileGetDataDir(), "commands.tga");
 	commandsTexture = loadTGATexture(imageFileName);
 	if(commandsTexture == 0){
 		ccPrintf("Could't load TGA texture: %s\n", imageFileName);

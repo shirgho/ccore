@@ -16,8 +16,8 @@ static void scanDirs(void)
 	
 	dataDir = malloc(strlen(path) + 1);
 	strcpy(dataDir, path);
-	ccStrTrimToChar(dataDir, '\\', true);
-	ccStrReplaceChar(dataDir, '\\', '/');
+	ccStringTrimToChar(dataDir, '\\', true);
+	ccStringReplaceChar(dataDir, '\\', '/');
 
 	//User dir
 	userDir = USERHOME;
@@ -27,7 +27,7 @@ static void scanDirs(void)
 
 	tempDir = malloc(strlen(path) + 1);
 	strcpy(tempDir, path);
-	ccStrReplaceChar(tempDir, '\\', '/');
+	ccStringReplaceChar(tempDir, '\\', '/');
 }
 
 char *ccFileGetUserDir(void)

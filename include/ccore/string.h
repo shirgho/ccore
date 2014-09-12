@@ -34,9 +34,9 @@ extern "C"
 {
 #endif
 
-void ccStrTrimToChar(char *str, char ch, bool includeChar);
-void ccStrReplaceChar(char *str, char ch, char newCh);
-char *ccStrConcatenate(int amount, ...);
+void ccStringTrimToChar(char *str, char ch, bool includeChar);
+void ccStringReplaceChar(char *str, char ch, char newCh);
+char *ccStringConcatenate(int amount, ...);
 
 #ifdef __cplusplus
 }

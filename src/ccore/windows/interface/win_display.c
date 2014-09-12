@@ -43,7 +43,7 @@ ccReturn ccDisplayInitialize(void)
 			memcpy(currentDisplay->gpuName, device.DeviceString, CC_MAXDEVICESTRINGSIZE);
 			memcpy(currentDisplay->monitorName, display.DeviceString, CC_MAXDEVICESTRINGSIZE);
 			memcpy(currentDisplay->deviceName, display.DeviceName, CC_MAXDEVICENAMESIZE);
-			ccStrTrimToChar(currentDisplay->deviceName, '\\', false);
+			ccStringTrimToChar(currentDisplay->deviceName, '\\', false);
 
 			currentDisplay->x = dm.dmPosition.x;
 			currentDisplay->y = dm.dmPosition.y;
