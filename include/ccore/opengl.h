@@ -29,8 +29,11 @@
 #include "error.h"
 #include "types.h"
 
-// Load all extensions using GLEW
+#ifdef LINUX
+#include <GL/glew.h>
+#elif defined WINDOWS
 #include "../../lib/glew/GL/glew.h"
+#endif
 
 #ifdef __cplusplus
 extern "C"

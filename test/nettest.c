@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 	ccSocket socket;
 	ccSockaddr_in servaddr;
 	ccAddrinfo hints, *servinfo;
-	char buf[256], site[128] = "www.example.net", *request = "GET /index.html HTTP/1.1\nHost: www.example.com\nAccept: text/plain\nConnection: close\n\n";
+	char buf[256], site[128] = "echo.websocket.org", *request = "Testing socket\n";
 	ssize_t send, received;
 
 	if(argc == 2){
