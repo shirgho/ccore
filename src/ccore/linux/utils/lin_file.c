@@ -2,12 +2,12 @@
 
 static char *dataDir = NULL;
 
-char *ccGetDirUserDir(void)
+char *ccFileGetUserDir(void)
 {
 	return CC_USER_LOCATION;
 }
 
-char *ccGetDirDataDir(void)
+char *ccFileGetDataDir(void)
 {
 #ifndef CC_DATA_LOCATION
 	int len;
@@ -27,7 +27,7 @@ char *ccGetDirDataDir(void)
 #endif
 }
 
-char *ccGetDirTempDir(void)
+char *ccFileGetTempDir(void)
 {
 	return CC_TEMP_LOCATION;
 }
