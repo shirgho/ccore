@@ -32,18 +32,22 @@ char *ccFileGetTempDir(void)
 	return CC_TEMP_LOCATION;
 }
 
-ccReturn ccFileGetSize(char *file, unsigned long *size)
+ccFileInfo ccFileGetInfo(char *file)
 {
 	struct stat sb;
+	ccFileInfo info;
 
 	if(stat(file, &sb) != 0){
 		ccErrorPush(CC_ERROR_FILE_OPEN);
-		return CC_FAIL;
+		info.size = 0;
+		info.modified = 0;
+		return info;
 	}
 	
-	*size = sb.st_size;
+	info.size = (unsigned long)sb.st_size;
+	info.modified = sb.st_mtime;
 
-	return CC_SUCCESS;
+	return info;
 }
 
 void _ccFileFree(void)

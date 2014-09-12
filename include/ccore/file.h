@@ -27,17 +27,24 @@
 #include "error.h"
 #include "types.h"
 
+#include <time.h>
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+typedef struct {
+	unsigned long size;
+	time_t modified;
+} ccFileInfo;
 
 // These functions can be used to get OS specific directories to store program data
 char *ccFileGetUserDir(void);
 char *ccFileGetDataDir(void);
 char *ccFileGetTempDir(void);
 
-ccReturn ccFileGetSize(char *file, unsigned long *size);
+ccFileInfo ccFileGetInfo(char *file); 
 
 void _ccFileFree(void);
 

@@ -11,3 +11,6 @@ clean:
 
 install:
 	scons target="install" install
+
+uninstall:
+	scons -c install
