@@ -5,4 +5,4 @@
 
 #include <ccore/file.h>
 
-#include <ccore/charUtils.h>
+#include <ccore/string.h>

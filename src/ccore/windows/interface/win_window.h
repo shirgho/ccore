@@ -5,7 +5,7 @@
 
 #include <ccore/window.h>
 
-#include <ccore/charUtils.h>
+#include <ccore/string.h>
 #include <ccore/assert.h>
 #include <ccore/gamepad.h>
 

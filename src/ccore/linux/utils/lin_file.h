@@ -7,7 +7,7 @@
 #include <limits.h>
 
 #include <ccore/file.h>
-#include <ccore/charUtils.h>
+#include <ccore/string.h>
 
 #ifndef CC_USER_LOCATION
 #define CC_USER_LOCATION "~/.config/"

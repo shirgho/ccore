@@ -31,7 +31,7 @@
 #include <ccore/opengl.h>
 #include <ccore/time.h>
 #include <ccore/file.h>
-#include <ccore/charUtils.h>
+#include <ccore/string.h>
 #include <ccore/thread.h>
 #include <ccore/print.h>
 #include <ccore/gamepad.h>

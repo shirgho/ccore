@@ -6,7 +6,7 @@
 #include <ccore/display.h>
 
 #include <ccore/window.h>
-#include <ccore/charUtils.h>
+#include <ccore/string.h>
 #include <ccore/assert.h>
 
 #define CC_MAXDEVICESTRINGSIZE 128
