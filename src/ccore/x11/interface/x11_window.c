@@ -221,11 +221,13 @@ bool ccWindowPollEvent(void)
 
 	_ccWindow->event.type = CC_EVENT_SKIP;
 
-	gamepadEvent = ccGamepadEventPoll();
-	if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){
-		_ccWindow->event.type = CC_EVENT_GAMEPAD;
-		_ccWindow->event.gamepadEvent = gamepadEvent;
-		return true;
+	if(_ccGamepads != NULL){
+		gamepadEvent = ccGamepadEventPoll();
+		if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){
+			_ccWindow->event.type = CC_EVENT_GAMEPAD;
+			_ccWindow->event.gamepadEvent = gamepadEvent;
+			return true;
+		}
 	}
 
 	if(XPending(WINDOW_DATA->XDisplay) == 0){
