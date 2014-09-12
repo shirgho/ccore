@@ -3,6 +3,6 @@
 #include <Windows.h>
 #include <string.h>
 
-#include <ccore/dirUtils.h>
+#include <ccore/file.h>
 
 #include <ccore/charUtils.h>

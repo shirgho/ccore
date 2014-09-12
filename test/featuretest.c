@@ -30,7 +30,7 @@
 #include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
 #include <ccore/opengl.h>
 #include <ccore/time.h>
-#include <ccore/dirUtils.h>
+#include <ccore/file.h>
 #include <ccore/charUtils.h>
 #include <ccore/thread.h>
 #include <ccore/print.h>

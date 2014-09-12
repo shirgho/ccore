@@ -5,7 +5,7 @@
 #include <ccore/net.h>
 #include <ccore/window.h>
 #include <ccore/opengl.h>
-#include <ccore/dirUtils.h>
+#include <ccore/file.h>
 #include <ccore/net.h>
 
 void ccFreeAll(void)
