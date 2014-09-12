@@ -17,10 +17,10 @@ if(env['target']=='debug'):
     env.Append(CCFLAGS=['-Wall'])
 
 if(env['target']=='install'):
-    print 'Installing ccore'
-    env.Install(dir='/usr/lib', source='lib/libccore.a')
-    env.Install(dir='/usr/include', source='include/ccore')
-    env.Alias('install', ['/usr'])
+    libInstall = env.Install(dir='/usr/lib', source='lib/libccore.a')
+    headerInstall = env.Install(dir='/usr/include', source='include/ccore')
+    Clean(libInstall, '/usr/include/ccore')
+    env.Alias('install', '/usr')
 else:
     staticLibrary=env.Library(target='lib/ccore', source=sources, LIBS=libs, LIBPATH=libpaths)
     if(env['test']=='yes' or env['test']=='all' or env['test']=='feature'):

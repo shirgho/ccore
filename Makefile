@@ -10,7 +10,7 @@ clean:
 	scons -c
 
 install:
-	scons target="install" install
+	scons -Q target="install" install
 
 uninstall:
-	scons -c install
+	scons -Q -c target="install" install
