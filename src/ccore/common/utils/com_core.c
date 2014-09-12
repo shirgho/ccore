@@ -11,7 +11,7 @@
 void ccFreeAll(void)
 {
 	_ccErrorFree();
-	_ccDirUtilsFree();
+	_ccFileFree();
 	ccNetFree();
 
 	if(_ccGamepads != NULL) ccGamepadFree();

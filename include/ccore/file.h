@@ -35,7 +35,7 @@ char *ccFileGetUserDir(void);
 char *ccFileGetDataDir(void);
 char *ccFileGetTempDir(void);
 
-void _ccDirUtilsFree(void);
+void _ccFileFree(void);
 
 #ifdef __cplusplus
 }

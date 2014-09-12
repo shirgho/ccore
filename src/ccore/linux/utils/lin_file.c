@@ -32,7 +32,7 @@ char *ccFileGetTempDir(void)
 	return CC_TEMP_LOCATION;
 }
 
-void _ccDirUtilsFree(void)
+void _ccFileFree(void)
 {
 
 }
