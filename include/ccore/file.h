@@ -24,6 +24,8 @@
 #pragma once
 
 #include "core.h"
+#include "error.h"
+#include "types.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -34,6 +36,8 @@ extern "C"
 char *ccFileGetUserDir(void);
 char *ccFileGetDataDir(void);
 char *ccFileGetTempDir(void);
+
+ccReturn ccFileGetSize(char *file, unsigned long *size);
 
 void _ccFileFree(void);
 

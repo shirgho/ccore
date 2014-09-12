@@ -72,7 +72,10 @@ typedef enum {
 	CC_ERROR_MOUSE_DATA, // The mice could not be read
 
 	// Memory related
-	CC_ERROR_MEMORY_OVERFLOW
+	CC_ERROR_MEMORY_OVERFLOW,
+
+	// File related
+	CC_ERROR_FILE_OPEN, // Error opening the file
 } ccError;
 
 // The following macro's can be used inside functions that return ccResult to catch allocation failures
