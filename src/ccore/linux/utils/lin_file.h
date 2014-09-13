@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <libgen.h>
 #include <limits.h>
-#include <sys/stat.h>
 
 #include <ccore/file.h>
 #include <ccore/string.h>

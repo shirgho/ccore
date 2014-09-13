@@ -23,11 +23,12 @@
 
 #pragma once
 
+#include <stdint.h>
+#include <sys/stat.h>
+
 #include "core.h"
 #include "error.h"
 #include "types.h"
-
-#include <time.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -35,7 +36,7 @@ extern "C"
 #endif
 
 typedef struct {
-	unsigned long size;
+	uint64_t size;
 	time_t modified;
 } ccFileInfo;
 
