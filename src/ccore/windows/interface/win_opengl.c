@@ -42,7 +42,10 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	}
 
 	//Make window the current context
-	wglMakeCurrent(WINDOW_DATA->hdc, WINDOW_DATA->renderContext);
+	if(wglMakeCurrent(WINDOW_DATA->hdc, WINDOW_DATA->renderContext) == FALSE) {
+		ccErrorPush(CC_ERROR_GL_CONTEXT);
+		return CC_FAIL;
+	}
 
 	//Version check
 	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
