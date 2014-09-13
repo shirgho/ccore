@@ -10,7 +10,7 @@ ccReturn ccThreadCreate(ccThread *thread, void *function)
 
 ccReturn ccThreadStart(ccThread thread, void *data)
 {
-	if(pthread_create(&_THREAD->id, NULL, _THREAD->function, data) != 0) {
+	if(CC_UNLIKELY(pthread_create(&_THREAD->id, NULL, _THREAD->function, data) != 0)) {
 		free(thread);
 		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
@@ -21,7 +21,7 @@ ccReturn ccThreadStart(ccThread thread, void *data)
 
 ccReturn ccThreadJoin(ccThread thread)
 {
-	if(pthread_join(_THREAD->id, NULL) == 0){
+	if(CC_UNLIKELY(pthread_join(_THREAD->id, NULL) == 0)){
 		return CC_SUCCESS;  
 	}else{
 		ccErrorPush(CC_ERROR_THREAD_CREATE);
@@ -41,7 +41,7 @@ bool ccThreadFinished(ccThread thread)
 
 ccReturn ccThreadMutexCreate(ccMutex *mutex)
 {
-	if(pthread_mutex_init(mutex, NULL) != 0) {
+	if(CC_UNLIKELY(pthread_mutex_init(mutex, NULL) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);
 		return CC_FAIL;
 	}
@@ -51,7 +51,7 @@ ccReturn ccThreadMutexCreate(ccMutex *mutex)
 
 ccReturn ccThreadMutexJoin(ccMutex mutex)
 {
-	if(pthread_mutex_lock(&mutex) != 0) {
+	if(CC_UNLIKELY(pthread_mutex_lock(&mutex) != 0)) {
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}
@@ -65,16 +65,17 @@ bool ccThreadMutexFinished(ccMutex mutex)
 
 	if(result == 0) {
 		return true;
-	}
-	else{
-		if(result == EBUSY) ccErrorPush(CC_ERROR_THREAD_MUTEX);
+	}else{
+		if(CC_UNLIKELY(result == EBUSY)){
+			ccErrorPush(CC_ERROR_THREAD_MUTEX);
+		}
 		return false;
 	}
 }
 
 ccReturn ccThreadMutexRelease(ccMutex mutex)
 {
-	if(pthread_mutex_unlock(&mutex) != 0) {
+	if(CC_UNLIKELY(pthread_mutex_unlock(&mutex) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}
@@ -84,7 +85,7 @@ ccReturn ccThreadMutexRelease(ccMutex mutex)
 
 ccReturn ccThreadMutexFree(ccMutex mutex)
 {
-	if(pthread_mutex_destroy(&mutex) != 0) {
+	if(CC_UNLIKELY(pthread_mutex_destroy(&mutex) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}

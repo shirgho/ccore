@@ -36,4 +36,12 @@
 #error "OS not supported!"
 #endif
 
+#ifdef __GNUC__
+#define CC_LIKELY(x) __builtin_expect(!!(x), 1)
+#define CC_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#define CC_LIKELY(x) (x)
+#define CC_UNLIKELY(x) (x)
+#endif
+
 void ccFreeAll(void); // Free all memory in use by ccore
