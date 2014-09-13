@@ -59,13 +59,13 @@ static ccReturn checkRawSupport()
 {
 	int event, error, mayor, minor;
 
-	if(!XQueryExtension(WINDOW_DATA->XDisplay, "XInputExtension", &WINDOW_DATA->XInputOpcode, &event, &error)){
+	if(CC_UNLIKELY(!XQueryExtension(WINDOW_DATA->XDisplay, "XInputExtension", &WINDOW_DATA->XInputOpcode, &event, &error))){
 		return CC_FAIL;
 	}
 
 	mayor = 2;
 	minor = 0;
-	if(XIQueryVersion(WINDOW_DATA->XDisplay, &mayor, &minor) == BadRequest){
+	if(CC_UNLIKELY(XIQueryVersion(WINDOW_DATA->XDisplay, &mayor, &minor) == BadRequest)){
 		return CC_FAIL;
 	}
 
@@ -139,7 +139,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	Window root;
 	Atom delete;
 
-	if(_ccWindow != NULL){
+	if(CC_UNLIKELY(_ccWindow != NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
@@ -151,7 +151,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	WINDOW_DATA->windowFlags = flags;
 
 	WINDOW_DATA->XDisplay = XOpenDisplay(NULL);
-	if(WINDOW_DATA->XDisplay == NULL){
+	if(CC_UNLIKELY(WINDOW_DATA->XDisplay == NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
@@ -237,7 +237,7 @@ bool ccWindowPollEvent(void)
 	XNextEvent(WINDOW_DATA->XDisplay, &event);
 	switch(event.type){
 		case GenericEvent:
-			if(!_ccWindow->supportsRawInput){
+			if(CC_UNLIKELY(!_ccWindow->supportsRawInput)){
 				return false;
 			}
 
@@ -294,13 +294,13 @@ bool ccWindowPollEvent(void)
 			_ccWindow->event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
-			if(!_ccWindow->supportsRawInput){
+			if(CC_UNLIKELY(!_ccWindow->supportsRawInput)){
 				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
 				_ccWindow->event.mouseDelta.x = _ccWindow->mouse.x - event.xmotion.x;
 				_ccWindow->event.mouseDelta.y = _ccWindow->mouse.y - event.xmotion.y;
 			}
-			if(_ccWindow->mouse.x != event.xmotion.x ||
-					_ccWindow->mouse.y != event.xmotion.y){
+			if(CC_LIKELY(_ccWindow->mouse.x != event.xmotion.x ||
+					_ccWindow->mouse.y != event.xmotion.y)){
 				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
 				_ccWindow->mouse.x = event.xmotion.x;
 				_ccWindow->mouse.y = event.xmotion.y;
@@ -392,7 +392,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 
 	ccAssert(_ccWindow);
 
-	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
+	if(CC_LIKELY(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY)) {
 		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _ccWindow->display;
 	}else{
 		va_start(displays, displayCount);
@@ -470,7 +470,7 @@ ccReturn ccWindowCenter(void)
 	ccRect newRect;
 
 	ccAssert(_ccWindow);
-	if(_ccWindow->display == NULL){
+	if(CC_UNLIKELY(_ccWindow->display == NULL)){
 		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
 	}

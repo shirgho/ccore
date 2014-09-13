@@ -15,13 +15,13 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 {
 	XVisualInfo *visual;
 
-	if(_ccWindow == NULL){
+	if(CC_UNLIKELY(_ccWindow == NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_NONE);
 		return CC_FAIL;
 	}
 
 	visual = glXChooseVisual(WINDOW_DATA->XDisplay, WINDOW_DATA->XScreen, attrList);
-	if(!visual){
+	if(CC_UNLIKELY(!visual)){
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
@@ -29,7 +29,7 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	WINDOW_DATA->XContext = glXCreateContext(WINDOW_DATA->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XContext);
 
-	if(glewInit() != GLEW_OK){
+	if(CC_UNLIKELY(glewInit() != GLEW_OK)){
 		ccErrorPush(CC_ERROR_GL_GLEWINIT);
 		return CC_FAIL;
 	}
@@ -39,7 +39,7 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 ccReturn ccGLFreeContext(void)
 {
-	if(WINDOW_DATA->XContext == NULL){
+	if(CC_UNLIKELY(WINDOW_DATA->XContext == NULL)){
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
@@ -51,7 +51,7 @@ ccReturn ccGLFreeContext(void)
 
 ccReturn ccGLSwapBuffers(void)
 {
-	if(WINDOW_DATA->XContext == NULL){
+	if(CC_UNLIKELY(WINDOW_DATA->XContext == NULL)){
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
