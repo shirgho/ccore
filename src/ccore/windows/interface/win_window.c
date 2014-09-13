@@ -30,7 +30,7 @@ static void updateWindowResolution(void)
 	RECT winRect;
 	ccEvent resizeEvent;
 	
-	GetClientRect(WINDOW_DATA->winHandle, &winRect);
+	if(GetClientRect(WINDOW_DATA->winHandle, &winRect) == 0) return;
 
 	if(winRect.right - winRect.left == _ccWindow->rect.width && winRect.bottom - winRect.top == _ccWindow->rect.height) {
 		return;
