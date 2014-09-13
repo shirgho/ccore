@@ -30,7 +30,10 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 		return CC_FAIL;
 	}
 
-	SetPixelFormat(WINDOW_DATA->hdc, pixelFormatIndex, &pfd);
+	if(SetPixelFormat(WINDOW_DATA->hdc, pixelFormatIndex, &pfd) == FALSE) {
+		ccErrorPush(CC_ERROR_GL_CONTEXT);
+		return CC_FAIL;
+	}
 
 	WINDOW_DATA->renderContext = wglCreateContext(WINDOW_DATA->hdc);
 	if(WINDOW_DATA->renderContext == NULL) {
