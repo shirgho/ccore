@@ -46,8 +46,6 @@ typedef struct {
 	int preparsedDataSize;
 	int *axisNegativeComponent;
 	double *axisFactor;
-
-	PHIDP_VALUE_CAPS outputValueCaps;
 } ccGamepad_win_raw;
 
 typedef struct {
