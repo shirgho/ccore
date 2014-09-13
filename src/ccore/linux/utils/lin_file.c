@@ -32,25 +32,6 @@ char *ccFileGetTempDir(void)
 	return CC_TEMP_LOCATION;
 }
 
-ccFileInfo ccFileGetInfo(char *file)
-{
-	struct stat sb;
-	ccFileInfo info;
-	
-		if(stat(file, &sb) != 0){
-		ccErrorPush(CC_ERROR_FILE_OPEN);
-		info.size = 0;
-		info.modified = 0;
-		return info;
-		
-	}
-	
-	info.size = (time_t)sb.st_size;
-	info.modified = sb.st_mtime;
-	
-	return info;
-}
-
 void _ccFileFree(void)
 {
 

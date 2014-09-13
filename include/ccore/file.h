@@ -24,6 +24,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <sys/stat.h>
 
 #include "core.h"
 #include "error.h"
