@@ -25,6 +25,7 @@
     <ClCompile Include="src\ccore\common\interface\com_window.c" />
     <ClCompile Include="src\ccore\common\utils\com_core.c" />
     <ClCompile Include="src\ccore\common\utils\com_error.c" />
+    <ClCompile Include="src\ccore\common\utils\com_file.c" />
     <ClCompile Include="src\ccore\common\utils\com_rect.c" />
     <ClCompile Include="src\ccore\common\utils\com_string.c" />
     <ClCompile Include="src\ccore\windows\interface\win_display.c" />
