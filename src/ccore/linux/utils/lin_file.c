@@ -45,7 +45,7 @@ ccFileInfo ccFileGetInfo(char *file)
 		
 	}
 	
-	info.size = (unsigned long)sb.st_size;
+	info.size = (time_t)sb.st_size;
 	info.modified = sb.st_mtime;
 	
 	return info;
