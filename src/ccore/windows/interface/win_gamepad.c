@@ -283,6 +283,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
+		currentGamepad->outputAmount = 0;
 		GAMEPAD_DATA->raw->handle = raw->header.hDevice;
 		HidP_GetCaps(GAMEPAD_DATA->raw->preparsedData, &GAMEPAD_DATA->raw->caps);
 
