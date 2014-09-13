@@ -8,6 +8,10 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 	ccAssert(ccWindowExists());
 
 	WINDOW_DATA->hdc = GetDC(WINDOW_DATA->winHandle);
+	if(WINDOW_DATA->hdc == NULL) {
+		ccErrorPush(CC_ERROR_GL_CONTEXT);
+		return CC_FAIL;
+	}
 
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
