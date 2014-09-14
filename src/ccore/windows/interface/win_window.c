@@ -512,3 +512,15 @@ ccReturn ccWindowBlink(void)
 
 	return CC_SUCCESS;
 }
+
+ccReturn ccWindowSetMousePosition(ccPoint target)
+{
+	POINT p;
+	p.x = target.x;
+	p.y = target.y;
+
+	ClientToScreen(WINDOW_DATA->winHandle, &p);
+	SetCursorPos(p.x, p.y);
+
+	return CC_SUCCESS;
+}
