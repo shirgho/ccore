@@ -76,6 +76,8 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...);
 
 ccReturn ccWindowBlink(void);
 
+ccReturn ccWindowSetMousePosition(ccPoint target);
+
 // Getters
 ccEvent ccWindowGetEvent(void);
 ccRect ccWindowGetRect(void);

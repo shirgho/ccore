@@ -486,3 +486,12 @@ ccReturn ccWindowCenter(void)
 
 	return CC_SUCCESS;
 }
+
+ccReturn ccWindowSetMousePosition(ccPoint target)
+{
+	ccAssert(_ccWindow);
+
+	XWarpPointer(WINDOW_DATA->XDisplay, None, WINDOW_DATA->XWindow, 0, 0, 0, 0, target.x, target.y);
+
+	return CC_SUCCESS;
+}
