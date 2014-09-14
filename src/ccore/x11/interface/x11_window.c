@@ -520,6 +520,7 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 
 ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 {
+	XColor black;
 
 	ccAssert(_ccWindow);
 
@@ -532,8 +533,12 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 		if(!WINDOW_DATA->XCursor){
 			ccErrorPush(CC_ERROR_WINDOW_CURSOR);
 		}
-		XDefineCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XCursor);
+	}else{
+		black.red = black.green = black.blue = 0;
+		WINDOW_DATA->XCursor = XCreatePixmapCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XEmptyCursorImage, WINDOW_DATA->XEmptyCursorImage, &black, &black, 0, 0);
 	}
+
+	XDefineCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XCursor);
 
 	return CC_SUCCESS;
 }

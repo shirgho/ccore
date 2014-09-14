@@ -222,6 +222,7 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_T:
 							ccWindowSetMousePosition((ccPoint){.x = ccWindowGetRect().width / 2, .y = ccWindowGetRect().height / 2});
+							ccWindowSetMouseCursor(CC_CURSOR_HAND);
 							break;	
 						case CC_KEY_P:
 							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowGetDisplay()->monitorName, ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
