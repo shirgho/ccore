@@ -6,6 +6,7 @@ static LPSTR _cursor[] =
 	IDC_CROSS,
 	IDC_IBEAM,
 	IDC_SIZEALL,
+	IDC_HAND,
 	IDC_SIZEWE,
 	IDC_SIZENS,
 	IDC_NO,
@@ -297,7 +298,8 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->lpbSize = 0;
 	WINDOW_DATA->lpb = NULL;
 	WINDOW_DATA->flags = flags;
-	
+	WINDOW_DATA->cursor = CC_CURSOR_ARROW;
+
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
 	if(flags & CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
@@ -548,8 +550,19 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 
 ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 {
-	HCURSOR hCursor = LoadCursor(NULL, _cursor[cursor]);
-	SetCursor(hCursor);
+	if(cursor == CC_CURSOR_NONE) {
+		if(WINDOW_DATA->cursor != CC_CURSOR_NONE) ShowCursor(FALSE);
+	}
+	else{
+		HCURSOR hCursor;
+
+		if(WINDOW_DATA->cursor == CC_CURSOR_NONE) ShowCursor(TRUE);
+
+		hCursor = LoadCursor(NULL, _cursor[cursor]);
+		SetCursor(hCursor);
+	}
+
+	WINDOW_DATA->cursor = cursor;
 
 	return CC_SUCCESS;
 }
