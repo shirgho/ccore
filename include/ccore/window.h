@@ -39,6 +39,23 @@ extern "C"
 {
 #endif
 
+#ifdef X11
+#define CURDEF(x11,win) x11
+#elif defined WINDOWS
+#include <Windows.h>
+#define CURDEF(x11,win) win
+#endif
+
+#define CC_CURSOR_ARROW CURDEF(XC_arrow, IDC_ARROW)
+#define CC_CURSOR_CROSS CURDEF(XC_crosshair, IDC_CROSS)
+#define CC_CURSOR_BEAM CURDEF(XC_xterm, IDC_IBEAM)
+#define CC_CURSOR_MOVE (XC_fleur, IDC_SIZEALL)
+#define CC_CURSOR_HAND (XC_hand1, IDC_HAND)
+#define CC_CURSOR_SIZEH (XC_sb_h_double_arrow, IDC_SIZEWE)
+#define CC_CURSOR_SIZEV (XC_sb_v_double_arrow, IDC_SIZENS)
+#define CC_CURSOR_NO (XC_X_cursor, IDC_NO)
+#define CC_CURSOR_QUESTION (XC_question_arrow, IDC_HELP)
+
 // A window can contain multiple flags to determine the layout and functionality
 typedef enum {
 	CC_WINDOW_FLAG_NORESIZE = 1,
