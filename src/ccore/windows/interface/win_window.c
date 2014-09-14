@@ -519,8 +519,15 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 	p.x = target.x;
 	p.y = target.y;
 
-	ClientToScreen(WINDOW_DATA->winHandle, &p);
-	SetCursorPos(p.x, p.y);
+	if(ClientToScreen(WINDOW_DATA->winHandle, &p) == 0) {
+		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
+		return CC_FAIL;
+	}
+	
+	if(SetCursorPos(p.x, p.y) == 0) {
+		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
+		return CC_FAIL;
+	}
 
 	return CC_SUCCESS;
 }

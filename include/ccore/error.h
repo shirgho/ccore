@@ -47,6 +47,7 @@ typedef enum {
 	CC_ERROR_WINDOW_CREATE, // The window can't be created
 	CC_ERROR_WINDOW_DESTROY, // The window can't be destroyed
 	CC_ERROR_WINDOW_MODE, // The window mode couldn't be changed (also moving & resolution)
+	CC_ERROR_WINDOW_CURSOR, // The cursor couldn't be changed or moved
 
 	// OpenGL related
 	CC_ERROR_GL_VERSION, // The target OpenGL version is not supported
