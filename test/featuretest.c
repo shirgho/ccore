@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccGLBindContext(3, 2);
 
-	ccWindowSetMouseCursor(CC_CURSOR_ARROW);
+	ccWindowSetMouseCursor(CC_CURSOR_CROSS);
 
 	// This function initializes openGL in this example
 	initialize();
@@ -222,6 +222,7 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_T:
 							ccWindowSetMousePosition((ccPoint){.x = ccWindowGetRect().width / 2, .y = ccWindowGetRect().height / 2});
+							ccWindowSetMouseCursor(CC_CURSOR_HAND);
 							break;	
 						case CC_KEY_P:
 							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowGetDisplay()->monitorName, ccDisplayGetResolutionAmount(ccWindowGetDisplay()));

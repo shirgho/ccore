@@ -1,5 +1,17 @@
 #include "win_window.h"
 
+static LPSTR _cursor[] =
+{
+	IDC_ARROW,
+	IDC_CROSS,
+	IDC_IBEAM,
+	IDC_SIZEALL,
+	IDC_SIZEWE,
+	IDC_SIZENS,
+	IDC_NO,
+	IDC_HELP
+};
+
 void _ccEventStackPush(ccEvent event)
 {
 	WINDOW_DATA->eventStackPos++;
@@ -157,6 +169,8 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 	case WM_INPUT:
 		processRid((HRAWINPUT)lParam);
 		break;
+	case WM_SETCURSOR:
+		break;
 	case WM_CLOSE:
 		_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
@@ -195,7 +209,7 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
 	}
-	return 0;
+	return FALSE;
 }
 
 static bool regHinstance(HINSTANCE instanceHandle)
@@ -528,6 +542,14 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
 		return CC_FAIL;
 	}
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowSetMouseCursor(ccCursor cursor)
+{
+	HCURSOR hCursor = LoadCursor(NULL, _cursor[cursor]);
+	SetCursor(hCursor);
 
 	return CC_SUCCESS;
 }
