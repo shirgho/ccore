@@ -37,6 +37,7 @@
 #include <ccore/gamepad.h>
 
 #include "tga.h"
+#include "icon.h"
 
 // Some helper functions for colors
 #define HEXTOR(x) (((x >> 16) & 0xff) / 255.0f)
@@ -103,6 +104,7 @@ int main(int argc, char** argv)
 {
 	int i;
 	char *imageFileName;
+	unsigned long *iconData;
 
 	// This variable tells the message loop when to quit
 	bool quit = false;
@@ -159,6 +161,10 @@ int main(int argc, char** argv)
 		ccPrintf("Could't load TGA texture: %s\n", imageFileName);
 	}
 	free(imageFileName);
+
+	iconData = iconGetData();
+	ccWindowSetIcon(iconGetSize(), iconData);
+	free(iconData);
 
 	// Set the projection
 	setProjection();

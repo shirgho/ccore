@@ -462,13 +462,6 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowBlink(void)
-{
-	ccAssert(_ccWindow);
-
-	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
-}
-
 ccReturn ccWindowResizeMove(ccRect rect)
 {
 	ccAssert(_ccWindow);
@@ -505,6 +498,39 @@ ccReturn ccWindowCenter(void)
 	newRect.height = _ccWindow->rect.height;
 
 	ccWindowResizeMove(newRect);
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowBlink(void)
+{
+	ccAssert(_ccWindow);
+
+	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
+}
+
+ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon)
+{
+	unsigned long *data;
+	size_t dataLen, totalLen;
+	Atom atom, cardinal;
+
+	ccAssert(_ccWindow);
+
+	dataLen = size.x * size.y * sizeof(unsigned long);
+	totalLen = dataLen + 2 * sizeof(unsigned long);
+	ccMalloc(data, totalLen);
+	
+	data[0] = (unsigned long)size.x;
+	data[1] = (unsigned long)size.y;
+	memcpy(data + 2, icon, dataLen);
+
+	atom = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_ICON", False);
+	cardinal = XInternAtom(WINDOW_DATA->XDisplay, "CARDINAL", False);
+
+	XChangeProperty(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, atom, cardinal, 32, PropModeReplace, (const unsigned char*)data, totalLen); 
+
+	free(data);
 
 	return CC_SUCCESS;
 }
