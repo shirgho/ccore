@@ -152,7 +152,6 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	Window root;
 	Atom delete;
 
 	if(CC_UNLIKELY(_ccWindow != NULL)){
@@ -172,9 +171,9 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 		return CC_FAIL;
 	}
 
-	root = DefaultRootWindow(WINDOW_DATA->XDisplay);
 	WINDOW_DATA->XScreen = DefaultScreen(WINDOW_DATA->XDisplay);
-	WINDOW_DATA->XWindow = XCreateSimpleWindow(WINDOW_DATA->XDisplay, root, rect.x, rect.y, rect.width, rect.height, 1, 0, 0);
+	WINDOW_DATA->XNetIcon = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_ICON", False);
+	WINDOW_DATA->XWindow = XCreateWindow(WINDOW_DATA->XDisplay, RootWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
 
 	// Choose types of events
 	XSelectInput(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
@@ -513,22 +512,20 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon)
 {
 	unsigned long *data;
 	size_t dataLen, totalLen;
-	Atom atom, cardinal;
 
 	ccAssert(_ccWindow);
 
-	dataLen = size.x * size.y * sizeof(unsigned long);
-	totalLen = dataLen + 2 * sizeof(unsigned long);
-	ccMalloc(data, totalLen);
+	ccPrintf("%d, %d\n", size.x, size.y);
+
+	dataLen = size.x * size.y;
+	totalLen = dataLen + 2;
+	ccMalloc(data, totalLen * sizeof(unsigned long));
 	
 	data[0] = (unsigned long)size.x;
 	data[1] = (unsigned long)size.y;
-	memcpy(data + 2, icon, dataLen);
+	memcpy(data + 2, icon, dataLen * sizeof(unsigned long));
 
-	atom = XInternAtom(WINDOW_DATA->XDisplay, "_NET_WM_ICON", False);
-	cardinal = XInternAtom(WINDOW_DATA->XDisplay, "CARDINAL", False);
-
-	XChangeProperty(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, atom, cardinal, 32, PropModeReplace, (const unsigned char*)data, totalLen); 
+	XChangeProperty(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XNetIcon, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totalLen); 
 
 	free(data);
 
