@@ -495,3 +495,10 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 
 	return CC_SUCCESS;
 }
+
+ccReturn ccWindowSetMouseCursor(ccCursor cursor)
+{
+	ccAssert(_ccWindow);
+
+	return CC_SUCCESS;
+}
