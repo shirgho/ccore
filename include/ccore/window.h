@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 typedef enum {
-	CC_CURSOR_ARROW = 1,
+	CC_CURSOR_ARROW,
 	CC_CURSOR_CROSS,
 	CC_CURSOR_BEAM,
 	CC_CURSOR_MOVE,

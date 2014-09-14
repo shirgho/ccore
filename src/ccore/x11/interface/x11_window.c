@@ -523,6 +523,9 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 
 	if(cursor != CC_CURSOR_NONE){
 		WINDOW_DATA->XCursor = XCreateFontCursor(WINDOW_DATA->XDisplay, cursorList[cursor]);
+		if(!WINDOW_DATA->XCursor){
+			ccErrorPush(CC_ERROR_WINDOW_CURSOR);
+		}
 		XDefineCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XCursor);
 	}
 
