@@ -38,6 +38,7 @@ extern "C"
 typedef struct {
 	uint64_t size;
 	time_t modified;
+	time_t access;
 } ccFileInfo;
 
 // These functions can be used to get OS specific directories to store program data

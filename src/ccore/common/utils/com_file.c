@@ -22,9 +22,10 @@ ccFileInfo ccFileGetInfo(char *file)
 		return info;
 
 	}
-
+	
 	info.size = (uint64_t)sb.st_size;
 	info.modified = (time_t)sb.st_mtime;
+	info.access = (time_t)sb.st_atime;
 
 	return info;
 }
