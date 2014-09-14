@@ -60,6 +60,8 @@ const char *ccErrorString(ccError error)
 			return "Can't destroy the window";
 		case CC_ERROR_WINDOW_MODE:
 			return "Couldn't change the window mode";
+		case CC_ERROR_WINDOW_CURSOR:
+			return "The cursor couldn't be changed or moved";
 
 			// OpenGL related
 		case CC_ERROR_GL_VERSION:
