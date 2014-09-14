@@ -515,7 +515,10 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon)
 
 	ccAssert(_ccWindow);
 
-	ccPrintf("%d, %d\n", size.x, size.y);
+	if(size.x <= 0 || size.y <= 0){
+		ccErrorPush(CC_ERROR_WINDOW_MODE);
+		return CC_FAIL;
+	}
 
 	dataLen = size.x * size.y;
 	totalLen = dataLen + 2;
