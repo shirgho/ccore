@@ -48,7 +48,8 @@ typedef enum {
 	CC_CURSOR_SIZEH,
 	CC_CURSOR_SIZEV,
 	CC_CURSOR_NO,
-	CC_CURSOR_QUESTION
+	CC_CURSOR_QUESTION,
+	CC_CURSOR_NONE
 } ccCursor;
 
 // A window can contain multiple flags to determine the layout and functionality
