@@ -36,6 +36,8 @@ typedef struct {
 	int eventStackPos;
 	int eventStackIndex;
 
+	ccCursor cursor;
+
 	int flags;
 } ccWindow_win;
 
