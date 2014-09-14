@@ -1,5 +1,18 @@
 #include "x11_window.h"
 
+static int cursorList[] =
+{
+	XC_arrow,
+	XC_crosshair,
+	XC_xterm,
+	XC_fleur,
+	XC_hand1,
+	XC_sb_h_double_arrow,
+	XC_sb_v_double_arrow,
+	XC_X_cursor,
+	XC_question_arrow
+};
+
 static ccReturn setWindowState(const char *type, bool value)
 {	
 	XEvent event;
@@ -200,6 +213,7 @@ ccReturn ccWindowFree(void)
 {
 	ccAssert(_ccWindow);
 
+	XFreeCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XCursor);
 	XUnmapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XCloseDisplay(WINDOW_DATA->XDisplay);
 
@@ -499,6 +513,11 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 {
 	ccAssert(_ccWindow);
+
+	if(cursor != CC_CURSOR_NONE){
+		WINDOW_DATA->XCursor = XCreateFontCursor(WINDOW_DATA->XDisplay, cursorList[cursor]);
+		XDefineCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XCursor);
+	}
 
 	return CC_SUCCESS;
 }

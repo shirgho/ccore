@@ -8,6 +8,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/cursorfont.h>
 #include <X11/extensions/XInput2.h>
 
 #include <ccore/opengl.h>
@@ -32,11 +33,10 @@
 typedef struct {
 	Display *XDisplay;
 	Window XWindow;
-	int XScreen;
-	int windowFlags;
-	bool resizable;
 	GLXContext XContext;
-	int XInputOpcode;
+	XID XCursor;
+	int XScreen, windowFlags, XInputOpcode;
+	bool resizable;
 } ccWindow_x11;
 
 #define WINDOW_DATA ((ccWindow_x11*)_ccWindow->data)
