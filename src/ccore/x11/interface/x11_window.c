@@ -1,7 +1,6 @@
 #include "x11_window.h"
 
-static int cursorList[] =
-{
+static int cursorList[] ={
 	XC_arrow,
 	XC_crosshair,
 	XC_xterm,
@@ -11,6 +10,10 @@ static int cursorList[] =
 	XC_sb_v_double_arrow,
 	XC_X_cursor,
 	XC_question_arrow
+};
+
+static char emptyCursorData[] = {
+	0, 0, 0, 0, 0, 0, 0, 0
 };
 
 static ccReturn setWindowState(const char *type, bool value)
@@ -206,6 +209,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 	WINDOW_DATA->XCursor = 0;
+	WINDOW_DATA->XEmptyCursorImage = XCreateBitmapFromData(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, emptyCursorData, 8, 8);
 
 	return CC_SUCCESS;
 }
@@ -217,6 +221,7 @@ ccReturn ccWindowFree(void)
 	if(WINDOW_DATA->XCursor != 0){
 		XFreeCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XCursor);
 	}
+	XFreePixmap(WINDOW_DATA->XDisplay, WINDOW_DATA->XEmptyCursorImage);
 	XUnmapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XCloseDisplay(WINDOW_DATA->XDisplay);
 
@@ -317,7 +322,7 @@ bool ccWindowPollEvent(void)
 				_ccWindow->event.mouseDelta.y = _ccWindow->mouse.y - event.xmotion.y;
 			}
 			if(CC_LIKELY(_ccWindow->mouse.x != event.xmotion.x ||
-					_ccWindow->mouse.y != event.xmotion.y)){
+						_ccWindow->mouse.y != event.xmotion.y)){
 				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
 				_ccWindow->mouse.x = event.xmotion.x;
 				_ccWindow->mouse.y = event.xmotion.y;
@@ -515,6 +520,7 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 
 ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 {
+
 	ccAssert(_ccWindow);
 
 	if(WINDOW_DATA->XCursor != 0){

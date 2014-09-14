@@ -35,6 +35,7 @@ typedef struct {
 	Window XWindow;
 	GLXContext XContext;
 	XID XCursor;
+	Pixmap XEmptyCursorImage;
 	int XScreen, windowFlags, XInputOpcode;
 	bool resizable;
 } ccWindow_x11;

@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccGLBindContext(3, 2);
 
-	ccWindowSetMouseCursor(CC_CURSOR_ARROW);
+	ccWindowSetMouseCursor(CC_CURSOR_NONE);
 
 	// This function initializes openGL in this example
 	initialize();
