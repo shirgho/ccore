@@ -90,7 +90,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...);
 ccReturn ccWindowBlink(void);
 ccReturn ccWindowSetMousePosition(ccPoint target);
 ccReturn ccWindowSetMouseCursor(ccCursor cursor);
-//ccReturn ccWindowSetMouseCursorImage(ccImage cursor);
+ccReturn ccWindowSetMouseCursorImage(ccPoint hotspot, char *imageData, char *maskData);
 
 // Getters
 ccEvent ccWindowGetEvent(void);

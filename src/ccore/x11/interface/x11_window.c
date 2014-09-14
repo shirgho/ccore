@@ -542,3 +542,11 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 
 	return CC_SUCCESS;
 }
+
+ccReturn ccWindowSetMouseCursorImage(ccPoint hotspot, char *imageData, char *maskData)
+{
+
+	assert(_ccWindow);
+
+	return CC_SUCCESS;
+}
