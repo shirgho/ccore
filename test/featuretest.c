@@ -37,6 +37,7 @@
 #include <ccore/gamepad.h>
 
 #include "tga.h"
+#include "cursor.h"
 
 // Some helper functions for colors
 #define HEXTOR(x) (((x >> 16) & 0xff) / 255.0f)
@@ -142,7 +143,7 @@ int main(int argc, char** argv)
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccGLBindContext(3, 2);
 
-	ccWindowSetMouseCursor(CC_CURSOR_NONE);
+	ccWindowSetMouseCursorImage((ccPoint){0, 0}, cursorGetBytes(), cursorGetBytes());
 
 	// This function initializes openGL in this example
 	initialize();

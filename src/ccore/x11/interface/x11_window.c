@@ -543,10 +543,46 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetMouseCursorImage(ccPoint hotspot, char *imageData, char *maskData)
+ccReturn ccWindowSetMouseCursorImage(ccPoint hotspot, unsigned char *imageData, unsigned char *maskData)
 {
+	Pixmap sourcePix, maskPix;
+	XImage *sourceImg, *maskImg;
+	GC gc;
+	XGCValues gcv;
+	XColor black, white;
 
 	assert(_ccWindow);
+
+	black.red = black.green = black.blue = 0;
+	white.red = white.green = white.blue = 0xffff;
+
+	sourceImg = XCreateImage(WINDOW_DATA->XDisplay, NULL, 24, ZPixmap, 0, NULL, 24, 24, 32, 0);
+	ccMalloc(sourceImg->data, 24 * 24 * 3);
+	memcpy(sourceImg->data, (char*)imageData, 24 * 24 * 3);
+
+	maskImg = XCreateImage(WINDOW_DATA->XDisplay, NULL, 24, ZPixmap, 0, NULL, 24, 24, 32, 0);
+	ccMalloc(maskImg->data, 24 * 24 * 1);
+	memcpy(maskImg->data, (char*)maskData, 24 * 24 * 1);
+
+	sourcePix = XCreatePixmap(WINDOW_DATA->XDisplay, RootWindow(WINDOW_DATA->XDisplay, DefaultScreen(WINDOW_DATA->XDisplay)), 24, 24, 24);
+	maskPix = XCreatePixmap(WINDOW_DATA->XDisplay, RootWindow(WINDOW_DATA->XDisplay, DefaultScreen(WINDOW_DATA->XDisplay)), 24, 24, 24);
+
+	gcv.foreground = 1;
+	gcv.background = 0;
+	gc = XCreateGC(WINDOW_DATA->XDisplay, sourcePix, GCForeground | GCBackground, &gcv);
+	XPutImage(WINDOW_DATA->XDisplay, sourcePix, gc, sourceImg, 0, 0, 0, 0, 24, 24);
+	XPutImage(WINDOW_DATA->XDisplay, maskPix, gc, maskImg, 0, 0, 0, 0, 24, 24);
+	XFreeGC(WINDOW_DATA->XDisplay, gc);
+
+	XDestroyImage(sourceImg);
+	XDestroyImage(maskImg);
+
+	WINDOW_DATA->XCursor = XCreatePixmapCursor(WINDOW_DATA->XDisplay, sourcePix, maskPix, &black, &white, hotspot.x, hotspot.y);
+
+	XFreePixmap(WINDOW_DATA->XDisplay, sourcePix);
+	XFreePixmap(WINDOW_DATA->XDisplay, maskPix);
+
+	XDefineCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XCursor);
 
 	return CC_SUCCESS;
 }
