@@ -205,6 +205,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
+	WINDOW_DATA->XCursor = 0;
 
 	return CC_SUCCESS;
 }
@@ -213,7 +214,9 @@ ccReturn ccWindowFree(void)
 {
 	ccAssert(_ccWindow);
 
-	XFreeCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XCursor);
+	if(WINDOW_DATA->XCursor != 0){
+		XFreeCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XCursor);
+	}
 	XUnmapWindow(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
 	XCloseDisplay(WINDOW_DATA->XDisplay);
 
@@ -513,6 +516,10 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 {
 	ccAssert(_ccWindow);
+
+	if(WINDOW_DATA->XCursor != 0){
+		XFreeCursor(WINDOW_DATA->XDisplay, WINDOW_DATA->XCursor);
+	}
 
 	if(cursor != CC_CURSOR_NONE){
 		WINDOW_DATA->XCursor = XCreateFontCursor(WINDOW_DATA->XDisplay, cursorList[cursor]);
