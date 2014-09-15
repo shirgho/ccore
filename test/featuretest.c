@@ -161,11 +161,11 @@ int main(int argc, char** argv)
 		ccPrintf("Could't load TGA texture: %s\n", imageFileName);
 	}
 	free(imageFileName);
-
+	
 	iconData = iconGetData();
 	ccWindowSetIcon(iconGetSize(), iconData);
 	free(iconData);
-
+	
 	// Set the projection
 	setProjection();
 

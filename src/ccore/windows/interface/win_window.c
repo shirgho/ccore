@@ -170,8 +170,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 	case WM_INPUT:
 		processRid((HRAWINPUT)lParam);
 		break;
-	case WM_SETCURSOR:
-		break;
 	case WM_CLOSE:
 		_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
 		break;
@@ -206,6 +204,7 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		return DefWindowProc(winHandle, message, wParam, lParam);
 	}
 		break;
+	case WM_SETCURSOR:
 	default:
 		return DefWindowProc(winHandle, message, wParam, lParam);
 		break;
