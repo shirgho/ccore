@@ -62,6 +62,8 @@ const char *ccErrorString(ccError error)
 			return "Couldn't change the window mode";
 		case CC_ERROR_WINDOW_CURSOR:
 			return "The cursor couldn't be changed or moved";
+		case CC_ERROR_WINDOW_CLIPBOARD:
+			return "The clipboad couldn't be read or written to";
 
 			// OpenGL related
 		case CC_ERROR_GL_VERSION:

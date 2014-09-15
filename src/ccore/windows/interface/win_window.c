@@ -603,3 +603,32 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 
 	return CC_SUCCESS;
 }
+
+ccReturn ccWindowClipboardSetString()
+{
+	return CC_SUCCESS;
+}
+
+char *ccWindowClipboardGetString()
+{
+	HANDLE clipboardData;
+
+	if(OpenClipboard(WINDOW_DATA->winHandle) == FALSE) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return NULL;
+	}
+
+	clipboardData = GetClipboardData(CF_TEXT);
+	if(clipboardData == NULL) {
+		CloseClipboard();
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return NULL;
+	}
+
+	if(CloseClipboard() == FALSE) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return NULL;
+	}
+
+	return clipboardData;
+}

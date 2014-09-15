@@ -166,6 +166,8 @@ int main(int argc, char** argv)
 	ccWindowSetIcon(iconGetSize(), iconData);
 	free(iconData);
 	
+	ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
+
 	// Set the projection
 	setProjection();
 
