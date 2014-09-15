@@ -604,12 +604,12 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowClipboardSetString()
+ccReturn ccWindowClipboardSetString(char *data)
 {
 	return CC_SUCCESS;
 }
 
-char *ccWindowClipboardGetString()
+char *ccWindowClipboardGetString(void)
 {
 	HANDLE clipboardData;
 
