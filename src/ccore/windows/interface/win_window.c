@@ -537,15 +537,15 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *data)
 	unsigned long *row;
 
 	dataLen = size.x * size.y * sizeof(unsigned long);
-	totalLen = dataLen + 40 * 4;
+	totalLen = dataLen + 40 * sizeof(int32_t);
 	ccMalloc(bmp, totalLen);
 
 	struct {
-		int headerSize, imageWidth, imageHeight;
-		short colorPlane, bitsPerPixel;
-		int compressionMode, imageLength, obsolete[4];
+		int32_t headerSize, imageWidth, imageHeight;
+		int16_t colorPlane, bitsPerPixel;
+		int32_t compressionMode, imageLength, obsolete[4];
 	} header = {
-		40, size.x, size.y * 2, 1, 32, BI_RGB, dataLen, (int[]){ 0, 0, 0, 0 }
+		40, size.x, size.y * 2, 1, 32, BI_RGB, dataLen, (int32_t[]){ 0, 0, 0, 0 }
 	};
 
 	memcpy(bmp, &header, 40);
