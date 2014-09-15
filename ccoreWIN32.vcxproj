@@ -37,6 +37,7 @@
     <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
     <ClCompile Include="src\ccore\windows\utils\win_time.c" />
     <ClCompile Include="test\featuretest.c" />
+    <ClCompile Include="test\icon.c" />
     <ClCompile Include="test\tga.c" />
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +67,7 @@
     <ClInclude Include="src\ccore\windows\utils\win_net.h" />
     <ClInclude Include="src\ccore\windows\utils\win_thread.h" />
     <ClInclude Include="src\ccore\windows\utils\win_time.h" />
+    <ClInclude Include="test\icon.h" />
     <ClInclude Include="test\tga.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

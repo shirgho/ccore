@@ -529,6 +529,44 @@ ccReturn ccWindowBlink(void)
 	return CC_SUCCESS;
 }
 
+ccReturn ccWindowSetIcon(ccPoint size, unsigned long *data)
+{
+	HICON icon;
+	BYTE *bmp;
+	int y, dataLen, totalLen;
+	unsigned long *row;
+
+	dataLen = size.x * size.y * sizeof(unsigned long);
+	totalLen = dataLen + 40 * 4;
+	ccMalloc(bmp, totalLen);
+
+	struct {
+		int headerSize, imageWidth, imageHeight;
+		short colorPlane, bitsPerPixel;
+		int compressionMode, imageLength, obsolete[4];
+	} header = {
+		40, size.x, size.y * 2, 1, 32, BI_RGB, dataLen, (int[]){ 0, 0, 0, 0 }
+	};
+
+	memcpy(bmp, &header, 40);
+	// Windows flips it's icons vertical
+	y = size.y;
+	row = data;
+	while (y--){
+		memcpy(bmp + 40 + y * size.x * sizeof(unsigned long), row, size.x * sizeof(unsigned long));
+		row += size.x;
+	}
+
+	icon = CreateIconFromResource(bmp, totalLen, TRUE, 0x00030000);
+
+	SendMessage(WINDOW_DATA->winHandle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+	SendMessage(WINDOW_DATA->winHandle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+
+	free(bmp);
+
+	return CC_SUCCESS;
+}
+
 ccReturn ccWindowSetMousePosition(ccPoint target)
 {
 	POINT p;
