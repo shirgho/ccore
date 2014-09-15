@@ -233,7 +233,7 @@ int main(int argc, char** argv)
 							ccPrintf("\tThe current resolution is: %dx%d\n", ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->width, ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->height);
 							break;
 						default:
-							ccPrintf("Key \"%d\" pressed\n", ccWindowGetEvent().keyCode);
+							ccPrintf("Key \"%s\" pressed\n", ccEventKeyToStr(ccWindowGetEvent().keyCode));
 							break;
 					}
 

@@ -181,6 +181,7 @@ typedef struct {
 #define CC_KEY_DOWN KEYDEF(XK_Down, VK_DOWN)
 
 char ccEventKeyToChar(int key);
+char *ccEventKeyToStr(int key);
 
 #ifdef __cplusplus
 }
