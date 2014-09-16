@@ -46,7 +46,7 @@ const char *ccErrorString(ccError error)
 			return "A wrong argument is supplied to the function";
 
 		case CC_ERROR_WM:
-			return "The Window Manager couldn't process the function"
+			return "The Window Manager couldn't process the function";
 
 			// Display related
 		case CC_ERROR_DISPLAY_NONE:
