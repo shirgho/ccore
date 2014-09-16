@@ -41,4 +41,4 @@ typedef struct {
 	bool resizable;
 } ccWindow_x11;
 
-#define WINDOW_DATA ((ccWindow_x11*)_ccWindow->data)
+#define XWINDATA ((ccWindow_x11*)_ccWindow->data)

@@ -166,7 +166,7 @@ int main(int argc, char** argv)
 	ccWindowSetIcon(iconGetSize(), iconData);
 	free(iconData);
 
-	ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSetString("Hello clipboard =D")));
+	ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSetString("ccore clipboard test")));
 	ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
 
 	// Set the projection

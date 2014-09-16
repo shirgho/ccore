@@ -92,7 +92,7 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon);
 ccReturn ccWindowSetMousePosition(ccPoint target);
 ccReturn ccWindowSetMouseCursor(ccCursor cursor);
 
-ccReturn ccWindowClipboardSetString(char *data);
+ccReturn ccWindowClipboardSetString(const char *data);
 char *ccWindowClipboardGetString(void);
 
 // Getters

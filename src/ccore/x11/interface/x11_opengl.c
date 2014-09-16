@@ -20,14 +20,14 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 		return CC_FAIL;
 	}
 
-	visual = glXChooseVisual(WINDOW_DATA->XDisplay, WINDOW_DATA->XScreen, attrList);
+	visual = glXChooseVisual(XWINDATA->XDisplay, XWINDATA->XScreen, attrList);
 	if(CC_UNLIKELY(!visual)){
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	WINDOW_DATA->XContext = glXCreateContext(WINDOW_DATA->XDisplay, visual, NULL, GL_TRUE);
-	glXMakeCurrent(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow, WINDOW_DATA->XContext);
+	XWINDATA->XContext = glXCreateContext(XWINDATA->XDisplay, visual, NULL, GL_TRUE);
+	glXMakeCurrent(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XContext);
 
 	if(CC_UNLIKELY(glewInit() != GLEW_OK)){
 		ccErrorPush(CC_ERROR_GL_GLEWINIT);
@@ -39,29 +39,29 @@ ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor)
 
 ccReturn ccGLFreeContext(void)
 {
-	if(CC_UNLIKELY(WINDOW_DATA->XContext == NULL)){
+	if(CC_UNLIKELY(XWINDATA->XContext == NULL)){
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	glXDestroyContext(WINDOW_DATA->XDisplay, WINDOW_DATA->XContext);
+	glXDestroyContext(XWINDATA->XDisplay, XWINDATA->XContext);
 	
 	return CC_SUCCESS;
 }
 
 ccReturn ccGLSwapBuffers(void)
 {
-	if(CC_UNLIKELY(WINDOW_DATA->XContext == NULL)){
+	if(CC_UNLIKELY(XWINDATA->XContext == NULL)){
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	glXSwapBuffers(WINDOW_DATA->XDisplay, WINDOW_DATA->XWindow);
+	glXSwapBuffers(XWINDATA->XDisplay, XWINDATA->XWindow);
 
 	return CC_SUCCESS;
 }
 
 bool ccGLHasContext(void)
 {
-	return WINDOW_DATA->XContext != NULL;
+	return XWINDATA->XContext != NULL;
 }

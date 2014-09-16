@@ -12,7 +12,7 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 	XRROutputInfo *outputInfo;
 	XRRCrtcInfo *crtcInfo;
 
-	if(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display)){
+	if(CC_UNLIKELY(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display))){
 		ccPrintf("Xinerama not supported or active\n");
 		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
@@ -149,13 +149,12 @@ ccReturn ccDisplayInitialize(void)
 			continue;
 		}
 		snprintf(displayName, 64, ":%s", direntry->d_name + 1);
-		ccPrintf("X: Found root display %s\n", displayName);
 		display = XOpenDisplay(displayName);
 		if(display != NULL){
 			if(CC_UNLIKELY(ccXFindDisplaysXinerama(display, displayName))){
+				XCloseDisplay(display);
 				return CC_FAIL;
 			}
-			ccPrintf("X: %d displays found\n", _ccDisplays->amount);
 			XCloseDisplay(display);
 		}
 	}
