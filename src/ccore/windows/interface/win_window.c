@@ -606,6 +606,45 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 
 ccReturn ccWindowClipboardSetString(char *data)
 {
+	HGLOBAL clipboardData;
+	int dataLength;
+
+	dataLength = strlen(data) + 1;
+	printf("Strlen %d\n", dataLength);
+	if(dataLength <= 0) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_FAIL;
+	}
+
+	if(OpenClipboard(NULL) == FALSE) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_FAIL;
+	}
+
+	if(EmptyClipboard() == FALSE) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_FAIL;
+	}
+
+	clipboardData = GlobalAlloc(GMEM_MOVEABLE, dataLength);
+	if(clipboardData == NULL) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		CloseClipboard();
+		return CC_FAIL;
+	}
+
+	memcpy(GlobalLock(clipboardData), data, dataLength);
+	GlobalUnlock(clipboardData);
+
+	SetClipboardData(CF_TEXT, clipboardData);
+
+	if(CloseClipboard() == FALSE) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_FAIL;
+	}
+
+	GlobalFree(clipboardData);
+
 	return CC_SUCCESS;
 }
 
@@ -613,7 +652,7 @@ char *ccWindowClipboardGetString(void)
 {
 	HANDLE clipboardData;
 
-	if(OpenClipboard(WINDOW_DATA->winHandle) == FALSE) {
+	if(OpenClipboard(NULL) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
 		return NULL;
 	}

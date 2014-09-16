@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <Windows.h>
+#include <string.h>
 
 #include <ccore/window.h>
 
