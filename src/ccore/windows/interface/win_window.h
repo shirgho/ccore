@@ -39,6 +39,8 @@ typedef struct {
 
 	ccCursor cursor;
 
+	bool controlDown;
+
 	int flags;
 } ccWindow_win;
 

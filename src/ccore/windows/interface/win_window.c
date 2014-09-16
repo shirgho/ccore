@@ -148,9 +148,14 @@ static void processRid(HRAWINPUT rawInput)
 		}
 		else if(vkCode == VK_CONTROL) {
 			vkCode = raw->data.keyboard.Flags & RI_KEY_E0?VK_RCONTROL:VK_LCONTROL;
+
+			WINDOW_DATA->controlDown = raw->data.keyboard.Message == WM_KEYDOWN;
 		}
 		else if(vkCode == VK_SHIFT) {
 			vkCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX);
+		}
+		else if(raw->data.keyboard.Message == WM_KEYDOWN && vkCode == CC_KEY_V && WINDOW_DATA->controlDown) {
+			_ccEventStackPush((ccEvent){CC_EVENT_CLIPBOARD_PASTE});
 		}
 
 		//fill event with data
@@ -298,6 +303,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->lpb = NULL;
 	WINDOW_DATA->flags = flags;
 	WINDOW_DATA->cursor = CC_CURSOR_ARROW;
+	WINDOW_DATA->controlDown = false;
 
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;

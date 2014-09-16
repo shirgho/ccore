@@ -183,6 +183,9 @@ int main(int argc, char** argv)
 					// Quit when the close button is pressed
 					quit = true;
 					break;
+				case CC_EVENT_CLIPBOARD_PASTE:
+					printf("Paste!\n");
+					break;
 				case CC_EVENT_WINDOW_RESIZE:
 					// Adapt projection and contents to new size
 					setProjection();

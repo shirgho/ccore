@@ -53,6 +53,8 @@ typedef enum {
 	CC_EVENT_FOCUS_GAINED,
 	// The keyboard lost focus on the window
 	CC_EVENT_FOCUS_LOST,
+	// The clipboard pastes something into this window
+	CC_EVENT_CLIPBOARD_PASTE,
 	// Window close button was pressed
 	CC_EVENT_WINDOW_QUIT,
 	// Window has resized, new dimensions are stored in the window struct before the event fires
