@@ -155,7 +155,29 @@ static void processRid(HRAWINPUT rawInput)
 			vkCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX);
 		}
 		else if(raw->data.keyboard.Message == WM_KEYDOWN && vkCode == CC_KEY_V && WINDOW_DATA->controlDown) {
-			_ccEventStackPush((ccEvent){CC_EVENT_CLIPBOARD_PASTE});
+			UINT format = 0;
+			bool hasText = false;
+			ccEvent pasteEvent;
+
+			OpenClipboard(NULL);
+
+			while(format = EnumClipboardFormats(format)) {
+				if(format == CF_TEXT) {
+					hasText = true;
+				}
+			}
+
+			if(!hasText) {
+				pasteEvent.clipboardData = NULL;
+			}
+			else{
+				pasteEvent.clipboardData = GetClipboardData(CF_TEXT);
+			}
+
+			CloseClipboard();
+
+			pasteEvent.type = CC_EVENT_CLIPBOARD_PASTE;
+			_ccEventStackPush(pasteEvent);
 		}
 
 		//fill event with data
@@ -662,42 +684,4 @@ ccReturn ccWindowClipboardSetString(const char *data)
 	GlobalFree(clipboardData);
 
 	return CC_SUCCESS;
-}
-
-char *ccWindowClipboardGetString(void)
-{
-	HANDLE clipboardData;
-	UINT format = 0;
-	bool hasText = false;
-
-	if(OpenClipboard(NULL) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
-		return NULL;
-	}
-	
-	while(format = EnumClipboardFormats(format)) {
-		if(format == CF_TEXT) {
-			hasText = true;
-		}
-	}
-
-	if(!hasText) {
-		CloseClipboard();
-		return NULL;
-	}
-
-	clipboardData = GetClipboardData(CF_TEXT);
-	if(clipboardData == NULL) {
-		CloseClipboard();
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
-		return NULL;
-	}
-
-
-	if(CloseClipboard() == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
-		return NULL;
-	}
-
-	return clipboardData;
 }

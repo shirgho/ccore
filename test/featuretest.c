@@ -181,14 +181,11 @@ int main(int argc, char** argv)
 					quit = true;
 					break;
 				case CC_EVENT_CLIPBOARD_PASTE:
-					printf("Paste!\n");
+					ccPrintf("Clipboard string: %s\n", ccWindowGetEvent().clipboardData);
 					break;
 				case CC_EVENT_WINDOW_RESIZE:
 					// Adapt projection and contents to new size
 					setProjection();
-					break;
-				case CC_EVENT_CLIPBOARD_PASTE:
-					ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
 					break;
 				case CC_EVENT_KEY_DOWN:
 					if(logoScreen) break;
