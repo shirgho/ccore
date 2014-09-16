@@ -604,7 +604,7 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowClipboardSetString(char *data)
+ccReturn ccWindowClipboardSetString(const char *data)
 {
 	HGLOBAL clipboardData;
 	int dataLength;
