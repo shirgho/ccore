@@ -96,7 +96,7 @@ int hsquares, vsquares;
 
 // Threading variables and constants
 #define THREAD_COUNT 8
-#define THREAD_ITERATIONS 20
+#define THREAD_ITERATIONS 5
 int threadVal;
 ccMutex mutex;
 
@@ -166,9 +166,6 @@ int main(int argc, char** argv)
 	ccWindowSetIcon(iconGetSize(), iconData);
 	free(iconData);
 
-	ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSetString("ccore clipboard test")));
-	ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
-
 	// Set the projection
 	setProjection();
 
@@ -186,6 +183,9 @@ int main(int argc, char** argv)
 				case CC_EVENT_WINDOW_RESIZE:
 					// Adapt projection and contents to new size
 					setProjection();
+					break;
+				case CC_EVENT_CLIPBOARD_PASTE:
+					ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
 					break;
 				case CC_EVENT_KEY_DOWN:
 					if(logoScreen) break;
@@ -231,6 +231,9 @@ int main(int argc, char** argv)
 							ccWindowSetMousePosition((ccPoint){.x = ccWindowGetRect().width / 2, .y = ccWindowGetRect().height / 2});
 							ccWindowSetMouseCursor(CC_CURSOR_NONE);
 							break;	
+						case CC_KEY_RETURN:
+							ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSetString("ccore clipboard test")));
+							break;
 						case CC_KEY_P:
 							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowGetDisplay()->monitorName, ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
 							ccPrintf("\tThe current resolution is: %dx%d\n", ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->width, ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->height);
