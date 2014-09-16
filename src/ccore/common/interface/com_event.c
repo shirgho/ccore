@@ -49,6 +49,30 @@ char *ccEventKeyToStr(int key)
 		return "8";
 	case CC_KEY_9:
 		return "9";
+	case CC_KEY_F1:
+		return "F1";
+	case CC_KEY_F2:
+		return "F2";
+	case CC_KEY_F3:
+		return "F3";
+	case CC_KEY_F4:
+		return "F4";
+	case CC_KEY_F5:
+		return "F5";
+	case CC_KEY_F6:
+		return "F6";
+	case CC_KEY_F7:
+		return "F7";
+	case CC_KEY_F8:
+		return "F8";
+	case CC_KEY_F9:
+		return "F9";
+	case CC_KEY_F10:
+		return "F10";
+	case CC_KEY_F11:
+		return "F11";
+	case CC_KEY_F12:
+		return "F12";
 	case CC_KEY_NUM0:
 		return "Numpad 0";
 	case CC_KEY_NUM1:
