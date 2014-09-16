@@ -610,7 +610,6 @@ ccReturn ccWindowClipboardSetString(char *data)
 	int dataLength;
 
 	dataLength = strlen(data) + 1;
-	printf("Strlen %d\n", dataLength);
 	if(dataLength <= 0) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
 		return CC_FAIL;
@@ -623,20 +622,31 @@ ccReturn ccWindowClipboardSetString(char *data)
 
 	if(EmptyClipboard() == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		CloseClipboard();
 		return CC_FAIL;
 	}
 
 	clipboardData = GlobalAlloc(GMEM_MOVEABLE, dataLength);
 	if(clipboardData == NULL) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
-		CloseClipboard();
-		return CC_FAIL;
+		goto closeFreeAndFail;
 	}
 
 	memcpy(GlobalLock(clipboardData), data, dataLength);
-	GlobalUnlock(clipboardData);
+	if(GlobalUnlock(clipboardData)!=0) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		goto closeFreeAndFail;
+	}
 
 	SetClipboardData(CF_TEXT, clipboardData);
+	if(clipboardData == NULL) {
+		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+
+		closeFreeAndFail:
+		CloseClipboard();
+		GlobalFree(clipboardData);
+		return CC_FAIL;
+	}
 
 	if(CloseClipboard() == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
