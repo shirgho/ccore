@@ -150,15 +150,13 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 	return XGetKeyboardMapping(XWINDATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
-static int (*origXError)(Display *display, XErrorEvent *event) = NULL;
+static int (*origXError)(Display*, XErrorEvent*);
 static int handleXError(Display *display, XErrorEvent *event)
 {
 	ccPrintf("X error %d\n", event->error_code);
 	
 	ccErrorPush(CC_ERROR_WM);
-	if(origXError){
-		return origXError(display, event);
-	}
+
 	return 0;
 }
 
@@ -177,13 +175,11 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	ccMalloc(_ccWindow->data, sizeof(ccWindow_x11));
 	XWINDATA->windowFlags = flags;
 	
-#ifdef _DEBUG
 	origXError = XSetErrorHandler(handleXError);
-#endif
 
 	XWINDATA->XDisplay = XOpenDisplay(NULL);
 	if(CC_UNLIKELY(XWINDATA->XDisplay == NULL)){
-		ccErrorPush(CC_ERROR_WINDOW_CREATE);
+		ccErrorPush(CC_ERROR_WM);
 		return CC_FAIL;
 	}
 
@@ -232,6 +228,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 ccReturn ccWindowFree(void)
 {
 	ccAssert(_ccWindow);
+
+	XSetErrorHandler(origXError);
 
 	if(XWINDATA->XCursor != 0){
 		XFreeCursor(XWINDATA->XDisplay, XWINDATA->XCursor);
@@ -588,15 +586,11 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 ccReturn ccWindowClipboardSetString(const char *text)
 {
 	Atom atom;
+	size_t len;
 
 	ccAssert(_ccWindow);
 
-	if(!text){
-		text = "";
-	}
-
 	atom = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
-	XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (const unsigned char*)text, strlen(text));
 
 	if(atom != None && XGetSelectionOwner(XWINDATA->XDisplay, atom) != XWINDATA->XWindow){
 		XSetSelectionOwner(XWINDATA->XDisplay, atom, XWINDATA->XWindow, CurrentTime);
@@ -605,6 +599,10 @@ ccReturn ccWindowClipboardSetString(const char *text)
 	if(XGetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY) != XWINDATA->XWindow){
 		XSetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY, XWINDATA->XWindow, CurrentTime);
 	}
+
+	len = strlen(text);
+	XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
+	XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER1, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
 
 	return CC_SUCCESS;
 }
