@@ -661,9 +661,22 @@ ccReturn ccWindowClipboardSetString(char *data)
 char *ccWindowClipboardGetString(void)
 {
 	HANDLE clipboardData;
+	UINT format = 0;
+	bool hasText = false;
 
 	if(OpenClipboard(NULL) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return NULL;
+	}
+	
+	while(format = EnumClipboardFormats(format)) {
+		if(format == CF_TEXT) {
+			hasText = true;
+		}
+	}
+
+	if(!hasText) {
+		CloseClipboard();
 		return NULL;
 	}
 
@@ -673,6 +686,7 @@ char *ccWindowClipboardGetString(void)
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
 		return NULL;
 	}
+
 
 	if(CloseClipboard() == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);

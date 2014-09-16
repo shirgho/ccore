@@ -165,7 +165,7 @@ int main(int argc, char** argv)
 	iconData = iconGetData();
 	ccWindowSetIcon(iconGetSize(), iconData);
 	free(iconData);
-	
+
 	ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSetString("Hello clipboard =D")));
 	ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
 
