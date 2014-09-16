@@ -14,11 +14,11 @@ The features of ccore include support for the following:
 - Networking
 - Cross platform implementations for several OS specific functions
 
-###Shortcuts###
+###Documentation###
 - [How to install](https://github.com/jobtalle/ccore/wiki/Building-the-ccore-library)
 - [Example code](https://github.com/jobtalle/ccore/wiki/Examples)
 
-### TODO ###
+###TODO###
 **Major:**
 - Mac & BSD support
 - Sound
