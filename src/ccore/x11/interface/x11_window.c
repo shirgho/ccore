@@ -160,6 +160,67 @@ static int handleXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 
+static bool handleSelectionRequest(XSelectionRequestEvent *request)
+{
+	XSelectionEvent event;
+	Atom targets, supportedFormats[2];
+	int format;
+	unsigned long length, overflow;
+	unsigned char *data;
+
+	event.type = SelectionNotify;
+	event.selection = request->selection;
+	event.target = request->target;
+	event.property = None;
+	event.requestor = request->requestor;
+	event.time = request->time;
+
+	if(XGetWindowProperty(XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), XA_CUT_BUFFER0, 0, INT_MAX >> 2, False, request->target, &event.target, &format, &length, &overflow, &data) != Success){
+		ccErrorPush(CC_ERROR_WM);
+		return false;
+	}
+
+	targets = XInternAtom(XWINDATA->XDisplay, "TARGETS", False);
+	if(event.target == request->target){
+		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, event.target, format, PropModeReplace, data, length);
+	}else if(targets == request->target){
+		supportedFormats[0] = event.target;
+		supportedFormats[1] = targets;
+
+		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char*)supportedFormats, sizeof(supportedFormats) / sizeof(*supportedFormats));
+		event.property = request->property;
+	}
+	XSendEvent(XWINDATA->XDisplay, request->requestor, False, 0, (XEvent*)&event);
+
+	if(strlen((char*)data) == 0){
+		XSync(XWINDATA->XDisplay, False);
+		return false;
+	}
+
+	XFree(data);
+
+	return true;
+}
+
+static bool handleSelectionNotify(XSelectionEvent *event)
+{
+	Atom type;
+	int format;
+	unsigned long length, overflow;
+	unsigned char *data;
+
+	if(XGetWindowProperty(XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), XA_CUT_BUFFER0, 0, INT_MAX >> 2, True, AnyPropertyType, &type, &format, &length, &overflow, &data) != Success){
+		ccErrorPush(CC_ERROR_WM);
+		return false;
+	}
+
+	ccPrintf("\"%s\"\n", (char*)data);
+
+	XFree(data);
+
+	return true;	
+}
+
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Atom delete;
@@ -185,6 +246,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	XWINDATA->XScreen = DefaultScreen(XWINDATA->XDisplay);
 	XWINDATA->XNetIcon = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
+	XWINDATA->XClipboard = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
+	delete = XInternAtom(XWINDATA->XDisplay, "WM_DELETE_WINDOW", True);
 	XWINDATA->XWindow = XCreateWindow(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
 
 	// Choose types of events
@@ -199,7 +262,6 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XMapWindow(XWINDATA->XDisplay, XWINDATA->XWindow);
 	XStoreName(XWINDATA->XDisplay, XWINDATA->XWindow, title);
 
-	delete = XInternAtom(XWINDATA->XDisplay, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(XWINDATA->XDisplay, XWINDATA->XWindow, &delete, 1);
 
 	ccWindowUpdateDisplay();
@@ -388,6 +450,12 @@ bool ccWindowPollEvent(void)
 		case FocusOut:
 			_ccWindow->event.type = CC_EVENT_FOCUS_LOST;
 			break;
+		case SelectionRequest:
+			handleSelectionRequest(&event.xselectionrequest);
+			return false;
+		case SelectionNotify:
+			_ccWindow->event.type = CC_EVENT_CLIPBOARD_PASTE;
+			return handleSelectionNotify(&event.xselection);
 	}
 
 	return true;
@@ -585,24 +653,20 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 
 ccReturn ccWindowClipboardSetString(const char *text)
 {
-	Atom atom;
 	size_t len;
 
 	ccAssert(_ccWindow);
 
-	atom = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
+	len = strlen(text);
+	XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
 
-	if(atom != None && XGetSelectionOwner(XWINDATA->XDisplay, atom) != XWINDATA->XWindow){
-		XSetSelectionOwner(XWINDATA->XDisplay, atom, XWINDATA->XWindow, CurrentTime);
+	if(XWINDATA->XClipboard != None && XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->XClipboard) != XWINDATA->XWindow){
+		XSetSelectionOwner(XWINDATA->XDisplay, XWINDATA->XClipboard, XWINDATA->XWindow, CurrentTime);
 	}
 
 	if(XGetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY) != XWINDATA->XWindow){
 		XSetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY, XWINDATA->XWindow, CurrentTime);
 	}
-
-	len = strlen(text);
-	XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
-	XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER1, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
 
 	return CC_SUCCESS;
 }
