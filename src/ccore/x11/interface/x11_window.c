@@ -150,6 +150,17 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 	return XGetKeyboardMapping(XWINDATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
+static int (*origXError)(Display *display, XErrorEvent *event) = NULL;
+static int handleXError(Display *display, XErrorEvent *event)
+{
+	ccPrintf("X error %d\n", event->error_code);
+	
+	ccErrorPush(CC_ERROR_WM);
+	if(origXError){
+		return origXError(display, event);
+	}
+	return 0;
+}
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
@@ -165,6 +176,10 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	_ccWindow->rect = rect;
 	ccMalloc(_ccWindow->data, sizeof(ccWindow_x11));
 	XWINDATA->windowFlags = flags;
+	
+#ifdef _DEBUG
+	origXError = XSetErrorHandler(handleXError);
+#endif
 
 	XWINDATA->XDisplay = XOpenDisplay(NULL);
 	if(CC_UNLIKELY(XWINDATA->XDisplay == NULL)){
