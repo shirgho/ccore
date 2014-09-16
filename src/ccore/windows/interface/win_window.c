@@ -544,7 +544,7 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *data)
 		int16_t colorPlane, bitsPerPixel;
 		int32_t compressionMode, imageLength, obsolete[4];
 	} header = {
-		40, size.x, size.y * 2, 1, 32, BI_RGB, dataLen, (int32_t[]){ 0, 0, 0, 0 }
+		40, size.x, size.y * 2, 1, 32, BI_RGB, dataLen, *(int32_t[]){ 0, 0, 0, 0 }
 	};
 
 	memcpy(bmp, &header, 40);
