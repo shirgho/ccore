@@ -16,7 +16,9 @@
 #include <GL/glx.h>
 
 #include <ccore/window.h>
+#define CC_IGNORE_INCLUDE
 #include <ccore/gamepad.h>
+#undef CC_IGNORE_INCLUDE
 
 #include <ccore/types.h>
 #include <ccore/event.h>
