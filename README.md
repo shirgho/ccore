@@ -20,5 +20,5 @@ The features of ccore include support for the following:
 
 ###TODO###
 **Major:**
-- Mac & BSD support
+- Wayland, Mac & BSD support
 - Sound
