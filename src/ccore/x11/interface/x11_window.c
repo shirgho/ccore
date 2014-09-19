@@ -202,21 +202,36 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 	return true;
 }
 
-static bool handleSelectionNotify(XSelectionEvent *event)
+static bool handleSelectionNotify(XSelectionEvent *event, char **output)
 {
 	Atom type;
 	int format;
-	unsigned long length, overflow;
+	unsigned long length, overflow, read;
 	unsigned char *data;
 
-	if(XGetWindowProperty(XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), XA_CUT_BUFFER0, 0, INT_MAX >> 2, True, AnyPropertyType, &type, &format, &length, &overflow, &data) != Success){
-		ccErrorPush(CC_ERROR_WM);
-		return false;
+	read = 0;
+	while(XGetWindowProperty(XWINDATA->XDisplay, event->requestor, event->property, read >> 2, INT_MAX >> 2, True, AnyPropertyType, &type, &format, &length, &overflow, (unsigned char**)&data) == Success){
+		//TODO handle INCR
+		if(type == XWINDATA->XIncr){
+			continue;
+		}
+
+		if(length > 0){
+			if((read & 3) != 0){
+				ccPrintf("Clipboard error: read not a multiple of 4\n");
+				ccErrorPush(CC_ERROR_WM);
+				return false;
+			}
+		}
+
+		*output = strdup((char*)data);
+		
+		XFree(data);
+
+		if(overflow == 0){
+			break;
+		}
 	}
-
-	ccPrintf("\"%s\"\n", (char*)data);
-
-	XFree(data);
 
 	return true;	
 }
@@ -247,7 +262,9 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->XScreen = DefaultScreen(XWINDATA->XDisplay);
 	XWINDATA->XNetIcon = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
 	XWINDATA->XClipboard = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
+	XWINDATA->XIncr = XInternAtom(XWINDATA->XDisplay, "INCR", False);
 	delete = XInternAtom(XWINDATA->XDisplay, "WM_DELETE_WINDOW", True);
+
 	XWINDATA->XWindow = XCreateWindow(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
 
 	// Choose types of events
@@ -288,6 +305,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	if(XGetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY) != None){
 		clipboardSelectionProperty = XInternAtom(XWINDATA->XDisplay, "VT_SELECTION", False);
 		XConvertSelection(XWINDATA->XDisplay, XA_PRIMARY, XA_STRING, clipboardSelectionProperty, XWINDATA->XWindow, CurrentTime);
+	}else{
+		//TODO implement cutbuffers
 	}
 
 	return CC_SUCCESS;
@@ -462,8 +481,12 @@ bool ccWindowPollEvent(void)
 			handleSelectionRequest(&event.xselectionrequest);
 			return false;
 		case SelectionNotify:
-			_ccWindow->event.type = CC_EVENT_CLIPBOARD_PASTE;
-			return handleSelectionNotify(&event.xselection);
+			if(event.xselection.property != None){
+				_ccWindow->event.type = CC_EVENT_CLIPBOARD_PASTE;
+				return handleSelectionNotify(&event.xselection, &_ccWindow->event.clipboardData);
+			}else{
+				return false;
+			}
 	}
 
 	return true;
@@ -677,9 +700,4 @@ ccReturn ccWindowClipboardSetString(const char *text)
 	}
 
 	return CC_SUCCESS;
-}
-
-char *ccWindowClipboardGetString()
-{
-	return NULL;
 }

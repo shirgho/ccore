@@ -38,7 +38,7 @@ typedef struct {
 	GLXContext XContext;
 	XID XCursor;
 	Pixmap XEmptyCursorImage;
-	Atom XNetIcon, XClipboard;
+	Atom XNetIcon, XClipboard, XIncr;
 	int XScreen, windowFlags, XInputOpcode;
 	bool resizable;
 } ccWindow_x11;
