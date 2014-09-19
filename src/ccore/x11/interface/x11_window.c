@@ -223,7 +223,7 @@ static bool handleSelectionNotify(XSelectionEvent *event)
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	Atom delete;
+	Atom delete, clipboardSelectionProperty;
 
 	if(CC_UNLIKELY(_ccWindow != NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
@@ -251,7 +251,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->XWindow = XCreateWindow(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
 
 	// Choose types of events
-	XSelectInput(XWINDATA->XDisplay, XWINDATA->XWindow, ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
+	XSelectInput(XWINDATA->XDisplay, XWINDATA->XWindow, PropertyChangeMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
 
 	// Disable resizing
 	XWINDATA->resizable = true;
@@ -283,6 +283,12 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 	XWINDATA->XCursor = 0;
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
+
+	// Initialize clipboard
+	if(XGetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY) != None){
+		clipboardSelectionProperty = XInternAtom(XWINDATA->XDisplay, "VT_SELECTION", False);
+		XConvertSelection(XWINDATA->XDisplay, XA_PRIMARY, XA_STRING, clipboardSelectionProperty, XWINDATA->XWindow, CurrentTime);
+	}
 
 	return CC_SUCCESS;
 }
