@@ -204,7 +204,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 
 static bool handleSelectionNotify(XSelectionEvent *event, char **output)
 {
-	Atom type;
+	Atom type, selectionProperty;
 	int format;
 	unsigned long length, overflow, read;
 	unsigned char *data;
@@ -232,6 +232,9 @@ static bool handleSelectionNotify(XSelectionEvent *event, char **output)
 			break;
 		}
 	}
+		
+	selectionProperty = XInternAtom(XWINDATA->XDisplay, "VT_SELECTION", False);
+	XConvertSelection(XWINDATA->XDisplay, XWINDATA->XClipboard, XA_STRING, selectionProperty, XWINDATA->XWindow, CurrentTime);
 
 	return true;	
 }
@@ -302,9 +305,9 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 
 	// Initialize clipboard
-	if(XGetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY) != None){
+	if(XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->XClipboard) != None){
 		clipboardSelectionProperty = XInternAtom(XWINDATA->XDisplay, "VT_SELECTION", False);
-		XConvertSelection(XWINDATA->XDisplay, XA_PRIMARY, XA_STRING, clipboardSelectionProperty, XWINDATA->XWindow, CurrentTime);
+		XConvertSelection(XWINDATA->XDisplay, XWINDATA->XClipboard, XA_STRING, clipboardSelectionProperty, XWINDATA->XWindow, CurrentTime);
 	}else{
 		//TODO implement cutbuffers
 	}
