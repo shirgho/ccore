@@ -179,12 +179,12 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 {
 	XSelectionEvent event;
 	const Atom formats[] = { XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
-	const Atom targets[] = { XWINDATA->TARGETS, /*XWINDATA->MULTIPLE,*/ XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
+	const Atom targets[] = { XWINDATA->TARGETS, XWINDATA->MULTIPLE, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 	int i;
 
 	if(request->property == None){
-		// The requestor is a legacy client
+		// The requestor is a legacy client, we don't handle it
 		return false;
 	}
 
@@ -194,11 +194,11 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		event.property = request->property;
 	}else if(request->target == XWINDATA->MULTIPLE){
 		//TODO implement this and save target
+		ccPrintf("X handleSelectionRequest: multiple targets not implemented yet!\n");
 
 		event.property = None;
 	}else{
 		event.property = None;
-
 		for(i = 0; i < formatCount; i++){
 			if(request->target == formats[i]){
 				XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, request->target, 8, PropModeReplace, (unsigned char*)XWINDATA->XClipString, XWINDATA->XClipStringLength);
@@ -304,6 +304,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 	XWINDATA->XCursor = 0;
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
+	XWINDATA->XClipString = NULL;
+	XWINDATA->XClipStringLength = 0;
 
 	return CC_SUCCESS;
 }
@@ -473,6 +475,13 @@ bool ccWindowPollEvent(void)
 		case FocusOut:
 			_ccWindow->event.type = CC_EVENT_FOCUS_LOST;
 			break;
+		case SelectionClear:
+			if(XWINDATA->XClipString){
+				free(XWINDATA->XClipString);
+				XWINDATA->XClipString = NULL;
+				XWINDATA->XClipStringLength = 0;
+			}
+			return false;
 		case SelectionRequest:
 			handleSelectionRequest(&event.xselectionrequest);
 			return false;
