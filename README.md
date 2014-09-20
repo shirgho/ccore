@@ -15,8 +15,8 @@ The features of ccore include support for the following:
 - Cross platform implementations for several OS specific functions
 
 ###Documentation###
-- [How to install](https://github.com/jobtalle/ccore/wiki/Building-the-ccore-library)
-- [Example code](https://github.com/jobtalle/ccore/wiki/Examples)
+- [How to install](../../wiki/Building-the-ccore-library)
+- [Example code](../../wiki/Examples)
 
 ###TODO###
 **Major:**
