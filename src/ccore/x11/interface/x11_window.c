@@ -160,88 +160,84 @@ static int handleXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 
+static unsigned long getWindowProperty(Window window, Atom property, Atom type, unsigned char **value)
+{
+	Atom actualType;
+	int actualFormat;
+	unsigned long length, overflow;
+
+	XGetWindowProperty(XWINDATA->XDisplay, window, property, 0, LONG_MAX, False, type, &actualType, &actualFormat, &length, &overflow, value);
+
+	if(type != AnyPropertyType && actualType != type){
+		return 0;
+	}
+
+	return length;
+}
+
 static bool handleSelectionRequest(XSelectionRequestEvent *request)
 {
 	XSelectionEvent event;
-	Atom targets, supportedFormats[2];
-	int format;
-	unsigned long length, overflow;
-	unsigned char *data;
+	const Atom formats[] = { XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
+	const Atom targets[] = { XWINDATA->TARGETS, XWINDATA->MULTIPLE, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
+	const int formatCount = sizeof(formats) / sizeof(formats[0]);
+	int i;
+
+	if(request->property == None){
+		// The requestor is a legacy client
+		return false;
+	}
+
+	if(request->target == XWINDATA->TARGETS){
+		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char*)targets, sizeof(targets) / sizeof(targets[0]));
+
+		event.property = request->property;
+	}else if(request->target == XWINDATA->MULTIPLE){
+		//TODO implement this
+
+		event.property = None;
+	}else{
+		event.property = None;
+
+		for(i = 0; i < formatCount; i++){
+			if(request->target == formats[i]){
+				XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, request->target, 8, PropModeReplace, (unsigned char*)XWINDATA->XClipString, XWINDATA->XClipStringLength);
+
+				event.property = request->property;
+				break;
+			}
+		}
+	}
 
 	event.type = SelectionNotify;
 	event.selection = request->selection;
 	event.target = request->target;
-	event.property = None;
+	event.display = request->display;
 	event.requestor = request->requestor;
 	event.time = request->time;
 
-	if(XGetWindowProperty(XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), XA_CUT_BUFFER0, 0, INT_MAX >> 2, False, request->target, &event.target, &format, &length, &overflow, &data) != Success){
-		ccErrorPush(CC_ERROR_WM);
-		return false;
-	}
-
-	targets = XInternAtom(XWINDATA->XDisplay, "TARGETS", False);
-	if(event.target == request->target){
-		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, event.target, format, PropModeReplace, data, length);
-	}else if(targets == request->target){
-		supportedFormats[0] = event.target;
-		supportedFormats[1] = targets;
-
-		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char*)supportedFormats, sizeof(supportedFormats) / sizeof(*supportedFormats));
-		event.property = request->property;
-	}
 	XSendEvent(XWINDATA->XDisplay, request->requestor, False, 0, (XEvent*)&event);
-
-	if(strlen((char*)data) == 0){
-		XSync(XWINDATA->XDisplay, False);
-		return false;
-	}
-
-	XFree(data);
 
 	return true;
 }
 
 static bool handleSelectionNotify(XSelectionEvent *event, char **output)
 {
-	Atom type, selectionProperty;
-	int format;
-	unsigned long length, overflow, read;
-	unsigned char *data;
+	unsigned long length;
+	char *data;
 
-	read = 0;
-	while(XGetWindowProperty(XWINDATA->XDisplay, event->requestor, event->property, read >> 2, INT_MAX >> 2, True, AnyPropertyType, &type, &format, &length, &overflow, (unsigned char**)&data) == Success){
-		//TODO handle INCR
-		if(type == XWINDATA->XIncr){
-			continue;
-		}
+	ccPrintf("XNotify\n");
 
-		if(length > 0){
-			if((read & 3) != 0){
-				ccPrintf("Clipboard error: read not a multiple of 4\n");
-				ccErrorPush(CC_ERROR_WM);
-				return false;
-			}
-		}
+	length = getWindowProperty(event->requestor, event->property, event->target, (unsigned char**)&data);
 
-		*output = strdup((char*)data);
-		
-		XFree(data);
-
-		if(overflow == 0){
-			break;
-		}
-	}
-		
-	selectionProperty = XInternAtom(XWINDATA->XDisplay, "VT_SELECTION", False);
-	XConvertSelection(XWINDATA->XDisplay, XWINDATA->XClipboard, XA_STRING, selectionProperty, XWINDATA->XWindow, CurrentTime);
+	ccPrintf("%d: \"%s\"\n", length, data);
 
 	return true;	
 }
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	Atom delete, clipboardSelectionProperty;
+	Atom DELETE, clipboardSelectionProperty;
 
 	if(CC_UNLIKELY(_ccWindow != NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
@@ -263,10 +259,15 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	XWINDATA->XScreen = DefaultScreen(XWINDATA->XDisplay);
-	XWINDATA->XNetIcon = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
-	XWINDATA->XClipboard = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
-	XWINDATA->XIncr = XInternAtom(XWINDATA->XDisplay, "INCR", False);
-	delete = XInternAtom(XWINDATA->XDisplay, "WM_DELETE_WINDOW", True);
+
+	XWINDATA->WM_ICON = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
+	XWINDATA->CLIPBOARD = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
+	XWINDATA->INCR = XInternAtom(XWINDATA->XDisplay, "INCR", False);
+	XWINDATA->TARGETS = XInternAtom(XWINDATA->XDisplay, "TARGETS", False);
+	XWINDATA->MULTIPLE = XInternAtom(XWINDATA->XDisplay, "MULTIPLE", False);
+	XWINDATA->UTF8_STRING = XInternAtom(XWINDATA->XDisplay, "UTF8_STRING", False);
+	XWINDATA->COMPOUND_STRING = XInternAtom(XWINDATA->XDisplay, "COMPOUND_STRING", False);
+	DELETE = XInternAtom(XWINDATA->XDisplay, "WM_DELETE_WINDOW", True);
 
 	XWINDATA->XWindow = XCreateWindow(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
 
@@ -282,7 +283,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XMapWindow(XWINDATA->XDisplay, XWINDATA->XWindow);
 	XStoreName(XWINDATA->XDisplay, XWINDATA->XWindow, title);
 
-	XSetWMProtocols(XWINDATA->XDisplay, XWINDATA->XWindow, &delete, 1);
+	XSetWMProtocols(XWINDATA->XDisplay, XWINDATA->XWindow, &DELETE, 1);
 
 	ccWindowUpdateDisplay();
 
@@ -304,13 +305,15 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->XCursor = 0;
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 
+	/*
 	// Initialize clipboard
-	if(XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->XClipboard) != None){
+	if(XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) != None){
 		clipboardSelectionProperty = XInternAtom(XWINDATA->XDisplay, "VT_SELECTION", False);
-		XConvertSelection(XWINDATA->XDisplay, XWINDATA->XClipboard, XA_STRING, clipboardSelectionProperty, XWINDATA->XWindow, CurrentTime);
+		XConvertSelection(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, XA_STRING, clipboardSelectionProperty, XWINDATA->XWindow, CurrentTime);
 	}else{
 		//TODO implement cutbuffers
 	}
+	*/
 
 	return CC_SUCCESS;
 }
@@ -644,7 +647,7 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon)
 	data[1] = (unsigned long)size.y;
 	memcpy(data + 2, icon, dataLen * sizeof(unsigned long));
 
-	XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XNetIcon, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totalLen); 
+	XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totalLen); 
 
 	free(data);
 
@@ -687,20 +690,23 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 
 ccReturn ccWindowClipboardSetString(const char *text)
 {
-	size_t len;
-
 	ccAssert(_ccWindow);
 
-	len = strlen(text);
-	XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
+	//len = strlen(text);
+	//XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
 
-	if(XWINDATA->XClipboard != None && XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->XClipboard) != XWINDATA->XWindow){
-		XSetSelectionOwner(XWINDATA->XDisplay, XWINDATA->XClipboard, XWINDATA->XWindow, CurrentTime);
+	if(XWINDATA->CLIPBOARD != None && XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) != XWINDATA->XWindow){
+		XSetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, XWINDATA->XWindow, CurrentTime);
 	}
 
-	if(XGetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY) != XWINDATA->XWindow){
-		XSetSelectionOwner(XWINDATA->XDisplay, XA_PRIMARY, XWINDATA->XWindow, CurrentTime);
+	XWINDATA->XClipStringLength = strlen(text);
+	if(!XWINDATA->XClipString){
+		ccMalloc(XWINDATA->XClipString, XWINDATA->XClipStringLength);
+	}else{
+		ccRealloc(XWINDATA->XClipString, XWINDATA->XClipStringLength);
 	}
+
+	XWINDATA->XClipString = strdup(text);
 
 	return CC_SUCCESS;
 }
