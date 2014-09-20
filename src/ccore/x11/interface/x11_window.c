@@ -179,7 +179,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 {
 	XSelectionEvent event;
 	const Atom formats[] = { XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
-	const Atom targets[] = { XWINDATA->TARGETS, XWINDATA->MULTIPLE, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
+	const Atom targets[] = { XWINDATA->TARGETS, /*XWINDATA->MULTIPLE,*/ XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 	int i;
 
@@ -193,7 +193,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 
 		event.property = request->property;
 	}else if(request->target == XWINDATA->MULTIPLE){
-		//TODO implement this
+		//TODO implement this and save target
 
 		event.property = None;
 	}else{
@@ -237,7 +237,7 @@ static bool handleSelectionNotify(XSelectionEvent *event, char **output)
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	Atom DELETE, clipboardSelectionProperty;
+	Atom DELETE;
 
 	if(CC_UNLIKELY(_ccWindow != NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
@@ -304,16 +304,6 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 	XWINDATA->XCursor = 0;
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
-
-	/*
-	// Initialize clipboard
-	if(XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) != None){
-		clipboardSelectionProperty = XInternAtom(XWINDATA->XDisplay, "VT_SELECTION", False);
-		XConvertSelection(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, XA_STRING, clipboardSelectionProperty, XWINDATA->XWindow, CurrentTime);
-	}else{
-		//TODO implement cutbuffers
-	}
-	*/
 
 	return CC_SUCCESS;
 }
@@ -692,9 +682,6 @@ ccReturn ccWindowClipboardSetString(const char *text)
 {
 	ccAssert(_ccWindow);
 
-	//len = strlen(text);
-	//XChangeProperty(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (unsigned char*)text, len);
-
 	if(XWINDATA->CLIPBOARD != None && XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) != XWINDATA->XWindow){
 		XSetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, XWINDATA->XWindow, CurrentTime);
 	}
@@ -705,7 +692,6 @@ ccReturn ccWindowClipboardSetString(const char *text)
 	}else{
 		ccRealloc(XWINDATA->XClipString, XWINDATA->XClipStringLength);
 	}
-
 	XWINDATA->XClipString = strdup(text);
 
 	return CC_SUCCESS;
