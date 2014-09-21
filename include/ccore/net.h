@@ -44,7 +44,6 @@ typedef int						ccSocket;
 typedef socklen_t 				ccSocklen_t;
 
 #define ccNetClose 				close
-#define ccNetInet_addr			inet_addr
 #define ccNetInet_lnaof			inet_lnaof
 #define ccNetInet_makeaddr		inet_makeaddr
 #define ccNetInet_netof			inet_netof
@@ -66,7 +65,6 @@ typedef int						ccSocklen_t;
 typedef SSIZE_T					ssize_t;
 
 #define ccNetClose 				closesocket
-#define ccNetInet_addr			InetAddr
 #define ccNetInet_lnaof			InetLnaof
 #define ccNetInet_makeaddr		InetMakeaddr
 #define ccNetInet_netof			InetNetof
