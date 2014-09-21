@@ -75,6 +75,8 @@ typedef SSIZE_T					ssize_t;
 #define ccNetInet_pton			InetPton
 #define ccNetInet_ntop			InetNtop
 
+#define s_addr					S_un.S_addr
+
 #endif
 
 #define ccNetFcntl				fcntl
