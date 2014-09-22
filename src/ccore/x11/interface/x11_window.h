@@ -40,7 +40,7 @@ typedef struct {
 	Pixmap XEmptyCursorImage;
 	char *XClipString;
 	size_t XClipStringLength;
-	Atom WM_ICON, CLIPBOARD, INCR, TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
+	Atom CCORE_SELECTION, WM_ICON, CLIPBOARD, INCR, TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
 	int XScreen, windowFlags, XInputOpcode;
 	bool resizable;
 } ccWindow_x11;

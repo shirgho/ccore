@@ -153,11 +153,29 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 static int (*origXError)(Display*, XErrorEvent*);
 static int handleXError(Display *display, XErrorEvent *event)
 {
-	ccPrintf("X error %d\n", event->error_code);
-	
+	char error[256];
+
+	XGetErrorText(XWINDATA->XDisplay, event->error_code, error, sizeof(error));
+	ccPrintf("X error:\n\t%s\n", error);
+
 	ccErrorPush(CC_ERROR_WM);
 
 	return 0;
+}
+
+static unsigned long getWindowProperty(Window window, Atom property, Atom type, unsigned char **value)
+{
+	Atom actualType;
+	int actualFormat;
+	unsigned long length, overflow;
+
+	XGetWindowProperty(XWINDATA->XDisplay, window, property, 0, LONG_MAX, False, type, &actualType, &actualFormat, &length, &overflow, value);
+
+	if(type != AnyPropertyType && type != actualType){
+		return 0;
+	}
+
+	return length;
 }
 
 static bool handleSelectionRequest(XSelectionRequestEvent *request)
@@ -220,7 +238,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	_ccWindow->rect = rect;
 	ccMalloc(_ccWindow->data, sizeof(ccWindow_x11));
 	XWINDATA->windowFlags = flags;
-	
+
 	origXError = XSetErrorHandler(handleXError);
 
 	XWINDATA->XDisplay = XOpenDisplay(NULL);
@@ -238,6 +256,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->MULTIPLE = XInternAtom(XWINDATA->XDisplay, "MULTIPLE", False);
 	XWINDATA->UTF8_STRING = XInternAtom(XWINDATA->XDisplay, "UTF8_STRING", False);
 	XWINDATA->COMPOUND_STRING = XInternAtom(XWINDATA->XDisplay, "COMPOUND_STRING", False);
+	XWINDATA->CCORE_SELECTION = XInternAtom(XWINDATA->XDisplay, "CCORE_SELECTION", False);
 	DELETE = XInternAtom(XWINDATA->XDisplay, "WM_DELETE_WINDOW", True);
 
 	XWINDATA->XWindow = XCreateWindow(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
@@ -605,7 +624,7 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon)
 	dataLen = size.x * size.y;
 	totalLen = dataLen + 2;
 	ccMalloc(data, totalLen * sizeof(unsigned long));
-	
+
 	data[0] = (unsigned long)size.x;
 	data[1] = (unsigned long)size.y;
 	memcpy(data + 2, icon, dataLen * sizeof(unsigned long));
@@ -672,5 +691,50 @@ ccReturn ccWindowClipboardSetString(const char *text)
 
 char *ccWindowClipboardGetString()
 {
+	const Atom formats[] = { XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
+	const int formatCount = sizeof(formats) / sizeof(formats[0]);
+
+	Window owner;
+	XEvent event;
+	unsigned char *data;
+	char *output;
+	int i;
+	unsigned long length;
+
+	ccAssert(_ccWindow);
+
+	owner = XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD);
+	if(owner == XWINDATA->XWindow){
+		return XWINDATA->XClipString;
+	}else if(owner == None){
+		return NULL;
+	}
+
+	for(i = 0; i < formatCount; i++){
+		XConvertSelection(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, formats[i], XWINDATA->CCORE_SELECTION, XWINDATA->XWindow, CurrentTime);
+
+		while(XCheckTypedEvent(XWINDATA->XDisplay, SelectionNotify, &event));
+
+		length = getWindowProperty(event.xselection.requestor, event.xselection.property, event.xselection.target, &data);
+
+		if(event.xselection.property == None || length == 0){
+			XFree(data);
+			continue;
+		}
+
+		output = malloc(length + 1);
+		if(!output){
+			XFree(output);
+			ccErrorPush(CC_ERROR_MEMORY_OVERFLOW);
+			return NULL;
+		}
+		memcpy(output, data, length);
+		output[length] = '\0';
+
+		XFree(data);
+		return output;
+
+	}
+
 	return NULL;
 }
