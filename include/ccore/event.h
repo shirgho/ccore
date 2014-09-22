@@ -80,7 +80,6 @@ typedef struct {
 		unsigned int keyCode;
 		double scrollDelta;
 		ccGamepadEvent gamepadEvent;
-		char *clipboardData;
 	};
 } ccEvent;
 

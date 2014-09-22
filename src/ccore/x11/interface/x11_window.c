@@ -160,21 +160,6 @@ static int handleXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 
-static unsigned long getWindowProperty(Window window, Atom property, Atom type, unsigned char **value)
-{
-	Atom actualType;
-	int actualFormat;
-	unsigned long length, overflow;
-
-	XGetWindowProperty(XWINDATA->XDisplay, window, property, 0, LONG_MAX, False, type, &actualType, &actualFormat, &length, &overflow, value);
-
-	if(type != AnyPropertyType && actualType != type){
-		return 0;
-	}
-
-	return length;
-}
-
 static bool handleSelectionRequest(XSelectionRequestEvent *request)
 {
 	XSelectionEvent event;
@@ -219,20 +204,6 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 	XSendEvent(XWINDATA->XDisplay, request->requestor, False, 0, (XEvent*)&event);
 
 	return true;
-}
-
-static bool handleSelectionNotify(XSelectionEvent *event, char **output)
-{
-	unsigned long length;
-	char *data;
-
-	ccPrintf("XNotify\n");
-
-	length = getWindowProperty(event->requestor, event->property, event->target, (unsigned char**)&data);
-
-	ccPrintf("%d: \"%s\"\n", length, data);
-
-	return true;	
 }
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
@@ -484,9 +455,6 @@ bool ccWindowPollEvent(void)
 			return false;
 		case SelectionRequest:
 			handleSelectionRequest(&event.xselectionrequest);
-			return false;
-		case SelectionNotify:
-			handleSelectionNotify(&event.xselection, &_ccWindow->event.clipboardData);
 			return false;
 	}
 
