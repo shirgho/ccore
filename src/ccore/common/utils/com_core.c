@@ -18,7 +18,7 @@ void ccInitialize(void)
 	ccDisplayInitialize();
 }
 
-void ccFreeAll(void)
+void ccFree(void)
 {
 	_ccErrorFree();
 	_ccFileFree();

@@ -340,7 +340,7 @@ int main(int argc, char** argv)
 	ccDisplayRevertModes();
 	
 	// Free memory before terminating
-	ccFreeAll();
+	ccFree();
 
 	free(squareAlpha);
 

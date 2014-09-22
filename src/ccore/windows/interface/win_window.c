@@ -662,7 +662,6 @@ char *ccWindowClipboardGetString(void)
 {
 	UINT format = 0;
 	bool hasText = false;
-	ccEvent pasteEvent;
 	char *str;
 
 	OpenClipboard(NULL);
