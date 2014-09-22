@@ -93,7 +93,7 @@ ccReturn ccWindowSetMousePosition(ccPoint target);
 ccReturn ccWindowSetMouseCursor(ccCursor cursor);
 
 ccReturn ccWindowClipboardSetString(const char *data);
-char *ccWindowClipboardGetString();
+char *ccWindowClipboardGetString(void);
 
 // Getters
 ccEvent ccWindowGetEvent(void);
