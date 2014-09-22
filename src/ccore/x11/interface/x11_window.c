@@ -155,10 +155,10 @@ static int handleXError(Display *display, XErrorEvent *event)
 {
 	char error[256];
 
-	XGetErrorText(XWINDATA->XDisplay, event->error_code, error, sizeof(error));
-	ccPrintf("X error:\n\t%s\n", error);
-
 	ccErrorPush(CC_ERROR_WM);
+
+	XGetErrorText(XWINDATA->XDisplay, event->error_code, error, sizeof(error));
+	ccPrintf("X message: %s\n", error);
 
 	return 0;
 }
