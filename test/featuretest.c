@@ -27,7 +27,9 @@
 #endif
 
 // Net needs to be included first, or else windows is going to cry when winsock.h is included before winsock2.h
-#include <ccore/window.h> // Also includes event.h and display.h, these do not need to be included explicitly
+#include <ccore/display.h>
+#include <ccore/window.h>
+#include <ccore/event.h>
 #include <ccore/opengl.h>
 #include <ccore/time.h>
 #include <ccore/file.h>
@@ -109,6 +111,8 @@ int main(int argc, char** argv)
 	// This variable tells the message loop when to quit
 	bool quit = false;
 
+	ccInitialize();
+
 	// Demonstrate threading
 	ccThread thread[THREAD_COUNT];
 	int threadData = 42;
@@ -130,9 +134,6 @@ int main(int argc, char** argv)
 	ccThreadMutexFree(mutex);
 
 	ccPrintf("%d threads finished counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
-
-	// Displays must be detected before creating the window and using display functions
-	ccDisplayInitialize();
 
 	// Create a centered window that cannot be resized
 	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);

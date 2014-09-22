@@ -148,36 +148,9 @@ static void processRid(HRAWINPUT rawInput)
 		}
 		else if(vkCode == VK_CONTROL) {
 			vkCode = raw->data.keyboard.Flags & RI_KEY_E0?VK_RCONTROL:VK_LCONTROL;
-
-			WINDOW_DATA->controlDown = raw->data.keyboard.Message == WM_KEYDOWN;
 		}
 		else if(vkCode == VK_SHIFT) {
 			vkCode = MapVirtualKey(raw->data.keyboard.MakeCode, MAPVK_VSC_TO_VK_EX);
-		}
-		else if(raw->data.keyboard.Message == WM_KEYDOWN && vkCode == CC_KEY_V && WINDOW_DATA->controlDown) {
-			UINT format = 0;
-			bool hasText = false;
-			ccEvent pasteEvent;
-
-			OpenClipboard(NULL);
-
-			while(format = EnumClipboardFormats(format)) {
-				if(format == CF_TEXT) {
-					hasText = true;
-				}
-			}
-
-			if(!hasText) {
-				pasteEvent.clipboardData = NULL;
-			}
-			else{
-				pasteEvent.clipboardData = GetClipboardData(CF_TEXT);
-			}
-
-			CloseClipboard();
-
-			pasteEvent.type = CC_EVENT_CLIPBOARD_PASTE;
-			_ccEventStackPush(pasteEvent);
 		}
 
 		//fill event with data
@@ -325,7 +298,6 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->lpb = NULL;
 	WINDOW_DATA->flags = flags;
 	WINDOW_DATA->cursor = CC_CURSOR_ARROW;
-	WINDOW_DATA->controlDown = false;
 
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
@@ -684,4 +656,26 @@ ccReturn ccWindowClipboardSetString(const char *data)
 	GlobalFree(clipboardData);
 
 	return CC_SUCCESS;
+}
+
+char *ccWindowClipboardGetString(void)
+{
+	UINT format = 0;
+	bool hasText = false;
+	ccEvent pasteEvent;
+	char *str;
+
+	OpenClipboard(NULL);
+
+	while(format = EnumClipboardFormats(format)) {
+		if(format == CF_TEXT) {
+			hasText = true;
+		}
+	}
+
+	str = hasText?GetClipboardData(CF_TEXT):NULL;
+
+	CloseClipboard();
+
+	return str;
 }
