@@ -180,9 +180,6 @@ int main(int argc, char** argv)
 					// Quit when the close button is pressed
 					quit = true;
 					break;
-				case CC_EVENT_CLIPBOARD_PASTE:
-					ccPrintf("Clipboard string: %s\n", ccWindowGetEvent().clipboardData);
-					break;
 				case CC_EVENT_WINDOW_RESIZE:
 					// Adapt projection and contents to new size
 					setProjection();
@@ -191,6 +188,9 @@ int main(int argc, char** argv)
 					if(logoScreen) break;
 
 					switch(ccWindowGetEvent().keyCode) {
+						case CC_KEY_V:
+							ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
+							break;
 						case CC_KEY_ESCAPE:
 							// Quit when the escape key is pressed
 							quit = true;

@@ -486,12 +486,8 @@ bool ccWindowPollEvent(void)
 			handleSelectionRequest(&event.xselectionrequest);
 			return false;
 		case SelectionNotify:
-			if(event.xselection.property != None){
-				_ccWindow->event.type = CC_EVENT_CLIPBOARD_PASTE;
-				return handleSelectionNotify(&event.xselection, &_ccWindow->event.clipboardData);
-			}else{
-				return false;
-			}
+			handleSelectionNotify(&event.xselection, &_ccWindow->event.clipboardData);
+			return false;
 	}
 
 	return true;
@@ -701,7 +697,12 @@ ccReturn ccWindowClipboardSetString(const char *text)
 	}else{
 		ccRealloc(XWINDATA->XClipString, XWINDATA->XClipStringLength);
 	}
-	XWINDATA->XClipString = strdup(text);
+	strcpy(XWINDATA->XClipString, text);
 
 	return CC_SUCCESS;
+}
+
+char *ccWindowClipboardGetString()
+{
+	return NULL;
 }
