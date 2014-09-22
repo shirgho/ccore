@@ -14,16 +14,12 @@ void ccInitialize(void)
 	_ccDisplays = NULL;
 	_ccNet = false;
 	_ccWindow = NULL;
-
-	ccDisplayInitialize();
 }
 
-void ccFreeAll(void)
+void ccFree(void)
 {
 	_ccErrorFree();
 	_ccFileFree();
-
-	ccDisplayFree();
 
 	if(_ccGamepads != NULL) ccGamepadFree();
 	if(_ccNet) ccNetFree();
@@ -31,4 +27,5 @@ void ccFreeAll(void)
 		if(ccGLHasContext()) ccGLFreeContext();
 		ccWindowFree();
 	}
+	if(_ccDisplays != NULL) ccDisplayFree();
 }

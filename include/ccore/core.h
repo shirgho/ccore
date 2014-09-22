@@ -45,4 +45,4 @@
 #endif
 
 void ccInitialize(void); // Initialize ccore
-void ccFreeAll(void); // Free all memory in use by ccore
+void ccFree(void); // Free ccore
