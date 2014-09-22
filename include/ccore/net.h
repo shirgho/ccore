@@ -146,6 +146,8 @@ ccReturn ccNetGethostname(char *name, size_t len);
 ccReturn ccNetGetaddrinfo(const char *name, const char *service, const ccAddrinfo *req, ccAddrinfo **pai);
 ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, ccSocklen_t hostlen, char *serv, ccSocklen_t servlen, int flags);
 
+bool _ccNet;
+
 #ifdef __cplusplus
 }
 #endif

@@ -44,4 +44,5 @@
 #define CC_UNLIKELY(x) (x)
 #endif
 
+void ccInitialize(void); // Initialize ccore
 void ccFreeAll(void); // Free all memory in use by ccore
