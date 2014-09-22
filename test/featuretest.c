@@ -136,6 +136,7 @@ int main(int argc, char** argv)
 	ccPrintf("%d threads finished counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
 	// Create a centered window that cannot be resized
+	ccDisplayInitialize();
 	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
 	ccWindowCenter();
 
