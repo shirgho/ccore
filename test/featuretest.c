@@ -250,7 +250,7 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_FOCUS_LOST:
-					ccWindowBlink();
+					ccWindowSetBlink();
 					break;
 				case CC_EVENT_MOUSE_UP:
 					if(logoScreen && ccWindowEventGet().mouseButton == CC_MOUSE_BUTTON_LEFT) {

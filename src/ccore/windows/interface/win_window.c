@@ -515,7 +515,7 @@ ccReturn ccWindowSetCentered(void)
 	}, false);
 }
 
-ccReturn ccWindowBlink(void)
+ccReturn ccWindowSetBlink(void)
 {
 	FLASHWINFO flash;
 	flash.cbSize = sizeof(FLASHWINFO);

@@ -604,7 +604,7 @@ ccReturn ccWindowSetCentered(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowBlink(void)
+ccReturn ccWindowSetBlink(void)
 {
 	ccAssert(_ccWindow);
 
