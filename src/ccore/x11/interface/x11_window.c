@@ -320,7 +320,7 @@ ccReturn ccWindowFree(void)
 	return CC_SUCCESS;
 }
 
-bool ccWindowPollEvent(void)
+bool ccWindowEventPoll(void)
 {
 	XEvent event;
 	XWindowAttributes _ccWindowAttributes;
@@ -532,10 +532,10 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 			if(current->y < topDisplay->y){
 				topDisplay = current;
 			}
-			if(current->x + ccDisplayGetResolutionCurrent(current)->width > rightDisplay->x + ccDisplayGetResolutionCurrent(rightDisplay)->width){ 
+			if(current->x + ccDisplayResolutionGetCurrent(current)->width > rightDisplay->x + ccDisplayResolutionGetCurrent(rightDisplay)->width){ 
 				rightDisplay = current;
 			}
-			if(current->y + ccDisplayGetResolutionCurrent(current)->height > bottomDisplay->y + ccDisplayGetResolutionCurrent(bottomDisplay)->width){ 
+			if(current->y + ccDisplayResolutionGetCurrent(current)->height > bottomDisplay->y + ccDisplayResolutionGetCurrent(bottomDisplay)->width){ 
 				bottomDisplay = current;
 			}
 		}
@@ -592,7 +592,7 @@ ccReturn ccWindowCenter(void)
 		return CC_FAIL;
 	}
 
-	currentResolution = ccDisplayGetResolutionCurrent(_ccWindow->display);
+	currentResolution = ccDisplayResolutionGetCurrent(_ccWindow->display);
 
 	newRect.x = (currentResolution->width - _ccWindow->rect.width) >> 1;
 	newRect.y = (currentResolution->height - _ccWindow->rect.height) >> 1;
@@ -611,7 +611,7 @@ ccReturn ccWindowBlink(void)
 	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
 }
 
-ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon)
+ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon)
 {
 	unsigned long *data;
 	size_t dataLen, totalLen;
@@ -638,7 +638,7 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *icon)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetMousePosition(ccPoint target)
+ccReturn ccWindowMouseSetPosition(ccPoint target)
 {
 	ccAssert(_ccWindow);
 
@@ -647,7 +647,7 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetMouseCursor(ccCursor cursor)
+ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 {
 	XColor black;
 
@@ -672,7 +672,7 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowClipboardSetString(const char *text)
+ccReturn ccWindowClipboardSet(const char *text)
 {
 	ccAssert(_ccWindow);
 
@@ -691,7 +691,7 @@ ccReturn ccWindowClipboardSetString(const char *text)
 	return CC_SUCCESS;
 }
 
-char *ccWindowClipboardGetString()
+char *ccWindowClipboardGet()
 {
 	const Atom formats[] = { XA_STRING, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING };
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);

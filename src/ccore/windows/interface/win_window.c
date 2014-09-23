@@ -236,7 +236,7 @@ static bool regHinstance(HINSTANCE instanceHandle)
 	return true;
 }
 
-bool ccWindowPollEvent(void)
+bool ccWindowEventPoll(void)
 {
 	static bool canPollInput = true;
 
@@ -508,8 +508,8 @@ ccReturn ccWindowCenter(void)
 	}
 
 	return _ccWindowResizeMove(
-		(ccRect){_ccWindow->display->x + ((ccDisplayGetResolutionCurrent(_ccWindow->display)->width - (windowRect.right - windowRect.left)) >> 1),
-				 _ccWindow->display->y + ((ccDisplayGetResolutionCurrent(_ccWindow->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
+		(ccRect){_ccWindow->display->x + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->width - (windowRect.right - windowRect.left)) >> 1),
+				 _ccWindow->display->y + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
 				 windowRect.right - windowRect.left,
 				 windowRect.bottom - windowRect.top
 	}, false);
@@ -528,7 +528,7 @@ ccReturn ccWindowBlink(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetIcon(ccPoint size, unsigned long *data)
+ccReturn ccWindowIconSet(ccPoint size, unsigned long *data)
 {
 	HICON icon;
 	BYTE *bmp;
@@ -566,7 +566,7 @@ ccReturn ccWindowSetIcon(ccPoint size, unsigned long *data)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetMousePosition(ccPoint target)
+ccReturn ccWindowMouseSetPosition(ccPoint target)
 {
 	POINT p;
 	p.x = target.x;
@@ -585,7 +585,7 @@ ccReturn ccWindowSetMousePosition(ccPoint target)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetMouseCursor(ccCursor cursor)
+ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 {
 	if(cursor == CC_CURSOR_NONE) {
 		if(WINDOW_DATA->cursor != CC_CURSOR_NONE) ShowCursor(FALSE);
@@ -604,7 +604,7 @@ ccReturn ccWindowSetMouseCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowClipboardSetString(const char *data)
+ccReturn ccWindowClipboardSet(const char *data)
 {
 	HGLOBAL clipboardData;
 	int dataLength;
@@ -658,7 +658,7 @@ ccReturn ccWindowClipboardSetString(const char *data)
 	return CC_SUCCESS;
 }
 
-char *ccWindowClipboardGetString(void)
+char *ccWindowClipboardGet(void)
 {
 	UINT format = 0;
 	bool hasText = false;

@@ -1,27 +1,27 @@
 #include <ccore/window.h>
 
-ccEvent ccWindowGetEvent(void)
+ccEvent ccWindowEventGet(void)
 {
 	ccAssert(_ccWindow != NULL);
 
 	return _ccWindow->event;
 }
 
-ccRect ccWindowGetRect(void)
+ccRect ccWindowRectGet(void)
 {
 	ccAssert(_ccWindow != NULL);
 
 	return _ccWindow->rect;
 }
 
-ccPoint ccWindowGetMouse(void)
+ccPoint ccWindowMouseGet(void)
 {
 	ccAssert(_ccWindow != NULL);
 
 	return _ccWindow->mouse;
 }
 
-ccDisplay *ccWindowGetDisplay(void)
+ccDisplay *ccWindowDisplayGet(void)
 {
 	ccAssert(_ccWindow != NULL);
 	ccAssert(_ccWindow->display != NULL);

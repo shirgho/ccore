@@ -112,7 +112,7 @@ ccReturn ccDisplayFree(void) {
 	return CC_SUCCESS;
 }
 
-ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
+ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 {
 	DEVMODE devMode;
 	ccDisplayData displayData;

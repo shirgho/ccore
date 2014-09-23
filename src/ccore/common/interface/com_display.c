@@ -28,7 +28,7 @@ bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-ccReturn ccDisplayRevertModes(void)
+ccReturn ccDisplayModesRevert(void)
 {
 	int i;
 	ccReturn output;
@@ -36,7 +36,7 @@ ccReturn ccDisplayRevertModes(void)
 	ccAssert(_ccDisplays != NULL);
 
 	for(i = 0; i < _ccDisplays->amount; i++){
-		output = ccDisplaySetResolution(_ccDisplays->display + i, CC_DEFAULT_RESOLUTION);
+		output = ccDisplayResolutionSet(_ccDisplays->display + i, CC_DEFAULT_RESOLUTION);
 		if(output != CC_SUCCESS){
 			return output;
 		}

@@ -190,7 +190,7 @@ ccReturn ccDisplayFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccDisplaySetResolution(ccDisplay *display, int resolutionIndex)
+ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 {
 	int minX, minY, maxX, maxY;
 	ccDisplayData *displayData;

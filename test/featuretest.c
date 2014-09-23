@@ -144,20 +144,20 @@ int main(int argc, char** argv)
 	ccGamepadInitialize();
 
 	// Prepare window for rendering with openGL 3.2 or higher
-	ccGLBindContext(3, 2);
+	ccGLContextBind(3, 2);
 
 	// This function initializes openGL in this example
 	initialize();
 
 	// Load textures using tga.c
-	imageFileName = ccStringConcatenate(2, ccFileGetDataDir(), "logo.tga");
+	imageFileName = ccStringConcatenate(2, ccFileDataDirGet(), "logo.tga");
 	logoTexture = loadTGATexture(imageFileName);
 	if(logoTexture == 0){
 		ccPrintf("Could't load TGA texture: %s\n", imageFileName);
 	}
 	free(imageFileName);
 
-	imageFileName = ccStringConcatenate(2, ccFileGetDataDir(), "commands.tga");
+	imageFileName = ccStringConcatenate(2, ccFileDataDirGet(), "commands.tga");
 	commandsTexture = loadTGATexture(imageFileName);
 	if(commandsTexture == 0){
 		ccPrintf("Could't load TGA texture: %s\n", imageFileName);
@@ -165,7 +165,7 @@ int main(int argc, char** argv)
 	free(imageFileName);
 	
 	iconData = iconGetData();
-	ccWindowSetIcon(iconGetSize(), iconData);
+	ccWindowIconSet(iconGetSize(), iconData);
 	free(iconData);
 
 	// Set the projection
@@ -176,8 +176,8 @@ int main(int argc, char** argv)
 		ccTimeDelay(15); //Limit the frame rate
 
 		// Poll all events (ccPollEvent returns true until there are no more events waiting to be polled)
-		while(ccWindowPollEvent()) {
-			switch(ccWindowGetEvent().type) {
+		while(ccWindowEventPoll()) {
+			switch(ccWindowEventGet().type) {
 				case CC_EVENT_WINDOW_QUIT:
 					// Quit when the close button is pressed
 					quit = true;
@@ -189,9 +189,9 @@ int main(int argc, char** argv)
 				case CC_EVENT_KEY_DOWN:
 					if(logoScreen) break;
 
-					switch(ccWindowGetEvent().keyCode) {
+					switch(ccWindowEventGet().keyCode) {
 						case CC_KEY_V:
-							ccPrintf("Clipboard string: %s\n", ccWindowClipboardGetString());
+							ccPrintf("Clipboard string: %s\n", ccWindowClipboardGet());
 							break;
 						case CC_KEY_ESCAPE:
 							// Quit when the escape key is pressed
@@ -204,7 +204,7 @@ int main(int argc, char** argv)
 						case CC_KEY_W:
 							// Go to windowed
 							ccWindowSetWindowed();
-							ccWindowResizeMove((ccRect){ ccWindowGetRect().x, ccWindowGetRect().y, RES_WIDTH, RES_HEIGHT });
+							ccWindowResizeMove((ccRect){ ccWindowRectGet().x, ccWindowRectGet().y, RES_WIDTH, RES_HEIGHT });
 							ccWindowCenter();
 							break;
 						case CC_KEY_M:
@@ -223,39 +223,39 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_R:
 							// Change the resolution to a random one from the list of possible resolutions
-							ccDisplaySetResolution(ccWindowGetDisplay(), rand() % ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
+							ccDisplayResolutionSet(ccWindowDisplayGet(), rand() % ccDisplayResolutionGetAmount(ccWindowDisplayGet()));
 							break;
 						case CC_KEY_N:
 							// Revert all resolutions
-							ccDisplayRevertModes();
+							ccDisplayModesRevert();
 							break;
 						case CC_KEY_T:
-							ccWindowSetMousePosition((ccPoint){.x = ccWindowGetRect().width / 2, .y = ccWindowGetRect().height / 2});
-							ccWindowSetMouseCursor(CC_CURSOR_NONE);
+							ccWindowMouseSetPosition((ccPoint){.x = ccWindowRectGet().width / 2, .y = ccWindowRectGet().height / 2});
+							ccWindowMouseSetCursor(CC_CURSOR_NONE);
 							break;	
 						case CC_KEY_RETURN:
-							ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSetString("ccore clipboard test")));
+							ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSet("ccore clipboard test")));
 							break;
 						case CC_KEY_P:
-							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowGetDisplay()->monitorName, ccDisplayGetResolutionAmount(ccWindowGetDisplay()));
-							ccPrintf("\tThe current resolution is: %dx%d\n", ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->width, ccDisplayGetResolutionCurrent(ccWindowGetDisplay())->height);
+							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowDisplayGet()->monitorName, ccDisplayResolutionGetAmount(ccWindowDisplayGet()));
+							ccPrintf("\tThe current resolution is: %dx%d\n", ccDisplayResolutionGetCurrent(ccWindowDisplayGet())->width, ccDisplayResolutionGetCurrent(ccWindowDisplayGet())->height);
 							break;
 						default:
-							ccPrintf("Key \"%s\" pressed\n", ccEventKeyToStr(ccWindowGetEvent().keyCode));
+							ccPrintf("Key \"%s\" pressed\n", ccEventKeyToStr(ccWindowEventGet().keyCode));
 							break;
 					}
 
 					if(!logoScreen) {
-						squareAlpha[ccWindowGetEvent().keyCode % squareCount] = 1.0f;
+						squareAlpha[ccWindowEventGet().keyCode % squareCount] = 1.0f;
 					}
 					break;
 				case CC_EVENT_FOCUS_LOST:
 					ccWindowBlink();
 					break;
 				case CC_EVENT_MOUSE_UP:
-					if(logoScreen && ccWindowGetEvent().mouseButton == CC_MOUSE_BUTTON_LEFT) {
+					if(logoScreen && ccWindowEventGet().mouseButton == CC_MOUSE_BUTTON_LEFT) {
 						// Proceed to the demo screen
-						ccRect windowRect = ccWindowGetRect();
+						ccRect windowRect = ccWindowRectGet();
 
 						logoScreen = false;
 
@@ -276,7 +276,7 @@ int main(int argc, char** argv)
 					break;
 				case CC_EVENT_MOUSE_SCROLL:
 					// Scroll all squares for a nice effect
-					if(ccWindowGetEvent().scrollDelta > 0) {
+					if(ccWindowEventGet().scrollDelta > 0) {
 						scrollSquaresUp();
 					}
 					else{
@@ -290,36 +290,36 @@ int main(int argc, char** argv)
 					}
 					break;
 				case CC_EVENT_GAMEPAD:
-					if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_AXIS_MOVE){
-						ccPrintf("Gamepad %d axis %d moved %d\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.axisId, ccGamepadGet(ccWindowGetEvent().gamepadEvent.id)->axis[ccWindowGetEvent().gamepadEvent.axisId]);
-					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_DOWN){
-						ccPrintf("Gamepad %d button %d down\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.buttonId);
-						if(ccWindowGetEvent().gamepadEvent.buttonId == 0) {
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MAX);
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MAX);
+					if(ccWindowEventGet().gamepadEvent.type == CC_GAMEPAD_AXIS_MOVE){
+						ccPrintf("Gamepad %d axis %d moved %d\n", ccWindowEventGet().gamepadEvent.id, ccWindowEventGet().gamepadEvent.axisId, ccGamepadGet(ccWindowEventGet().gamepadEvent.id)->axis[ccWindowEventGet().gamepadEvent.axisId]);
+					}else if(ccWindowEventGet().gamepadEvent.type == CC_GAMEPAD_BUTTON_DOWN){
+						ccPrintf("Gamepad %d button %d down\n", ccWindowEventGet().gamepadEvent.id, ccWindowEventGet().gamepadEvent.buttonId);
+						if(ccWindowEventGet().gamepadEvent.buttonId == 0) {
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MAX);
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MAX);
 						}
-						else if(ccWindowGetEvent().gamepadEvent.buttonId == 10) {
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MAX);
+						else if(ccWindowEventGet().gamepadEvent.buttonId == 10) {
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MAX);
 						}
-						else if(ccWindowGetEvent().gamepadEvent.buttonId == 11) {
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MAX);
+						else if(ccWindowEventGet().gamepadEvent.buttonId == 11) {
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MAX);
 						}
-					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_BUTTON_UP){
-						ccPrintf("Gamepad %d button %d up\n", ccWindowGetEvent().gamepadEvent.id, ccWindowGetEvent().gamepadEvent.buttonId);
-						if(ccWindowGetEvent().gamepadEvent.buttonId == 0) {
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MIN);
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MIN);
+					}else if(ccWindowEventGet().gamepadEvent.type == CC_GAMEPAD_BUTTON_UP){
+						ccPrintf("Gamepad %d button %d up\n", ccWindowEventGet().gamepadEvent.id, ccWindowEventGet().gamepadEvent.buttonId);
+						if(ccWindowEventGet().gamepadEvent.buttonId == 0) {
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MIN);
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MIN);
 						}
-						else if(ccWindowGetEvent().gamepadEvent.buttonId == 10) {
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MIN);
+						else if(ccWindowEventGet().gamepadEvent.buttonId == 10) {
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 0, GAMEPAD_OUTPUT_VALUE_MIN);
 						}
-						else if(ccWindowGetEvent().gamepadEvent.buttonId == 11) {
-							ccGamepadOutputSet(ccGamepadGet(ccWindowGetEvent().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MIN);
+						else if(ccWindowEventGet().gamepadEvent.buttonId == 11) {
+							ccGamepadOutputSet(ccGamepadGet(ccWindowEventGet().gamepadEvent.id), 1, GAMEPAD_OUTPUT_VALUE_MIN);
 						}
-					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_CONNECT){
-						ccPrintf("Gamepad %d \"%s\" connected\n",  ccWindowGetEvent().gamepadEvent.id, ccGamepadGet(ccWindowGetEvent().gamepadEvent.id)->name);
-					}else if(ccWindowGetEvent().gamepadEvent.type == CC_GAMEPAD_DISCONNECT){
-						ccPrintf("Gamepad %d \"%s\" disconnected\n", ccWindowGetEvent().gamepadEvent.id, ccGamepadGet(ccWindowGetEvent().gamepadEvent.id)->name);
+					}else if(ccWindowEventGet().gamepadEvent.type == CC_GAMEPAD_CONNECT){
+						ccPrintf("Gamepad %d \"%s\" connected\n",  ccWindowEventGet().gamepadEvent.id, ccGamepadGet(ccWindowEventGet().gamepadEvent.id)->name);
+					}else if(ccWindowEventGet().gamepadEvent.type == CC_GAMEPAD_DISCONNECT){
+						ccPrintf("Gamepad %d \"%s\" disconnected\n", ccWindowEventGet().gamepadEvent.id, ccGamepadGet(ccWindowEventGet().gamepadEvent.id)->name);
 					}
 					break;
 				default:
@@ -334,11 +334,11 @@ int main(int argc, char** argv)
 		render();
 
 		// Swap the buffers
-		ccGLSwapBuffers();
+		ccGLBuffersSwap();
 
 	}
 
-	ccDisplayRevertModes();
+	ccDisplayModesRevert();
 	
 	// Free memory before terminating
 	ccFree();
@@ -385,8 +385,8 @@ void initialize()
 
 void setProjection()
 {
-	int width = ccWindowGetRect().width;
-	int height = ccWindowGetRect().height;
+	int width = ccWindowRectGet().width;
+	int height = ccWindowRectGet().height;
 
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
@@ -396,8 +396,8 @@ void setProjection()
 
 	if(!logoScreen) {
 		int i;
-		hsquares = cceil((float)ccWindowGetRect().width / SQUARE_SIZE);
-		vsquares = cceil((float)ccWindowGetRect().height / SQUARE_SIZE);
+		hsquares = cceil((float)ccWindowRectGet().width / SQUARE_SIZE);
+		vsquares = cceil((float)ccWindowRectGet().height / SQUARE_SIZE);
 		squareCount = hsquares * vsquares;
 
 		squareAlpha = realloc(squareAlpha ,sizeof(float)*squareCount);
@@ -436,13 +436,13 @@ void renderCommands()
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, -1.0f);
-	glVertex2f(0.0f, (float)ccWindowGetRect().height - COMMANDS_HEIGHT);
+	glVertex2f(0.0f, (float)ccWindowRectGet().height - COMMANDS_HEIGHT);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(0.0f, (float)ccWindowGetRect().height);
+	glVertex2f(0.0f, (float)ccWindowRectGet().height);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowGetRect().height);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowRectGet().height);
 	glTexCoord2f(1.0f, -1.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowGetRect().height - COMMANDS_HEIGHT);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowRectGet().height - COMMANDS_HEIGHT);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
@@ -521,7 +521,7 @@ void scrollSquaresDown()
 
 int mouseToIndex()
 {
-	int index = (ccWindowGetMouse().x / SQUARE_SIZE) + ((ccWindowGetRect().height - ccWindowGetMouse().y) / SQUARE_SIZE) * hsquares;
+	int index = (ccWindowMouseGet().x / SQUARE_SIZE) + ((ccWindowRectGet().height - ccWindowMouseGet().y) / SQUARE_SIZE) * hsquares;
 	if(index >= squareCount || index < 0) index = -1;
 	return index;
 }

@@ -42,11 +42,11 @@ typedef struct {
 } ccFileInfo;
 
 // These functions can be used to get OS specific directories to store program data
-char *ccFileGetUserDir(void);
-char *ccFileGetDataDir(void);
-char *ccFileGetTempDir(void);
+char *ccFileUserDirGet(void);
+char *ccFileDataDirGet(void);
+char *ccFileTempDirGet(void);
 
-ccFileInfo ccFileGetInfo(char *file); 
+ccFileInfo ccFileInfoGet(char *file); 
 
 void _ccFileFree(void);
 

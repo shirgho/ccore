@@ -24,7 +24,7 @@ void ccFree(void)
 	if(_ccGamepads != NULL) ccGamepadFree();
 	if(_ccNet) ccNetFree();
 	if(_ccWindow != NULL) {
-		if(ccGLHasContext()) ccGLFreeContext();
+		if(ccGLContextIsActive()) ccGLContextFree();
 		ccWindowFree();
 	}
 	if(_ccDisplays != NULL) ccDisplayFree();

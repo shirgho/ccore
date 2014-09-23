@@ -10,7 +10,7 @@
 
 #endif
 
-ccFileInfo ccFileGetInfo(char *file)
+ccFileInfo ccFileInfoGet(char *file)
 {
 	struct ccStat sb;
 	ccFileInfo info;

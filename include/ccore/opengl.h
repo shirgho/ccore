@@ -40,10 +40,10 @@ extern "C"
 {
 #endif
 // opengl
-ccReturn ccGLBindContext(int glVersionMajor, int glVersionMinor); // Bind the openGl context to window
-ccReturn ccGLFreeContext(void); // Free context
-ccReturn ccGLSwapBuffers(void); // Swap the buffers
-bool ccGLHasContext(void);
+ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor); // Bind the openGl context to window
+ccReturn ccGLContextFree(void); // Free context
+ccReturn ccGLBuffersSwap(void); // Swap the buffers
+bool ccGLContextIsActive(void);
 
 #ifdef __cplusplus
 }
