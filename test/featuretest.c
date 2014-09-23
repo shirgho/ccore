@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 	// Create a centered window that cannot be resized
 	ccDisplayInitialize();
 	ccWindowCreate((ccRect){ 0, 0, LOGO_WIDTH, LOGO_HEIGHT }, "CCORE feature showcase", CC_WINDOW_FLAG_NORESIZE);
-	ccWindowCenter();
+	ccWindowSetCentered();
 
 	// Prepare gamepad capturing
 	ccGamepadInitialize();
@@ -204,8 +204,8 @@ int main(int argc, char** argv)
 						case CC_KEY_W:
 							// Go to windowed
 							ccWindowSetWindowed();
-							ccWindowResizeMove((ccRect){ ccWindowRectGet().x, ccWindowRectGet().y, RES_WIDTH, RES_HEIGHT });
-							ccWindowCenter();
+							ccWindowResizeMove((ccRect){ ccWindowGetRect().x, ccWindowGetRect().y, RES_WIDTH, RES_HEIGHT });
+							ccWindowSetCentered();
 							break;
 						case CC_KEY_M:
 							// Maximize the window
@@ -213,7 +213,7 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_C:
 							// Center the window
-							ccWindowCenter();
+							ccWindowSetCentered();
 							break;
 						case CC_KEY_X:
 							// Go full screen on the first two displays if possible
@@ -223,22 +223,22 @@ int main(int argc, char** argv)
 							break;
 						case CC_KEY_R:
 							// Change the resolution to a random one from the list of possible resolutions
-							ccDisplayResolutionSet(ccWindowDisplayGet(), rand() % ccDisplayResolutionGetAmount(ccWindowDisplayGet()));
+							ccDisplayResolutionSet(ccWindowGetDisplay(), rand() % ccDisplayResolutionGetAmount(ccWindowGetDisplay()));
 							break;
 						case CC_KEY_N:
 							// Revert all resolutions
-							ccDisplayModesRevert();
+							ccDisplayRevertModes();
 							break;
 						case CC_KEY_T:
-							ccWindowMouseSetPosition((ccPoint){.x = ccWindowRectGet().width / 2, .y = ccWindowRectGet().height / 2});
+							ccWindowMouseSetPosition((ccPoint){.x = ccWindowGetRect().width / 2, .y = ccWindowGetRect().height / 2});
 							ccWindowMouseSetCursor(CC_CURSOR_NONE);
 							break;	
 						case CC_KEY_RETURN:
 							ccPrintf("Setting clipboard... %s\n", ccErrorString(ccWindowClipboardSet("ccore clipboard test")));
 							break;
 						case CC_KEY_P:
-							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowDisplayGet()->monitorName, ccDisplayResolutionGetAmount(ccWindowDisplayGet()));
-							ccPrintf("\tThe current resolution is: %dx%d\n", ccDisplayResolutionGetCurrent(ccWindowDisplayGet())->width, ccDisplayResolutionGetCurrent(ccWindowDisplayGet())->height);
+							ccPrintf("Current display \"%s\" has %d resolutions\n", ccWindowGetDisplay()->monitorName, ccDisplayResolutionGetAmount(ccWindowGetDisplay()));
+							ccPrintf("\tThe current resolution is: %dx%d\n", ccDisplayResolutionGetCurrent(ccWindowGetDisplay())->width, ccDisplayResolutionGetCurrent(ccWindowGetDisplay())->height);
 							break;
 						default:
 							ccPrintf("Key \"%s\" pressed\n", ccEventKeyToStr(ccWindowEventGet().keyCode));
@@ -255,7 +255,7 @@ int main(int argc, char** argv)
 				case CC_EVENT_MOUSE_UP:
 					if(logoScreen && ccWindowEventGet().mouseButton == CC_MOUSE_BUTTON_LEFT) {
 						// Proceed to the demo screen
-						ccRect windowRect = ccWindowRectGet();
+						ccRect windowRect = ccWindowGetRect();
 
 						logoScreen = false;
 
@@ -263,7 +263,7 @@ int main(int argc, char** argv)
 						windowRect.width = RES_WIDTH;
 						windowRect.height = RES_HEIGHT;
 						ccWindowResizeMove(windowRect);
-						ccWindowCenter();
+						ccWindowSetCentered();
 
 						setProjection();
 					}
@@ -338,7 +338,7 @@ int main(int argc, char** argv)
 
 	}
 
-	ccDisplayModesRevert();
+	ccDisplayRevertModes();
 	
 	// Free memory before terminating
 	ccFree();
@@ -385,8 +385,8 @@ void initialize()
 
 void setProjection()
 {
-	int width = ccWindowRectGet().width;
-	int height = ccWindowRectGet().height;
+	int width = ccWindowGetRect().width;
+	int height = ccWindowGetRect().height;
 
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
@@ -396,8 +396,8 @@ void setProjection()
 
 	if(!logoScreen) {
 		int i;
-		hsquares = cceil((float)ccWindowRectGet().width / SQUARE_SIZE);
-		vsquares = cceil((float)ccWindowRectGet().height / SQUARE_SIZE);
+		hsquares = cceil((float)ccWindowGetRect().width / SQUARE_SIZE);
+		vsquares = cceil((float)ccWindowGetRect().height / SQUARE_SIZE);
 		squareCount = hsquares * vsquares;
 
 		squareAlpha = realloc(squareAlpha ,sizeof(float)*squareCount);
@@ -436,13 +436,13 @@ void renderCommands()
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, -1.0f);
-	glVertex2f(0.0f, (float)ccWindowRectGet().height - COMMANDS_HEIGHT);
+	glVertex2f(0.0f, (float)ccWindowGetRect().height - COMMANDS_HEIGHT);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(0.0f, (float)ccWindowRectGet().height);
+	glVertex2f(0.0f, (float)ccWindowGetRect().height);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowRectGet().height);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowGetRect().height);
 	glTexCoord2f(1.0f, -1.0f);
-	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowRectGet().height - COMMANDS_HEIGHT);
+	glVertex2f((float)COMMANDS_WIDTH, (float)ccWindowGetRect().height - COMMANDS_HEIGHT);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
@@ -521,7 +521,7 @@ void scrollSquaresDown()
 
 int mouseToIndex()
 {
-	int index = (ccWindowMouseGet().x / SQUARE_SIZE) + ((ccWindowRectGet().height - ccWindowMouseGet().y) / SQUARE_SIZE) * hsquares;
+	int index = (ccWindowGetMouse().x / SQUARE_SIZE) + ((ccWindowGetRect().height - ccWindowGetMouse().y) / SQUARE_SIZE) * hsquares;
 	if(index >= squareCount || index < 0) index = -1;
 	return index;
 }

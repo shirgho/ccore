@@ -7,21 +7,21 @@ ccEvent ccWindowEventGet(void)
 	return _ccWindow->event;
 }
 
-ccRect ccWindowRectGet(void)
+ccRect ccWindowGetRect(void)
 {
 	ccAssert(_ccWindow != NULL);
 
 	return _ccWindow->rect;
 }
 
-ccPoint ccWindowMouseGet(void)
+ccPoint ccWindowGetMouse(void)
 {
 	ccAssert(_ccWindow != NULL);
 
 	return _ccWindow->mouse;
 }
 
-ccDisplay *ccWindowDisplayGet(void)
+ccDisplay *ccWindowGetDisplay(void)
 {
 	ccAssert(_ccWindow != NULL);
 	ccAssert(_ccWindow->display != NULL);

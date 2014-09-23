@@ -73,7 +73,7 @@ ccDisplays *_ccDisplays;
 // Display
 ccReturn ccDisplayInitialize(void); // Get all displays currently connected and active
 ccReturn ccDisplayFree(void);
-ccReturn ccDisplayModesRevert(void);
+ccReturn ccDisplayRevertModes(void);
 
 // Getters
 ccRect ccDisplayGetRect(ccDisplay *display);

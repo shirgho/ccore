@@ -28,7 +28,7 @@ bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-ccReturn ccDisplayModesRevert(void)
+ccReturn ccDisplayRevertModes(void)
 {
 	int i;
 	ccReturn output;

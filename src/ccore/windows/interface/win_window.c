@@ -496,7 +496,7 @@ ccReturn ccWindowResizeMove(ccRect rect)
 	return _ccWindowResizeMove(rect, true);
 }
 
-ccReturn ccWindowCenter(void)
+ccReturn ccWindowSetCentered(void)
 {
 	RECT windowRect;
 

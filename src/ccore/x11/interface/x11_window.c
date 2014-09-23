@@ -581,7 +581,7 @@ ccReturn ccWindowResizeMove(ccRect rect)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowCenter(void)
+ccReturn ccWindowSetCentered(void)
 {
 	ccDisplayData *currentResolution;
 	ccRect newRect;

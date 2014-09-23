@@ -81,7 +81,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags);
 ccReturn ccWindowFree(void);
 bool ccWindowEventPoll(void); // Poll an event from the events that currently need to be processed in the window
 ccReturn ccWindowResizeMove(ccRect rect);
-ccReturn ccWindowCenter(void);
+ccReturn ccWindowSetCentered(void);
 
 ccReturn ccWindowSetWindowed(void);
 ccReturn ccWindowSetMaximized(void);
@@ -97,9 +97,9 @@ char *ccWindowClipboardGet(void);
 
 // Getters
 ccEvent ccWindowEventGet(void);
-ccRect ccWindowRectGet(void);
-ccPoint ccWindowMouseGet(void);
-ccDisplay *ccWindowDisplayGet(void);
+ccRect ccWindowGetRect(void);
+ccPoint ccWindowGetMouse(void);
+ccDisplay *ccWindowGetDisplay(void);
 bool ccWindowExists(void);
 
 // Usually for internal use only, finds the display the window currently is in
