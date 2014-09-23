@@ -475,6 +475,8 @@ bool ccWindowPollEvent(void)
 		case SelectionRequest:
 			handleSelectionRequest(&event.xselectionrequest);
 			return false;
+		default:
+			return false;
 	}
 
 	return true;
@@ -691,7 +693,7 @@ ccReturn ccWindowClipboardSetString(const char *text)
 
 char *ccWindowClipboardGetString()
 {
-	const Atom formats[] = { XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING };
+	const Atom formats[] = { XA_STRING, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING };
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 
 	Window owner;
@@ -713,18 +715,22 @@ char *ccWindowClipboardGetString()
 	for(i = 0; i < formatCount; i++){
 		XConvertSelection(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, formats[i], XWINDATA->CCORE_SELECTION, XWINDATA->XWindow, CurrentTime);
 
-		while(XCheckTypedEvent(XWINDATA->XDisplay, SelectionNotify, &event));
+		while(XCheckTypedEvent(XWINDATA->XDisplay, SelectionNotify, &event) || event.xselection.requestor != XWINDATA->XWindow);
+
+		if(event.xselection.property == None){
+			continue;
+		}
 
 		length = getWindowProperty(event.xselection.requestor, event.xselection.property, event.xselection.target, &data);
 
-		if(event.xselection.property == None || length == 0){
+		if(length == 0){
 			XFree(data);
 			continue;
 		}
 
 		output = malloc(length + 1);
 		if(!output){
-			XFree(output);
+			XFree(data);
 			ccErrorPush(CC_ERROR_MEMORY_OVERFLOW);
 			return NULL;
 		}
@@ -733,7 +739,6 @@ char *ccWindowClipboardGetString()
 
 		XFree(data);
 		return output;
-
 	}
 
 	return NULL;
