@@ -34,6 +34,9 @@ extern "C"
 
 #ifdef LINUX
 
+
+#include <sys/socket.h>
+#include <sys/select.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -62,7 +65,6 @@ typedef socklen_t 				ccSocklen_t;
 
 typedef SOCKET					ccSocket;
 typedef int						ccSocklen_t;
-typedef SSIZE_T					ssize_t;
 
 #define ccNetClose 				closesocket
 #define ccNetInet_lnaof			InetLnaof
@@ -105,6 +107,25 @@ typedef SSIZE_T					ssize_t;
 #define ccNetNtonl 				ntonl
 #define ccNetNtons 				ntons
 
+#define ccNetSocket				socket
+#define ccNetBind				bind
+#define ccNetGetsockname		getsockname
+#define ccNetConnect			connect
+#define ccNetGetpeername		getpeername
+#define ccNetSend				send
+#define ccNetRecv				recv
+#define ccNetSendto				sendto
+#define ccNetRecvfrom			recvfrom
+#define ccNetGetsockopt			getsockopt
+#define ccNetSetsockopt			setsockopt
+#define ccNetListen				listen
+#define ccNetAccept				accept
+#define ccNetShutdown			shutdown
+#define ccNetSelect				select
+#define ccNetGethostname		gethostname
+#define ccNetGetaddrinfo		getaddrinfo
+#define ccNetGetnameinfo		getnameinfo
+
 #define CC_NET_FD_CLR 			FD_CLR
 #define CC_NET_FD_ISSET			FD_ISSET
 #define CC_NET_FD_SET 			FD_SET
@@ -124,29 +145,6 @@ typedef struct servent 			ccServent;
 
 ccReturn ccNetInitialize();
 ccReturn ccNetFree();
-
-ccReturn ccNetSocket(ccSocket *sock, int family, int type, int protocol);
-ccReturn ccNetBind(ccSocket sock, const ccSockaddr *addr, ccSocklen_t len);
-ccReturn ccNetGetsockname(ccSocket sock, ccSockaddr *addr, ccSocklen_t *len);
-ccReturn ccNetConnect(ccSocket sock, const ccSockaddr *addr, ccSocklen_t len);
-ccReturn ccNetGetpeername(ccSocket sock, ccSockaddr *addr, ccSocklen_t *len);
-ccReturn ccNetSend(ccSocket sock, ssize_t *bytesSend, const void *buf, size_t n, int flags);
-ccReturn ccNetRecv(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t n, int flags);
-ccReturn ccNetSendto(ccSocket sock, ssize_t *bytesSend, const void *buf, size_t n, int flags, const ccSockaddr *addr, ccSocklen_t len);
-ccReturn ccNetRecvfrom(ccSocket sock, ssize_t *bytesReceived, void *buf, size_t n, int flags, ccSockaddr *addr, ccSocklen_t *len);
-ccReturn ccNetGetsockopt(ccSocket sock, int level, int optname, void *optval, ccSocklen_t *optlen);
-ccReturn ccNetSetsockopt(ccSocket sock, int level, int optname, const void *optval, ccSocklen_t optlen);
-ccReturn ccNetListen(ccSocket sock, int n);
-ccReturn ccNetAccept(ccSocket sock, ccSocket *sockReceived, ccSockaddr *addr, ccSocklen_t *addr_len);
-ccReturn ccNetShutdown(ccSocket sock, int how);
-
-ccReturn ccNetSelect(ccSocket sock, ccFd_set *readfds, ccFd_set *writefds, ccFd_set *exceptfds, struct timeval *timeout);
-ccReturn ccNetGethostname(char *name, size_t len);
-
-ccReturn ccNetGetaddrinfo(const char *name, const char *service, const ccAddrinfo *req, ccAddrinfo **pai);
-ccReturn ccNetGetnameinfo(const ccSockaddr *sa, ccSocklen_t salen, char *host, ccSocklen_t hostlen, char *serv, ccSocklen_t servlen, int flags);
-
-bool _ccNet;
 
 #ifdef __cplusplus
 }
