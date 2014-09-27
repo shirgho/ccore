@@ -50,8 +50,7 @@ bool ccThreadFinished(ccThread thread)
 
 ccReturn ccThreadMutexCreate(ccMutex *mutex)
 {
-	*mutex = CreateMutex(NULL, FALSE, NULL);
-	if(*mutex == NULL) {
+	if(!InitializeCriticalSectionAndSpinCount(mutex, _CRITICAL_SECTION_SPIN_COUNT)) {
 		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);
 		return CC_FAIL;
 	}
@@ -61,39 +60,21 @@ ccReturn ccThreadMutexCreate(ccMutex *mutex)
 
 ccReturn ccThreadMutexJoin(ccMutex mutex)
 {
-	if(WaitForSingleObject(mutex, INFINITE) != WAIT_OBJECT_0) {
-		ccErrorPush(CC_ERROR_THREAD_MUTEX);
-		return CC_FAIL;
-	}
+	EnterCriticalSection(&mutex);
 
 	return CC_SUCCESS;
 }
 
-bool ccThreadMutexFinished(ccMutex mutex)
-{
-	if(WaitForSingleObject(mutex, 0) == WAIT_OBJECT_0) {
-		return true;
-	}
-
-	return false;
-}
-
 ccReturn ccThreadMutexRelease(ccMutex mutex)
 {
-	if(ReleaseMutex(mutex) == 0) {
-		ccErrorPush(CC_ERROR_THREAD_MUTEX);
-		return CC_FAIL;
-	}
-	
+	LeaveCriticalSection(&mutex);
+
 	return CC_SUCCESS;
 }
 
 ccReturn ccThreadMutexFree(ccMutex mutex)
 {
-	if(CloseHandle(mutex) == 0) {
-		ccErrorPush(CC_ERROR_THREAD_MUTEX);
-		return CC_FAIL;
-	}
+	DeleteCriticalSection(&mutex);
 
 	return CC_SUCCESS;
 }

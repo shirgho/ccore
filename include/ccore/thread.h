@@ -43,7 +43,7 @@ typedef void* ccThread;
 
 #define ccThreadReturn() return 0;
 
-typedef HANDLE ccMutex;
+typedef CRITICAL_SECTION ccMutex;
 
 #elif defined X11
 
@@ -65,7 +65,6 @@ bool ccThreadFinished(ccThread thread);
 
 ccReturn ccThreadMutexCreate(ccMutex *mutex);
 ccReturn ccThreadMutexJoin(ccMutex mutex);
-bool ccThreadMutexFinished(ccMutex mutex);
 ccReturn ccThreadMutexRelease(ccMutex mutex);
 ccReturn ccThreadMutexFree(ccMutex mutex);
 

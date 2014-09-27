@@ -10,3 +10,5 @@ typedef struct {
 } ccThread_win;
 
 #define _THREAD ((ccThread_win*)thread)
+
+#define _CRITICAL_SECTION_SPIN_COUNT 400

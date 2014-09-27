@@ -59,20 +59,6 @@ ccReturn ccThreadMutexJoin(ccMutex mutex)
 	return CC_SUCCESS;
 }
 
-bool ccThreadMutexFinished(ccMutex mutex)
-{
-	int result = pthread_mutex_trylock(&mutex);
-
-	if(result == 0) {
-		return true;
-	}else{
-		if(CC_UNLIKELY(result == EBUSY)){
-			ccErrorPush(CC_ERROR_THREAD_MUTEX);
-		}
-		return false;
-	}
-}
-
 ccReturn ccThreadMutexRelease(ccMutex mutex)
 {
 	if(CC_UNLIKELY(pthread_mutex_unlock(&mutex) != 0)){
