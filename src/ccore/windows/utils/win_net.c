@@ -9,6 +9,7 @@ ccReturn ccNetInitialize(void)
 		return CC_FAIL;
     }
 
+	_ccNet = true;
 	return CC_SUCCESS;
 }
 
@@ -16,5 +17,6 @@ ccReturn ccNetFree(void)
 {
 	WSACleanup();
 
+	_ccNet = false;
 	return CC_SUCCESS;
 }
