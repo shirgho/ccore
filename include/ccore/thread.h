@@ -64,9 +64,9 @@ ccReturn ccThreadJoin(ccThread thread);
 bool ccThreadFinished(ccThread thread);
 
 ccReturn ccThreadMutexCreate(ccMutex *mutex);
-ccReturn ccThreadMutexJoin(ccMutex mutex);
-ccReturn ccThreadMutexRelease(ccMutex mutex);
-ccReturn ccThreadMutexFree(ccMutex mutex);
+ccReturn ccThreadMutexJoin(ccMutex *mutex);
+ccReturn ccThreadMutexRelease(ccMutex *mutex);
+ccReturn ccThreadMutexFree(ccMutex *mutex);
 
 #ifdef __cplusplus
 }

@@ -49,9 +49,9 @@ ccReturn ccThreadMutexCreate(ccMutex *mutex)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexJoin(ccMutex mutex)
+ccReturn ccThreadMutexJoin(ccMutex *mutex)
 {
-	if(CC_UNLIKELY(pthread_mutex_lock(&mutex) != 0)) {
+	if(CC_UNLIKELY(pthread_mutex_lock(mutex) != 0)) {
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}
@@ -59,9 +59,9 @@ ccReturn ccThreadMutexJoin(ccMutex mutex)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexRelease(ccMutex mutex)
+ccReturn ccThreadMutexRelease(ccMutex *mutex)
 {
-	if(CC_UNLIKELY(pthread_mutex_unlock(&mutex) != 0)){
+	if(CC_UNLIKELY(pthread_mutex_unlock(mutex) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}
@@ -69,9 +69,9 @@ ccReturn ccThreadMutexRelease(ccMutex mutex)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexFree(ccMutex mutex)
+ccReturn ccThreadMutexFree(ccMutex *mutex)
 {
-	if(CC_UNLIKELY(pthread_mutex_destroy(&mutex) != 0)){
+	if(CC_UNLIKELY(pthread_mutex_destroy(mutex) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
 		return CC_FAIL;
 	}

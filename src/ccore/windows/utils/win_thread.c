@@ -58,23 +58,23 @@ ccReturn ccThreadMutexCreate(ccMutex *mutex)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexJoin(ccMutex mutex)
+ccReturn ccThreadMutexJoin(ccMutex *mutex)
 {
-	EnterCriticalSection(&mutex);
+	EnterCriticalSection(mutex);
 
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexRelease(ccMutex mutex)
+ccReturn ccThreadMutexRelease(ccMutex *mutex)
 {
-	LeaveCriticalSection(&mutex);
+	LeaveCriticalSection(mutex);
 
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexFree(ccMutex mutex)
+ccReturn ccThreadMutexFree(ccMutex *mutex)
 {
-	DeleteCriticalSection(&mutex);
+	DeleteCriticalSection(mutex);
 
 	return CC_SUCCESS;
 }

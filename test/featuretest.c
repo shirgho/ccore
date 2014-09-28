@@ -131,7 +131,7 @@ int main(int argc, char** argv)
 		ccThreadJoin(thread[i]);
 	}
 
-	ccThreadMutexFree(mutex);
+	ccThreadMutexFree(&mutex);
 
 	ccPrintf("%d threads finished counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
@@ -362,10 +362,10 @@ ccThreadFunction(counter)
 	ccPrintf("\nPassed integer: %d\n", *(int*)ccThreadData);
 
 	for(count = 0; count<THREAD_ITERATIONS; count++) {
-		ccThreadMutexJoin(mutex);
+		ccThreadMutexJoin(&mutex);
 		threadVal++;
 		printf("thread counter: %d\n", threadVal);
-		ccThreadMutexRelease(mutex);
+		ccThreadMutexRelease(&mutex);
 		ccTimeDelay(10);
 	}
 
