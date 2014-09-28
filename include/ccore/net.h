@@ -77,6 +77,9 @@ typedef int						ccSocklen_t;
 
 #define s_addr					S_un.S_addr
 #define EWOULDBLOCK				WSAETIMEDOUT
+#define EAGAIN					WSAETIMEDOUT
+#define EINPROGRESS				WSAEINPROGRESS
+#define EINTR					WSAEINTR
 
 #undef errno
 #define errno					WSAGetLastError()
