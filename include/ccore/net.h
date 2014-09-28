@@ -76,6 +76,10 @@ typedef int						ccSocklen_t;
 #define ccNetInet_ntop			InetNtop
 
 #define s_addr					S_un.S_addr
+#define EWOULDBLOCK				WSAETIMEDOUT
+
+#undef errno
+#define errno					WSAGetLastError()
 
 #endif
 
@@ -126,11 +130,6 @@ typedef int						ccSocklen_t;
 #define ccNetGetaddrinfo		getaddrinfo
 #define ccNetGetnameinfo		getnameinfo
 
-#define CC_NET_FD_CLR 			FD_CLR
-#define CC_NET_FD_ISSET			FD_ISSET
-#define CC_NET_FD_SET 			FD_SET
-#define CC_NET_FD_ZERO			FD_ZERO
-
 typedef struct sockaddr 		ccSockaddr;
 typedef struct sockaddr6 		ccSockaddr6;
 typedef struct sockaddr_in 		ccSockaddr_in;
@@ -145,8 +144,6 @@ typedef struct servent 			ccServent;
 
 ccReturn ccNetInitialize();
 ccReturn ccNetFree();
-
-bool _ccNet;
 
 #ifdef __cplusplus
 }
