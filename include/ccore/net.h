@@ -148,6 +148,8 @@ typedef struct servent 			ccServent;
 ccReturn ccNetInitialize();
 ccReturn ccNetFree();
 
+bool _ccNet;
+
 #ifdef __cplusplus
 }
 #endif
