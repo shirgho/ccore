@@ -10,12 +10,13 @@ static void scanDirs(void)
 {
 	HMODULE hModule = GetModuleHandleW(NULL);
 	char path[MAX_PATH];
+	int pathlength;
 
 	//Fetch absolue .exe path
-	GetModuleFileName(hModule, path, MAX_PATH);
+	pathlength = GetModuleFileName(hModule, path, MAX_PATH);
 	
-	dataDir = malloc(strlen(path) + 1);
-	strcpy(dataDir, path);
+	dataDir = calloc(pathlength + 1, sizeof(char));
+	strcpy_s(dataDir, pathlength, path);
 	ccStringTrimToChar(dataDir, '\\', true);
 	ccStringReplaceChar(dataDir, '\\', '/');
 
@@ -23,26 +24,26 @@ static void scanDirs(void)
 	userDir = USERHOME;
 
 	//Temp directory
-	GetTempPath(MAX_PATH, path);
+	pathlength = GetTempPath(MAX_PATH, path);
 
-	tempDir = malloc(strlen(path) + 1);
-	strcpy(tempDir, path);
+	tempDir = calloc(pathlength + 1, sizeof(char));
+	strcpy_s(tempDir, pathlength, path);
 	ccStringReplaceChar(tempDir, '\\', '/');
 }
 
-char *ccFileUserDirGet(void)
+char *ccFileGetUserDir(void)
 {
 	if(userDir == NULL) scanDirs();
 	return userDir;
 }
 
-char *ccFileDataDirGet(void)
+char *ccFileGetDataDir(void)
 {
 	if(userDir == NULL) scanDirs();
 	return dataDir;
 }
 
-char *ccFileTempDirGet(void)
+char *ccFileGetTempDir(void)
 {
 	if(userDir == NULL) scanDirs();
 	return tempDir;
