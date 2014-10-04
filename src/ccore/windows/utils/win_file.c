@@ -2,7 +2,7 @@
 
 #define USERHOME "%HOMEPATH%/"
 
-static char *userDir = NULL;
+static char *userDir;
 static char *dataDir;
 static char *tempDir;
 
@@ -16,7 +16,7 @@ static void scanDirs(void)
 	pathlength = GetModuleFileName(hModule, path, MAX_PATH);
 	
 	dataDir = calloc(pathlength + 1, sizeof(char));
-	strcpy_s(dataDir, pathlength, path);
+	memcpy(dataDir, path, pathlength);
 	ccStringTrimToChar(dataDir, '\\', true);
 	ccStringReplaceChar(dataDir, '\\', '/');
 
@@ -27,7 +27,7 @@ static void scanDirs(void)
 	pathlength = GetTempPath(MAX_PATH, path);
 
 	tempDir = calloc(pathlength + 1, sizeof(char));
-	strcpy_s(tempDir, pathlength, path);
+	memcpy(tempDir, path, pathlength);
 	ccStringReplaceChar(tempDir, '\\', '/');
 }
 
