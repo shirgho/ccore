@@ -1,17 +1,8 @@
 #include "lin_thread.h"
 
-ccReturn ccThreadCreate(ccThread *thread, void *function)
+ccReturn ccThreadStart(ccThread *thread, void *function, void *data)
 {
-	ccMalloc(*thread, sizeof(ccThread_lin));
-	((ccThread_lin*)*thread)->function = function;
-
-	return CC_SUCCESS;
-}
-
-ccReturn ccThreadStart(ccThread thread, void *data)
-{
-	if(CC_UNLIKELY(pthread_create(&_THREAD->id, NULL, _THREAD->function, data) != 0)) {
-		free(thread);
+	if(CC_UNLIKELY(pthread_create(*thread, NULL, function, data) != 0)) {
 		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
 	}
@@ -19,9 +10,9 @@ ccReturn ccThreadStart(ccThread thread, void *data)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadJoin(ccThread thread)
+ccReturn ccThreadJoin(ccThread *thread)
 {
-	if(CC_UNLIKELY(pthread_join(_THREAD->id, NULL) == 0)){
+	if(CC_UNLIKELY(pthread_join(*thread, NULL) == 0)){
 		return CC_SUCCESS;  
 	}else{
 		ccErrorPush(CC_ERROR_THREAD_CREATE);
@@ -29,12 +20,11 @@ ccReturn ccThreadJoin(ccThread thread)
 	}
 }
 
-bool ccThreadFinished(ccThread thread)
+bool ccThreadFinished(ccThread *thread)
 {
-	if(pthread_kill(_THREAD->id, 0) == 0){
+	if(pthread_kill(*thread, 0) == 0){
 		return false;
 	}else{
-		free(thread);
 		return true;
 	}
 }

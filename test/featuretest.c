@@ -123,12 +123,11 @@ int main(int argc, char** argv)
 	ccPrintf("Waiting for %d threads counting to %d\n", THREAD_COUNT, THREAD_ITERATIONS * THREAD_COUNT);
 
 	for(i = 0; i < THREAD_COUNT; i++) {
-		ccThreadCreate(&thread[i], &counter);
-		ccThreadStart(thread[i], &threadData);
+		ccThreadStart(&thread[i], &counter, &threadData);
 	}
 
 	for(i = 0; i < THREAD_COUNT; i++) {
-		ccThreadJoin(thread[i]);
+		ccThreadJoin(&thread[i]);
 	}
 
 	ccThreadMutexFree(&mutex);

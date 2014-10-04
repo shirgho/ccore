@@ -32,8 +32,6 @@ extern "C"
 {
 #endif
 
-typedef void* ccThread;
-
 #ifdef WINDOWS
 
 #include <windows.h>
@@ -43,6 +41,7 @@ typedef void* ccThread;
 
 #define ccThreadReturn() return 0;
 
+typedef HANDLE ccThread;
 typedef CRITICAL_SECTION ccMutex;
 
 #elif defined X11
@@ -54,14 +53,14 @@ typedef CRITICAL_SECTION ccMutex;
 
 #define ccThreadReturn() return 0;
 
+typedef pthread_t ccThread;
 typedef pthread_mutex_t ccMutex;
 
 #endif
 
-ccReturn ccThreadCreate(ccThread *thread, void *function);
-ccReturn ccThreadStart(ccThread thread, void *data);
-ccReturn ccThreadJoin(ccThread thread);
-bool ccThreadFinished(ccThread thread);
+ccReturn ccThreadStart(ccThread *thread, void *function, void *data);
+ccReturn ccThreadJoin(ccThread *thread);
+bool ccThreadFinished(ccThread *thread);
 
 ccReturn ccThreadMutexCreate(ccMutex *mutex);
 ccReturn ccThreadMutexJoin(ccMutex *mutex);
