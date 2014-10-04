@@ -8,7 +8,7 @@ libpaths=['/usr/lib', '/usr/local/lib', '.']
 
 opts=Variables('custom.py', ARGUMENTS)
 opts.Add('target', 'Compile Target (debug/release/install)', 'debug', allowed_values=('debug', 'release', 'install'))
-opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'all', 'net', 'feature', 'no'))
+opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'all', 'feature', 'no'))
 opts.Update(env)
 
 if(env['target']=='debug'):
@@ -27,8 +27,5 @@ else:
         env.Program(target='bin/featuretest', source=['test/featuretest.c', 'test/tga.c', 'test/icon.c'], LIBS=[staticLibrary, libs], LIBPATH=libpaths)
         Command("bin/commands.tga", "test/commands.tga", Copy("$TARGET", "$SOURCE"))
         Command("bin/logo.tga", "test/logo.tga", Copy("$TARGET", "$SOURCE"))
-
-    if(env['test']=='yes' or env['test']=='all' or env['test']=='net'):
-        env.Program(target='bin/nettest', source='test/nettest.c', LIBS=[staticLibrary], LIBPATH=libpaths)
 
 Help(opts.GenerateHelpText(env))
