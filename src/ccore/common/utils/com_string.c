@@ -41,7 +41,7 @@ char *ccStringConcatenate(int amount, ...)
 	l = 0;
 
 	for(i = 0; i < amount; i++) {
-		memcpy(newStr + l, elements[i], strlen(lengths[i]));
+		memcpy(&newStr[l], elements[i], lengths[i]);
 		l += lengths[i];
 	}
 
