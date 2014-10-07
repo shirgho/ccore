@@ -132,17 +132,17 @@ typedef int						ccSocklen_t;
 #define ccNetGetaddrinfo		getaddrinfo
 #define ccNetGetnameinfo		getnameinfo
 
-typedef struct sockaddr 		ccSockaddr;
-typedef struct sockaddr6 		ccSockaddr6;
-typedef struct sockaddr_in 		ccSockaddr_in;
-typedef struct sockaddr_in6		ccSockaddr_in6;
-typedef struct addrinfo			ccAddrinfo;
-typedef struct msghdr 			ccMsghdr;
-typedef fd_set 					ccFd_set;
-typedef struct hostent 			ccHostent;
-typedef struct netent 			ccNetent;
-typedef struct protoent 		ccProtoent;
-typedef struct servent 			ccServent;
+#define ccSockaddr				sockaddr;
+#define ccSockaddr6				sockaddr6;
+#define ccSockaddr_in			sockaddr_in;
+#define ccSockaddr_in6			sockaddr_in6;
+#define ccAddrinfo				addrinfo;
+#define ccMsghdr				msghdr;
+#define ccFd_set				fd_set;
+#define ccHostent				hostent;
+#define ccNetent				netent;
+#define ccProtoent				protoent;
+#define ccServent				servent;
 
 ccReturn ccNetInitialize();
 ccReturn ccNetFree();
