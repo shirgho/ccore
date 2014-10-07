@@ -44,7 +44,7 @@ extern "C"
 typedef HANDLE ccThread;
 typedef CRITICAL_SECTION ccMutex;
 
-#elif defined X11
+#elif defined LINUX
 
 #include <pthread.h>
 

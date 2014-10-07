@@ -2,7 +2,7 @@
 
 ccReturn ccThreadStart(ccThread *thread, void *function, void *data)
 {
-	if(CC_UNLIKELY(pthread_create(*thread, NULL, function, data) != 0)) {
+	if(CC_UNLIKELY(pthread_create(thread, NULL, function, data) != 0)) {
 		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
 	}
