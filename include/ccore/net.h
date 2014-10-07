@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "core.h"
 #include "error.h"
 #include "types.h"
 
