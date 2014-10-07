@@ -1,7 +1,7 @@
 ccore
 =====
 
-ccore is a light weight low level library to facilitate cross platform software development in C/C++. ccore is focused on but not exclusively aimed at game development. It provides the user with basic functionality while leaving high level implementations up to the user. We aim at creating libraries/binaries smaller than 1MB.
+ccore is a light weight low level library to facilitate cross platform software development in C/C++. ccore is focused on but not exclusively aimed at game development. It provides the user with basic functionality while leaving high level implementations up to the user.
 
 ccore is described in detail in [the ccore wiki.](../../wiki)
 
