@@ -21,9 +21,7 @@
 //      along with this program. If not, see <http://www.gnu.org/licenses/>.        //
 //__________________________________________________________________________________//
 
-#include "core.h"
-
-// ccPrintString will only translate to printf while debugging
+#pragma once
 
 #ifdef _DEBUG
 #include <stdio.h>

@@ -8,7 +8,7 @@ libpaths=['/usr/lib', '/usr/local/lib', '.']
 
 opts=Variables('custom.py', ARGUMENTS)
 opts.Add('target', 'Compile Target (debug/release/install)', 'debug', allowed_values=('debug', 'release', 'install'))
-opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'all', 'feature', 'no'))
+opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'feature', 'no'))
 opts.Update(env)
 
 if(env['target']=='debug'):
