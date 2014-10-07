@@ -30,7 +30,7 @@
 #include "types.h"
 
 #ifdef LINUX
-#include <GL/glew.h>
+#include "../../lib/glew/GL/glew.h"
 #elif defined WINDOWS
 #include "../../lib/glew/GL/glew.h"
 #endif
