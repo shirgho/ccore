@@ -1,5 +1,7 @@
 #include "win_thread.h"
 
+#ifdef CC_USE_THREAD
+
 ccReturn ccThreadStart(ccThread *thread, void *function, void *data)
 {
 	*thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)function, (LPVOID)data, 0, NULL);
@@ -67,3 +69,5 @@ ccReturn ccThreadMutexFree(ccMutex *mutex)
 
 	return CC_SUCCESS;
 }
+
+#endif

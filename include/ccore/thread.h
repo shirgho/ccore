@@ -23,6 +23,8 @@
 
 #pragma once
 
+#ifdef CC_USE_THREAD
+
 #include "core.h"
 #include "types.h"
 #include "error.h"
@@ -69,4 +71,6 @@ ccReturn ccThreadMutexFree(ccMutex *mutex);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
