@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef CC_USE_FILE
+
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -15,4 +17,6 @@
 
 #ifndef CC_TEMP_LOCATION
 #define CC_TEMP_LOCATION "/tmp/"
+#endif
+
 #endif

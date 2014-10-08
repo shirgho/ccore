@@ -1,3 +1,5 @@
+#ifdef CC_USE_FILE
+
 #include "lin_file.h"
 
 static char *dataDir = NULL;
@@ -36,3 +38,5 @@ void _ccFileFree(void)
 {
 
 }
+
+#endif

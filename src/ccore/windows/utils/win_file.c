@@ -1,3 +1,5 @@
+#ifdef CC_USE_FILE
+
 #include "win_file.h"
 
 #define USERHOME "%HOMEPATH%/"
@@ -56,3 +58,5 @@ void _ccFileFree(void)
 	free(tempDir);
 	userDir = NULL;
 }
+
+#endif
