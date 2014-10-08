@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef CC_USE_GAMEPAD
+
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "XInput9_1_0.lib")
 
@@ -63,3 +65,5 @@ typedef struct {
 
 #define GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
 #define GAMEPADS_DATA ((ccGamepads_win*)_ccGamepads->data)
+
+#endif CC_USE_GAMEPAD

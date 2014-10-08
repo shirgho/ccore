@@ -94,4 +94,4 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 }
 #endif
 
-#endif //CC_USE_GAMEPAD
+#endif
