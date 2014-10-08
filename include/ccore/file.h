@@ -22,6 +22,7 @@
 //__________________________________________________________________________________//
 
 #pragma once
+#ifdef CC_USE_FILE
 
 #include <stdint.h>
 #include <sys/stat.h>
@@ -52,4 +53,6 @@ void _ccFileFree(void);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

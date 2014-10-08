@@ -19,7 +19,10 @@ void ccInitialize(void)
 void ccFree(void)
 {
 	_ccErrorFree();
+
+#ifdef CC_USE_FILE
 	_ccFileFree();
+#endif
 
 	if(_ccGamepads != NULL) ccGamepadFree();
 	if(_ccNet) ccNetFree();

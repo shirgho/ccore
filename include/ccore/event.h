@@ -57,8 +57,10 @@ typedef enum {
 	CC_EVENT_WINDOW_QUIT,
 	// Window has resized, new dimensions are stored in the window struct before the event fires
 	CC_EVENT_WINDOW_RESIZE,
+#ifdef CC_USE_GAMEPAD
 	// Gamepad event, see gamepad.h for specifics
 	CC_EVENT_GAMEPAD,
+#endif
 } ccEventType;
 
 // The type of mouse button pressed, used inside the ccEvent union
@@ -79,7 +81,9 @@ typedef struct {
 		ccPoint mouseDelta;
 		unsigned int keyCode;
 		double scrollDelta;
+#ifdef CC_USE_GAMEPAD
 		ccGamepadEvent gamepadEvent;
+#endif
 	};
 } ccEvent;
 
