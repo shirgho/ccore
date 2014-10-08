@@ -1,5 +1,7 @@
 #include <ccore/file.h>
 
+#ifdef CC_USE_FILE
+
 #ifdef WINDOWS
 
 #define ccStat _stat
@@ -29,3 +31,5 @@ ccFileInfo ccFileInfoGet(char *file)
 
 	return info;
 }
+
+#endif

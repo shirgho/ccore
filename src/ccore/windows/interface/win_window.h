@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <string.h>
 #include <hidsdi.h>
+#include <stdint.h>
 
 #include <ccore/window.h>
 
