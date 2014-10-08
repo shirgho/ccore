@@ -1,3 +1,4 @@
+#ifdef CC_USE_NET
 #include "lin_net.h"
 
 ccReturn ccNetInitialize(void)
@@ -9,3 +10,5 @@ ccReturn ccNetFree(void)
 {
 	return CC_SUCCESS;
 }
+
+#endif

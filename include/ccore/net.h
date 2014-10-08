@@ -22,6 +22,7 @@
 //__________________________________________________________________________________//
 
 #pragma once
+#ifdef CC_USE_NET
 
 #include "core.h"
 #include "error.h"
@@ -151,4 +152,6 @@ bool _ccNet;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

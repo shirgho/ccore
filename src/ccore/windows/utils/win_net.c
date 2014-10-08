@@ -1,3 +1,4 @@
+#ifdef CC_USE_NET
 #include "win_net.h"
 
 ccReturn ccNetInitialize(void)
@@ -20,3 +21,5 @@ ccReturn ccNetFree(void)
 	_ccNet = false;
 	return CC_SUCCESS;
 }
+
+#endif
