@@ -1,5 +1,7 @@
 #include "win_gamepad.h"
 
+#ifdef CC_USE_GAMEPAD
+
 static int _gamepadXinputButtons[] =
 {
 	XINPUT_GAMEPAD_A,
@@ -367,3 +369,5 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		}
 	}
 }
+
+#endif CC_USE_GAMEPAD
