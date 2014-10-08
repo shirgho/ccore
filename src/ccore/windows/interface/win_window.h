@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <string.h>
+#include <hidsdi.h>
 
 #include <ccore/window.h>
 
@@ -13,12 +14,17 @@
 #include "../utils/win_file.h"
 #include "win_gamepad.h"
 
+#ifdef CC_USE_GAMEPAD
 #define NRAWINPUTDEVICES 3
+#define RAWINPUT_GAMEPAD 2
+#define RAWINPUT_GAMEPADCOUNT 1
+#else
+#define NRAWINPUTDEVICES 2
+#define RAWINPUT_GAMEPADCOUNT 0
+#endif
+
 #define RAWINPUT_KEYBOARD 0
 #define RAWINPUT_MOUSE 1
-#define RAWINPUT_GAMEPAD 2
-
-#define RAWINPUT_GAMEPADCOUNT 1
 
 typedef struct {
 	HDC hdc;
@@ -30,7 +36,9 @@ typedef struct {
 	LPBYTE lpb;
 	UINT lpbSize;
 	UINT dwSize;
+#ifdef CC_USE_GAMEPAD
 	bool queryXinput;
+#endif
 
 	ccEvent *eventStack;
 	int eventStackSize;

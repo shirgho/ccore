@@ -157,10 +157,12 @@ static void processRid(HRAWINPUT rawInput)
 		_ccWindow->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 		_ccWindow->event.keyCode = vkCode;
 	}
+#ifdef CC_USE_GAMEPAD
 	else if(raw->header.dwType == RIM_TYPEHID)
 	{
 		_generateGamepadEvents(raw);
 	}
+#endif
 }
 
 static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPARAM lParam)
@@ -244,7 +246,9 @@ bool ccWindowEventPoll(void)
 	
 	if(canPollInput) {
 		canPollInput = false;
+#ifdef CC_USE_GAMEPAD
 		if(WINDOW_DATA->queryXinput) _queryXinput();
+#endif
 	}
 
 	if(WINDOW_DATA->eventStackPos != -1) {
@@ -292,7 +296,9 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->eventStackPos = -1;
 	WINDOW_DATA->eventStackIndex = 0;
 	WINDOW_DATA->eventStack = NULL;
+#ifdef CC_USE_GAMEPAD
 	WINDOW_DATA->queryXinput = false;
+#endif
 	WINDOW_DATA->renderContext = NULL;
 	WINDOW_DATA->lpbSize = 0;
 	WINDOW_DATA->lpb = NULL;
