@@ -1,4 +1,5 @@
 #ifdef CC_USE_NET
+
 #include "win_net.h"
 
 ccReturn ccNetInitialize(void)
