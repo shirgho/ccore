@@ -14,7 +14,9 @@ void ccInitialize(void)
 	_ccGamepads = NULL;
 #endif
 	_ccDisplays = NULL;
+#ifdef CC_USE_NET
 	_ccNet = false;
+#endif
 	_ccWindow = NULL;
 }
 
@@ -27,12 +29,20 @@ void ccFree(void)
 #endif
 
 #ifdef CC_USE_GAMEPAD
-	if(_ccGamepads != NULL) ccGamepadFree();
+	if(_ccGamepads != NULL){
+		ccGamepadFree();
+	}
 #endif
-	if(_ccNet) ccNetFree();
+#ifdef CC_USE_NET
+	if(_ccNet){
+		ccNetFree();
+	}
+#endif
 	if(_ccWindow != NULL) {
 		if(ccGLContextIsActive()) ccGLContextFree();
 		ccWindowFree();
 	}
-	if(_ccDisplays != NULL) ccDisplayFree();
+	if(_ccDisplays != NULL){
+		ccDisplayFree();
+	}
 }
