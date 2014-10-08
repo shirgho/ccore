@@ -154,4 +154,8 @@ bool _ccNet;
 }
 #endif
 
+#else
+
+#error CC_USE_NET was not defined
+
 #endif

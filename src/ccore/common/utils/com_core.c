@@ -1,12 +1,17 @@
 #include <ccore/core.h>
 
+#ifdef CC_USE_GAMEPAD
 #include <ccore/gamepad.h>
+#endif
 #include <ccore/display.h>
+#ifdef CC_USE_NET
 #include <ccore/net.h>
+#endif
 #include <ccore/window.h>
 #include <ccore/opengl.h>
+#ifdef CC_USE_FILE
 #include <ccore/file.h>
-#include <ccore/net.h>
+#endif
 
 void ccInitialize(void)
 {
