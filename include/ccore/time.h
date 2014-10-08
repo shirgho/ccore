@@ -22,6 +22,7 @@
 //__________________________________________________________________________________//
 
 #pragma once
+#ifdef CC_USE_TIME
 
 #include <stdint.h>
 
@@ -46,4 +47,8 @@ uint64_t ccTimeNanoseconds(void);
 
 #ifdef __cplusplus
 }
+#endif
+
+#else
+#error CC_USE_TIME must be defined with -DCC_USE_TIME
 #endif
