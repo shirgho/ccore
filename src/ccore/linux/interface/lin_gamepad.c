@@ -1,3 +1,5 @@
+#ifdef CC_USE_GAMEPAD
+
 #include "lin_gamepad.h"
 
 static int openGamepadDescriptor(char *locName)
@@ -260,3 +262,5 @@ ccReturn ccGamepadFree(void)
 
 	return CC_SUCCESS;
 }
+
+#endif

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef CC_USE_GAMEPAD
 
 #include <errno.h>
 #include <dirent.h>
@@ -27,3 +28,5 @@ typedef struct {
 #define GAMEPADS_DATA() ((ccGamepads_lin*)(_ccGamepads)->data)
 
 ccGamepadEvent ccGamepadEventPoll(void);
+
+#endif

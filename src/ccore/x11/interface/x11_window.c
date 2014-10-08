@@ -331,7 +331,7 @@ bool ccWindowEventPoll(void)
 
 	_ccWindow->event.type = CC_EVENT_SKIP;
 
-#ifdef CC_INCLUDE_GAMEPAD
+#ifdef CC_USE_GAMEPAD
 	if(_ccGamepads != NULL){
 		gamepadEvent = ccGamepadEventPoll();
 		if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){

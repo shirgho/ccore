@@ -21,11 +21,7 @@
 //      along with this program. If not, see <http://www.gnu.org/licenses/>.        //
 //__________________________________________________________________________________//
 
-#ifndef CC_IGNORE_INCLUDE
-#define CC_INCLUDE_GAMEPAD
-#endif
-
-#ifdef CC_INCLUDE_GAMEPAD
+#ifdef CC_USE_GAMEPAD
 #pragma once
 
 #include <limits.h>
@@ -97,4 +93,4 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 }
 #endif
 
-#endif //CC_INCLUDE_GAMEPAD
+#endif //CC_USE_GAMEPAD
