@@ -11,6 +11,12 @@ opts.Add('target', 'Compile Target (debug/release/install)', 'debug', allowed_va
 opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'feature', 'no'))
 opts.Update(env)
 
+env.Append(CCFLAGS=['-DCC_USE_GAMEPAD'])
+env.Append(CCFLAGS=['-DCC_USE_NET'])
+env.Append(CCFLAGS=['-DCC_USE_TIME'])
+env.Append(CCFLAGS=['-DCC_USE_THREAD'])
+env.Append(CCFLAGS=['-DCC_USE_FILE'])
+
 if(env['target']=='debug'):
     env.Append(CCFLAGS=['-D_DEBUG'])
     env.Append(CCFLAGS=['-g'])
