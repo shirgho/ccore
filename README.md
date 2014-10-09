@@ -14,7 +14,6 @@ The features of ccore include support for the following:
 - Managing multiple monitors, multi monitor fullscreen
 - Raw input with gamepad support
 - Threading
-- Networking with POSIX functions
 - Clipboard cutting/pasting
 - Cross platform implementations for several OS specific functions
 
