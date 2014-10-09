@@ -94,8 +94,4 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 }
 #endif
 
-#else
-
-#error CC_USE_GAMEPAD was not defined
-
 #endif

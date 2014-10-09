@@ -73,8 +73,4 @@ ccReturn ccThreadMutexFree(ccMutex *mutex);
 }
 #endif
 
-#else
-
-#error CC_USE_THREAD was not defined
-
 #endif

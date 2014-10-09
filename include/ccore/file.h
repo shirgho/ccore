@@ -57,7 +57,3 @@ void _ccFileFree(void);
 #endif
 
 #else
-
-#error CC_USE_FILE was not defined
-
-#endif

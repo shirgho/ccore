@@ -50,8 +50,4 @@ uint64_t ccTimeNanoseconds(void);
 }
 #endif
 
-#else
-
-#error CC_USE_TIME was not defined
-
 #endif
