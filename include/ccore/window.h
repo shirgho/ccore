@@ -6,8 +6,8 @@
 //                             \  \___\___/|_|  \___| 1.0                           //
 //                              \______\                                            //
 //                                                                                  //
-//             Copyright (C) 2014 \ Job Talle (jobtalle@hotmail.com)                //
-//                                 \ Thomas Versteeg (thomasversteeg@gmx.com)       //
+//             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
+//                                 \ Thomas Versteeg (thomas@ccore.org)             //
 //__________________________________________________________________________________//
 //                                                                                  //
 //      This program is free software: you can redistribute it and/or modify        //
