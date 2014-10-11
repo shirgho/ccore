@@ -1,5 +1,7 @@
 #include "win_time.h"
 
+#ifdef CC_USE_TIME
+
 static void calculateConversionFactor(void)
 {
 	LARGE_INTEGER ticksPerSecond;
@@ -25,3 +27,5 @@ uint64_t ccTimeNanoseconds(void)
 	QueryPerformanceCounter(&time);
 	return (uint64_t)(time.QuadPart * _ticksToNanoSeconds);
 }
+
+#endif
