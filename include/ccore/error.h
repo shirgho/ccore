@@ -50,7 +50,6 @@ typedef enum {
 	// OpenGL related
 	CC_ERROR_GL_VERSION, // The target OpenGL version is not supported
 	CC_ERROR_GL_CONTEXT, // OpenGL context creation failed
-	CC_ERROR_GL_GLEWINIT, // GLEW could not initialize
 	CC_ERROR_GL_BUFFERSWAP, // The buffers couldn't swap
 
 	// Thread related

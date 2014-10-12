@@ -55,12 +55,6 @@ ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
 		return CC_FAIL;
 	}
 
-	//Fetch extentions after context creation
-	if(glewInit() != GLEW_OK) {
-		ccErrorPush(CC_ERROR_GL_GLEWINIT);
-		return CC_FAIL;
-	}
-
 	return CC_SUCCESS;
 }
 

@@ -25,12 +25,6 @@
 #include "error.h"
 #include "types.h"
 
-#ifdef LINUX
-#include "../../lib/glew/GL/glew.h"
-#elif defined WINDOWS
-#include "../../lib/glew/GL/glew.h"
-#endif
-
 #ifdef __cplusplus
 extern "C"
 {
