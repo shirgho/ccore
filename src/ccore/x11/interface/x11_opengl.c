@@ -11,7 +11,7 @@ static int attrList[] =
 	None
 };
 
-ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
+ccReturn ccGLContextBind(void)
 {
 	XVisualInfo *visual;
 

@@ -1,9 +1,8 @@
 #include "win_opengl.h"
 
-ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
+ccReturn ccGLContextBind(void)
 {
 	int pixelFormatIndex;
-	int glVerMajor, glVerMinor;
 
 	ccAssert(ccWindowExists());
 
@@ -44,14 +43,6 @@ ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
 	//Make window the current context
 	if(wglMakeCurrent(WINDOW_DATA->hdc, WINDOW_DATA->renderContext) == FALSE) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
-		return CC_FAIL;
-	}
-
-	//Version check
-	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
-	glGetIntegerv(GL_MINOR_VERSION, &glVerMinor);
-	if(glVerMajor < glVersionMajor || (glVerMajor == glVersionMajor && glVerMinor < glVersionMinor)) {
-		ccErrorPush(CC_ERROR_GL_VERSION);
 		return CC_FAIL;
 	}
 

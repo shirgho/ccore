@@ -145,8 +145,9 @@ int main(int argc, char** argv)
 	ccGamepadInitialize();
 
 	// Prepare window for rendering with openGL 3.2 or higher
-	ccGLContextBind(3, 2);
+	ccGLContextBind();
 
+	// This test uses glew for openGL extension loading
 	glewInit();
 
 	// This function initializes openGL in this example
