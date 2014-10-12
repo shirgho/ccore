@@ -38,6 +38,8 @@
 #include <ccore/print.h>
 #include <ccore/gamepad.h>
 
+#include <GL/glew.h>
+
 #include "tga.h"
 #include "icon.h"
 
@@ -144,6 +146,8 @@ int main(int argc, char** argv)
 
 	// Prepare window for rendering with openGL 3.2 or higher
 	ccGLContextBind(3, 2);
+
+	glewInit();
 
 	// This function initializes openGL in this example
 	initialize();
