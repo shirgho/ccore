@@ -46,4 +46,6 @@ uint64_t ccTimeNanoseconds(void);
 }
 #endif
 
+#elif defined __GNUC__
+#error "The CC_USE_TIME or the CC_USE_ALL flag must be set"
 #endif
