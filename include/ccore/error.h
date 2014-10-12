@@ -102,8 +102,8 @@ typedef enum {
 		} \
 	} \
 
-const char *ccErrorString(ccError error);
-void _ccErrorPush(ccError error, char *file, int line);
+const wchar_t *ccErrorString(ccError error);
+void _ccErrorPush(ccError error, wchar_t *file, int line);
 #define ccErrorPush(error) _ccErrorPush(error, __FILE__, __LINE__)
 ccError ccErrorPop(void);
 

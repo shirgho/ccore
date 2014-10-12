@@ -59,7 +59,7 @@ typedef struct {
 } ccGamepadEvent;
 
 typedef struct {
-	char *name;
+	wchar_t *name;
 	bool *button;
 	int *axis;
 	int *output;

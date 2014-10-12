@@ -73,7 +73,7 @@ ccWindow *_ccWindow;
 #define ccWindowSupportsRawInput() _ccWindow->supportsRawInput
 
 // Window functions
-ccReturn ccWindowCreate(ccRect rect, const char *title, int flags);
+ccReturn ccWindowCreate(ccRect rect, const wchar_t *title, int flags);
 ccReturn ccWindowFree(void);
 bool ccWindowEventPoll(void); // Poll an event from the events that currently need to be processed in the window
 ccReturn ccWindowResizeMove(ccRect rect);
@@ -88,8 +88,8 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon);
 ccReturn ccWindowMouseSetPosition(ccPoint target);
 ccReturn ccWindowMouseSetCursor(ccCursor cursor);
 
-ccReturn ccWindowClipboardSet(const char *data);
-char *ccWindowClipboardGet(void);
+ccReturn ccWindowClipboardSet(const wchar_t *data);
+wchar_t *ccWindowClipboardGet(void);
 
 // Getters
 ccEvent ccWindowEventGet(void);

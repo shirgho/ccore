@@ -30,9 +30,9 @@ extern "C"
 {
 #endif
 
-void ccStringTrimToChar(char *str, char ch, bool includeChar);
-void ccStringReplaceChar(char *str, char ch, char newCh);
-char *ccStringConcatenate(int amount, ...);
+void ccStringTrimToChar(wchar_t *str, wchar_t ch, bool includeChar);
+void ccStringReplaceChar(wchar_t *str, wchar_t ch, wchar_t newCh);
+wchar_t *ccStringConcatenate(int amount, ...);
 
 #ifdef __cplusplus
 }
