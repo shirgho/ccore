@@ -19,7 +19,7 @@
 
 #pragma once
 
-#ifdef CC_USE_TIME
+#if defined CC_USE_ALL || defined CC_USE_TIME
 
 #include <stdint.h>
 

@@ -1,6 +1,6 @@
 #include "win_time.h"
 
-#ifdef CC_USE_TIME
+#if defined CC_USE_ALL || defined CC_USE_TIME
 
 static void calculateConversionFactor(void)
 {

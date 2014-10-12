@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "XInput9_1_0.lib")

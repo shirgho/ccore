@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef CC_USE_THREAD
+#if defined CC_USE_ALL || defined CC_USE_THREAD
 
 #include <Windows.h>
 

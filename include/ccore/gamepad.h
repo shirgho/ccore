@@ -17,7 +17,7 @@
 //      this program. If not, see <http://opensource.org/licenses/>.                //
 //__________________________________________________________________________________//
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 
 #pragma once
 

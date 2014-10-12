@@ -15,7 +15,7 @@
 #include "../utils/win_file.h"
 #include "win_gamepad.h"
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 #define NRAWINPUTDEVICES 3
 #define RAWINPUT_GAMEPAD 2
 #define RAWINPUT_GAMEPADCOUNT 1
@@ -37,7 +37,7 @@ typedef struct {
 	LPBYTE lpb;
 	UINT lpbSize;
 	UINT dwSize;
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	bool queryXinput;
 #endif
 
