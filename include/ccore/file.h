@@ -52,4 +52,4 @@ void _ccFileFree(void);
 }
 #endif
 
-#endif
+#endif //CC_USE_FILE

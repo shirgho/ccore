@@ -73,8 +73,6 @@ const char *ccErrorString(ccError error)
 			return "The current OpenGL version is not supported";
 		case CC_ERROR_GL_CONTEXT:
 			return "The openGL context could not be created";
-		case CC_ERROR_GL_GLEWINIT:
-			return "GLEW could not be initialized";
 		case CC_ERROR_GL_BUFFERSWAP:
 			return "Failed to swap the buffers";
 
