@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\glew\glew.c" />
     <ClCompile Include="src\ccore\common\interface\com_display.c" />
     <ClCompile Include="src\ccore\common\interface\com_event.c" />
     <ClCompile Include="src\ccore\common\interface\com_window.c" />
@@ -54,9 +53,6 @@
     <ClInclude Include="include\ccore\time.h" />
     <ClInclude Include="include\ccore\types.h" />
     <ClInclude Include="include\ccore\window.h" />
-    <ClInclude Include="lib\glew\GL\glew.h" />
-    <ClInclude Include="lib\glew\GL\glxew.h" />
-    <ClInclude Include="lib\glew\GL\wglew.h" />
     <ClInclude Include="src\ccore\windows\interface\win_display.h" />
     <ClInclude Include="src\ccore\windows\interface\win_gamepad.h" />
     <ClInclude Include="src\ccore\windows\interface\win_opengl.h" />
